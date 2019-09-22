@@ -28,7 +28,6 @@ export const findExtWorkspace = /\.code-workspace$/;
 
 export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 
-// tslint:disable-next-line: max-line-length
 	private _onDidChangeTreeData:vscode.EventEmitter<TreeItems|undefined> = new vscode.EventEmitter<TreeItems|undefined>();
 	public readonly onDidChangeTreeData:vscode.Event<TreeItems|undefined> = this._onDidChangeTreeData.event;
 	
@@ -51,6 +50,9 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 		if (vscode.workspace.getConfiguration('l13Projects').get('useCacheForDetectedProjects')) {
 			this.cache = context.globalState.get('cache') || [];
+			this.gitProjects = context.globalState.get('cacheGitProjects') || [];
+			this.vscodeProjects = context.globalState.get('cacheVSCodeProjects') || [];
+			this.workspaceProjects = context.globalState.get('cacheWorkspaceProjects') || [];
 			this.isFirstView = false;
 		}
 		
@@ -62,30 +64,24 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 		const gitFolders = config.get('git.folders', []);
 		const vscodeFolders = config.get('vsCode.folders', []);
 		const workspaceFolders = config.get('workspace.folders', []);
-		let promises:Array<Promise<any>> = [];
+		const promises:Array<Promise<any>> = [];
 		
-		promises = promises.concat(detectProjects(this, this.gitProjects = [], 'git', gitFolders, {
+		return promises.concat(this.detectProjectsFor('cacheGitProjects', this.gitProjects = [], 'git', gitFolders, {
 			find: findGitFolder,
 			type: 'folder',
 			maxDepth: config.get('git.maxDepthRecursion', 1),
 			ignore: config.get('git.ignore', []),
-		}));
-		
-		promises = promises.concat(detectProjects(this, this.vscodeProjects = [], 'vscode', vscodeFolders, {
+		}), this.detectProjectsFor('cacheVSCodeProjects', this.vscodeProjects = [], 'vscode', vscodeFolders, {
 			find: findVSCodeFolder,
 			type: 'folder',
 			maxDepth: config.get('vsCode.maxDepthRecursion', 1),
 			ignore: config.get('vsCode.ignore', []),
-		}));
-		
-		promises = promises.concat(detectProjects(this, this.workspaceProjects = [], 'workspace', workspaceFolders, {
+		}), this.detectProjectsFor('cacheWorkspaceProjects', this.workspaceProjects = [], 'workspace', workspaceFolders, {
 			find: findExtWorkspace,
 			type: 'file',
 			maxDepth: config.get('workspace.maxDepthRecursion', 1),
 			ignore: config.get('workspace.ignore', []),
 		}));
-		
-		return promises;
 		
 	}
 	
@@ -108,6 +104,58 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 	public getTreeItem (element:ProjectTreeItem) :vscode.TreeItem {
 		
 		return element;
+		
+	}
+	
+	private detectProjectsFor (cacheName: string, detectedProjects:Project[], type:'git'|'vscode'|'workspace', paths:string[], options:Options) {
+	
+		const promises:Array<Promise<{ [relative:string]: File }>> = [];
+		
+		paths.forEach((path) => {
+			
+			if (fs.existsSync(path)) {
+				promises.push(new Promise((resolve, reject) => {
+					
+					walktree(path, options, (error, result) => {
+						
+						if (error) reject(error);
+						else resolve(result);
+						
+					});
+					
+				}));
+			}
+			
+		});
+		
+		if (promises.length) {
+			return [Promise.all(promises).then((results) => {
+				
+				results.forEach((files) => {
+					
+					for (const file of Object.values(files)) {
+						const pathname = file.type === 'file' ? file.path : path.dirname(file.path);
+						detectedProjects.push({
+							label: path.basename(pathname, '.code-workspace'),
+							path: pathname,
+							type,
+						});
+					}
+					
+					this.context.globalState.update(cacheName, detectedProjects);
+					
+				});
+				
+				detectedProjects.sort(({ label:a }:Project, { label:b }:Project) => sortCaseInsensitive(a, b));
+				
+				this.refresh();
+				
+			}, (error) => { vscode.window.showErrorMessage(error.message); })];
+		}
+		
+		this.refresh();
+		
+		return [];
 		
 	}
 	
@@ -380,56 +428,6 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 }
 
 //	Functions __________________________________________________________________
-
-function detectProjects (provider:ProjectsProvider, detectedProjects:Project[], type:'git'|'vscode'|'workspace', paths:string[], options:Options) {
-	
-	const promises:Array<Promise<{ [relative:string]: File }>> = [];
-	
-	paths.forEach((path) => {
-		
-		if (fs.existsSync(path)) {
-			promises.push(new Promise((resolve, reject) => {
-				
-				walktree(path, options, (error, result) => {
-					
-					if (error) reject(error);
-					else resolve(result);
-					
-				});
-				
-			}));
-		}
-		
-	});
-	
-	if (promises.length) {
-		return [Promise.all(promises).then((results) => {
-			
-			results.forEach((files) => {
-				
-				for (const file of Object.values(files)) {
-					const pathname = file.type === 'file' ? file.path : path.dirname(file.path);
-					detectedProjects.push({
-						label: path.basename(pathname, '.code-workspace'),
-						path: pathname,
-						type,
-					});
-				}
-				
-			});
-			
-			detectedProjects.sort(({ label:a }:Project, { label:b }:Project) => sortCaseInsensitive(a, b));
-			
-			provider.refresh();
-			
-		}, (error) => { vscode.window.showErrorMessage(error.message); })];
-	}
-	
-	provider.refresh();
-	
-	return [];
-	
-}
 
 function saveProject (projects:Project[], fsPath:string, value:string) {
 	
