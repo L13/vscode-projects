@@ -1,0 +1,433 @@
+{
+	"name": "l13-projects",
+	"displayName": "L13 Projects",
+	"description": "Manage your workspaces and projects in Visual Studio Code",
+	"version": "0.13.0",
+	"publisher": "L13RARY",
+	"license": "SEE LICENCE IN LICENCE.md",
+	"preview": true,
+	"homepage": "https://github.com/l13/vscode-projects/blob/master/README.md",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/l13/vscode-projects.git"
+	},
+	"bugs": {
+		"url": "https://github.com/l13/vscode-projects/issues"
+	},
+	"icon": "images/icon.png",
+	"galleryBanner": {
+		"color": "#232323",
+		"theme": "dark"
+	},
+	"engines": {
+		"vscode": "^1.38.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"keywords": [
+		"folder",
+		"manage",
+		"project",
+		"repository",
+		"workspace"
+	],
+	"activationEvents": [
+		"*"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "l13Projects",
+					"title": "L13 Projects",
+					"icon": "images/projects.svg"
+				}
+			]
+		},
+		"views": {
+			"l13Projects": [
+				{
+					"id": "l13ProjectsFavorites",
+					"name": "Favorites"
+				},
+				{
+					"id": "l13ProjectsWorkspaces",
+					"name": "Workspaces"
+				}
+			]
+		},
+		"commands": [
+			{
+				"command": "l13Projects.openInNewWindow",
+				"title": "Open in new Window"
+			},
+			{
+				"command": "l13Projects.openInCurrentWindow",
+				"title": "Open in current Window"
+			},
+			{
+				"command": "l13Projects.pickFavorite",
+				"title": "L13 Projects: Select Favorite"
+			},
+			{
+				"command": "l13Projects.addToFavorites",
+				"title": "Add to Favorites"
+			},
+			{
+				"command": "l13Projects.addToWorkspace",
+				"title": "Add Folder to Workspace"
+			},
+			{
+				"command": "l13Projects.renameFavorite",
+				"title": "Rename"
+			},
+			{
+				"command": "l13Projects.removeFavorite",
+				"title": "Delete"
+			},
+			{
+				"command": "l13Projects.clearFavorites",
+				"title": "L13 Projects: Delete All Favorites"
+			},
+			{
+				"command": "l13Projects.pickProject",
+				"title": "L13 Projects: Select Project"
+			},
+			{
+				"command": "l13Projects.addProject",
+				"title": "L13 Projects: Add Project",
+				"icon": {
+					"light": "images/project-save-light.svg",
+					"dark": "images/project-save-dark.svg"
+				}
+			},
+			{
+				"command": "l13Projects.saveProject",
+				"title": "L13 Projects: Save Project"
+			},
+			{
+				"command": "l13Projects.refreshProjects",
+				"title": "L13 Projects: Refresh Projects",
+				"icon": {
+					"light": "images/project-refresh-light.svg",
+					"dark": "images/project-refresh-dark.svg"
+				}
+			},
+			{
+				"command": "l13Projects.saveDetectedProject",
+				"title": "Save as Project"
+			},
+			{
+				"command": "l13Projects.openProject",
+				"title": "Open"
+			},
+			{
+				"command": "l13Projects.openProjectInCurrentWindow",
+				"title": "Open"
+			},
+			{
+				"command": "l13Projects.openProjectInNewWindow",
+				"title": "Open in new Window"
+			},
+			{
+				"command": "l13Projects.renameProject",
+				"title": "Rename"
+			},
+			{
+				"command": "l13Projects.removeProject",
+				"title": "Delete"
+			},
+			{
+				"command": "l13Projects.clearProjects",
+				"title": "L13 Projects: Delete All Projects"
+			},
+			{
+				"command": "l13Projects.showProjectInFinder",
+				"title": "Reveal in Finder"
+			},
+			{
+				"command": "l13Projects.showProjectInExplorer",
+				"title": "Reveal in Explorer"
+			},
+			{
+				"command": "l13Projects.showProjectInFolder",
+				"title": "Open Containing Folder"
+			},
+			{
+				"command": "l13Projects.openInTerminal",
+				"title": "Open in Terminal"
+			}
+		],
+		"keybindings": [
+			{
+				"mac": "meta+l meta+p",
+				"key": "ctrl+l ctrl+p",
+				"command": "workbench.view.extension.l13Projects"
+			},
+			{
+				"mac": "meta+alt+p",
+				"key": "ctrl+alt+p",
+				"command": "l13Projects.pickFavorite"
+			},
+			{
+				"mac": "meta+alt+shift+p",
+				"key": "ctrl+alt+shift+p",
+				"command": "l13Projects.pickProject"
+			}
+		],
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "l13Projects.openInNewWindow",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.openInCurrentWindow",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.addToFavorites",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.addToWorkspace",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.renameFavorite",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.removeFavorite",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.openProject",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.openProjectInCurrentWindow",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.openProjectInNewWindow",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.renameProject",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.removeProject",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.showProjectInFinder",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.showProjectInExplorer",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.showProjectInFolder",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.openInTerminal",
+					"when": "false"
+				}
+			],
+			"explorer/context": [
+				{
+					"command": "l13Projects.openInCurrentWindow",
+					"group": "navigation@1"
+				},
+				{
+					"command": "l13Projects.openInNewWindow",
+					"group": "navigation@2"
+				}
+			],
+			"view/title": [
+				{
+					"command": "l13Projects.addProject",
+					"when": "view == l13ProjectsWorkspaces",
+					"group": "navigation@1"
+				},
+				{
+					"command": "l13Projects.refreshProjects",
+					"when": "view == l13ProjectsWorkspaces",
+					"group": "navigation@2"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "l13Projects.renameFavorite",
+					"group": "7_modification@1",
+					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?project-(folders?)$/"
+				},
+				{
+					"command": "l13Projects.removeFavorite",
+					"group": "7_modification@2",
+					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
+				},
+				{
+					"command": "l13Projects.openProjectInCurrentWindow",
+					"group": "navigation@1",
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^project-(folders?|git|vscode|workspace)$/"
+				},
+				{
+					"command": "l13Projects.openProjectInNewWindow",
+					"group": "navigation@2",
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^project-(folders?|git|vscode|workspace)$/"
+				},
+				{
+					"command": "l13Projects.saveDetectedProject",
+					"group": "navigation@3",
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^((current-)?project-(git|vscode|workspace)|unknown-project)$/"
+				},
+				{
+					"command": "l13Projects.addToFavorites",
+					"group": "navigation@4",
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
+				},
+				{
+					"command": "l13Projects.showProjectInFinder",
+					"group": "navigation@5",
+					"when": "isMac && view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?project-(folders?|git|vscode|workspace)|unknown-project)$/"
+				},
+				{
+					"command": "l13Projects.showProjectInExplorer",
+					"group": "navigation@5",
+					"when": "isWindows && view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?project-(folders?|git|vscode|workspace)|unknown-project)$/"
+				},
+				{
+					"command": "l13Projects.showProjectInFolder",
+					"group": "navigation@5",
+					"when": "isLinux && view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?project-(folders?|git|vscode|workspace)|unknown-project)$/"
+				},
+				{
+					"command": "l13Projects.openInTerminal",
+					"group": "navigation@6",
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?project-(folders?|git|vscode|workspace)|unknown-project)$/"
+				},
+				{
+					"command": "l13Projects.addToWorkspace",
+					"group": "2_workspace@1",
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^project-(folder|git|vscode)$/"
+				},
+				{
+					"command": "l13Projects.renameProject",
+					"group": "7_modification@1",
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?project-(folders?)$/"
+				},
+				{
+					"command": "l13Projects.removeProject",
+					"group": "7_modification@2",
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?project-(folders?)$/"
+				}
+			]
+		},
+		"configuration": {
+			"type": "object",
+			"title": "L13 Projects",
+			"properties": {
+				"l13Projects.openInNewWindow": {
+					"type": "boolean",
+					"default": false,
+					"description": "Should click on project or pick in quick menu open in new window?"
+				},
+				"l13Projects.useCacheForDetectedProjects": {
+					"type": "boolean",
+					"default": false,
+					"description": "Should all detected folders and workspaces be cached between sessions?"
+				},
+				"l13Projects.git.folders": {
+					"type": "array",
+					"default": [],
+					"description": "Indicates the folders to search for Git projects"
+				},
+				"l13Projects.git.maxDepthRecursion": {
+					"type": "number",
+					"default": 1,
+					"description": "Indicates the maximum depth of folder recursion to search for Git projects"
+				},
+				"l13Projects.git.ignore": {
+					"type": "array",
+					"default": [
+						".svn",
+						".vscode",
+						"CVS",
+						"node_modules"
+					],
+					"description": "Indicates folders to be ignored, like \".svn\", \"CVS\", \"node_modules\", etc."
+				},
+				"l13Projects.vsCode.folders": {
+					"type": "array",
+					"default": [],
+					"description": "Indicates the folders to search for VS Code projects"
+				},
+				"l13Projects.vsCode.maxDepthRecursion": {
+					"type": "number",
+					"default": 1,
+					"description": "Indicates the maximum depth of folder recursion to search for VS Code projects"
+				},
+				"l13Projects.vsCode.ignore": {
+					"type": "array",
+					"default": [
+						".git",
+						".svn",
+						"CVS",
+						"node_modules"
+					],
+					"description": "Indicates folders to be ignored, like \".git\", \".svn\", \"CVS\", \"node_modules\", etc."
+				},
+				"l13Projects.workspace.folders": {
+					"type": "array",
+					"default": [],
+					"description": "Indicates the folders to search for VS Code projects"
+				},
+				"l13Projects.workspace.maxDepthRecursion": {
+					"type": "number",
+					"default": 1,
+					"description": "Indicates the maximum depth of folder recursion to search for VS Code workspaces"
+				},
+				"l13Projects.workspace.ignore": {
+					"type": "array",
+					"default": [
+						".git",
+						".svn",
+						".vscode",
+						"CVS",
+						"node_modules"
+					],
+					"description": "Indicates folders to be ignored, like \".git\", \".svn\", \"CVS\", \"node_modules\", etc."
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "gulp build",
+		"watch": "gulp watch",
+		"pretest": "npm run compile",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^5.2.6",
+		"@types/node": "^10.12.21",
+		"@types/vscode": "^1.38.0",
+		"del": "^4.1.1",
+		"glob": "^7.1.4",
+		"gulp": "^4.0.2",
+		"rollup": "^1.16.6",
+		"rollup-plugin-typescript": "^1.0.1",
+		"mocha": "^6.1.4",
+		"tslint": "^5.12.1",
+		"typescript": "^3.3.1",
+		"vscode-test": "^1.0.2"
+	}
+}
