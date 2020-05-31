@@ -19,9 +19,9 @@ const findPattern = /width="100%" height="100%" viewBox="0 0 (\d+) (\d+)"/;
 //	Exports ____________________________________________________________________
 
 gulp.task('clean', () => {
-
+	
 	return del(['out']);
-
+	
 });
 
 gulp.task('icons:fix', (done) => {
@@ -53,9 +53,15 @@ gulp.task('icons:fix', (done) => {
 });
 
 gulp.task('script', () => {
-
+	
 	return rollup.rollup({
 		input: 'src/extension.ts',
+		external: [
+			'child_process',
+			'fs',
+			'path',
+			'vscode',
+		],
 		plugins: [
 			typescript({
 				target: 'es6',
@@ -68,15 +74,21 @@ gulp.task('script', () => {
 			}),
 		]
 	}).then(bundle => {
-
+		
 		return bundle.write({
 			file: './out/extension.js',
-			format: 'umd',
-			name: 'l13Projects',
+			format: 'cjs',
+			name: 'l13projects',
+			globals: {
+				child_process: 'child_process',
+				fs: 'fs',
+				path: 'path',
+				vscode: 'vscode',
+			},
 		});
-
+		
 	});
-
+	
 });
 
 gulp.task('build', gulp.series('clean', 'script'));
@@ -87,9 +99,9 @@ gulp.task('watch', () => {
 		'src/**/*.svg',
 		'images/**/*.svg',
 	], gulp.parallel('icons:fix'));
-
+	
 	gulp.watch(['src/**/*.ts'], gulp.parallel('script'));
-
+	
 });
 
 //	Functions __________________________________________________________________

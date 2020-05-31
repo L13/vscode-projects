@@ -3,7 +3,7 @@
 import { join } from 'path';
 import { TreeItem } from 'vscode';
 
-import { Project } from './types';
+import { Project } from '../../types';
 
 //	Variables __________________________________________________________________
 

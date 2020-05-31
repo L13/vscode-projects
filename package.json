@@ -2,10 +2,9 @@
 	"name": "l13-projects",
 	"displayName": "L13 Projects",
 	"description": "Manage your workspaces and projects in Visual Studio Code",
-	"version": "0.13.2",
+	"version": "0.14.0",
 	"publisher": "L13RARY",
 	"license": "SEE LICENCE IN LICENCE.md",
-	"preview": true,
 	"homepage": "https://github.com/l13/vscode-projects/blob/master/README.md",
 	"repository": {
 		"type": "git",
@@ -20,7 +19,7 @@
 		"theme": "dark"
 	},
 	"engines": {
-		"vscode": "^1.38.0"
+		"vscode": "^1.43.0"
 	},
 	"categories": [
 		"Other"
@@ -58,6 +57,16 @@
 				}
 			]
 		},
+		"viewsWelcome": [
+			{
+				"view": "l13ProjectsFavorites",
+				"contents": "No favorite workspaces are available."
+			},
+			{
+				"view": "l13ProjectsWorkspaces",
+				"contents": "No workspaces found.\n[Add a Project](command:l13Projects.addProject)\nYou can scan folders to automatically detect Git repositories, VS Code projects, or VS Code workspaces. Open the [Settings](command:workbench.action.openSettings) and define folders in which the extension should search for."
+			}
+		],
 		"commands": [
 			{
 				"command": "l13Projects.openInNewWindow",
@@ -347,22 +356,23 @@
 				"l13Projects.git.folders": {
 					"type": "array",
 					"default": [],
-					"description": "Indicates the folders to search for Git projects"
+					"description": "Indicates the folders to search for Git repositories"
 				},
 				"l13Projects.git.maxDepthRecursion": {
 					"type": "number",
 					"default": 1,
-					"description": "Indicates the maximum depth of folder recursion to search for Git projects"
+					"description": "Indicates the maximum depth of folder recursion to search for Git repositories"
 				},
 				"l13Projects.git.ignore": {
 					"type": "array",
 					"default": [
+						".hg",
 						".svn",
 						".vscode",
 						"CVS",
 						"node_modules"
 					],
-					"description": "Indicates folders to be ignored, like \".svn\", \"CVS\", \"node_modules\", etc."
+					"description": "Indicates folders to be ignored, like \".hg\", \".svn\", \"CVS\", \"node_modules\", etc."
 				},
 				"l13Projects.vsCode.folders": {
 					"type": "array",
@@ -378,11 +388,12 @@
 					"type": "array",
 					"default": [
 						".git",
+						".hg",
 						".svn",
 						"CVS",
 						"node_modules"
 					],
-					"description": "Indicates folders to be ignored, like \".git\", \".svn\", \"CVS\", \"node_modules\", etc."
+					"description": "Indicates folders to be ignored, like \".git\", \".hg\", \".svn\", \"CVS\", \"node_modules\", etc."
 				},
 				"l13Projects.workspace.folders": {
 					"type": "array",
@@ -397,13 +408,14 @@
 				"l13Projects.workspace.ignore": {
 					"type": "array",
 					"default": [
+						".hg",
 						".git",
 						".svn",
 						".vscode",
 						"CVS",
 						"node_modules"
 					],
-					"description": "Indicates folders to be ignored, like \".git\", \".svn\", \"CVS\", \"node_modules\", etc."
+					"description": "Indicates folders to be ignored, like \".git\", \".hg\", \".svn\", \"CVS\", \"node_modules\", etc."
 				}
 			}
 		}
@@ -412,22 +424,20 @@
 		"vscode:prepublish": "npm run compile",
 		"compile": "gulp build",
 		"watch": "gulp watch",
-		"pretest": "npm run compile",
-		"test": "node ./out/test/runTest.js"
+		"test": "npm run compile"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.1",
-		"@types/mocha": "^5.2.6",
-		"@types/node": "^10.12.21",
-		"@types/vscode": "^1.38.0",
-		"del": "^4.1.1",
-		"glob": "^7.1.4",
+		"@types/mocha": "^7.0.2",
+		"@types/node": "^12.12.35",
+		"@types/vscode": "^1.43.0",
+		"del": "^5.1.0",
 		"gulp": "^4.0.2",
-		"rollup": "^1.16.6",
+		"rollup": "^1.32.1",
 		"rollup-plugin-typescript": "^1.0.1",
-		"mocha": "^6.1.4",
-		"tslint": "^5.12.1",
-		"typescript": "^3.3.1",
+		"mocha": "^7.1.1",
+		"tslint": "^6.1.0",
+		"typescript": "^3.8.3",
 		"vscode-test": "^1.0.2"
 	}
 }

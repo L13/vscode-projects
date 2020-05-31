@@ -3,7 +3,7 @@
 import { join } from 'path';
 import { TreeItem } from 'vscode';
 
-import { Project } from './types';
+import { Project } from '../../types';
 
 //	Variables __________________________________________________________________
 
@@ -15,25 +15,19 @@ import { Project } from './types';
 
 //	Exports ____________________________________________________________________
 
-export class ProjectTreeItem extends TreeItem {
+export class UnknownProjectTreeItem extends TreeItem {
 	
-	public command = {
-		arguments: [this],
-		command: 'l13Projects.openProject',
-		title: 'Open Project',
-	};
+	public contextValue = 'unknown-project';
+	
+	public description:string = 'Unknown workspace';
 	
 	public constructor (public readonly project:Project) {
 		
 		super(project.label);
 		
-		const type = project.type;
-		
-		this.contextValue = `project-${type}`;
-		
 		this.iconPath = {
-			light: join(__filename, '..', '..', 'images', `project-${type}-light.svg`),
-			dark: join(__filename, '..', '..', 'images', `project-${type}-dark.svg`),
+			light: join(__filename, '..', '..', 'images', `unknown-project-light.svg`),
+			dark: join(__filename, '..', '..', 'images', `unknown-project-dark.svg`),
 		};
 		
 	}
@@ -41,12 +35,6 @@ export class ProjectTreeItem extends TreeItem {
 	public get tooltip () :string {
 		
 		return this.project.path;
-		
-	}
-	
-	public get description () :string {
-		
-		return this.project.deleted ? 'Path does not exist' : '';
 		
 	}
 	

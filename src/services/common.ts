@@ -4,7 +4,7 @@ import { spawn } from 'child_process';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import { Project } from './types';
+import { Project } from '../types';
 
 //	Variables __________________________________________________________________
 
@@ -34,7 +34,7 @@ export function getWorkspacePath () {
 }
 
 export function sortCaseInsensitive (a:string, b:string) {
-					
+	
 	a = a.toLowerCase();
 	b = b.toLowerCase();
 	

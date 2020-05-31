@@ -5,13 +5,12 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 import { File, Options } from '../types';
+import { Project, TreeItems } from '../types';
 import { walktree } from './@l13/fse';
 import { getWorkspacePath, sortCaseInsensitive } from './common';
-import { CurrentProjectTreeItem } from './CurrentProjectTreeItem';
-import { ProjectsFavoritesProvider } from './ProjectsFavorites';
-import { ProjectTreeItem } from './ProjectTreeItem';
-import { Project, TreeItems } from './types';
-import { UnknownProjectTreeItem } from './UnknownProjectTreeItem';
+import { CurrentProjectTreeItem } from './trees/CurrentProjectTreeItem';
+import { ProjectTreeItem } from './trees/ProjectTreeItem';
+import { UnknownProjectTreeItem } from './trees/UnknownProjectTreeItem';
 
 //	Variables __________________________________________________________________
 
@@ -27,9 +26,12 @@ export const findExtWorkspace = /\.code-workspace$/;
 //	Exports ____________________________________________________________________
 
 export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
-
+	
 	private _onDidChangeTreeData:vscode.EventEmitter<TreeItems|undefined> = new vscode.EventEmitter<TreeItems|undefined>();
 	public readonly onDidChangeTreeData:vscode.Event<TreeItems|undefined> = this._onDidChangeTreeData.event;
+	
+	private static _onDidChangeProject:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
+	public static readonly onDidChangeProject:vscode.Event<Project> = ProjectsProvider._onDidChangeProject.event;
 	
 	private isFirstView:boolean = true;
 	private cache:Project[] = [];
@@ -45,7 +47,7 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 		return ProjectsProvider.currentProvider || (ProjectsProvider.currentProvider = new ProjectsProvider(context));
 		
 	}
-
+	
 	private constructor (private context:vscode.ExtensionContext) {
 		
 		if (vscode.workspace.getConfiguration('l13Projects').get('useCacheForDetectedProjects')) {
@@ -64,7 +66,7 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 		const gitFolders = config.get('git.folders', []);
 		const vscodeFolders = config.get('vsCode.folders', []);
 		const workspaceFolders = config.get('workspace.folders', []);
-		const promises:Array<Promise<any>> = [];
+		const promises:Promise<any>[] = [];
 		
 		return promises.concat(this.detectProjectsFor('cacheGitProjects', this.gitProjects = [], 'git', gitFolders, {
 			find: findGitFolder,
@@ -100,7 +102,7 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 		this._onDidChangeTreeData.fire();
 		
 	}
-
+	
 	public getTreeItem (element:ProjectTreeItem) :vscode.TreeItem {
 		
 		return element;
@@ -108,8 +110,8 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 	}
 	
 	private detectProjectsFor (cacheName: string, detectedProjects:Project[], type:'git'|'vscode'|'workspace', paths:string[], options:Options) {
-	
-		const promises:Array<Promise<{ [relative:string]: File }>> = [];
+		
+		const promises:Promise<{ [relative:string]: File }>[] = [];
 		
 		paths.forEach((path) => {
 			
@@ -187,7 +189,7 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 		this.context.globalState.update('cache', this.cache);
 		
 	}
-
+	
 	public getChildren (element?:TreeItems) :Thenable<TreeItems[]> {
 		
 		if (this.isFirstView) {
@@ -218,7 +220,7 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 		}
 		
 		return Promise.resolve(list);
-
+		
 	}
 	
 	public static addToWorkspace (project:Project) {
@@ -289,7 +291,7 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 			}).forEach((uri) => {
 				
 				const fsPath = uri.fsPath;
-					
+				
 				if (projects.some(({ path }) => path === fsPath)) {
 					return vscode.window.showErrorMessage(`Project '${fsPath}' exists!`);
 				}
@@ -303,7 +305,7 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 			if (!total) return;
 			
 			context.globalState.update('projects', projects);
-				
+			
 			if (ProjectsProvider.currentProvider) ProjectsProvider.currentProvider.refresh();
 			
 			vscode.window.showInformationMessage(`${total} project${total === 1 ? '' : 's'} added!`);
@@ -318,18 +320,18 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 		if (fsPath) {
 			const projects:Project[] = context.globalState.get('projects') || [];
-				
+			
 			if (projects.some(({ path }) => path === fsPath)) {
 				return vscode.window.showErrorMessage(`Project exists!`);
 			}
 			
 			vscode.window.showInputBox({ value: path.basename(fsPath, '.code-workspace') }).then((value) => {
-						
+				
 				if (!value) return;
 				
-				const newProject = saveProject(projects, fsPath, value);
+				const newProject:Project = saveProject(projects, fsPath, value);
 				context.globalState.update('projects', projects);
-				ProjectsFavoritesProvider.updateFavorite(context, newProject);
+				ProjectsProvider._onDidChangeProject.fire(newProject);
 				
 				if (ProjectsProvider.currentProvider) ProjectsProvider.currentProvider.refresh();
 				
@@ -337,6 +339,9 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 				
 			});
 			
+		} else if (vscode.workspace.workspaceFile && vscode.workspace.workspaceFile.scheme === 'untitled') {
+			vscode.window.showWarningMessage(`Please save your current workspace first.`);
+			vscode.commands.executeCommand('workbench.action.saveWorkspaceAs');
 		} else vscode.window.showErrorMessage(`No folder or workspace available!`);
 		
 	}
@@ -344,7 +349,7 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 	public static updateProject (context:vscode.ExtensionContext, project:Project) {
 		
 		const projects:Project[] = context.globalState.get('projects') || [];
-			
+		
 		for (const pro of projects) {
 			if (pro.path === project.path) {
 				pro.label = project.label;
@@ -360,7 +365,7 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 	public static renameProject (context:vscode.ExtensionContext, project:Project) {
 		
 		vscode.window.showInputBox({ value: project.label }).then((value) => {
-					
+			
 			if (project.label === value || value === undefined) return;
 			
 			if (!value) {
@@ -370,7 +375,7 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 			
 			project.label = value;
 			ProjectsProvider.updateProject(context, project);
-			ProjectsFavoritesProvider.updateFavorite(context, project);
+			ProjectsProvider._onDidChangeProject.fire(project);
 			vscode.window.showInformationMessage(`Saved "${value}" in projects!`);
 			
 		});
@@ -394,13 +399,13 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 						provider.refresh();
 						for (const pro of provider.cache) {
 							if (pro.path === fsPath) {
-								ProjectsFavoritesProvider.updateFavorite(context, pro);
+								ProjectsProvider._onDidChangeProject.fire(pro);
 								return;
 							}
 						}
 						project.label = path.basename(fsPath, '.code-workspace');
 						project.type = findExtWorkspace.test(fsPath) ? 'folders' : 'folder';
-						ProjectsFavoritesProvider.updateFavorite(context, project);
+						ProjectsProvider._onDidChangeProject.fire(project);
 						return;
 					}
 				}
@@ -429,7 +434,7 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 
 //	Functions __________________________________________________________________
 
-function saveProject (projects:Project[], fsPath:string, value:string) {
+function saveProject (projects:Project[], fsPath:string, value:string) :Project {
 	
 	const project:Project = {
 		label: value,

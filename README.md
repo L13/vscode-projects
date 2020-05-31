@@ -6,6 +6,11 @@ Manage your workspaces and projects in Visual Studio Code.
 
 This extension is part of the [L13 Extension Pack](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-extension-pack).
 
+## What's new in L13 Projects 1.0.0
+
+- Added message to empty workspace view.
+- Added save dialog to unknown worspace.
+
 ## Features
 
 * Supports extension [L13 Diff](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)

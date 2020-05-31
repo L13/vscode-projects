@@ -3,9 +3,9 @@
 import { basename } from 'path';
 import * as vscode from 'vscode';
 
+import { Project } from '../types';
 import { getWorkspacePath } from './common';
 import { findExtWorkspace } from './ProjectsProvider';
-import { Project } from './types';
 
 //	Variables __________________________________________________________________
 
