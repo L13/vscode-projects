@@ -1,26 +1,26 @@
-# L13 Projects
+# Projects
 
 Manage your workspaces and projects in Visual Studio Code.
 
-![L13 Projects](images/preview.png)
+![Projects](images/preview.png)
 
 This extension is part of the [L13 Extension Pack](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-extension-pack).
 
-## What's new in L13 Projects 1.0.0
+## What's new in Projects 0.14.0
 
 - Added message to empty workspace view.
 - Added save dialog to unknown worspace.
 
 ## Features
 
-* Supports extension [L13 Diff](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
+* Supports extension [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
 * Add folders and workspaces to the project list.
 * Save the current folder or workspace in the project list.
 * Auto detects Git repositories, VS Code folders and VS Code workspaces.
 * Save auto detected Git repositories, VS Code folders and VS Code workspaces in the project list.
 * Add projects, Git repositories, VS Code folders and VS Code workspaces to favorites.
 * Open and pick a (favorite) folder, workspace or project with the quick menu.
-* Open a folder, workspace or project in  the current or a new window in VS Code Explorer or L13 Projects.
+* Open a folder, workspace or project in  the current or a new window in VS Code Explorer or Projects.
 * Reveal a folder or workspace in the Finder/Explorer.
 * Open a project, Git repository, VS Code folder or VS Code workspace in the Terminal.
 * Delete or rename a favorite or project.
@@ -29,23 +29,23 @@ This extension is part of the [L13 Extension Pack](https://marketplace.visualstu
 
 ### Workspaces
 
-![L13 Projects Favorites](images/preview-workspaces.png)
+![Projects Favorites](images/preview-workspaces.png)
 
 ### Favorites
 
-![L13 Projects Favorites](images/preview-favorites.png)
+![Projects Favorites](images/preview-favorites.png)
 
 ### Quick Pick for Favorites or Projects
 
-![L13 Projects Quick Menu](images/preview-quick-menu.png)
+![Projects Quick Menu](images/preview-quick-menu.png)
 
-### Supports [L13 Diff](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
+### Supports [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
 
-![L13 Projects L13 Diff](images/preview-l13-diff.png)
+![Projects Diff Folders](images/preview-l13-diff.png)
 
 ### Legend of used Icons
 
-![L13 Projects Icons](images/preview-icons.png)
+![Projects Icons](images/preview-icons.png)
 
 Priority of icons and labels for saved projects and detected folders and workspaces.
 
@@ -102,8 +102,8 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Open` - Open the favorite project in the current window. Ignores `l13Projects.openInNewWindow`.
 * `Open in new Window` - Open the favorite project in a new window. Ignores `l13Projects.openInNewWindow`.
 * `Open in Terminal` - Opens the favorite project in the VS Code terminal.
-* `Compare with Workspace` - Compares the favorite project with the current workspace. Requires [L13 Diff](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
-* `Open in L13 Diff` - Opens the favorite project in L13 Diff. Requires [L13 Diff](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Compare with Workspace` - Compares the favorite project with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Open in Diff Folders` - Opens the favorite project in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Rename` - Change the name of the favorite.
 * `Delete` - Delete the favorite project from favorites.
 
@@ -130,8 +130,8 @@ Linux
 * `Save Project` - Save the folder or workspace as a project.
 * `Add to Favorites` - Add the folder, workspace or project to the favorites.
 * `Open in Terminal` - Open the folder, workspace or project in the terminal.
-* `Compare with Workspace` - Compares the folder, workspace or project with the current workspace. Requires [L13 Diff](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
-* `Open in L13 Diff` - Opens the folder, workspace or project in L13 Diff. Requires [L13 Diff](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Compare with Workspace` - Compares the folder, workspace or project with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Open in Diff Folders` - Opens the folder, workspace or project in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Rename` - Change the name of a project.
 * `Delete` - Delete the project.
 

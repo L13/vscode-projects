@@ -1,6 +1,6 @@
 {
 	"name": "l13-projects",
-	"displayName": "L13 Projects",
+	"displayName": "Projects",
 	"description": "Manage your workspaces and projects in Visual Studio Code",
 	"version": "0.14.0",
 	"publisher": "L13RARY",
@@ -40,7 +40,7 @@
 			"activitybar": [
 				{
 					"id": "l13Projects",
-					"title": "L13 Projects",
+					"title": "Projects",
 					"icon": "images/projects.svg"
 				}
 			]
@@ -78,7 +78,7 @@
 			},
 			{
 				"command": "l13Projects.pickFavorite",
-				"title": "L13 Projects: Select Favorite"
+				"title": "Projects: Select Favorite"
 			},
 			{
 				"command": "l13Projects.addToFavorites",
@@ -98,15 +98,15 @@
 			},
 			{
 				"command": "l13Projects.clearFavorites",
-				"title": "L13 Projects: Delete All Favorites"
+				"title": "Projects: Delete All Favorites"
 			},
 			{
 				"command": "l13Projects.pickProject",
-				"title": "L13 Projects: Select Project"
+				"title": "Projects: Select Project"
 			},
 			{
 				"command": "l13Projects.addProject",
-				"title": "L13 Projects: Add Project",
+				"title": "Projects: Add Project",
 				"icon": {
 					"light": "images/project-save-light.svg",
 					"dark": "images/project-save-dark.svg"
@@ -114,11 +114,11 @@
 			},
 			{
 				"command": "l13Projects.saveProject",
-				"title": "L13 Projects: Save Project"
+				"title": "Projects: Save Project"
 			},
 			{
 				"command": "l13Projects.refreshProjects",
-				"title": "L13 Projects: Refresh Projects",
+				"title": "Projects: Refresh Projects",
 				"icon": {
 					"light": "images/project-refresh-light.svg",
 					"dark": "images/project-refresh-dark.svg"
@@ -150,7 +150,7 @@
 			},
 			{
 				"command": "l13Projects.clearProjects",
-				"title": "L13 Projects: Delete All Projects"
+				"title": "Projects: Delete All Projects"
 			},
 			{
 				"command": "l13Projects.showProjectInFinder",
@@ -341,7 +341,7 @@
 		},
 		"configuration": {
 			"type": "object",
-			"title": "L13 Projects",
+			"title": "Projects",
 			"properties": {
 				"l13Projects.openInNewWindow": {
 					"type": "boolean",
