@@ -2,6 +2,7 @@
 
 import * as vscode from 'vscode';
 
+import { ProjectsHotkeys } from '../services/common/ProjectsHotkeys';
 import { ProjectsStatus } from '../services/common/ProjectsStatus';
 import { FavoritesProvider } from '../services/sidebar/FavoritesProvider';
 import { WorkspacesProvider } from '../services/sidebar/WorkspacesProvider';
@@ -24,7 +25,12 @@ export function activate (context:vscode.ExtensionContext, status:ProjectsStatus
 	
 	favoritesProvider.onDidChangeTreeData(() => status.update());
 	
-	FavoritesProvider.onDidChangeFavorite((favorite) => WorkspacesProvider.updateProject(context, favorite));
+	FavoritesProvider.onDidChangeFavorite((favorite) => {
+		
+		WorkspacesProvider.updateProject(context, favorite);
+		ProjectsHotkeys.updateSlot(context, favorite);
+		
+	});
 	
 	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.pickFavorite', () => {
 		

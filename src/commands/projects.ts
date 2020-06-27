@@ -2,6 +2,8 @@
 
 import * as vscode from 'vscode';
 
+import { ProjectsHotkeys } from '../services/common/ProjectsHotkeys';
+import { ProjectsSettings } from '../services/common/ProjectsSettings';
 import { ProjectsStatus } from '../services/common/ProjectsStatus';
 import { FavoritesProvider } from '../services/sidebar/FavoritesProvider';
 import { GroupSimpleTreeItem } from '../services/sidebar/trees/GroupSimpleTreeItem';
@@ -33,7 +35,12 @@ export function activate (context:vscode.ExtensionContext, status:ProjectsStatus
 	
 	workspacesProvider.onDidChangeTreeData(() => status.update());
 	
-	WorkspacesProvider.onDidChangeProject((project) => FavoritesProvider.updateFavorite(context, project));
+	WorkspacesProvider.onDidChangeProject((project) => {
+		
+		FavoritesProvider.updateFavorite(context, project);
+		ProjectsHotkeys.updateSlot(context, project);
+		
+	});
 	
 	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.collapseAll', () => {
 		
@@ -49,7 +56,7 @@ export function activate (context:vscode.ExtensionContext, status:ProjectsStatus
 	
 	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.openProject', ({ project }) => {
 		
-		const newWindow = vscode.workspace.getConfiguration('l13Projects').get('openInNewWindow', false);
+		const newWindow = ProjectsSettings.get('openInNewWindow', false);
 		
 		vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(project.path), newWindow);
 		

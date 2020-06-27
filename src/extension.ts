@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 
 import * as common from './commands/common';
 import * as favorites from './commands/favorites';
+import * as hotkeys from './commands/hotkeys';
 import * as projects from './commands/projects';
 
 import { ProjectsStatus } from './services/common/ProjectsStatus';
@@ -24,6 +25,7 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	common.activate(context);
 	favorites.activate(context, status);
+	hotkeys.activate(context);
 	projects.activate(context, status);
 	
 }

@@ -175,6 +175,54 @@
 			{
 				"command": "l13Projects.openInTerminal",
 				"title": "Open in Terminal"
+			},
+			{
+				"command": "l13Projects.assignSlot",
+				"title": "Assign Slot"
+			},
+			{
+				"command": "l13Projects.removeSlot",
+				"title": "Projects: Remove Slot"
+			},
+			{
+				"command": "l13Projects.clearSlots",
+				"title": "Projects: Clear All Slots"
+			},
+			{
+				"command": "l13Projects.slot1",
+				"title": "Project Slot 1"
+			},
+			{
+				"command": "l13Projects.slot2",
+				"title": "Project Slot 2"
+			},
+			{
+				"command": "l13Projects.slot3",
+				"title": "Project Slot 3"
+			},
+			{
+				"command": "l13Projects.slot4",
+				"title": "Project Slot 4"
+			},
+			{
+				"command": "l13Projects.slot5",
+				"title": "Project Slot 5"
+			},
+			{
+				"command": "l13Projects.slot6",
+				"title": "Project Slot 6"
+			},
+			{
+				"command": "l13Projects.slot7",
+				"title": "Project Slot 7"
+			},
+			{
+				"command": "l13Projects.slot8",
+				"title": "Project Slot 8"
+			},
+			{
+				"command": "l13Projects.slot9",
+				"title": "Project Slot 9"
 			}
 		],
 		"keybindings": [
@@ -192,6 +240,51 @@
 				"mac": "meta+alt+shift+p",
 				"key": "ctrl+alt+shift+p",
 				"command": "l13Projects.pickProject"
+			},
+			{
+				"mac": "meta+l meta+1",
+				"key": "ctrl+l ctrl+1",
+				"command": "l13Projects.slot1"
+			},
+			{
+				"mac": "meta+l meta+2",
+				"key": "ctrl+l ctrl+2",
+				"command": "l13Projects.slot2"
+			},
+			{
+				"mac": "meta+l meta+3",
+				"key": "ctrl+l ctrl+3",
+				"command": "l13Projects.slot3"
+			},
+			{
+				"mac": "meta+l meta+4",
+				"key": "ctrl+l ctrl+4",
+				"command": "l13Projects.slot4"
+			},
+			{
+				"mac": "meta+l meta+5",
+				"key": "ctrl+l ctrl+5",
+				"command": "l13Projects.slot5"
+			},
+			{
+				"mac": "meta+l meta+6",
+				"key": "ctrl+l ctrl+6",
+				"command": "l13Projects.slot6"
+			},
+			{
+				"mac": "meta+l meta+7",
+				"key": "ctrl+l ctrl+7",
+				"command": "l13Projects.slot7"
+			},
+			{
+				"mac": "meta+l meta+8",
+				"key": "ctrl+l ctrl+8",
+				"command": "l13Projects.slot8"
+			},
+			{
+				"mac": "meta+l meta+9",
+				"key": "ctrl+l ctrl+9",
+				"command": "l13Projects.slot9"
 			}
 		],
 		"menus": {
@@ -258,6 +351,10 @@
 				},
 				{
 					"command": "l13Projects.collapseAll",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.assignSlot",
 					"when": "false"
 				}
 			],
@@ -346,13 +443,28 @@
 				},
 				{
 					"command": "l13Projects.renameProject",
-					"group": "7_modification@1",
+					"group": "7_modification@2",
 					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?project-(folders?)$/"
 				},
 				{
 					"command": "l13Projects.removeProject",
-					"group": "7_modification@2",
+					"group": "7_modification@3",
+					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?project-(folders?)$/"
+				},
+				{
+					"command": "l13Projects.assignSlot",
+					"group": "navigation@7",
+					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
+				},
+				{
+					"command": "l13Projects.removeProject",
+					"group": "7_modification@3",
 					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?project-(folders?)$/"
+				},
+				{
+					"command": "l13Projects.assignSlot",
+					"group": "navigation@7",
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
 				}
 			]
 		},
