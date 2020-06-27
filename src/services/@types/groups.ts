@@ -1,6 +1,6 @@
 //	Imports ____________________________________________________________________
 
-
+import { Project } from './projects';
 
 //	Variables __________________________________________________________________
 
@@ -15,6 +15,7 @@
 export type GroupSimple = {
 	label:string,
 	type:'project'|'git'|'vscode',
+	projectTypes:(Project['type'])[]
 	collapsed:boolean,
 };
 

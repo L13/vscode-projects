@@ -17,6 +17,8 @@ import { GroupSimple } from '../@types/groups';
 
 export class GroupSimpleTreeItem extends TreeItem {
 	
+	public static stateVersion:number = 0;
+	
 	public constructor (public readonly group:GroupSimple) {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
@@ -24,6 +26,7 @@ export class GroupSimpleTreeItem extends TreeItem {
 		const type = group.type;
 		
 		this.contextValue = `group-simple-${type}`;
+		this.id = `group-simple-${type}-${GroupSimpleTreeItem.stateVersion}`;
 		
 		this.iconPath = {
 			light: join(__filename, '..', '..', 'images', `group-simple-${type}-light.svg`),

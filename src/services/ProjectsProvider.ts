@@ -50,6 +50,7 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	private isFirstView:boolean = true;
 	private cache:Project[] = [];
+	
 	public projects:Project[] = [];
 	public gitProjects:Project[] = [];
 	public vscodeProjects:Project[] = [];
@@ -64,9 +65,9 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 	];
 	
 	public groupSimples:GroupSimple[] = [
-		{ label: 'Projects', type: 'project', collapsed: false },
-		{ label: 'Git', type: 'git', collapsed: false },
-		{ label: 'Visual Studio Code', type: 'vscode', collapsed: false },
+		{ label: 'Projects', type: 'project', projectTypes: ['folder', 'folders'], collapsed: false },
+		{ label: 'Git', type: 'git', projectTypes: ['git'], collapsed: false },
+		{ label: 'Visual Studio Code', type: 'vscode', projectTypes: ['vscode', 'workspace'], collapsed: false },
 	];
 	
 	public static currentProvider:ProjectsProvider|undefined;
@@ -91,6 +92,7 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 			
 			if (event.affectsConfiguration('l13Projects.sortWorkspacesBy')) {
 				sortWorkspacesBy = ProjectsSettings.get('sortWorkspacesBy');
+				this.setContextGroups();
 				this.refresh();
 			}
 			
@@ -132,11 +134,19 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 			this.groupSimples.forEach((group) => group.collapsed = initialState === 'Collapsed');
 		}
 		
+		this.setContextGroups();
+		
 	}
 	
 	public dispose () {
 		
 		this.disposables.forEach((disposable) => disposable.dispose());
+		
+	}
+	
+	private setContextGroups () {
+		
+		vscode.commands.executeCommand('setContext', 'l13ProjectGroups', sortWorkspacesBy !== 'Name');
 		
 	}
 	
@@ -269,6 +279,121 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
+	private addSimpleGroups (list:TreeItems[], workspacePath:string) {
+		
+		this.groupSimples.forEach((group) => {
+			
+			if (this.cache.some((project) => group.projectTypes.includes(project.type)) || group.type === 'project' && this.hasUnknownProject(workspacePath)) {
+				list.push(new GroupSimpleTreeItem(group));
+			}
+			
+		});
+		
+	}
+	
+	private addSimpleGroupItems (list:TreeItems[], type:string, workspacePath:string) {
+		
+		let hasCurrentProject = false;
+		
+		this.cache.forEach((project) => {
+						
+			let simpleType = null;
+			
+			switch (project.type) {
+				case 'folder':
+				case 'folders':
+					simpleType = 'project';
+					break;
+				case 'git':
+					simpleType = 'git';
+					break;
+				case 'vscode':
+				case 'workspace':
+					simpleType = 'vscode';
+					break;
+			}
+		
+			if (type === simpleType) {
+				if (workspacePath && workspacePath === project.path) {
+					hasCurrentProject = true;
+					list.push(new CurrentProjectTreeItem(project));
+				} else list.push(new ProjectTreeItem(project));
+			}
+			
+		});
+		
+		if ((type === 'project') && !hasCurrentProject && workspacePath) {
+			list.unshift(new UnknownProjectTreeItem({
+				label: path.basename(workspacePath, '.code-workspace'),
+				path: workspacePath,
+				type: findExtWorkspace.test(workspacePath) ? 'folders' : 'folder',
+			}));
+		}
+		
+	}
+	
+	private addTypeGroups (list:TreeItems[], workspacePath:string) {
+		
+		this.groupTypes.forEach((group) => {
+			
+			if (this.cache.some((project) => project.type === group.type
+			|| group.type === 'folder' && this.hasUnknownProject(workspacePath) && !findExtWorkspace.test(workspacePath)
+			|| group.type === 'folders' && this.hasUnknownProject(workspacePath) && findExtWorkspace.test(workspacePath))) {
+				list.push(new GroupTypeTreeItem(group));
+			}
+			
+		});
+		
+	}
+	
+	private addTypeGroupItems (list:TreeItems[], type:string, workspacePath:string) {
+		
+		let hasCurrentProject = false;
+		
+		this.cache.forEach((project) => {
+					
+			if (type === project.type) {
+				if (workspacePath && workspacePath === project.path) {
+					hasCurrentProject = true;
+					list.push(new CurrentProjectTreeItem(project));
+				} else list.push(new ProjectTreeItem(project));
+			}
+			
+		});
+		
+		if ((type === 'folder' || type === 'folders') && !hasCurrentProject && workspacePath) {
+			list.unshift(new UnknownProjectTreeItem({
+				label: path.basename(workspacePath, '.code-workspace'),
+				path: workspacePath,
+				type: findExtWorkspace.test(workspacePath) ? 'folders' : 'folder',
+			}));
+		}
+		
+	}
+	
+	private addItems (list:TreeItems[], workspacePath:string) {
+		
+		let hasCurrentProject = false;
+		
+		this.cache.forEach((project) => {
+				
+			if (workspacePath && workspacePath === project.path) {
+				hasCurrentProject = true;
+				list.push(new CurrentProjectTreeItem(project));
+			} else list.push(new ProjectTreeItem(project));
+			
+		});
+		
+		if (workspacePath && !hasCurrentProject) {
+			list.unshift(new UnknownProjectTreeItem({
+				label: path.basename(workspacePath, '.code-workspace'),
+				path: workspacePath,
+				type: findExtWorkspace.test(workspacePath) ? 'folders' : 'folder',
+			}));
+		}
+		
+	}
+	
 	public getChildren (element?:TreeItems) :Thenable<TreeItems[]> {
 		
 		if (this.isFirstView) {
@@ -278,118 +403,18 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 		}
 		
 		const workspacePath:string = getWorkspacePath();
-		let hasCurrentProject = false;
-		let list:TreeItems[] = [];
+		const list:TreeItems[] = [];
 		
 		if (sortWorkspacesBy !== 'Name') {
 			if (element) {
 				const type = (<GroupSimpleTreeItem|GroupTypeTreeItem>element).group.type;
-				
-				if (sortWorkspacesBy === 'Simple') {
-					this.cache.forEach((project) => {
-						
-						let simpleType = null;
-						
-						switch (project.type) {
-							case 'folder':
-							case 'folders':
-								simpleType = 'project';
-								break;
-							case 'git':
-								simpleType = 'git';
-								break;
-							case 'vscode':
-							case 'workspace':
-								simpleType = 'vscode';
-								break;
-						}
-					
-						if (type === simpleType) {
-							if (workspacePath && workspacePath === project.path) {
-								hasCurrentProject = true;
-								list.push(new CurrentProjectTreeItem(project));
-							} else list.push(new ProjectTreeItem(project));
-						}
-						
-					});
-					
-					if ((type === 'project') && !hasCurrentProject && workspacePath) {
-						list.unshift(new UnknownProjectTreeItem({
-							label: path.basename(workspacePath, '.code-workspace'),
-							path: workspacePath,
-							type: findExtWorkspace.test(workspacePath) ? 'folders' : 'folder',
-						}));
-					}
-				} else {
-					this.cache.forEach((project) => {
-					
-						if (type === project.type) {
-							if (workspacePath && workspacePath === project.path) {
-								hasCurrentProject = true;
-								list.push(new CurrentProjectTreeItem(project));
-							} else list.push(new ProjectTreeItem(project));
-						}
-						
-					});
-					
-					if ((type === 'folder' || type === 'folders') && !hasCurrentProject && workspacePath) {
-						list.unshift(new UnknownProjectTreeItem({
-							label: path.basename(workspacePath, '.code-workspace'),
-							path: workspacePath,
-							type: findExtWorkspace.test(workspacePath) ? 'folders' : 'folder',
-						}));
-					}
-				}
-				
+				if (sortWorkspacesBy === 'Simple') this.addSimpleGroupItems(list, type, workspacePath);
+				else this.addTypeGroupItems(list, type, workspacePath);
 			} else {
-				if (sortWorkspacesBy === 'Simple') {
-					if (this.cache.some((project) => project.type === 'folder' || project.type === 'folders') || this.hasUnknownProject(workspacePath)) {
-						list.push(new GroupSimpleTreeItem(this.groupSimples.filter((group) => group.type === 'project')[0]));
-					}
-					if (this.cache.some((project) => project.type === 'git')) {
-						list.push(new GroupSimpleTreeItem(this.groupSimples.filter((group) => group.type === 'git')[0]));
-					}
-					if (this.cache.some((project) => project.type === 'vscode' || project.type === 'workspace')) {
-						list.push(new GroupSimpleTreeItem(this.groupSimples.filter((group) => group.type === 'vscode')[0]));
-					}
-				} else {
-					if (this.cache.some((project) => project.type === 'folder') || this.hasUnknownProject(workspacePath) && !findExtWorkspace.test(workspacePath)) {
-						list.push(new GroupTypeTreeItem(this.groupTypes.filter((group) => group.type === 'folder')[0]));
-					}
-					if (this.cache.some((project) => project.type === 'folders') || this.hasUnknownProject(workspacePath) && findExtWorkspace.test(workspacePath)) {
-						list.push(new GroupTypeTreeItem(this.groupTypes.filter((group) => group.type === 'folders')[0]));
-					}
-					if (this.cache.some((project) => project.type === 'git')) {
-						list.push(new GroupTypeTreeItem(this.groupTypes.filter((group) => group.type === 'git')[0]));
-					}
-					if (this.cache.some((project) => project.type === 'vscode')) {
-						list.push(new GroupTypeTreeItem(this.groupTypes.filter((group) => group.type === 'vscode')[0]));
-					}
-					if (this.cache.some((project) => project.type === 'workspace')) {
-						list.push(new GroupTypeTreeItem(this.groupTypes.filter((group) => group.type === 'workspace')[0]));
-					}
-				}
+				if (sortWorkspacesBy === 'Simple') this.addSimpleGroups(list, workspacePath);
+				else this.addTypeGroups(list, workspacePath);
 			}
-		} else {
-			list = this.cache.map((project) => {
-				
-				if (workspacePath && workspacePath === project.path) {
-					hasCurrentProject = true;
-					return new CurrentProjectTreeItem(project);
-				}
-				
-				return new ProjectTreeItem(project);
-				
-			});
-			
-			if (workspacePath && !hasCurrentProject) {
-				list.unshift(new UnknownProjectTreeItem({
-					label: path.basename(workspacePath, '.code-workspace'),
-					path: workspacePath,
-					type: findExtWorkspace.test(workspacePath) ? 'folders' : 'folder',
-				}));
-			}
-		}
+		} else this.addItems(list, workspacePath);
 		
 		return Promise.resolve(list);
 		
@@ -597,7 +622,7 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	public static saveCollapseState (context:vscode.ExtensionContext, item:GroupTypeTreeItem, state:boolean) {
+	public static saveCollapseState (context:vscode.ExtensionContext, item:GroupSimpleTreeItem|GroupTypeTreeItem, state:boolean) {
 		
 		if (sortWorkspacesBy === 'Name') return;
 		
@@ -609,7 +634,38 @@ export class ProjectsProvider implements vscode.TreeDataProvider<TreeItems> {
 			groups.push({ type: groupType, collapsed: state });
 		}
 		
+		item.group.collapsed = state;
+		
 		context.globalState.update(states, groups);
+		
+	}
+	
+	public collapseAll () {
+		
+		if (sortWorkspacesBy === 'Name') return;
+		
+		const states = sortWorkspacesBy === 'Simple' ? GROUP_STATES_BY_SIMPLE : GROUP_STATES_BY_TYPE;
+		const groups:(GroupSimple|GroupType)[] = sortWorkspacesBy === 'Simple' ? this.groupSimples : this.groupTypes;
+		const groupStates:(GroupSimpleState|GroupTypeState)[] = this.context.globalState.get(states, []);
+		
+		if (sortWorkspacesBy === 'Simple') GroupSimpleTreeItem.stateVersion++;
+		else GroupTypeTreeItem.stateVersion++;
+		
+		groups.forEach((group) => {
+			
+			const type = group.type;
+			
+			group.collapsed = true;
+			
+			if (!groupStates.some((groupState) => groupState.type === type ? groupState.collapsed = true : false)) {
+				groupStates.push({ type, collapsed: true });
+			}
+			
+		});
+		
+		this.context.globalState.update(states, groupStates);
+		
+		this.refresh();
 		
 	}
 	

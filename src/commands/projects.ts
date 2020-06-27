@@ -35,6 +35,12 @@ export function activate (context:vscode.ExtensionContext, status:ProjectsStatus
 	
 	ProjectsProvider.onDidChangeProject((project) => FavoritesProvider.updateFavorite(context, project));
 	
+	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.collapseAll', () => {
+		
+		ProjectsProvider.currentProvider?.collapseAll();
+		
+	}));
+	
 	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.addToWorkspace', ({ project }) => {
 		
 		ProjectsProvider.addToWorkspace(project);

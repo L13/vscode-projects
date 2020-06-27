@@ -125,6 +125,14 @@
 				}
 			},
 			{
+				"command": "l13Projects.collapseAll",
+				"title": "Collapse All",
+				"icon": {
+					"light": "images/collapse-group-light.svg",
+					"dark": "images/collapse-group-dark.svg"
+				}
+			},
+			{
 				"command": "l13Projects.saveDetectedProject",
 				"title": "Save as Project"
 			},
@@ -247,6 +255,10 @@
 				{
 					"command": "l13Projects.openInTerminal",
 					"when": "false"
+				},
+				{
+					"command": "l13Projects.collapseAll",
+					"when": "false"
 				}
 			],
 			"explorer/context": [
@@ -269,6 +281,11 @@
 					"command": "l13Projects.refreshProjects",
 					"when": "view == l13ProjectsWorkspaces",
 					"group": "navigation@2"
+				},
+				{
+					"command": "l13Projects.collapseAll",
+					"when": "view == l13ProjectsWorkspaces && l13ProjectGroups",
+					"group": "navigation@3"
 				}
 			],
 			"view/item/context": [
