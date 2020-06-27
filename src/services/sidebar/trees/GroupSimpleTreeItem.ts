@@ -20,7 +20,7 @@ export class GroupSimpleTreeItem extends TreeItem {
 	// triggers the tree view to recreate all items for collapse all
 	private static stateVersion:number = 0;
 	
-	public static toggleStateVersion () {
+	public static updateStateVersion () {
 		
 		GroupSimpleTreeItem.stateVersion = 1 - GroupSimpleTreeItem.stateVersion;
 		

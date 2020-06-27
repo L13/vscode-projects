@@ -655,7 +655,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		const groupTreeItem = sortWorkspacesBy === 'Simple' ? GroupSimpleTreeItem : GroupTypeTreeItem;
 		const groupStates:(GroupSimpleState|GroupTypeState)[] = this.context.globalState.get(states, []);
 		
-		groupTreeItem.toggleStateVersion();
+		groupTreeItem.updateStateVersion();
 		
 		groups.forEach((group) => {
 			
