@@ -11,7 +11,7 @@ import { File, Options } from '../@types/files';
 import { GroupSimple, GroupSimpleState, GroupType, GroupTypeState, InitialState, WorkspaceSortting } from '../@types/groups';
 import { Project, TreeItems } from '../@types/projects';
 
-import { getWorkspacePath } from '../common';
+import { getWorkspacePath } from '../../commands/common';
 
 import { ProjectsSettings } from '../common/ProjectsSettings';
 import { CurrentProjectTreeItem } from './trees/CurrentProjectTreeItem';

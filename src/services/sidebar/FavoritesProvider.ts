@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import { sortCaseInsensitive } from '../@l13/arrays';
 import { Project, TreeItems } from '../@types/projects';
 
-import { getWorkspacePath } from '../common';
+import { getWorkspacePath } from '../../commands/common';
 
 import { CurrentProjectTreeItem } from './trees/CurrentProjectTreeItem';
 import { ProjectTreeItem } from './trees/ProjectTreeItem';

@@ -4,7 +4,9 @@ import { basename } from 'path';
 import * as vscode from 'vscode';
 
 import { Project } from '../@types/projects';
-import { getWorkspacePath } from '../common';
+
+import { getWorkspacePath } from '../../commands/common';
+
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
 
 //	Variables __________________________________________________________________

@@ -4,8 +4,6 @@ import { spawn } from 'child_process';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import { getWorkspacePath } from '../services/common';
-
 import { Project } from '../services/types';
 
 //	Variables __________________________________________________________________
@@ -56,6 +54,17 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	}));
 
+}
+
+export function getWorkspacePath () {
+	
+	const workspace = vscode.workspace;
+	let uri:undefined|vscode.Uri = workspace.workspaceFile;
+	
+	if (!uri && workspace.workspaceFolders) uri = workspace.workspaceFolders[0].uri;
+	
+	return uri && uri.scheme !== 'untitled' ? uri.fsPath : '';
+	
 }
 
 //	Functions __________________________________________________________________
