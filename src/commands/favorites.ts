@@ -3,8 +3,8 @@
 import * as vscode from 'vscode';
 
 import { FavoritesProvider } from '../services/FavoritesProvider';
-import { ProjectsProvider } from '../services/ProjectsProvider';
 import { ProjectsStatus } from '../services/ProjectsStatus';
+import { WorkspacesProvider } from '../services/WorkspacesProvider';
 
 //	Variables __________________________________________________________________
 
@@ -24,7 +24,7 @@ export function activate (context:vscode.ExtensionContext, status:ProjectsStatus
 	
 	favoritesProvider.onDidChangeTreeData(() => status.update());
 	
-	FavoritesProvider.onDidChangeFavorite((favorite) => ProjectsProvider.updateProject(context, favorite));
+	FavoritesProvider.onDidChangeFavorite((favorite) => WorkspacesProvider.updateProject(context, favorite));
 	
 	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.pickFavorite', () => {
 		

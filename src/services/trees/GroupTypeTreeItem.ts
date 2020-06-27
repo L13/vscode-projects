@@ -17,7 +17,14 @@ import { GroupType } from '../@types/groups';
 
 export class GroupTypeTreeItem extends TreeItem {
 	
-	public static stateVersion:number = 0;
+	// triggers the tree view to recreate all items for collapse all
+	private static stateVersion:number = 0;
+	
+	public static toggleStateVersion () {
+		
+		GroupTypeTreeItem.stateVersion = 1 - GroupTypeTreeItem.stateVersion;
+		
+	}
 	
 	public constructor (public readonly group:GroupType) {
 		

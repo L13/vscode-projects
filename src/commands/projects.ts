@@ -3,10 +3,10 @@
 import * as vscode from 'vscode';
 
 import { FavoritesProvider } from '../services/FavoritesProvider';
-import { ProjectsProvider } from '../services/ProjectsProvider';
 import { ProjectsStatus } from '../services/ProjectsStatus';
 import { GroupSimpleTreeItem } from '../services/trees/GroupSimpleTreeItem';
 import { GroupTypeTreeItem } from '../services/trees/GroupTypeTreeItem';
+import { WorkspacesProvider } from '../services/WorkspacesProvider';
 
 //	Variables __________________________________________________________________
 
@@ -20,30 +20,30 @@ import { GroupTypeTreeItem } from '../services/trees/GroupTypeTreeItem';
 
 export function activate (context:vscode.ExtensionContext, status:ProjectsStatus) {
 	
-	const projectsProvider = ProjectsProvider.createProvider(context);
+	const workspacesProvider = WorkspacesProvider.createProvider(context);
 	const treeView = vscode.window.createTreeView('l13ProjectsWorkspaces', {
-		treeDataProvider: projectsProvider
+		treeDataProvider: workspacesProvider
 	});
 	
-	treeView.onDidCollapseElement(({ element }) => ProjectsProvider.saveCollapseState(context, <GroupSimpleTreeItem|GroupTypeTreeItem>element, true));
+	treeView.onDidCollapseElement(({ element }) => WorkspacesProvider.saveCollapseState(context, <GroupSimpleTreeItem|GroupTypeTreeItem>element, true));
 	
-	treeView.onDidExpandElement(({ element }) => ProjectsProvider.saveCollapseState(context, <GroupSimpleTreeItem|GroupTypeTreeItem>element, false));
+	treeView.onDidExpandElement(({ element }) => WorkspacesProvider.saveCollapseState(context, <GroupSimpleTreeItem|GroupTypeTreeItem>element, false));
 	
 	context.subscriptions.push(treeView);
 	
-	projectsProvider.onDidChangeTreeData(() => status.update());
+	workspacesProvider.onDidChangeTreeData(() => status.update());
 	
-	ProjectsProvider.onDidChangeProject((project) => FavoritesProvider.updateFavorite(context, project));
+	WorkspacesProvider.onDidChangeProject((project) => FavoritesProvider.updateFavorite(context, project));
 	
 	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.collapseAll', () => {
 		
-		ProjectsProvider.currentProvider?.collapseAll();
+		WorkspacesProvider.currentProvider?.collapseAll();
 		
 	}));
 	
 	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.addToWorkspace', ({ project }) => {
 		
-		ProjectsProvider.addToWorkspace(project);
+		WorkspacesProvider.addToWorkspace(project);
 		
 	}));
 	
@@ -69,49 +69,49 @@ export function activate (context:vscode.ExtensionContext, status:ProjectsStatus
 	
 	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.pickProject', () => {
 		
-		ProjectsProvider.pickProject(context);
+		WorkspacesProvider.pickProject(context);
 		
 	}));
 	
 	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.addProject', () => {
 		
-		ProjectsProvider.addProject(context);
+		WorkspacesProvider.addProject(context);
 		
 	}));
 	
 	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.saveProject', () => {
 		
-		ProjectsProvider.saveProject(context);
+		WorkspacesProvider.saveProject(context);
 		
 	}));
 	
 	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.saveDetectedProject', ({ project }) => {
 		
-		ProjectsProvider.saveProject(context, project);
+		WorkspacesProvider.saveProject(context, project);
 		
 	}));
 	
 	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.refreshProjects', () => {
 		
-		ProjectsProvider.createProvider(context).refreshProjects();
+		WorkspacesProvider.createProvider(context).refreshProjects();
 		
 	}));
 	
 	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.renameProject', ({ project }) => {
 		
-		ProjectsProvider.renameProject(context, project);
+		WorkspacesProvider.renameProject(context, project);
 		
 	}));
 	
 	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.removeProject', ({ project }) => {
 		
-		ProjectsProvider.removeProject(context, project);
+		WorkspacesProvider.removeProject(context, project);
 		
 	}));
 	
 	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.clearProjects', () => {
 		
-		ProjectsProvider.clearProjects(context);
+		WorkspacesProvider.clearProjects(context);
 		
 	}));
 	

@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 
 import { Project } from './@types/projects';
 import { getWorkspacePath } from './common';
-import { findExtWorkspace } from './ProjectsProvider';
+import { WorkspacesProvider } from './WorkspacesProvider';
 
 //	Variables __________________________________________________________________
 
@@ -42,7 +42,7 @@ export class ProjectsStatus {
 		const workspacePath = getWorkspacePath();
 		
 		if (workspacePath) {
-			const icon = findExtWorkspace.test(workspacePath) ? 'submodule' : 'directory';
+			const icon = WorkspacesProvider.isWorkspace(workspacePath) ? 'submodule' : 'directory';
 			const name:string = this.getProjectName('projects', workspacePath) || this.getProjectName('favorites', workspacePath);
 			
 			this.statusBarItem.text = `$(file-${icon}) ${name || basename(workspacePath, '.code-workspace')}`;

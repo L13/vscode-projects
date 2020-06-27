@@ -17,7 +17,14 @@ import { GroupSimple } from '../@types/groups';
 
 export class GroupSimpleTreeItem extends TreeItem {
 	
-	public static stateVersion:number = 0;
+	// triggers the tree view to recreate all items for collapse all
+	private static stateVersion:number = 0;
+	
+	public static toggleStateVersion () {
+		
+		GroupSimpleTreeItem.stateVersion = 1 - GroupSimpleTreeItem.stateVersion;
+		
+	}
 	
 	public constructor (public readonly group:GroupSimple) {
 		
