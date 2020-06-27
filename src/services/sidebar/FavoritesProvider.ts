@@ -3,9 +3,10 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 
-import { Project, TreeItems } from './@types/projects';
+import { sortCaseInsensitive } from '../@l13/arrays';
+import { Project, TreeItems } from '../@types/projects';
 
-import { getWorkspacePath, sortCaseInsensitive } from './common';
+import { getWorkspacePath } from '../common';
 
 import { CurrentProjectTreeItem } from './trees/CurrentProjectTreeItem';
 import { ProjectTreeItem } from './trees/ProjectTreeItem';

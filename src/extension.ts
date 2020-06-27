@@ -6,7 +6,7 @@ import * as common from './commands/common';
 import * as favorites from './commands/favorites';
 import * as projects from './commands/projects';
 
-import { ProjectsStatus } from './services/ProjectsStatus';
+import { ProjectsStatus } from './services/common/ProjectsStatus';
 
 //	Variables __________________________________________________________________
 

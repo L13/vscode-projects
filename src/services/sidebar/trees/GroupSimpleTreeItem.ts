@@ -3,7 +3,7 @@
 import { join } from 'path';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 
-import { GroupType } from '../@types/groups';
+import { GroupSimple } from '../../@types/groups';
 
 //	Variables __________________________________________________________________
 
@@ -15,29 +15,29 @@ import { GroupType } from '../@types/groups';
 
 //	Exports ____________________________________________________________________
 
-export class GroupTypeTreeItem extends TreeItem {
+export class GroupSimpleTreeItem extends TreeItem {
 	
 	// triggers the tree view to recreate all items for collapse all
 	private static stateVersion:number = 0;
 	
 	public static toggleStateVersion () {
 		
-		GroupTypeTreeItem.stateVersion = 1 - GroupTypeTreeItem.stateVersion;
+		GroupSimpleTreeItem.stateVersion = 1 - GroupSimpleTreeItem.stateVersion;
 		
 	}
 	
-	public constructor (public readonly group:GroupType) {
+	public constructor (public readonly group:GroupSimple) {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
 		const type = group.type;
 		
-		this.contextValue = `group-type-${type}`;
-		this.id = `group-type-${type}-${GroupTypeTreeItem.stateVersion}`;
+		this.contextValue = `group-simple-${type}`;
+		this.id = `group-simple-${type}-${GroupSimpleTreeItem.stateVersion}`;
 		
 		this.iconPath = {
-			light: join(__filename, '..', '..', 'images', `group-type-${type}-light.svg`),
-			dark: join(__filename, '..', '..', 'images', `group-type-${type}-dark.svg`),
+			light: join(__filename, '..', '..', 'images', `group-simple-${type}-light.svg`),
+			dark: join(__filename, '..', '..', 'images', `group-simple-${type}-dark.svg`),
 		};
 		
 	}

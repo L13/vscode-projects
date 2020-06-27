@@ -1,8 +1,12 @@
 //	Imports ____________________________________________________________________
 
+import { spawn } from 'child_process';
+import * as path from 'path';
 import * as vscode from 'vscode';
 
-import { getWorkspacePath, openTerminalWithFolder, showFileInExplorer, showFileInFinder, showFileInFolder } from '../services/common';
+import { getWorkspacePath } from '../services/common';
+
+import { Project } from '../services/types';
 
 //	Variables __________________________________________________________________
 
@@ -56,3 +60,53 @@ export function activate (context:vscode.ExtensionContext) {
 
 //	Functions __________________________________________________________________
 
+export function showFileInFinder (pathname:string) {
+	
+	const process = spawn('open', ['-R', pathname || '/']);
+	
+	process.on('error', (error:Error) => {
+		
+		process.kill();
+		vscode.window.showErrorMessage(error.message);
+		
+	});
+	
+}
+
+export function showFileInExplorer (pathname:string) {
+	
+	const process = spawn('explorer', ['/select,', pathname || 'c:\\']);
+	
+	process.on('error', (error:Error) => {
+		
+		process.kill();
+		vscode.window.showErrorMessage(error.message);
+		
+	});
+	
+}
+
+export function showFileInFolder (pathname:string) {
+	
+	const process = spawn('xdg-open', [path.dirname(pathname) || '/']);
+	
+	process.on('error', (error:Error) => {
+		
+		process.kill();
+		vscode.window.showErrorMessage(error.message);
+		
+	});
+	
+}
+
+export function openTerminalWithFolder (project:Project) {
+	
+	vscode.window.createTerminal({ cwd: getFolderPath(project) }).show();
+	
+}
+
+function getFolderPath (project:Project) {
+	
+	return project.type === 'folders' || project.type === 'workspace' ? path.dirname(project.path) : project.path;
+	
+}

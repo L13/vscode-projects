@@ -4,15 +4,16 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import { walktree } from './@l13/fse';
+import { sortCaseInsensitive } from '../@l13/arrays';
+import { walktree } from '../@l13/fse';
 
-import { File, Options } from './@types/files';
-import { GroupSimple, GroupSimpleState, GroupType, GroupTypeState, InitialState, WorkspaceSortting } from './@types/groups';
-import { Project, TreeItems } from './@types/projects';
+import { File, Options } from '../@types/files';
+import { GroupSimple, GroupSimpleState, GroupType, GroupTypeState, InitialState, WorkspaceSortting } from '../@types/groups';
+import { Project, TreeItems } from '../@types/projects';
 
-import { getWorkspacePath, sortCaseInsensitive } from './common';
+import { getWorkspacePath } from '../common';
 
-import { ProjectsSettings } from './ProjectsSettings';
+import { ProjectsSettings } from '../common/ProjectsSettings';
 import { CurrentProjectTreeItem } from './trees/CurrentProjectTreeItem';
 import { GroupSimpleTreeItem } from './trees/GroupSimpleTreeItem';
 import { GroupTypeTreeItem } from './trees/GroupTypeTreeItem';

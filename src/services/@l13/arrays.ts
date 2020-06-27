@@ -1,6 +1,6 @@
 //	Imports ____________________________________________________________________
 
-import * as vscode from 'vscode';
+
 
 //	Variables __________________________________________________________________
 
@@ -12,14 +12,12 @@ import * as vscode from 'vscode';
 
 //	Exports ____________________________________________________________________
 
-export function getWorkspacePath () {
+export function sortCaseInsensitive (a:string, b:string) {
 	
-	const workspace = vscode.workspace;
-	let uri:undefined|vscode.Uri = workspace.workspaceFile;
+	a = a.toLowerCase();
+	b = b.toLowerCase();
 	
-	if (!uri && workspace.workspaceFolders) uri = workspace.workspaceFolders[0].uri;
-	
-	return uri && uri.scheme !== 'untitled' ? uri.fsPath : '';
+	return a < b ? -1 : a > b ? 1 : 0;
 	
 }
 

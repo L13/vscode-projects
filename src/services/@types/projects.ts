@@ -1,10 +1,10 @@
 //	Imports ____________________________________________________________________
 
-import { CurrentProjectTreeItem } from '../trees/CurrentProjectTreeItem';
-import { GroupSimpleTreeItem } from '../trees/GroupSimpleTreeItem';
-import { GroupTypeTreeItem } from '../trees/GroupTypeTreeItem';
-import { ProjectTreeItem } from '../trees/ProjectTreeItem';
-import { UnknownProjectTreeItem } from '../trees/UnknownProjectTreeItem';
+import { CurrentProjectTreeItem } from '../sidebar/trees/CurrentProjectTreeItem';
+import { GroupSimpleTreeItem } from '../sidebar/trees/GroupSimpleTreeItem';
+import { GroupTypeTreeItem } from '../sidebar/trees/GroupTypeTreeItem';
+import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
+import { UnknownProjectTreeItem } from '../sidebar/trees/UnknownProjectTreeItem';
 
 //	Variables __________________________________________________________________
 

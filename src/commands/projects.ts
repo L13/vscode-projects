@@ -2,11 +2,11 @@
 
 import * as vscode from 'vscode';
 
-import { FavoritesProvider } from '../services/FavoritesProvider';
-import { ProjectsStatus } from '../services/ProjectsStatus';
-import { GroupSimpleTreeItem } from '../services/trees/GroupSimpleTreeItem';
-import { GroupTypeTreeItem } from '../services/trees/GroupTypeTreeItem';
-import { WorkspacesProvider } from '../services/WorkspacesProvider';
+import { ProjectsStatus } from '../services/common/ProjectsStatus';
+import { FavoritesProvider } from '../services/sidebar/FavoritesProvider';
+import { GroupSimpleTreeItem } from '../services/sidebar/trees/GroupSimpleTreeItem';
+import { GroupTypeTreeItem } from '../services/sidebar/trees/GroupTypeTreeItem';
+import { WorkspacesProvider } from '../services/sidebar/WorkspacesProvider';
 
 //	Variables __________________________________________________________________
 
