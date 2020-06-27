@@ -416,6 +416,36 @@
 						"node_modules"
 					],
 					"description": "Indicates folders to be ignored, like \".git\", \".hg\", \".svn\", \"CVS\", \"node_modules\", etc."
+				},
+				"l13Projects.initialWorkspacesGroupState": {
+					"type": "string",
+					"default": "Remember",
+					"enum": [
+						"Remember",
+						"Collapsed",
+						"Expanded"
+					],
+					"description": "Indicates if a workspace group should be collapsed, expanded or remembered in its initial state.",
+					"enumDescriptions": [
+						"Remember the collpased and expanded state of each group.",
+						"Show all groups collapsed at start.",
+						"Show all groups expanded at start."
+					]
+				},
+				"l13Projects.sortWorkspacesBy": {
+					"type": "string",
+					"default": "Name",
+					"enum": [
+						"Name",
+						"Simple",
+						"Type"
+					],
+					"description": "Indicates how the workspaces should be sorted.",
+					"enumDescriptions": [
+						"Sort all workspaces by name.",
+						"Group all workspaces by simple type.",
+						"Group all workspaces by type."
+					]
 				}
 			}
 		}

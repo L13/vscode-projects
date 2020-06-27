@@ -5,6 +5,8 @@ import * as vscode from 'vscode';
 import { FavoritesProvider } from '../services/FavoritesProvider';
 import { ProjectsProvider } from '../services/ProjectsProvider';
 import { ProjectsStatus } from '../services/ProjectsStatus';
+import { GroupSimpleTreeItem } from '../services/trees/GroupSimpleTreeItem';
+import { GroupTypeTreeItem } from '../services/trees/GroupTypeTreeItem';
 
 //	Variables __________________________________________________________________
 
@@ -19,8 +21,15 @@ import { ProjectsStatus } from '../services/ProjectsStatus';
 export function activate (context:vscode.ExtensionContext, status:ProjectsStatus) {
 	
 	const projectsProvider = ProjectsProvider.createProvider(context);
+	const treeView = vscode.window.createTreeView('l13ProjectsWorkspaces', {
+		treeDataProvider: projectsProvider
+	});
 	
-	vscode.window.registerTreeDataProvider('l13ProjectsWorkspaces', projectsProvider);
+	treeView.onDidCollapseElement(({ element }) => ProjectsProvider.saveCollapseState(context, <GroupSimpleTreeItem|GroupTypeTreeItem>element, true));
+	
+	treeView.onDidExpandElement(({ element }) => ProjectsProvider.saveCollapseState(context, <GroupSimpleTreeItem|GroupTypeTreeItem>element, false));
+	
+	context.subscriptions.push(treeView);
 	
 	projectsProvider.onDidChangeTreeData(() => status.update());
 	

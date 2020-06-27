@@ -2,10 +2,6 @@
 
 import { Stats } from 'fs';
 
-import { CurrentProjectTreeItem } from './services/trees/CurrentProjectTreeItem';
-import { ProjectTreeItem } from './services/trees/ProjectTreeItem';
-import { UnknownProjectTreeItem } from './services/trees/UnknownProjectTreeItem';
-
 //	Variables __________________________________________________________________
 
 
@@ -17,8 +13,6 @@ import { UnknownProjectTreeItem } from './services/trees/UnknownProjectTreeItem'
 //	Exports ____________________________________________________________________
 
 export type Callback = (error?:null|Error, result?:StatsMap) => void;
-
-export type Dictionary<T> = { [token:string]:T };
 
 export type File = {
 	path:string,
@@ -51,21 +45,8 @@ export type Options = {
 	maxDepth?:number,
 };
 
-export type Project = {
-	path:string,
-	label:string,
-	type:'folder'|'folders'|'git'|'vscode'|'workspace',
-	deleted?:boolean,
-};
-
-export type TreeItems = ProjectTreeItem|CurrentProjectTreeItem|UnknownProjectTreeItem;
-
 export type StatsMap = {
 	[pathname:string]:File,
-};
-
-export type Uri = {
-	fsPath:string,
 };
 
 //	Functions __________________________________________________________________

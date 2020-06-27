@@ -3,7 +3,7 @@
 import { basename } from 'path';
 import * as vscode from 'vscode';
 
-import { Project } from '../types';
+import { Project } from './@types/projects';
 import { getWorkspacePath } from './common';
 import { findExtWorkspace } from './ProjectsProvider';
 

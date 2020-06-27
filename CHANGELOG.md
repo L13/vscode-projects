@@ -6,6 +6,8 @@ All notable changes to the "Projects" extension will be documented in this file.
 ### Added
 - Added message to empty workspace view.
 - Added save dialog to unknown worspace.
+- Added `l13Projects.sortWorkspacesBy` to group and sort workspaces.
+- Added `l13Projects.initialWorkspacesGroupState` to set the initial state of the workspaces groups.
 
 ### Changed
 - Changed display name from `L13 Diff` to `Diff Folders`.

@@ -4,12 +4,14 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ![Projects](images/preview.png)
 
-This extension is part of the [L13 Extension Pack](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-extension-pack).
+> This extension is part of the [L13 Extension Pack](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-extension-pack).
 
 ## What's new in Projects 0.14.0
 
 - Added message to empty workspace view.
 - Added save dialog to unknown worspace.
+- Added `l13Projects.sortWorkspacesBy` to group and sort workspaces.
+- Added `l13Projects.initialWorkspacesGroupState` to set the initial state of the workspaces groups.
 
 ## Features
 
@@ -26,6 +28,7 @@ This extension is part of the [L13 Extension Pack](https://marketplace.visualstu
 * Delete or rename a favorite or project.
 * Status bar shows current workspace name and opens the current folder or workspace in the Finder/Explorer.
 * Cache detected folders and workspaces between sessions.
+* Sort workspaces by name, type or simple group.
 
 ### Workspaces
 
@@ -76,6 +79,14 @@ Priority of icons and labels for saved projects and detected folders and workspa
 * `l13Projects.workspace.folders` - The folders to search for VS Code workspaces.
 * `l13Projects.workspace.maxDepthRecursion` - The maximum depth of folder recursion for VS Code workspaces.
 * `l13Projects.workspace.ignore` - The folders which will be ignored for search.
+* `l13Projects.sortWorkspacesBy` - Sort workspaces by name, simple or type. 
+	* `Name` - (default) Sort all workspaces by name.
+	* `Simple` - Group all workspaces by simple type. 
+	* `Type` - Group all workspaces by type. 
+* `l13Projects.initialWorkspacesGroupState` - Set the initial state of a group.
+	* `Remember` - (default) Remember the collpased and expanded state of each group.
+	* `Collapsed` - Show all groups collapsed at start.
+	* `Expanded` - Show all groups expanded at start.
 
 ## Global Keyboard Shortcuts
 
