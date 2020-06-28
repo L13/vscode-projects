@@ -178,7 +178,7 @@
 			},
 			{
 				"command": "l13Projects.assignSlot",
-				"title": "Assign Slot"
+				"title": "Assign to Slot"
 			},
 			{
 				"command": "l13Projects.removeSlot",

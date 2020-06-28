@@ -113,8 +113,6 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 		if (FavoritesProvider.currentProvider) FavoritesProvider.currentProvider.refresh();
 		
-		vscode.window.showInformationMessage(`Favorite '${project.label}' saved!`);
-		
 	}
 	
 	public static updateFavorite (context:vscode.ExtensionContext, favorite:Project) {
@@ -148,7 +146,6 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 			favorite.label = value;
 			FavoritesProvider.updateFavorite(context, favorite);
 			FavoritesProvider._onDidChangeFavorite.fire(favorite);
-			vscode.window.showInformationMessage(`Saved "${value}" in favorites!`);
 			
 		});
 		

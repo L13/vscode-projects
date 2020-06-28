@@ -10,6 +10,7 @@ Manage your workspaces and projects in Visual Studio Code.
 - Added save dialog to unknown worspace.
 - Added `l13Projects.sortWorkspacesBy` to group and sort workspaces.
 - Added `l13Projects.initialWorkspacesGroupState` to set the initial state of the workspaces groups.
+- Added hotkeys for workspace slots `Ctrl/Cmd + L Ctrl/Cmd + 1 .. 9`.
 
 ## Features
 
@@ -27,6 +28,7 @@ Manage your workspaces and projects in Visual Studio Code.
 * Status bar shows current workspace name and opens the current folder or workspace in the Finder/Explorer.
 * Cache detected folders and workspaces between sessions.
 * Sort workspaces by name, type or simple group.
+* Assign a workspace to a slot to open it with a keyboard shortcut.
 
 ### Workspaces
 
@@ -93,12 +95,14 @@ macOS
 * `Cmd + L Cmd + P` - Open the projects view.
 * `Cmd + Alt + P` - Open the quick menu to pick a favorite.
 * `Cmd + Alt + Shift + P` - Open the quick menu to pick a project.
+* `Cmd + L Cmd + 1 .. 9` - Open the workspace in the slot 1 - 9.
 
 Windows / Linux
 
 * `Ctrl + L Ctrl + P` - Open the projects view.
 * `Ctrl + Alt + P` - Open the quick menu to pick a favorite.
 * `Ctrl + Alt + Shift + P` - Open the quick menu to pick a project.
+* `Ctrl + L Ctrl + 1 .. 9` - Open the workspace in the slot 1 - 9.
 
 If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`.
 
@@ -111,6 +115,7 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Open` - Open the favorite project in the current window. Ignores `l13Projects.openInNewWindow`.
 * `Open in new Window` - Open the favorite project in a new window. Ignores `l13Projects.openInNewWindow`.
 * `Open in Terminal` - Opens the favorite project in the VS Code terminal.
+* `Assign to Slot` - Assign the folder, workspace or project to a slot 1 - 9 to open it with a keyboard shortcut directly.
 * `Compare with Workspace` - Compares the favorite project with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Open in Diff Folders` - Opens the favorite project in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Rename` - Change the name of the favorite.
@@ -139,6 +144,7 @@ Linux
 * `Save Project` - Save the folder or workspace as a project.
 * `Add to Favorites` - Add the folder, workspace or project to the favorites.
 * `Open in Terminal` - Open the folder, workspace or project in the terminal.
+* `Assign to Slot` - Assign the folder, workspace or project to a slot 1 - 9 to open it with a keyboard shortcut directly.
 * `Compare with Workspace` - Compares the folder, workspace or project with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Open in Diff Folders` - Opens the folder, workspace or project in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Rename` - Change the name of a project.
