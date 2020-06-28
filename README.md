@@ -4,8 +4,6 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ![Projects](images/preview.png)
 
-> This extension is part of the [L13 Extension Pack](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-extension-pack).
-
 ## What's new in Projects 0.14.0
 
 - Added message to empty workspace view.
@@ -176,3 +174,5 @@ Linux
 
 * `Open in current Window` - Opens the selected file or folder in the current VS Code Window.
 * `Open in new Window` - Opens the selected file or folder in a new VS Code Window.
+
+> This extension is part of the [L13 Extension Pack](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-extension-pack).

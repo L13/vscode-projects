@@ -322,7 +322,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 			
 		});
 		
-		if ((type === 'project') && !hasCurrentProject && workspacePath) {
+		if ((type === 'project') && !hasCurrentProject && this.hasUnknownProject(workspacePath)) {
 			list.unshift(new UnknownProjectTreeItem({
 				label: path.basename(workspacePath, '.code-workspace'),
 				path: workspacePath,
@@ -361,7 +361,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 			
 		});
 		
-		if ((type === 'folder' || type === 'folders') && !hasCurrentProject && workspacePath) {
+		if ((type === 'folder' || type === 'folders') && !hasCurrentProject && this.hasUnknownProject(workspacePath)) {
 			list.unshift(new UnknownProjectTreeItem({
 				label: path.basename(workspacePath, '.code-workspace'),
 				path: workspacePath,
