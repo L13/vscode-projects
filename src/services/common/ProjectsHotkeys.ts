@@ -18,6 +18,9 @@ const SLOTS = 'slots';
 
 export class ProjectsHotkeys {
 	
+	private static _onDidChangeSlot:vscode.EventEmitter<Slot[]> = new vscode.EventEmitter<Slot[]>();
+	public static readonly onDidChangeSlot:vscode.Event<Slot[]> = ProjectsHotkeys._onDidChangeSlot.event;
+	
 	public static async assignSlot (context:vscode.ExtensionContext, selectedProject:Project) {
 		
 		const slots:Slot[] = context.globalState.get(SLOTS, []);
@@ -44,6 +47,7 @@ export class ProjectsHotkeys {
 				index: item.index,
 				path: selectedProject.path,
 			};
+			ProjectsHotkeys._onDidChangeSlot.fire(slots);
 			context.globalState.update(SLOTS, slots);
 		}
 		
@@ -68,6 +72,7 @@ export class ProjectsHotkeys {
 			if (slot?.path === project.path) slots[slot.index].label = project.label;
 		}
 		
+		ProjectsHotkeys._onDidChangeSlot.fire(slots);
 		context.globalState.update(SLOTS, slots);
 		
 	}
@@ -93,14 +98,22 @@ export class ProjectsHotkeys {
 		
 		if (item) {
 			delete slots[item.index];
+			ProjectsHotkeys._onDidChangeSlot.fire(slots);
 			context.globalState.update(SLOTS, slots);
 		}
+		
+	}
+	
+	public static getSlots (context:vscode.ExtensionContext) {
+		
+		return context.globalState.get(SLOTS, []);
 		
 	}
 	
 	public static clearSlots (context:vscode.ExtensionContext) {
 		
 		context.globalState.update(SLOTS, []);
+		ProjectsHotkeys._onDidChangeSlot.fire([]);
 		
 	}
 	

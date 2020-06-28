@@ -3,6 +3,7 @@
 import { join } from 'path';
 import { TreeItem } from 'vscode';
 
+import { Slot } from '../../@types/hotkeys';
 import { Project } from '../../@types/projects';
 
 //	Variables __________________________________________________________________
@@ -19,9 +20,7 @@ export class CurrentProjectTreeItem extends TreeItem {
 	
 	public contextValue = 'current-project';
 	
-	public description:string = 'Current workspace';
-	
-	public constructor (public readonly project:Project) {
+	public constructor (public readonly project:Project, public readonly slot:Slot|null) {
 		
 		super(project.label);
 		
@@ -39,6 +38,18 @@ export class CurrentProjectTreeItem extends TreeItem {
 	public get tooltip () :string {
 		
 		return this.project.path;
+		
+	}
+	
+	public get description () :string {
+		
+		const info:string[] = [];
+		
+		if (this.slot) info.push(`[${this.slot.index}]`);
+		
+		info.push('Current workspace');
+		
+		return info.join(' ');
 		
 	}
 	

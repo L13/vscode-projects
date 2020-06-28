@@ -3,6 +3,7 @@
 import { join } from 'path';
 import { TreeItem } from 'vscode';
 
+import { Slot } from '../../@types/hotkeys';
 import { Project } from '../../@types/projects';
 
 //	Variables __________________________________________________________________
@@ -23,7 +24,7 @@ export class ProjectTreeItem extends TreeItem {
 		title: 'Open Project',
 	};
 	
-	public constructor (public readonly project:Project) {
+	public constructor (public readonly project:Project, public readonly slot:Slot|null) {
 		
 		super(project.label);
 		
@@ -46,7 +47,12 @@ export class ProjectTreeItem extends TreeItem {
 	
 	public get description () :string {
 		
-		return this.project.deleted ? 'Path does not exist' : '';
+		const info:string[] = [];
+		
+		if (this.slot) info.push(`[${this.slot.index}]`);
+		if (this.project.deleted) info.push('Path does not exist');
+		
+		return info.join(' ');
 		
 	}
 	

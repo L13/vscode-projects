@@ -13,6 +13,8 @@ import { Project, TreeItems } from '../@types/projects';
 
 import { getWorkspacePath } from '../../commands/common';
 
+import { Slot } from '../@types/hotkeys';
+import { ProjectsHotkeys } from '../common/ProjectsHotkeys';
 import { ProjectsSettings } from '../common/ProjectsSettings';
 import { CurrentProjectTreeItem } from './trees/CurrentProjectTreeItem';
 import { GroupSimpleTreeItem } from './trees/GroupSimpleTreeItem';
@@ -56,6 +58,8 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	public vscodeProjects:Project[] = [];
 	public workspaceProjects:Project[] = [];
 	
+	private slots:Slot[] = [];
+	
 	public groupTypes:GroupType[] = [
 		{ label: 'Projects', type: 'folder', collapsed: false },
 		{ label: 'Project Workspaces', type: 'folders', collapsed: false },
@@ -95,6 +99,15 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 				this.setContextGroups();
 				this.refresh();
 			}
+			
+		}, null, this.disposables);
+		
+		this.slots = ProjectsHotkeys.getSlots(context);
+		
+		ProjectsHotkeys.onDidChangeSlot((slots) => {
+			
+			this.slots = slots;
+			this._onDidChangeTreeData.fire();
 			
 		}, null, this.disposables);
 		
@@ -283,7 +296,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 		this.groupSimples.forEach((group) => {
 			
-			if (this.cache.some((project) => group.projectTypes.includes(project.type)) || group.type === 'project' && this.hasUnknownProject(workspacePath)) {
+			if (this.cache.some((project) => group.projectTypes.includes(project.type)) || group.type === 'project' && this.isUnknownWorkspace(workspacePath)) {
 				list.push(new GroupSimpleTreeItem(group));
 			}
 			
@@ -316,18 +329,14 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 			if (type === simpleType) {
 				if (workspacePath && workspacePath === project.path) {
 					hasCurrentProject = true;
-					list.push(new CurrentProjectTreeItem(project));
-				} else list.push(new ProjectTreeItem(project));
+					list.push(new CurrentProjectTreeItem(project, this.getSlot(project)));
+				} else list.push(new ProjectTreeItem(project, this.getSlot(project)));
 			}
 			
 		});
 		
-		if ((type === 'project') && !hasCurrentProject && this.hasUnknownProject(workspacePath)) {
-			list.unshift(new UnknownProjectTreeItem({
-				label: path.basename(workspacePath, '.code-workspace'),
-				path: workspacePath,
-				type: findExtWorkspace.test(workspacePath) ? 'folders' : 'folder',
-			}));
+		if ((type === 'project') && !hasCurrentProject && this.isUnknownWorkspace(workspacePath)) {
+			this.addUnknownItem(list, workspacePath);
 		}
 		
 	}
@@ -337,8 +346,8 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		this.groupTypes.forEach((group) => {
 			
 			if (this.cache.some((project) => project.type === group.type
-			|| group.type === 'folder' && this.hasUnknownProject(workspacePath) && !findExtWorkspace.test(workspacePath)
-			|| group.type === 'folders' && this.hasUnknownProject(workspacePath) && findExtWorkspace.test(workspacePath))) {
+			|| group.type === 'folder' && this.isUnknownWorkspace(workspacePath) && !findExtWorkspace.test(workspacePath)
+			|| group.type === 'folders' && this.isUnknownWorkspace(workspacePath) && findExtWorkspace.test(workspacePath))) {
 				list.push(new GroupTypeTreeItem(group));
 			}
 			
@@ -355,18 +364,14 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 			if (type === project.type) {
 				if (workspacePath && workspacePath === project.path) {
 					hasCurrentProject = true;
-					list.push(new CurrentProjectTreeItem(project));
-				} else list.push(new ProjectTreeItem(project));
+					list.push(new CurrentProjectTreeItem(project, this.getSlot(project)));
+				} else list.push(new ProjectTreeItem(project, this.getSlot(project)));
 			}
 			
 		});
 		
-		if ((type === 'folder' || type === 'folders') && !hasCurrentProject && this.hasUnknownProject(workspacePath)) {
-			list.unshift(new UnknownProjectTreeItem({
-				label: path.basename(workspacePath, '.code-workspace'),
-				path: workspacePath,
-				type: findExtWorkspace.test(workspacePath) ? 'folders' : 'folder',
-			}));
+		if ((type === 'folder' || type === 'folders') && !hasCurrentProject && this.isUnknownWorkspace(workspacePath)) {
+			this.addUnknownItem(list, workspacePath);
 		}
 		
 	}
@@ -379,18 +384,32 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 				
 			if (workspacePath && workspacePath === project.path) {
 				hasCurrentProject = true;
-				list.push(new CurrentProjectTreeItem(project));
-			} else list.push(new ProjectTreeItem(project));
+				list.push(new CurrentProjectTreeItem(project, this.getSlot(project)));
+			} else list.push(new ProjectTreeItem(project, this.getSlot(project)));
 			
 		});
 		
-		if (workspacePath && !hasCurrentProject) {
-			list.unshift(new UnknownProjectTreeItem({
-				label: path.basename(workspacePath, '.code-workspace'),
-				path: workspacePath,
-				type: findExtWorkspace.test(workspacePath) ? 'folders' : 'folder',
-			}));
+		if (workspacePath && !hasCurrentProject) this.addUnknownItem(list, workspacePath);
+		
+	}
+	
+	private addUnknownItem (list:TreeItems[], workspacePath:string) {
+		
+		list.unshift(new UnknownProjectTreeItem({
+			label: path.basename(workspacePath, '.code-workspace'),
+			path: workspacePath,
+			type: findExtWorkspace.test(workspacePath) ? 'folders' : 'folder',
+		}));
+		
+	}
+	
+	private getSlot (project:Project) {
+		
+		for (const slot of this.slots) {
+			if (slot?.path === project.path) return slot;
 		}
+		
+		return null;
 		
 	}
 	
@@ -420,7 +439,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	private hasUnknownProject (workspacePath:string) {
+	private isUnknownWorkspace (workspacePath:string) {
 		
 		if (!workspacePath) return false;
 		
