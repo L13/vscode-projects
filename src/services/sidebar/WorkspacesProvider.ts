@@ -357,6 +357,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	private addTypeGroupItems (list:TreeItems[], type:string, workspacePath:string) {
 		
+		const workspaceFile = vscode.workspace.workspaceFile;
 		let hasCurrentProject = false;
 		
 		this.cache.forEach((project) => {
@@ -370,7 +371,8 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 			
 		});
 		
-		if ((type === 'folder' || type === 'folders') && !hasCurrentProject && this.isUnknownWorkspace(workspacePath)) {
+		if ((type === 'folder' && !workspaceFile || type === 'folders' && workspaceFile)
+		&& !hasCurrentProject && this.isUnknownWorkspace(workspacePath)) {
 			this.addUnknownItem(list, workspacePath);
 		}
 		
@@ -565,8 +567,6 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 				
 				if (WorkspacesProvider.currentProvider) WorkspacesProvider.currentProvider.refresh();
 				
-				vscode.window.showInformationMessage(`Project '${value}' saved!`);
-				
 			});
 			
 		} else if (vscode.workspace.workspaceFile && vscode.workspace.workspaceFile.scheme === 'untitled') {
@@ -606,7 +606,6 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 			project.label = value;
 			WorkspacesProvider.updateProject(context, project);
 			WorkspacesProvider._onDidChangeProject.fire(project);
-			vscode.window.showInformationMessage(`Saved "${value}" in projects!`);
 			
 		});
 		
