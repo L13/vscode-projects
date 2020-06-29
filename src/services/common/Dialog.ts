@@ -12,17 +12,23 @@ import * as vscode from 'vscode';
 
 //	Exports ____________________________________________________________________
 
-export class ProjectsSettings {
+export class Dialog {
 	
-	public static get (key:string, value?:any) {
+	public static async open () {
 		
-		return vscode.workspace.getConfiguration('l13Projects').get(key, value);
+		const uris = await vscode.window.showOpenDialog({
+			canSelectFiles: true,
+			canSelectFolders: true,
+			canSelectMany: true,
+		});
+		
+		return uris || null;
 		
 	}
 	
-	public static update (key:string, value:any, global:boolean = true) {
+	public static async confirm (text:string, ...buttons:string[]) {
 		
-		return vscode.workspace.getConfiguration('l13Projects').update(key, value, global);
+		return await vscode.window.showInformationMessage(text, { modal: true }, ...buttons);
 		
 	}
 	

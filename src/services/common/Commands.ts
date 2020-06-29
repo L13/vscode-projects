@@ -1,6 +1,6 @@
 //	Imports ____________________________________________________________________
 
-
+import * as vscode from 'vscode';
 
 //	Variables __________________________________________________________________
 
@@ -12,17 +12,17 @@
 
 //	Exports ____________________________________________________________________
 
-export type Slot = {
-	label:string,
-	index:number,
-	path:string,
-};
-
-export type Item = {
-	label:string,
-	index:number,
-	description:string,
-};
+export class Commands {
+	
+	public static register (context:vscode.ExtensionContext, commands:{ [command:string]: (...args:any) => void }) {
+	
+		for (const [command, callback] of Object.entries(commands)) {
+			context.subscriptions.push(vscode.commands.registerCommand(command, callback));
+		}
+		
+	}
+	
+}
 
 //	Functions __________________________________________________________________
 

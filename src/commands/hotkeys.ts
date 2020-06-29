@@ -2,7 +2,10 @@
 
 import * as vscode from 'vscode';
 
-import { ProjectsHotkeys } from '../services/common/ProjectsHotkeys';
+import { Commands } from '../services/common/Commands';
+import { Hotkeys } from '../services/common/Hotkeys';
+import { FavoritesProvider } from '../services/sidebar/FavoritesProvider';
+import { WorkspacesProvider } from '../services/sidebar/WorkspacesProvider';
 
 //	Variables __________________________________________________________________
 
@@ -16,29 +19,27 @@ import { ProjectsHotkeys } from '../services/common/ProjectsHotkeys';
 
 export function activate (context:vscode.ExtensionContext) {
 	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.assignSlot', async ({ project }) => ProjectsHotkeys.assignSlot(context, project)));
+	Hotkeys.onDidChangeSlot(() => {
+		
+		FavoritesProvider.currentProvider?.refresh();
+		WorkspacesProvider.currentProvider?.refresh();
+		
+	});
 	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.removeSlot', () => ProjectsHotkeys.clearSlot(context)));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.clearSlots', () => ProjectsHotkeys.clearSlots(context)));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.slot1', () => ProjectsHotkeys.openSlot(context, 1)));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.slot2', () => ProjectsHotkeys.openSlot(context, 2)));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.slot3', () => ProjectsHotkeys.openSlot(context, 3)));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.slot4', () => ProjectsHotkeys.openSlot(context, 4)));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.slot5', () => ProjectsHotkeys.openSlot(context, 5)));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.slot6', () => ProjectsHotkeys.openSlot(context, 6)));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.slot7', () => ProjectsHotkeys.openSlot(context, 7)));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.slot8', () => ProjectsHotkeys.openSlot(context, 8)));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.slot9', () => ProjectsHotkeys.openSlot(context, 9)));
+	Commands.register(context, {
+		'l13Projects.assignSlot': async ({ project }) => Hotkeys.assignSlot(context, project),
+		'l13Projects.removeSlot': () => Hotkeys.clearSlot(context),
+		'l13Projects.clearSlots': () => Hotkeys.clearSlots(context),
+		'l13Projects.slot1': () => Hotkeys.openSlot(context, 1),
+		'l13Projects.slot2': () => Hotkeys.openSlot(context, 2),
+		'l13Projects.slot3': () => Hotkeys.openSlot(context, 3),
+		'l13Projects.slot4': () => Hotkeys.openSlot(context, 4),
+		'l13Projects.slot5': () => Hotkeys.openSlot(context, 5),
+		'l13Projects.slot6': () => Hotkeys.openSlot(context, 6),
+		'l13Projects.slot7': () => Hotkeys.openSlot(context, 7),
+		'l13Projects.slot8': () => Hotkeys.openSlot(context, 8),
+		'l13Projects.slot9': () => Hotkeys.openSlot(context, 9),
+	});
 	
 }
 

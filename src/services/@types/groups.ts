@@ -2,6 +2,9 @@
 
 import { Project } from './projects';
 
+import { GroupSimpleTreeItem } from '../sidebar/trees/GroupSimpleTreeItem';
+import { GroupTypeTreeItem } from '../sidebar/trees/GroupTypeTreeItem';
+
 //	Variables __________________________________________________________________
 
 
@@ -11,6 +14,8 @@ import { Project } from './projects';
 
 
 //	Exports ____________________________________________________________________
+
+export type GroupTreeItem = GroupSimpleTreeItem|GroupTypeTreeItem;
 
 export type GroupSimple = {
 	label:string,

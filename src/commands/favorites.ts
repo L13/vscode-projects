@@ -2,8 +2,9 @@
 
 import * as vscode from 'vscode';
 
-import { ProjectsHotkeys } from '../services/common/ProjectsHotkeys';
-import { ProjectsStatus } from '../services/common/ProjectsStatus';
+import { Commands } from '../services/common/Commands';
+import { Hotkeys } from '../services/common/Hotkeys';
+import { StatusBar } from '../services/common/StatusBar';
 import { FavoritesProvider } from '../services/sidebar/FavoritesProvider';
 import { WorkspacesProvider } from '../services/sidebar/WorkspacesProvider';
 
@@ -17,7 +18,7 @@ import { WorkspacesProvider } from '../services/sidebar/WorkspacesProvider';
 
 //	Exports ____________________________________________________________________
 
-export function activate (context:vscode.ExtensionContext, status:ProjectsStatus) {
+export function activate (context:vscode.ExtensionContext, status:StatusBar) {
 	
 	const favoritesProvider = FavoritesProvider.createProvider(context);
 	
@@ -28,39 +29,17 @@ export function activate (context:vscode.ExtensionContext, status:ProjectsStatus
 	FavoritesProvider.onDidChangeFavorite((favorite) => {
 		
 		WorkspacesProvider.updateProject(context, favorite);
-		ProjectsHotkeys.updateSlot(context, favorite);
+		Hotkeys.updateSlot(context, favorite);
 		
 	});
 	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.pickFavorite', () => {
-		
-		FavoritesProvider.pickFavorite(context);
-		
-	}));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.addToFavorites', ({ project }) => {
-		
-		FavoritesProvider.addToFavorites(context, project);
-		
-	}));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.renameFavorite', ({ project }) => {
-		
-		FavoritesProvider.renameFavorite(context, project);
-		
-	}));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.removeFavorite', ({ project }) => {
-		
-		FavoritesProvider.removeFavorite(context, project);
-		
-	}));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.clearFavorites', () => {
-		
-		FavoritesProvider.clearFavorites(context);
-		
-	}));
+	Commands.register(context, {
+		'l13Projects.pickFavorite': () => FavoritesProvider.pickFavorite(context),
+		'l13Projects.addToFavorites': ({ project }) => FavoritesProvider.addToFavorites(context, project),
+		'l13Projects.renameFavorite': ({ project }) => FavoritesProvider.renameFavorite(context, project),
+		'l13Projects.removeFavorite': ({ project }) => FavoritesProvider.removeFavorite(context, project),
+		'l13Projects.clearFavorites': () => FavoritesProvider.clearFavorites(context),
+	});
 	
 }
 

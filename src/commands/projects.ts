@@ -2,13 +2,13 @@
 
 import * as vscode from 'vscode';
 
-import { ProjectsHotkeys } from '../services/common/ProjectsHotkeys';
-import { ProjectsSettings } from '../services/common/ProjectsSettings';
-import { ProjectsStatus } from '../services/common/ProjectsStatus';
+import { Open } from '../services/actions/Open';
+import { Commands } from '../services/common/Commands';
+import { Hotkeys } from '../services/common/Hotkeys';
+import { StatusBar } from '../services/common/StatusBar';
 import { FavoritesProvider } from '../services/sidebar/FavoritesProvider';
-import { GroupSimpleTreeItem } from '../services/sidebar/trees/GroupSimpleTreeItem';
-import { GroupTypeTreeItem } from '../services/sidebar/trees/GroupTypeTreeItem';
 import { WorkspacesProvider } from '../services/sidebar/WorkspacesProvider';
+import { GroupTreeItem } from '../services/types';
 
 //	Variables __________________________________________________________________
 
@@ -20,16 +20,16 @@ import { WorkspacesProvider } from '../services/sidebar/WorkspacesProvider';
 
 //	Exports ____________________________________________________________________
 
-export function activate (context:vscode.ExtensionContext, status:ProjectsStatus) {
+export function activate (context:vscode.ExtensionContext, status:StatusBar) {
 	
 	const workspacesProvider = WorkspacesProvider.createProvider(context);
 	const treeView = vscode.window.createTreeView('l13ProjectsWorkspaces', {
 		treeDataProvider: workspacesProvider
 	});
 	
-	treeView.onDidCollapseElement(({ element }) => WorkspacesProvider.saveCollapseState(context, <GroupSimpleTreeItem|GroupTypeTreeItem>element, true));
+	treeView.onDidCollapseElement(({ element }) => WorkspacesProvider.saveCollapseState(context, <GroupTreeItem>element, true));
 	
-	treeView.onDidExpandElement(({ element }) => WorkspacesProvider.saveCollapseState(context, <GroupSimpleTreeItem|GroupTypeTreeItem>element, false));
+	treeView.onDidExpandElement(({ element }) => WorkspacesProvider.saveCollapseState(context, <GroupTreeItem>element, false));
 	
 	context.subscriptions.push(treeView);
 	
@@ -38,89 +38,25 @@ export function activate (context:vscode.ExtensionContext, status:ProjectsStatus
 	WorkspacesProvider.onDidChangeProject((project) => {
 		
 		FavoritesProvider.updateFavorite(context, project);
-		ProjectsHotkeys.updateSlot(context, project);
+		Hotkeys.updateSlot(context, project);
 		
 	});
 	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.collapseAll', () => {
-		
-		WorkspacesProvider.currentProvider?.collapseAll();
-		
-	}));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.addToWorkspace', ({ project }) => {
-		
-		WorkspacesProvider.addToWorkspace(project);
-		
-	}));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.openProject', ({ project }) => {
-		
-		const newWindow = ProjectsSettings.get('openInNewWindow', false);
-		
-		vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(project.path), newWindow);
-		
-	}));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.openProjectInCurrentWindow', ({ project }) => {
-		
-		vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(project.path), false);
-		
-	}));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.openProjectInNewWindow', ({ project }) => {
-		
-		vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(project.path), true);
-		
-	}));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.pickProject', () => {
-		
-		WorkspacesProvider.pickProject(context);
-		
-	}));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.addProject', () => {
-		
-		WorkspacesProvider.addProject(context);
-		
-	}));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.saveProject', () => {
-		
-		WorkspacesProvider.saveProject(context);
-		
-	}));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.saveDetectedProject', ({ project }) => {
-		
-		WorkspacesProvider.saveProject(context, project);
-		
-	}));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.refreshProjects', () => {
-		
-		WorkspacesProvider.createProvider(context).refreshProjects();
-		
-	}));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.renameProject', ({ project }) => {
-		
-		WorkspacesProvider.renameProject(context, project);
-		
-	}));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.removeProject', ({ project }) => {
-		
-		WorkspacesProvider.removeProject(context, project);
-		
-	}));
-	
-	context.subscriptions.push(vscode.commands.registerCommand('l13Projects.clearProjects', () => {
-		
-		WorkspacesProvider.clearProjects(context);
-		
-	}));
+	Commands.register(context, {
+		'l13Projects.collapseAll': () => WorkspacesProvider.currentProvider?.collapseAll(),
+		'l13Projects.addToWorkspace': ({ project }) => WorkspacesProvider.addToWorkspace(project),
+		'l13Projects.openProject': ({ project }) => Open.openFolder(project.path),
+		'l13Projects.openProjectInCurrentWindow': ({ project }) => Open.openFolder(project.path, false),
+		'l13Projects.openProjectInNewWindow': ({ project }) => Open.openFolder(project.path, true),
+		'l13Projects.pickProject': () => WorkspacesProvider.pickProject(context),
+		'l13Projects.addProject': () => WorkspacesProvider.addProject(context),
+		'l13Projects.saveProject': () => WorkspacesProvider.saveProject(context),
+		'l13Projects.saveDetectedProject': ({ project }) => WorkspacesProvider.saveProject(context, project),
+		'l13Projects.refreshProjects': () => WorkspacesProvider.createProvider(context).refreshProjects(),
+		'l13Projects.renameProject': ({ project }) => WorkspacesProvider.renameProject(context, project),
+		'l13Projects.removeProject': ({ project }) => WorkspacesProvider.removeProject(context, project),
+		'l13Projects.clearProjects': () => WorkspacesProvider.clearProjects(context),
+	});
 	
 }
 

@@ -6,14 +6,15 @@ import * as vscode from 'vscode';
 import { sortCaseInsensitive } from '../@l13/arrays';
 import { Project, TreeItems } from '../@types/projects';
 
-import { getWorkspacePath } from '../../commands/common';
-
+import { Open } from '../actions/Open';
+import { Hotkeys } from '../common/Hotkeys';
+import { Settings } from '../common/Settings';
 import { CurrentProjectTreeItem } from './trees/CurrentProjectTreeItem';
 import { ProjectTreeItem } from './trees/ProjectTreeItem';
 
 //	Variables __________________________________________________________________
 
-
+const FAVORITES = 'favorites';
 
 //	Initialize _________________________________________________________________
 
@@ -61,21 +62,23 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	public getChildren (element?:TreeItems) :Thenable<TreeItems[]> {
 		
-		const workspacePath:string = getWorkspacePath();
+		const workspacePath:string = Settings.getWorkspacePath();
 		
 		return Promise.resolve(this.favorites.map((favorite) => {
 			
+			const slot = Hotkeys.getSlot(this.context, favorite);
+			
 			if (workspacePath && workspacePath === favorite.path) {
-				return new CurrentProjectTreeItem(favorite);
+				return new CurrentProjectTreeItem(favorite, slot);
 			}
 			
-			return new ProjectTreeItem(favorite);
+			return new ProjectTreeItem(favorite, slot);
 			
 		}));
 		
 	}
 	
-	public static pickFavorite (context:vscode.ExtensionContext) {
+	public static async pickFavorite (context:vscode.ExtensionContext) {
 		
 		const favorites:Project[] = getFavorites(context);
 		
@@ -85,22 +88,17 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 				description: project.path,
 				detail: project.deleted ? '$(alert) Path does not exist' : '',
 			}));
-			vscode.window.showQuickPick(items, { placeHolder: 'Select a project' }).then((value:any) => {
+			
+			const value = await vscode.window.showQuickPick(items, { placeHolder: 'Select a project' });
 				
-				if (!value) return;
-				
-				const newWindow = vscode.workspace.getConfiguration('l13Projects').get('openInNewWindow', false);
-				
-				vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(value.description), newWindow);
-				
-			});
+			if (value) Open.openFolder(value.description);
 		}
 		
 	}
 	
 	public static addToFavorites (context:vscode.ExtensionContext, project:Project) {
 		
-		const favorites:Project[] = context.globalState.get('favorites') || [];
+		const favorites:Project[] = getFavorites(context);
 		
 		if (favorites.some(({ path }) => path === project.path)) {
 			return vscode.window.showErrorMessage(`Project '${project.label}' exists in favorites!`);
@@ -109,79 +107,73 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 		favorites.push({ label: project.label, path: project.path, type: project.type });
 		favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 		
-		context.globalState.update('favorites', favorites);
+		context.globalState.update(FAVORITES, favorites);
 		
-		if (FavoritesProvider.currentProvider) FavoritesProvider.currentProvider.refresh();
+		FavoritesProvider.currentProvider?.refresh();
 		
 	}
 	
-	public static updateFavorite (context:vscode.ExtensionContext, favorite:Project) {
+	public static updateFavorite (context:vscode.ExtensionContext, { path, label, type }:Project) {
 		
-		const favorites:Project[] = context.globalState.get('favorites') || [];
+		const favorites:Project[] = getFavorites(context);
 		
-		for (const fav of favorites) {
-			if (fav.path === favorite.path) {
-				fav.label = favorite.label;
-				fav.type = favorite.type;
+		for (const favorite of favorites) {
+			if (favorite.path === path) {
+				favorite.label = label;
+				favorite.type = type;
 				favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				context.globalState.update('favorites', favorites);
-				if (FavoritesProvider.currentProvider) FavoritesProvider.currentProvider.refresh();
+				context.globalState.update(FAVORITES, favorites);
+				FavoritesProvider.currentProvider?.refresh();
 				break;
 			}
 		}
 		
 	}
 	
-	public static renameFavorite (context:vscode.ExtensionContext, favorite:Project) {
+	public static async renameFavorite (context:vscode.ExtensionContext, favorite:Project) {
 		
-		vscode.window.showInputBox({ value: favorite.label }).then((value) => {
-			
-			if (favorite.label === value || value === undefined) return;
-			
-			if (!value) {
-				vscode.window.showErrorMessage(`Favorite with no name is not valid!`);
-				return;
-			}
-			
-			favorite.label = value;
-			FavoritesProvider.updateFavorite(context, favorite);
-			FavoritesProvider._onDidChangeFavorite.fire(favorite);
-			
-		});
+		const value = await vscode.window.showInputBox({ value: favorite.label });
+		
+		if (favorite.label === value || value === undefined) return;
+		
+		if (!value) {
+			vscode.window.showErrorMessage(`Favorite with no name is not valid!`);
+			return;
+		}
+		
+		favorite.label = value;
+		FavoritesProvider.updateFavorite(context, favorite);
+		FavoritesProvider._onDidChangeFavorite.fire(favorite);
 		
 	}
 	
-	public static removeFavorite (context:vscode.ExtensionContext, favorite:Project) {
+	public static async removeFavorite (context:vscode.ExtensionContext, favorite:Project) {
 		
-		vscode.window.showInformationMessage(`Delete favorite "${favorite.label}"?`, { modal: true }, 'Delete').then((value) => {
+		const value = await vscode.window.showInformationMessage(`Delete favorite "${favorite.label}"?`, { modal: true }, 'Delete');
+		
+		if (value) {
+			const favorites:Project[] = getFavorites(context);
 			
-			if (value) {
-				const favorites:Project[] = context.globalState.get('favorites') || [];
-				
-				for (let i = 0; i < favorites.length; i++) {
-					if (favorites[i].path === favorite.path) {
-						favorites.splice(i, 1);
-						context.globalState.update('favorites', favorites);
-						if (FavoritesProvider.currentProvider) FavoritesProvider.currentProvider.refresh();
-						return;
-					}
+			for (let i = 0; i < favorites.length; i++) {
+				if (favorites[i].path === favorite.path) {
+					favorites.splice(i, 1);
+					context.globalState.update(FAVORITES, favorites);
+					FavoritesProvider.currentProvider?.refresh();
+					return;
 				}
 			}
-			
-		});
+		}
 		
 	}
 	
-	public static clearFavorites (context:vscode.ExtensionContext) {
+	public static async clearFavorites (context:vscode.ExtensionContext) {
 		
-		vscode.window.showInformationMessage(`Delete all favorites?'`, { modal: true }, 'Delete').then((value) => {
+		const value = await vscode.window.showInformationMessage(`Delete all favorites?'`, { modal: true }, 'Delete');
 			
-			if (value) {
-				context.globalState.update('favorites', []);
-				if (FavoritesProvider.currentProvider) FavoritesProvider.currentProvider.refresh();
-			}
-			
-		});
+		if (value) {
+			context.globalState.update(FAVORITES, []);
+			FavoritesProvider.currentProvider?.refresh();
+		}
 		
 	}
 	
@@ -189,11 +181,11 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 
 //	Functions __________________________________________________________________
 
-function getFavorites (context:vscode.ExtensionContext) {
+function getFavorites (context:vscode.ExtensionContext, checkDeleted:boolean = false) {
 	
-	const favorites:Project[] = context.globalState.get('favorites') || [];
+	const favorites:Project[] = context.globalState.get(FAVORITES) || [];
 	
-	favorites.forEach((favorite) => favorite.deleted = !fs.existsSync(favorite.path));
+	if (checkDeleted) favorites.forEach((favorite) => favorite.deleted = !fs.existsSync(favorite.path));
 	
 	return favorites;
 	

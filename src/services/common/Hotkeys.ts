@@ -2,9 +2,9 @@
 
 import * as vscode from 'vscode';
 
-import { Slot } from '../@types/hotkeys';
+import { Item, Slot } from '../@types/hotkeys';
 import { Project } from '../@types/projects';
-import { ProjectsSettings } from './ProjectsSettings';
+import { Open } from '../actions/Open';
 
 //	Variables __________________________________________________________________
 
@@ -16,15 +16,17 @@ const SLOTS = 'slots';
 
 //	Exports ____________________________________________________________________
 
-export class ProjectsHotkeys {
+export class Hotkeys {
 	
 	private static _onDidChangeSlot:vscode.EventEmitter<Slot[]> = new vscode.EventEmitter<Slot[]>();
-	public static readonly onDidChangeSlot:vscode.Event<Slot[]> = ProjectsHotkeys._onDidChangeSlot.event;
+	public static readonly onDidChangeSlot:vscode.Event<Slot[]> = Hotkeys._onDidChangeSlot.event;
 	
-	public static async assignSlot (context:vscode.ExtensionContext, selectedProject:Project) {
+	private static slots:Slot[]|null = null;
+	
+	public static async assignSlot (context:vscode.ExtensionContext, project:Project) {
 		
-		const slots:Slot[] = context.globalState.get(SLOTS, []);
-		const items:{ label:string, index:number, description:string }[] = [];
+		const slots = Hotkeys.slots || Hotkeys.getSlots(context);
+		const items:Item[] = [];
 		
 		for (let i = 1; i < 10; i++) {
 			items.push({
@@ -40,47 +42,44 @@ export class ProjectsHotkeys {
 		
 		if (item) {
 			for (const slot of slots) {
-				if (slot?.path === selectedProject.path) delete slots[slot.index];
+				if (slot?.path === project.path) delete slots[slot.index];
 			}
 			slots[item.index] = {
-				label: selectedProject.label,
+				label: project.label,
 				index: item.index,
-				path: selectedProject.path,
+				path: project.path,
 			};
-			ProjectsHotkeys._onDidChangeSlot.fire(slots);
 			context.globalState.update(SLOTS, slots);
+			Hotkeys._onDidChangeSlot.fire(slots);
 		}
 		
 	}
 	
 	public static openSlot (context:vscode.ExtensionContext, index:number) {
 		
-		const slots:Slot[] = context.globalState.get(SLOTS, []);
+		const slots = Hotkeys.slots || Hotkeys.getSlots(context);
 		const slot = slots[index];
 		
-		if (slot) {
-			const newWindow = ProjectsSettings.get('openInNewWindow', false);
-			vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(slot.path), newWindow);
-		}
+		if (slot) Open.openFolder(slot.path);
 	}
 	
 	public static updateSlot (context:vscode.ExtensionContext, project:Project) {
 		
-		const slots:Slot[] = context.globalState.get(SLOTS, []);
+		const slots = Hotkeys.slots || Hotkeys.getSlots(context);
 		
 		for (const slot of slots) {
 			if (slot?.path === project.path) slots[slot.index].label = project.label;
 		}
 		
-		ProjectsHotkeys._onDidChangeSlot.fire(slots);
 		context.globalState.update(SLOTS, slots);
+		Hotkeys._onDidChangeSlot.fire(slots);
 		
 	}
 	
 	public static async clearSlot (context:vscode.ExtensionContext) {
 		
-		const slots:Slot[] = context.globalState.get(SLOTS, []);
-		const items:{ label:string, index:number, description:string }[] = [];
+		const slots = Hotkeys.slots || Hotkeys.getSlots(context);
+		const items:Item[] = [];
 		
 		for (const slot of slots) {
 			if (slot) {
@@ -98,22 +97,35 @@ export class ProjectsHotkeys {
 		
 		if (item) {
 			delete slots[item.index];
-			ProjectsHotkeys._onDidChangeSlot.fire(slots);
 			context.globalState.update(SLOTS, slots);
+			Hotkeys._onDidChangeSlot.fire(slots);
 		}
 		
 	}
 	
 	public static getSlots (context:vscode.ExtensionContext) {
 		
-		return context.globalState.get(SLOTS, []);
+		return Hotkeys.slots || (Hotkeys.slots = context.globalState.get(SLOTS, []));
+		
+	}
+	
+	public static getSlot (context:vscode.ExtensionContext, project:Project) {
+		
+		const slots = Hotkeys.slots || Hotkeys.getSlots(context);
+		
+		for (const slot of slots) {
+			if (slot?.path === project.path) return slot;
+		}
+		
+		return null;
 		
 	}
 	
 	public static clearSlots (context:vscode.ExtensionContext) {
 		
-		context.globalState.update(SLOTS, []);
-		ProjectsHotkeys._onDidChangeSlot.fire([]);
+		Hotkeys.slots = [];
+		context.globalState.update(SLOTS, Hotkeys.slots);
+		Hotkeys._onDidChangeSlot.fire([]);
 		
 	}
 	

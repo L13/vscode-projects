@@ -14,6 +14,7 @@
 
 export * from './@types/files';
 export * from './@types/groups';
+export * from './@types/hotkeys';
 export * from './@types/projects';
 
 //	Functions __________________________________________________________________

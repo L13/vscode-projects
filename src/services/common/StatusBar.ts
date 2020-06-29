@@ -5,9 +5,8 @@ import * as vscode from 'vscode';
 
 import { Project } from '../@types/projects';
 
-import { getWorkspacePath } from '../../commands/common';
-
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
+import { Settings } from './Settings';
 
 //	Variables __________________________________________________________________
 
@@ -20,11 +19,11 @@ else if (process.platform === 'win32') command = 'l13Projects.showProjectInExplo
 
 //	Exports ____________________________________________________________________
 
-export class ProjectsStatus {
+export class StatusBar {
 	
 	private readonly statusBarItem:vscode.StatusBarItem;
 	
-	public static currentStatusBar:ProjectsStatus|undefined = undefined;
+	public static current:StatusBar|undefined = undefined;
 	
 	private constructor (private context:vscode.ExtensionContext) {
 		
@@ -41,7 +40,7 @@ export class ProjectsStatus {
 	
 	public update () :void {
 		
-		const workspacePath = getWorkspacePath();
+		const workspacePath = Settings.getWorkspacePath();
 		
 		if (workspacePath) {
 			const icon = WorkspacesProvider.isWorkspace(workspacePath) ? 'submodule' : 'directory';
@@ -67,13 +66,13 @@ export class ProjectsStatus {
 	public dispose () :void {
 		
 		this.statusBarItem.dispose();
-		ProjectsStatus.currentStatusBar = undefined;
+		StatusBar.current = undefined;
 		
 	}
 	
-	public static createStatusBar (context:vscode.ExtensionContext) :ProjectsStatus {
+	public static create (context:vscode.ExtensionContext) :StatusBar {
 		
-		return ProjectsStatus.currentStatusBar || (ProjectsStatus.currentStatusBar = new ProjectsStatus(context));
+		return StatusBar.current || (StatusBar.current = new StatusBar(context));
 		
 	}
 	
