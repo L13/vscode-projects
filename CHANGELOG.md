@@ -8,7 +8,8 @@ All notable changes to the "Projects" extension will be documented in this file.
 - Added save dialog to unknown worspace.
 - Added `l13Projects.sortWorkspacesBy` to group and sort workspaces.
 - Added `l13Projects.initialWorkspacesGroupState` to set the initial state of the workspaces groups.
-- Added hotkeys for workspace slots `Ctrl/Cmd + L Ctrl/Cmd + 1 .. 9`.
+- Added keyboard shortcuts for workspace slots `Ctrl/Cmd + L Ctrl/Cmd + 1 .. 9`.
+- Added keyboard shortcut for previous workspace `Ctrl/Cmd + L Ctrl/Cmd + 0`.
 
 ### Changed
 - Changed display name from `L13 Diff` to `Diff Folders`.

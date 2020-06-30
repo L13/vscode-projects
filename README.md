@@ -10,7 +10,8 @@ Manage your workspaces and projects in Visual Studio Code.
 - Added save dialog to unknown worspace.
 - Added `l13Projects.sortWorkspacesBy` to group and sort workspaces.
 - Added `l13Projects.initialWorkspacesGroupState` to set the initial state of the workspaces groups.
-- Added hotkeys for workspace slots `Ctrl/Cmd + L Ctrl/Cmd + 1 .. 9`.
+- Added keyboard shortcuts for workspace slots `Ctrl/Cmd + L Ctrl/Cmd + 1 .. 9`.
+- Added keyboard shortcut for previous workspace `Ctrl/Cmd + L Ctrl/Cmd + 0`.
 
 ## Features
 
@@ -65,6 +66,8 @@ Priority of icons and labels for saved projects and detected folders and workspa
 * `l13Projects.pickFavorite` - Open the quick menu and pick a favorite.
 * `l13Projects.pickProject` - Open the quick menu and pick a project.
 * `l13Projects.refreshProjects` - Refresh all detected folders and workspaces.
+* `l13Projects.slot1 .. .slot9` - Open a workspace in slot.
+* `l13Projects.previousWorkspace` - Open the previous active workspace.
 
 ## Available Settings
 
@@ -144,7 +147,7 @@ Linux
 * `Save Project` - Save the folder or workspace as a project.
 * `Add to Favorites` - Add the folder, workspace or project to the favorites.
 * `Open in Terminal` - Open the folder, workspace or project in the terminal.
-* `Assign to Slot` - Assign the folder, workspace or project to a slot 1 - 9 to open it with a keyboard shortcut directly.
+* `Assign to Slot` - Assign the folder, workspace or project to a slot 1 - 9 to open it with a keyboard shortcut.
 * `Compare with Workspace` - Compares the folder, workspace or project with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Open in Diff Folders` - Opens the folder, workspace or project in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Rename` - Change the name of a project.
