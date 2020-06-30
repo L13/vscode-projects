@@ -1,8 +1,8 @@
 //	Imports ____________________________________________________________________
 
-import { CurrentProjectTreeItem } from '../sidebar/trees/CurrentProjectTreeItem';
-import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
-import { UnknownProjectTreeItem } from '../sidebar/trees/UnknownProjectTreeItem';
+import { CurrentProjectTreeItem } from '../services/sidebar/trees/CurrentProjectTreeItem';
+import { ProjectTreeItem } from '../services/sidebar/trees/ProjectTreeItem';
+import { UnknownProjectTreeItem } from '../services/sidebar/trees/UnknownProjectTreeItem';
 import { GroupTreeItem } from './groups';
 
 //	Variables __________________________________________________________________

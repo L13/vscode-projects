@@ -2,10 +2,11 @@
 
 import * as vscode from 'vscode';
 
-import { Commands } from '../services/common/Commands';
-import { Hotkeys } from '../services/common/Hotkeys';
-import { FavoritesProvider } from '../services/sidebar/FavoritesProvider';
-import { WorkspacesProvider } from '../services/sidebar/WorkspacesProvider';
+import * as commands from '../common/commands';
+
+import { HotkeySlots } from '../features/HotkeySlots';
+import { FavoritesProvider } from '../sidebar/FavoritesProvider';
+import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
 
 //	Variables __________________________________________________________________
 
@@ -19,26 +20,29 @@ import { WorkspacesProvider } from '../services/sidebar/WorkspacesProvider';
 
 export function activate (context:vscode.ExtensionContext) {
 	
-	Hotkeys.onDidChangeSlot(() => {
+	const hotkeys = HotkeySlots.create(context);
+	
+	hotkeys.onDidChangeSlot(() => {
 		
 		FavoritesProvider.currentProvider?.refresh();
 		WorkspacesProvider.currentProvider?.refresh();
 		
 	});
 	
-	Commands.register(context, {
-		'l13Projects.assignSlot': async ({ project }) => Hotkeys.assignSlot(context, project),
-		'l13Projects.removeSlot': () => Hotkeys.clearSlot(context),
-		'l13Projects.clearSlots': () => Hotkeys.clearSlots(context),
-		'l13Projects.slot1': () => Hotkeys.openSlot(context, 1),
-		'l13Projects.slot2': () => Hotkeys.openSlot(context, 2),
-		'l13Projects.slot3': () => Hotkeys.openSlot(context, 3),
-		'l13Projects.slot4': () => Hotkeys.openSlot(context, 4),
-		'l13Projects.slot5': () => Hotkeys.openSlot(context, 5),
-		'l13Projects.slot6': () => Hotkeys.openSlot(context, 6),
-		'l13Projects.slot7': () => Hotkeys.openSlot(context, 7),
-		'l13Projects.slot8': () => Hotkeys.openSlot(context, 8),
-		'l13Projects.slot9': () => Hotkeys.openSlot(context, 9),
+	commands.register(context, {
+		'l13Projects.assignSlot': async ({ project }) => hotkeys.assign(project),
+		'l13Projects.removeSlot': () => hotkeys.remove(),
+		'l13Projects.clearSlots': () => hotkeys.clear(),
+		'l13Projects.slot1': () => hotkeys.open(1),
+		'l13Projects.slot2': () => hotkeys.open(2),
+		'l13Projects.slot3': () => hotkeys.open(3),
+		'l13Projects.slot4': () => hotkeys.open(4),
+		'l13Projects.slot5': () => hotkeys.open(5),
+		'l13Projects.slot6': () => hotkeys.open(6),
+		'l13Projects.slot7': () => hotkeys.open(7),
+		'l13Projects.slot8': () => hotkeys.open(8),
+		'l13Projects.slot9': () => hotkeys.open(9),
+		'l13Projects.previousWorkspace': () => hotkeys.previousWorkspace(),
 	});
 	
 }

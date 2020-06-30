@@ -223,6 +223,10 @@
 			{
 				"command": "l13Projects.slot9",
 				"title": "Project Slot 9"
+			},
+			{
+				"command": "l13Projects.previousWorkspace",
+				"title": "Previous Workspace"
 			}
 		],
 		"keybindings": [
@@ -285,6 +289,11 @@
 				"mac": "meta+l meta+9",
 				"key": "ctrl+l ctrl+9",
 				"command": "l13Projects.slot9"
+			},
+			{
+				"mac": "meta+l meta+0",
+				"key": "ctrl+l ctrl+0",
+				"command": "l13Projects.previousWorkspace"
 			}
 		],
 		"menus": {

@@ -7,7 +7,7 @@ import * as favorites from './commands/favorites';
 import * as hotkeys from './commands/hotkeys';
 import * as projects from './commands/projects';
 
-import { StatusBar } from './services/common/StatusBar';
+import { StatusBar } from './statusbar/StatusBar';
 
 //	Variables __________________________________________________________________
 
@@ -21,12 +21,12 @@ import { StatusBar } from './services/common/StatusBar';
 
 export function activate (context:vscode.ExtensionContext) {
 	
-	const status = StatusBar.create(context);
+	StatusBar.create(context);
 	
 	common.activate(context);
-	favorites.activate(context, status);
+	favorites.activate(context);
 	hotkeys.activate(context);
-	projects.activate(context, status);
+	projects.activate(context);
 	
 }
 

@@ -3,12 +3,13 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 
+import * as files from '../common/files';
+import * as settings from '../common/Settings';
+
 import { sortCaseInsensitive } from '../@l13/arrays';
 import { Project, TreeItems } from '../@types/projects';
 
-import { Open } from '../actions/Open';
-import { Hotkeys } from '../common/Hotkeys';
-import { Settings } from '../common/Settings';
+import { HotkeySlots } from '../features/HotkeySlots';
 import { CurrentProjectTreeItem } from './trees/CurrentProjectTreeItem';
 import { ProjectTreeItem } from './trees/ProjectTreeItem';
 
@@ -32,7 +33,9 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	public favorites:Project[] = [];
 	
-	public static currentProvider:FavoritesProvider|undefined;
+	private slots:HotkeySlots = null;
+	
+	public static currentProvider:FavoritesProvider;
 	
 	public static createProvider (context:vscode.ExtensionContext) {
 		
@@ -43,6 +46,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 	private constructor (private context:vscode.ExtensionContext) {
 		
 		this.favorites = getFavorites(this.context);
+		this.slots = HotkeySlots.create(this.context);
 		
 	}
 	
@@ -62,11 +66,12 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	public getChildren (element?:TreeItems) :Thenable<TreeItems[]> {
 		
-		const workspacePath:string = Settings.getWorkspacePath();
+		const workspacePath:string = settings.getWorkspacePath();
+		const slots = this.slots;
 		
 		return Promise.resolve(this.favorites.map((favorite) => {
 			
-			const slot = Hotkeys.getSlot(this.context, favorite);
+			const slot = slots.get(favorite);
 			
 			if (workspacePath && workspacePath === favorite.path) {
 				return new CurrentProjectTreeItem(favorite, slot);
@@ -91,7 +96,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 			
 			const value = await vscode.window.showQuickPick(items, { placeHolder: 'Select a project' });
 				
-			if (value) Open.openFolder(value.description);
+			if (value) files.open(value.description);
 		}
 		
 	}

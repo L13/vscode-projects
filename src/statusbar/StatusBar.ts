@@ -3,10 +3,11 @@
 import { basename } from 'path';
 import * as vscode from 'vscode';
 
+import { isMacOs, isWindows } from '../@l13/platforms';
 import { Project } from '../@types/projects';
 
+import * as settings from '../common/settings';
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
-import { Settings } from './Settings';
 
 //	Variables __________________________________________________________________
 
@@ -14,8 +15,8 @@ let command = 'l13Projects.showProjectInFolder';
 
 //	Initialize _________________________________________________________________
 
-if (process.platform === 'darwin') command = 'l13Projects.showProjectInFinder';
-else if (process.platform === 'win32') command = 'l13Projects.showProjectInExplorer';
+if (isMacOs) command = 'l13Projects.showProjectInFinder';
+else if (isWindows) command = 'l13Projects.showProjectInExplorer';
 
 //	Exports ____________________________________________________________________
 
@@ -23,7 +24,7 @@ export class StatusBar {
 	
 	private readonly statusBarItem:vscode.StatusBarItem;
 	
-	public static current:StatusBar|undefined = undefined;
+	public static current:StatusBar;
 	
 	private constructor (private context:vscode.ExtensionContext) {
 		
@@ -40,7 +41,7 @@ export class StatusBar {
 	
 	public update () :void {
 		
-		const workspacePath = Settings.getWorkspacePath();
+		const workspacePath = settings.getWorkspacePath();
 		
 		if (workspacePath) {
 			const icon = WorkspacesProvider.isWorkspace(workspacePath) ? 'submodule' : 'directory';

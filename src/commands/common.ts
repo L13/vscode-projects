@@ -1,10 +1,14 @@
 //	Imports ____________________________________________________________________
 
+import * as path from 'path';
 import * as vscode from 'vscode';
 
-import { Open } from '../services/actions/Open';
-import { Commands } from '../services/common/Commands';
-import { Settings } from '../services/common/Settings';
+import * as commands from '../common/commands';
+import * as files from '../common/files';
+import * as settings from '../common/settings';
+import * as terminal from '../common/terminal';
+
+import { Project } from '../@types/projects';
 
 //	Variables __________________________________________________________________
 
@@ -18,16 +22,21 @@ import { Settings } from '../services/common/Settings';
 
 export function activate (context:vscode.ExtensionContext) {
 	
-	Commands.register(context, {
+	commands.register(context, {
 		'l13Projects.openInNewWindow': (uri) => vscode.commands.executeCommand('vscode.openFolder', uri, true),
 		'l13Projects.openInCurrentWindow': (uri) => vscode.commands.executeCommand('vscode.openFolder', uri, false),
-		'l13Projects.showProjectInFinder': (item) => Open.reveal(item?.project.path || Settings.getWorkspacePath()),
-		'l13Projects.showProjectInExplorer': (item) => Open.reveal(item?.project.path || Settings.getWorkspacePath()),
-		'l13Projects.showProjectInFolder': (item) => Open.reveal(item?.project.path || Settings.getWorkspacePath()),
-		'l13Projects.openInTerminal': ({ project }) => Open.openTerminal(project),
+		'l13Projects.showProjectInFinder': (item) => files.reveal(item?.project.path || settings.getWorkspacePath()),
+		'l13Projects.showProjectInExplorer': (item) => files.reveal(item?.project.path || settings.getWorkspacePath()),
+		'l13Projects.showProjectInFolder': (item) => files.reveal(item?.project.path || settings.getWorkspacePath()),
+		'l13Projects.openInTerminal': ({ project }) => terminal.open(getFolderPath(project)),
 	});
 
 }
 
 //	Functions __________________________________________________________________
 
+function getFolderPath (project:Project) {
+	
+	return project.type === 'folders' || project.type === 'workspace' ? path.dirname(project.path) : project.path;
+	
+}

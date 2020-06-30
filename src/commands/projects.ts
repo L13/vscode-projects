@@ -2,13 +2,14 @@
 
 import * as vscode from 'vscode';
 
-import { Open } from '../services/actions/Open';
-import { Commands } from '../services/common/Commands';
-import { Hotkeys } from '../services/common/Hotkeys';
-import { StatusBar } from '../services/common/StatusBar';
-import { FavoritesProvider } from '../services/sidebar/FavoritesProvider';
-import { WorkspacesProvider } from '../services/sidebar/WorkspacesProvider';
-import { GroupTreeItem } from '../services/types';
+import * as commands from '../common/commands';
+import * as files from '../common/files';
+
+import { GroupTreeItem } from '../@types/groups';
+import { HotkeySlots } from '../features/HotkeySlots';
+import { FavoritesProvider } from '../sidebar/FavoritesProvider';
+import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
+import { StatusBar } from '../statusbar/StatusBar';
 
 //	Variables __________________________________________________________________
 
@@ -20,7 +21,7 @@ import { GroupTreeItem } from '../services/types';
 
 //	Exports ____________________________________________________________________
 
-export function activate (context:vscode.ExtensionContext, status:StatusBar) {
+export function activate (context:vscode.ExtensionContext) {
 	
 	const workspacesProvider = WorkspacesProvider.createProvider(context);
 	const treeView = vscode.window.createTreeView('l13ProjectsWorkspaces', {
@@ -33,21 +34,21 @@ export function activate (context:vscode.ExtensionContext, status:StatusBar) {
 	
 	context.subscriptions.push(treeView);
 	
-	workspacesProvider.onDidChangeTreeData(() => status.update());
+	workspacesProvider.onDidChangeTreeData(() => StatusBar.current?.update());
 	
 	WorkspacesProvider.onDidChangeProject((project) => {
 		
 		FavoritesProvider.updateFavorite(context, project);
-		Hotkeys.updateSlot(context, project);
+		HotkeySlots.create(context).update(project);
 		
 	});
 	
-	Commands.register(context, {
+	commands.register(context, {
 		'l13Projects.collapseAll': () => WorkspacesProvider.currentProvider?.collapseAll(),
 		'l13Projects.addToWorkspace': ({ project }) => WorkspacesProvider.addToWorkspace(project),
-		'l13Projects.openProject': ({ project }) => Open.openFolder(project.path),
-		'l13Projects.openProjectInCurrentWindow': ({ project }) => Open.openFolder(project.path, false),
-		'l13Projects.openProjectInNewWindow': ({ project }) => Open.openFolder(project.path, true),
+		'l13Projects.openProject': ({ project }) => files.open(project.path),
+		'l13Projects.openProjectInCurrentWindow': ({ project }) => files.open(project.path, false),
+		'l13Projects.openProjectInNewWindow': ({ project }) => files.open(project.path, true),
 		'l13Projects.pickProject': () => WorkspacesProvider.pickProject(context),
 		'l13Projects.addProject': () => WorkspacesProvider.addProject(context),
 		'l13Projects.saveProject': () => WorkspacesProvider.saveProject(context),

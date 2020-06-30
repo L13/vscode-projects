@@ -2,11 +2,12 @@
 
 import * as vscode from 'vscode';
 
-import { Commands } from '../services/common/Commands';
-import { Hotkeys } from '../services/common/Hotkeys';
-import { StatusBar } from '../services/common/StatusBar';
-import { FavoritesProvider } from '../services/sidebar/FavoritesProvider';
-import { WorkspacesProvider } from '../services/sidebar/WorkspacesProvider';
+import * as commands from '../common/commands';
+
+import { HotkeySlots } from '../features/HotkeySlots';
+import { FavoritesProvider } from '../sidebar/FavoritesProvider';
+import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
+import { StatusBar } from '../statusbar/StatusBar';
 
 //	Variables __________________________________________________________________
 
@@ -18,22 +19,22 @@ import { WorkspacesProvider } from '../services/sidebar/WorkspacesProvider';
 
 //	Exports ____________________________________________________________________
 
-export function activate (context:vscode.ExtensionContext, status:StatusBar) {
+export function activate (context:vscode.ExtensionContext) {
 	
 	const favoritesProvider = FavoritesProvider.createProvider(context);
 	
 	vscode.window.registerTreeDataProvider('l13ProjectsFavorites', favoritesProvider);
 	
-	favoritesProvider.onDidChangeTreeData(() => status.update());
+	favoritesProvider.onDidChangeTreeData(() => StatusBar.current?.update());
 	
 	FavoritesProvider.onDidChangeFavorite((favorite) => {
 		
 		WorkspacesProvider.updateProject(context, favorite);
-		Hotkeys.updateSlot(context, favorite);
+		HotkeySlots.create(context).update(favorite);
 		
 	});
 	
-	Commands.register(context, {
+	commands.register(context, {
 		'l13Projects.pickFavorite': () => FavoritesProvider.pickFavorite(context),
 		'l13Projects.addToFavorites': ({ project }) => FavoritesProvider.addToFavorites(context, project),
 		'l13Projects.renameFavorite': ({ project }) => FavoritesProvider.renameFavorite(context, project),

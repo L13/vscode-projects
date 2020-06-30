@@ -1,6 +1,6 @@
 //	Imports ____________________________________________________________________
 
-
+import * as vscode from 'vscode';
 
 //	Variables __________________________________________________________________
 
@@ -12,10 +12,13 @@
 
 //	Exports ____________________________________________________________________
 
-export * from './@types/files';
-export * from './@types/groups';
-export * from './@types/hotkeys';
-export * from './@types/projects';
+export function register (context:vscode.ExtensionContext, commands:{ [command:string]: (...args:any) => void }) {
+
+	for (const [command, callback] of Object.entries(commands)) {
+		context.subscriptions.push(vscode.commands.registerCommand(command, callback));
+	}
+	
+}
 
 //	Functions __________________________________________________________________
 

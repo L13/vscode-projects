@@ -78,7 +78,6 @@ gulp.task('script', () => {
 		return bundle.write({
 			file: './out/extension.js',
 			format: 'cjs',
-			name: 'l13projects',
 			globals: {
 				child_process: 'child_process',
 				fs: 'fs',
