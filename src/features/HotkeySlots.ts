@@ -38,8 +38,6 @@ export class HotkeySlots {
 		
 		this.slots = context.globalState.get(SLOTS, []);
 		
-		saveCurrentWorkspace(context);
-		
 	}
 	
 	public async assign (project:Project) {
@@ -150,18 +148,19 @@ export class HotkeySlots {
 		
 	}
 	
+	public static saveCurrentWorkspace (context:vscode.ExtensionContext) {
+	
+		const workspacePaths = context.globalState.get(CURRENT_WORKSPACE, []);
+		const workspacePath = settings.getWorkspacePath();
+		
+		if (workspacePath && workspacePaths[0] !== workspacePath) {
+			workspacePaths.unshift(workspacePath);
+			context.globalState.update(CURRENT_WORKSPACE, workspacePaths.slice(0, 2));
+		}
+		
+	}
+	
 }
 
 //	Functions __________________________________________________________________
 
-function saveCurrentWorkspace (context:vscode.ExtensionContext) {
-	
-	const workspacePaths = context.globalState.get(CURRENT_WORKSPACE, []);
-	const workspacePath = settings.getWorkspacePath();
-	
-	if (workspacePath && workspacePaths[0] !== workspacePath) {
-		workspacePaths.unshift(workspacePath);
-		context.globalState.update(CURRENT_WORKSPACE, workspacePaths.slice(0, 2));
-	}
-	
-}
