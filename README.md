@@ -9,7 +9,7 @@ Manage your workspaces and projects in Visual Studio Code.
 - Added message to empty workspace view.
 - Added save dialog to unknown worspace.
 - Added `l13Projects.sortWorkspacesBy` to group and sort workspaces.
-- Added `l13Projects.initialWorkspacesGroupState` to set the initial state of the workspaces groups.
+- Added `l13Projects.initialWorkspacesGroupState` to set the initial state of the workspace groups.
 - Added keyboard shortcuts for workspace slots `Ctrl/Cmd + L Ctrl/Cmd + 1 .. 9`.
 - Added keyboard shortcut for previous workspace `Ctrl/Cmd + L Ctrl/Cmd + 0`.
 
@@ -33,13 +33,9 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ### Workspaces
 
-![Projects Favorites](images/preview-workspaces.png)
+![Projects](images/preview-workspaces.png)
 
-### Favorites
-
-![Projects Favorites](images/preview-favorites.png)
-
-### Quick Pick for Favorites or Projects
+### Quick Pick for Favorites or Projects and Keyboard Shortcuts for Slots
 
 ![Projects Quick Menu](images/preview-quick-menu.png)
 
@@ -47,7 +43,7 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ![Projects Diff Folders](images/preview-l13-diff.png)
 
-### Legend of used Icons
+### Icons
 
 ![Projects Icons](images/preview-icons.png)
 
@@ -66,7 +62,7 @@ Priority of icons and labels for saved projects and detected folders and workspa
 * `l13Projects.pickFavorite` - Open the quick menu and pick a favorite.
 * `l13Projects.pickProject` - Open the quick menu and pick a project.
 * `l13Projects.refreshProjects` - Refresh all detected folders and workspaces.
-* `l13Projects.slot1 .. .slot9` - Open a workspace in slot.
+* `l13Projects.slot1 .. .slot9` - Open a workspace of a slot.
 * `l13Projects.previousWorkspace` - Open the previous active workspace.
 
 ## Available Settings
@@ -98,14 +94,14 @@ macOS
 * `Cmd + L Cmd + P` - Open the projects view.
 * `Cmd + Alt + P` - Open the quick menu to pick a favorite.
 * `Cmd + Alt + Shift + P` - Open the quick menu to pick a project.
-* `Cmd + L Cmd + 1 .. 9` - Open the workspace in the slot 1 - 9.
+* `Cmd + L Cmd + 1 .. 9` - Open a workspace in the slot 1 - 9.
 
 Windows / Linux
 
 * `Ctrl + L Ctrl + P` - Open the projects view.
 * `Ctrl + Alt + P` - Open the quick menu to pick a favorite.
 * `Ctrl + Alt + Shift + P` - Open the quick menu to pick a project.
-* `Ctrl + L Ctrl + 1 .. 9` - Open the workspace in the slot 1 - 9.
+* `Ctrl + L Ctrl + 1 .. 9` - Open a workspace in the slot 1 - 9.
 
 If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`.
 
