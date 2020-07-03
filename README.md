@@ -13,6 +13,14 @@ Manage your workspaces and projects in Visual Studio Code.
 - Added keyboard shortcuts for workspace slots `Ctrl/Cmd + L Ctrl/Cmd + 1 .. 9`.
 - Added keyboard shortcut for previous workspace `Ctrl/Cmd + L Ctrl/Cmd + 0`.
 
+## Index
+
+1. [Features](#features)
+1. [Available Commands](#available-commands)
+1. [Available Settings](#available-settings)
+1. [Mouse and Keyboard Shortcuts](#mouse-and-keyboard-shortcuts)
+1. [Recommended Extensions](#recommended-extensions)
+
 ## Features
 
 * Supports extension [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
@@ -87,7 +95,9 @@ Priority of icons and labels for saved projects and detected folders and workspa
 	* `Collapsed` - Show all groups collapsed at start.
 	* `Expanded` - Show all groups expanded at start.
 
-## Global Keyboard Shortcuts
+## Mouse and Keyboard Shortcuts
+
+## Global
 
 macOS
 
@@ -105,11 +115,11 @@ Windows / Linux
 
 If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`.
 
-## Favorites
+### Favorites
 
 * `Click` - Open a favorite folder, workspace or project. If `l13Projects.openInNewWindow` is true the project opens in a new window.
 
-### Context menu
+#### Context menu
 
 * `Open` - Open the favorite project in the current window. Ignores `l13Projects.openInNewWindow`.
 * `Open in new Window` - Open the favorite project in a new window. Ignores `l13Projects.openInNewWindow`.
@@ -132,11 +142,11 @@ Linux
 
 * `Open Containing Folder` - Opens the favorite project in the file manager.
 
-## Workspaces
+### Workspaces
 
 * `Click` - Open a folder, workspace or project. If `l13Projects.openInNewWindow` is true the project opens in a new window.
 
-### Context menu
+#### Context menu
 
 * `Open` - Open the folder, workspace or project in the current window. Ignores `l13Projects.openInNewWindow`.
 * `Open in new Window` - Open the folder, workspace or project in a new window. Ignores `l13Projects.openInNewWindow`.
@@ -161,23 +171,26 @@ Linux
 
 * `Open Containing Folder` - Opens the folder or VS Code workspace file in the file manager.
 
-## Quick Menu for Favorites
+### Quick Menu for Favorites
 
 * `Click` - Open a favorite folder, workspace or project. If `l13Projects.openInNewWindow` is true the project opens in a new window.
 
-## Quick Menu for Projects
+### Quick Menu for Projects
 
 * `Click` - Open a folder, workspace or project. If `l13Projects.openInNewWindow` is true the project opens in a new window.
 
-## Statusbar
+### Statusbar
 
 * `Click` - Reveal the current folder or workspace file in the Finder/Explorer.
 
-## VS Code Explorer
+### VS Code Explorer
 
-### Context Menu
+#### Context Menu
 
 * `Open in current Window` - Opens the selected file or folder in the current VS Code Window.
 * `Open in new Window` - Opens the selected file or folder in a new VS Code Window.
 
-> This extension is part of the [L13 Extension Pack](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-extension-pack).
+## Recommended Extensions
+
+- [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
+- [Extension Pack](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-extension-pack)
