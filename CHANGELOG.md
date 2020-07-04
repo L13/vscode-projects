@@ -4,8 +4,8 @@ All notable changes to the "Projects" extension will be documented in this file.
 ## [0.14.0] - 2020-07-05
 
 ### Added
-- Added message to empty workspace view.
-- Added save dialog to unknown worspace.
+- Added welcome view to empty workspaces view.
+- Added save dialog to unknown workspace.
 - Added `l13Projects.sortWorkspacesBy` to group and sort workspaces.
 - Added `l13Projects.initialWorkspacesGroupState` to set the initial state of the workspace groups.
 - Added keyboard shortcuts for workspace slots `Ctrl/Cmd + L Ctrl/Cmd + 1 .. 9`.

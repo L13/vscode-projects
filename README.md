@@ -6,8 +6,8 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ## What's new in Projects 0.14.0
 
-- Added message to empty workspace view.
-- Added save dialog to unknown worspace.
+- Added welcome view to empty workspaces view.
+- Added save dialog to unknown workspace.
 - Added `l13Projects.sortWorkspacesBy` to group and sort workspaces.
 - Added `l13Projects.initialWorkspacesGroupState` to set the initial state of the workspace groups.
 - Added keyboard shortcuts for workspace slots `Ctrl/Cmd + L Ctrl/Cmd + 1 .. 9`.
@@ -47,7 +47,7 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ![Projects Quick Menu](images/preview-quick-menu.png)
 
-### Supports [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
+### Supports the extension [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
 
 ![Projects Diff Folders](images/preview-l13-diff.png)
 
