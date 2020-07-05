@@ -3,9 +3,11 @@
 import { basename } from 'path';
 import * as vscode from 'vscode';
 
-import { getWorkspacePath } from './common';
-import { findExtWorkspace } from './ProjectsProvider';
-import { Project } from './types';
+import { isMacOs, isWindows } from '../@l13/platforms';
+import { Project } from '../@types/projects';
+
+import * as settings from '../common/settings';
+import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
 
 //	Variables __________________________________________________________________
 
@@ -13,16 +15,16 @@ let command = 'l13Projects.showProjectInFolder';
 
 //	Initialize _________________________________________________________________
 
-if (process.platform === 'darwin') command = 'l13Projects.showProjectInFinder';
-else if (process.platform === 'win32') command = 'l13Projects.showProjectInExplorer';
+if (isMacOs) command = 'l13Projects.showProjectInFinder';
+else if (isWindows) command = 'l13Projects.showProjectInExplorer';
 
 //	Exports ____________________________________________________________________
 
-export class ProjectsStatus {
+export class StatusBar {
 	
 	private readonly statusBarItem:vscode.StatusBarItem;
 	
-	public static currentStatusBar:ProjectsStatus|undefined = undefined;
+	public static current:StatusBar;
 	
 	private constructor (private context:vscode.ExtensionContext) {
 		
@@ -39,10 +41,10 @@ export class ProjectsStatus {
 	
 	public update () :void {
 		
-		const workspacePath = getWorkspacePath();
+		const workspacePath = settings.getWorkspacePath();
 		
 		if (workspacePath) {
-			const icon = findExtWorkspace.test(workspacePath) ? 'submodule' : 'directory';
+			const icon = WorkspacesProvider.isWorkspace(workspacePath) ? 'submodule' : 'directory';
 			const name:string = this.getProjectName('projects', workspacePath) || this.getProjectName('favorites', workspacePath);
 			
 			this.statusBarItem.text = `$(file-${icon}) ${name || basename(workspacePath, '.code-workspace')}`;
@@ -65,13 +67,13 @@ export class ProjectsStatus {
 	public dispose () :void {
 		
 		this.statusBarItem.dispose();
-		ProjectsStatus.currentStatusBar = undefined;
+		StatusBar.current = undefined;
 		
 	}
 	
-	public static createStatusBar (context:vscode.ExtensionContext) :ProjectsStatus {
+	public static create (context:vscode.ExtensionContext) :StatusBar {
 		
-		return ProjectsStatus.currentStatusBar || (ProjectsStatus.currentStatusBar = new ProjectsStatus(context));
+		return StatusBar.current || (StatusBar.current = new StatusBar(context));
 		
 	}
 	

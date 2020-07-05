@@ -1,6 +1,6 @@
 //	Imports ____________________________________________________________________
 
-import * as fs from 'fs';
+import { Stats } from 'fs';
 
 //	Variables __________________________________________________________________
 
@@ -14,13 +14,11 @@ import * as fs from 'fs';
 
 export type Callback = (error?:null|Error, result?:StatsMap) => void;
 
-export type Dictionary<T> = { [token:string]:T };
-
 export type File = {
 	path:string,
 	folder:string,
 	relative:string,
-	stat?:fs.Stats,
+	stat?:Stats,
 	type?:'file'|'folder'|'symlink',
 };
 
@@ -47,10 +45,8 @@ export type Options = {
 	maxDepth?:number,
 };
 
-export type StatsMap = { [pathname:string]:File };
-
-export type Uri = {
-	fsPath:string,
+export type StatsMap = {
+	[pathname:string]:File,
 };
 
 //	Functions __________________________________________________________________
