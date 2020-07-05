@@ -102,14 +102,11 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 			
 			if (event.affectsConfiguration('l13Projects.sortWorkspacesBy')) {
 				sortWorkspacesBy = settings.get('sortWorkspacesBy');
-				this.setContextGroups();
 				this.refresh();
 			}
 			
 		}, null, this.disposables);
 		
-		// this.context.globalState.update(GROUP_STATES_BY_SIMPLE, undefined);
-		// this.context.globalState.update(GROUP_STATES_BY_TYPE, undefined);
 		const groupTypeStates:GroupTypeState[] = this.context.globalState.get(GROUP_STATES_BY_TYPE, []);
 		const groupSimpleStates:GroupSimpleState[] = this.context.globalState.get(GROUP_STATES_BY_SIMPLE, []);
 		const initialState:InitialState = settings.get('initialWorkspacesGroupState', 'Remember');
@@ -144,19 +141,11 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 			this.groupSimples.forEach((group) => group.collapsed = initialState === 'Collapsed');
 		}
 		
-		this.setContextGroups();
-		
 	}
 	
 	public dispose () {
 		
 		this.disposables.forEach((disposable) => disposable.dispose());
-		
-	}
-	
-	private setContextGroups () {
-		
-		vscode.commands.executeCommand('setContext', 'l13ProjectGroups', sortWorkspacesBy !== 'Name');
 		
 	}
 	
