@@ -1,8 +1,6 @@
 //	Imports ____________________________________________________________________
 
-import { CurrentProjectTreeItem } from './CurrentProjectTreeItem';
-import { ProjectTreeItem } from './ProjectTreeItem';
-import { UnknownProjectTreeItem } from './UnknownProjectTreeItem';
+
 
 //	Variables __________________________________________________________________
 
@@ -14,14 +12,14 @@ import { UnknownProjectTreeItem } from './UnknownProjectTreeItem';
 
 //	Exports ____________________________________________________________________
 
-export type Project = {
-	path:string,
-	label:string,
-	type:'folder'|'folders'|'git'|'vscode'|'workspace',
-	deleted?:boolean,
-};
-
-export type TreeItems = ProjectTreeItem|CurrentProjectTreeItem|UnknownProjectTreeItem;
+export function sortCaseInsensitive (a:string, b:string) {
+	
+	a = a.toLowerCase();
+	b = b.toLowerCase();
+	
+	return a < b ? -1 : a > b ? 1 : 0;
+	
+}
 
 //	Functions __________________________________________________________________
 

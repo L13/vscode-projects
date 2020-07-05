@@ -9,7 +9,14 @@
 		"sourceMap": true,
 		"rootDir": "src",
 		"removeComments": true,
-		"strict": true   /* enable all strict type-checking options */
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"alwaysStrict": true,
+		"strictBindCallApply": true,
+		"strictNullChecks": false,
+		"strictFunctionTypes": true,
+		"strictPropertyInitialization": false,
+		// "strict": true   /* enable all strict type-checking options */
 		/* Additional Checks */
 		// "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
 		// "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */

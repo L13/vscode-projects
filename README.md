@@ -1,46 +1,59 @@
-# L13 Projects
+# Projects
 
 Manage your workspaces and projects in Visual Studio Code.
 
-![L13 Projects](images/preview.png)
+![Projects](images/preview.png)
 
-This extension is part of the [L13 Extension Pack](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-extension-pack).
+## What's new in Projects 0.14.0
+
+- Added welcome view to empty workspaces view.
+- Added save dialog to unknown workspace.
+- Added `l13Projects.sortWorkspacesBy` to group and sort workspaces.
+- Added `l13Projects.initialWorkspacesGroupState` to set the initial state of the workspace groups.
+- Added keyboard shortcuts for workspace slots `Ctrl/Cmd + L Ctrl/Cmd + 1 .. 9`.
+- Added keyboard shortcut for previous workspace `Ctrl/Cmd + L Ctrl/Cmd + 0`.
+
+## Index
+
+1. [Features](#features)
+1. [Available Commands](#available-commands)
+1. [Available Settings](#available-settings)
+1. [Mouse and Keyboard Shortcuts](#mouse-and-keyboard-shortcuts)
+1. [Recommended Extensions](#recommended-extensions)
 
 ## Features
 
-* Supports extension [L13 Diff](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
+* Supports extension [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
 * Add folders and workspaces to the project list.
 * Save the current folder or workspace in the project list.
 * Auto detects Git repositories, VS Code folders and VS Code workspaces.
 * Save auto detected Git repositories, VS Code folders and VS Code workspaces in the project list.
 * Add projects, Git repositories, VS Code folders and VS Code workspaces to favorites.
 * Open and pick a (favorite) folder, workspace or project with the quick menu.
-* Open a folder, workspace or project in  the current or a new window in VS Code Explorer or L13 Projects.
+* Open a folder, workspace or project in  the current or a new window in VS Code Explorer or Projects.
 * Reveal a folder or workspace in the Finder/Explorer.
 * Open a project, Git repository, VS Code folder or VS Code workspace in the Terminal.
 * Delete or rename a favorite or project.
 * Status bar shows current workspace name and opens the current folder or workspace in the Finder/Explorer.
 * Cache detected folders and workspaces between sessions.
+* Sort workspaces by name, type or simple group.
+* Assign a workspace to a slot to open it with a keyboard shortcut.
 
 ### Workspaces
 
-![L13 Projects Favorites](images/preview-workspaces.png)
+![Projects](images/preview-workspaces.png)
 
-### Favorites
+### Quick Pick for Favorites or Projects and Keyboard Shortcuts for Slots
 
-![L13 Projects Favorites](images/preview-favorites.png)
+![Projects Quick Menu](images/preview-quick-menu.png)
 
-### Quick Pick for Favorites or Projects
+### Supports the extension [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
 
-![L13 Projects Quick Menu](images/preview-quick-menu.png)
+![Projects Diff Folders](images/preview-l13-diff.png)
 
-### Supports [L13 Diff](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
+### Icons
 
-![L13 Projects L13 Diff](images/preview-l13-diff.png)
-
-### Legend of used Icons
-
-![L13 Projects Icons](images/preview-icons.png)
+![Projects Icons](images/preview-icons.png)
 
 Priority of icons and labels for saved projects and detected folders and workspaces.
 
@@ -57,6 +70,8 @@ Priority of icons and labels for saved projects and detected folders and workspa
 * `l13Projects.pickFavorite` - Open the quick menu and pick a favorite.
 * `l13Projects.pickProject` - Open the quick menu and pick a project.
 * `l13Projects.refreshProjects` - Refresh all detected folders and workspaces.
+* `l13Projects.slot1 .. .slot9` - Open a workspace of a slot.
+* `l13Projects.previousWorkspace` - Open the previous active workspace.
 
 ## Available Settings
 
@@ -71,34 +86,47 @@ Priority of icons and labels for saved projects and detected folders and workspa
 * `l13Projects.workspace.folders` - The folders to search for VS Code workspaces.
 * `l13Projects.workspace.maxDepthRecursion` - The maximum depth of folder recursion for VS Code workspaces.
 * `l13Projects.workspace.ignore` - The folders which will be ignored for search.
+* `l13Projects.sortWorkspacesBy` - Sort workspaces by name, simple or type. 
+	* `Name` - (default) Sort all workspaces by name.
+	* `Simple` - Group all workspaces by simple type. 
+	* `Type` - Group all workspaces by type. 
+* `l13Projects.initialWorkspacesGroupState` - Set the initial state of a group.
+	* `Remember` - (default) Remember the collpased and expanded state of each group.
+	* `Collapsed` - Show all groups collapsed at start.
+	* `Expanded` - Show all groups expanded at start.
 
-## Global Keyboard Shortcuts
+## Mouse and Keyboard Shortcuts
+
+## Global
 
 macOS
 
 * `Cmd + L Cmd + P` - Open the projects view.
 * `Cmd + Alt + P` - Open the quick menu to pick a favorite.
 * `Cmd + Alt + Shift + P` - Open the quick menu to pick a project.
+* `Cmd + L Cmd + 1 .. 9` - Open a workspace in the slot 1 - 9.
 
 Windows / Linux
 
 * `Ctrl + L Ctrl + P` - Open the projects view.
 * `Ctrl + Alt + P` - Open the quick menu to pick a favorite.
 * `Ctrl + Alt + Shift + P` - Open the quick menu to pick a project.
+* `Ctrl + L Ctrl + 1 .. 9` - Open a workspace in the slot 1 - 9.
 
 If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`.
 
-## Favorites
+### Favorites
 
 * `Click` - Open a favorite folder, workspace or project. If `l13Projects.openInNewWindow` is true the project opens in a new window.
 
-### Context menu
+#### Context menu
 
 * `Open` - Open the favorite project in the current window. Ignores `l13Projects.openInNewWindow`.
 * `Open in new Window` - Open the favorite project in a new window. Ignores `l13Projects.openInNewWindow`.
 * `Open in Terminal` - Opens the favorite project in the VS Code terminal.
-* `Compare with Workspace` - Compares the favorite project with the current workspace. Requires [L13 Diff](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
-* `Open in L13 Diff` - Opens the favorite project in L13 Diff. Requires [L13 Diff](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Assign to Slot` - Assign the folder, workspace or project to a slot 1 - 9 to open it with a keyboard shortcut directly.
+* `Compare with Workspace` - Compares the favorite project with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Open in Diff Folders` - Opens the favorite project in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Rename` - Change the name of the favorite.
 * `Delete` - Delete the favorite project from favorites.
 
@@ -114,19 +142,20 @@ Linux
 
 * `Open Containing Folder` - Opens the favorite project in the file manager.
 
-## Workspaces
+### Workspaces
 
 * `Click` - Open a folder, workspace or project. If `l13Projects.openInNewWindow` is true the project opens in a new window.
 
-### Context menu
+#### Context menu
 
 * `Open` - Open the folder, workspace or project in the current window. Ignores `l13Projects.openInNewWindow`.
 * `Open in new Window` - Open the folder, workspace or project in a new window. Ignores `l13Projects.openInNewWindow`.
 * `Save Project` - Save the folder or workspace as a project.
 * `Add to Favorites` - Add the folder, workspace or project to the favorites.
 * `Open in Terminal` - Open the folder, workspace or project in the terminal.
-* `Compare with Workspace` - Compares the folder, workspace or project with the current workspace. Requires [L13 Diff](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
-* `Open in L13 Diff` - Opens the folder, workspace or project in L13 Diff. Requires [L13 Diff](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Assign to Slot` - Assign the folder, workspace or project to a slot 1 - 9 to open it with a keyboard shortcut.
+* `Compare with Workspace` - Compares the folder, workspace or project with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Open in Diff Folders` - Opens the folder, workspace or project in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Rename` - Change the name of a project.
 * `Delete` - Delete the project.
 
@@ -142,21 +171,26 @@ Linux
 
 * `Open Containing Folder` - Opens the folder or VS Code workspace file in the file manager.
 
-## Quick Menu for Favorites
+### Quick Menu for Favorites
 
 * `Click` - Open a favorite folder, workspace or project. If `l13Projects.openInNewWindow` is true the project opens in a new window.
 
-## Quick Menu for Projects
+### Quick Menu for Projects
 
 * `Click` - Open a folder, workspace or project. If `l13Projects.openInNewWindow` is true the project opens in a new window.
 
-## Statusbar
+### Statusbar
 
 * `Click` - Reveal the current folder or workspace file in the Finder/Explorer.
 
-## VS Code Explorer
+### VS Code Explorer
 
-### Context Menu
+#### Context Menu
 
 * `Open in current Window` - Opens the selected file or folder in the current VS Code Window.
 * `Open in new Window` - Opens the selected file or folder in a new VS Code Window.
+
+## Recommended Extensions
+
+- [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
+- [Extension Pack](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-extension-pack)
