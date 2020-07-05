@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to the "Projects" extension will be documented in this file.
 
+## [0.14.1] - 2020-07-05
+
+### Fixed
+- Fixed wrong name for a light theme icon.
+
 ## [0.14.0] - 2020-07-05
 
 ### Added
