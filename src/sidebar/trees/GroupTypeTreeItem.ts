@@ -21,10 +21,10 @@ export class GroupTypeTreeItem extends TreeItem {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
-		const name = `group-type-${group.type}`;
+		const name = `project-${group.type}`;
 		
-		this.contextValue = name;
-		this.id = name;
+		this.contextValue = `group-${name}`;
+		this.id = `group-${name}`;
 		
 		this.iconPath = {
 			light: join(__filename, '..', '..', 'images', `${name}-light.svg`),

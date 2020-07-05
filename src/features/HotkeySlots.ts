@@ -6,7 +6,7 @@ import * as files from '../common/files';
 import * as settings from '../common/settings';
 
 import { Item, Slot } from '../@types/hotkeys';
-import { Project } from '../@types/projects';
+import { Project } from '../@types/workspaces';
 
 //	Variables __________________________________________________________________
 

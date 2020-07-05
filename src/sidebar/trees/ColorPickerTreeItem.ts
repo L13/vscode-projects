@@ -15,26 +15,19 @@ import { Project } from '../../@types/workspaces';
 
 //	Exports ____________________________________________________________________
 
-export class UnknownProjectTreeItem extends TreeItem {
+export class ColorPickerTreeItem extends TreeItem {
 	
-	public contextValue = 'unknown-project';
+	public project:Project = null;
 	
-	public description:string = 'Unknown workspace';
+	public contextValue = 'color-picker';
 	
-	public constructor (public readonly project:Project) {
-		
-		super(project.label);
-		
-		this.iconPath = {
-			light: join(__filename, '..', '..', 'images', `unknown-project-light.svg`),
-			dark: join(__filename, '..', '..', 'images', `unknown-project-dark.svg`),
-		};
-		
-	}
+	public id = 'color-picker';
 	
-	public get tooltip () :string {
+	public constructor () {
 		
-		return this.project.path;
+		super('');
+		
+		this.iconPath = join(__filename, '..', '..', 'images', 'color-picker.svg');
 		
 	}
 	

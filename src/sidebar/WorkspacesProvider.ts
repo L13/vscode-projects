@@ -9,7 +9,7 @@ import { walktree } from '../@l13/fse';
 
 import { File, Options } from '../@types/files';
 import { GroupSimple, GroupSimpleState, GroupTreeItem, GroupType, GroupTypeState, InitialState, WorkspaceSortting } from '../@types/groups';
-import { Project, TreeItems } from '../@types/projects';
+import { Project, TreeItems } from '../@types/workspaces';
 
 import * as dialogs from '../common/dialogs';
 import * as files from '../common/files';
@@ -17,6 +17,7 @@ import * as settings from '../common/settings';
 
 import { HotkeySlots } from '../features/HotkeySlots';
 
+import { ColorPickerTreeItem } from './trees/ColorPickerTreeItem';
 import { CurrentProjectTreeItem } from './trees/CurrentProjectTreeItem';
 import { GroupSimpleTreeItem } from './trees/GroupSimpleTreeItem';
 import { GroupTypeTreeItem } from './trees/GroupTypeTreeItem';
@@ -49,9 +50,11 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	private static _onDidChangeProject:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
 	public static readonly onDidChangeProject:vscode.Event<Project> = WorkspacesProvider._onDidChangeProject.event;
 	
+	public static colorPicker = new ColorPickerTreeItem();
+	
 	private disposables:vscode.Disposable[] = [];
 	
-	private isFirstView:boolean = true;
+	private initCache:boolean = true;
 	private cache:Project[] = [];
 	
 	public projects:Project[] = [];
@@ -90,7 +93,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 			this.gitProjects = context.globalState.get('cacheGitProjects') || [];
 			this.vscodeProjects = context.globalState.get('cacheVSCodeProjects') || [];
 			this.workspaceProjects = context.globalState.get('cacheWorkspaceProjects') || [];
-			this.isFirstView = false;
+			this.initCache = false;
 		}
 		
 		this.slots = HotkeySlots.create(this.context);
@@ -154,6 +157,24 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	private setContextGroups () {
 		
 		vscode.commands.executeCommand('setContext', 'l13ProjectGroups', sortWorkspacesBy !== 'Name');
+		
+	}
+	
+	public showColorPicker (project:Project) {
+		
+		WorkspacesProvider.colorPicker.project = project;
+		
+		this.refresh();
+		
+	}
+	
+	public assignColor (project:Project, color:number) {
+		
+		project.color = color;
+		
+		WorkspacesProvider.colorPicker.project = null;
+		WorkspacesProvider.updateProject(this.context, project);
+		WorkspacesProvider._onDidChangeProject.fire(project);
 		
 	}
 	
@@ -300,6 +321,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	private addSimpleGroupItems (list:TreeItems[], type:string, workspacePath:string) {
 		
+		const colorPickerProject = WorkspacesProvider.colorPicker.project;
 		const slots = this.slots;
 		let hasCurrentProject = false;
 		
@@ -327,6 +349,9 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 					hasCurrentProject = true;
 					list.push(new CurrentProjectTreeItem(project, slot));
 				} else list.push(new ProjectTreeItem(project, slot));
+				if (colorPickerProject && simpleType === 'project' && colorPickerProject.path === project.path) {
+					list.push(WorkspacesProvider.colorPicker);
+				}
 			}
 			
 		});
@@ -353,6 +378,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	private addTypeGroupItems (list:TreeItems[], type:string, workspacePath:string) {
 		
+		const colorPickerProject = WorkspacesProvider.colorPicker.project;
 		const workspaceFile = vscode.workspace.workspaceFile;
 		const slots = this.slots;
 		let hasCurrentProject = false;
@@ -365,6 +391,9 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 					hasCurrentProject = true;
 					list.push(new CurrentProjectTreeItem(project, slot));
 				} else list.push(new ProjectTreeItem(project, slot));
+				if (colorPickerProject && (type === 'folder' || type === 'folders') && colorPickerProject.path === project.path) {
+					list.push(WorkspacesProvider.colorPicker);
+				}
 			}
 			
 		});
@@ -378,16 +407,22 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	private addItems (list:TreeItems[], workspacePath:string) {
 		
+		const colorPickerProject = WorkspacesProvider.colorPicker.project;
 		const slots = this.slots;
 		let hasCurrentProject = false;
 		
 		this.cache.forEach((project) => {
 			
 			const slot = slots.get(project);
+			
 			if (workspacePath && workspacePath === project.path) {
 				hasCurrentProject = true;
 				list.push(new CurrentProjectTreeItem(project, slot));
 			} else list.push(new ProjectTreeItem(project, slot));
+			
+			if (colorPickerProject?.path === project.path) {
+				list.push(WorkspacesProvider.colorPicker);
+			}
 			
 		});
 		
@@ -405,12 +440,18 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
+	public getParent (element:TreeItems) {
+		
+		return Promise.resolve(undefined);
+		
+	}
+	
 	public getChildren (element?:TreeItems) :Thenable<TreeItems[]> {
 		
-		if (this.isFirstView) {
+		if (this.initCache) {
 			this.updateCache();
 			this.detectProjects();
-			this.isFirstView = false;
+			this.initCache = false;
 		}
 		
 		const workspacePath:string = settings.getWorkspacePath();
@@ -466,9 +507,9 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	public static async pickProject (context:vscode.ExtensionContext) {
 		
 		const projectProvider = WorkspacesProvider.createProvider(context);
-		const items = projectProvider.isFirstView ? Promise.all(projectProvider.detectProjects()).then(() => {
+		const items = projectProvider.initCache ? Promise.all(projectProvider.detectProjects()).then(() => {
 			
-			projectProvider.isFirstView = false;
+			projectProvider.initCache = false;
 			
 			return projectProvider.createQuickPickItems();
 			
@@ -557,6 +598,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		for (const pro of projects) {
 			if (pro.path === project.path) {
 				pro.label = project.label;
+				pro.color = project.color;
 				projects.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				context.globalState.update(PROJECTS, projects);
 				WorkspacesProvider.currentProvider?.refresh();

@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 import * as common from './commands/common';
 import * as favorites from './commands/favorites';
 import * as hotkeys from './commands/hotkeys';
-import * as projects from './commands/projects';
+import * as workspaces from './commands/workspaces';
 
 import { StatusBar } from './statusbar/StatusBar';
 
@@ -26,7 +26,7 @@ export function activate (context:vscode.ExtensionContext) {
 	common.activate(context);
 	favorites.activate(context);
 	hotkeys.activate(context);
-	projects.activate(context);
+	workspaces.activate(context);
 	
 }
 

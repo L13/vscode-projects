@@ -90,7 +90,7 @@ gulp.task('script', () => {
 	
 });
 
-gulp.task('build', gulp.series('clean', 'script'));
+gulp.task('build', gulp.series('clean', 'icons:fix', 'script'));
 
 gulp.task('watch', () => {
 	

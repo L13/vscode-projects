@@ -4,7 +4,7 @@ import { basename } from 'path';
 import * as vscode from 'vscode';
 
 import { isMacOs, isWindows } from '../@l13/platforms';
-import { Project } from '../@types/projects';
+import { Project } from '../@types/workspaces';
 
 import * as settings from '../common/settings';
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';

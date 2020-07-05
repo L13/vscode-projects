@@ -4,7 +4,7 @@ import { join } from 'path';
 import { TreeItem } from 'vscode';
 
 import { Slot } from '../../@types/hotkeys';
-import { Project } from '../../@types/projects';
+import { Project } from '../../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -17,8 +17,6 @@ import { Project } from '../../@types/projects';
 //	Exports ____________________________________________________________________
 
 export class CurrentProjectTreeItem extends TreeItem {
-	
-	public contextValue = 'current-project';
 	
 	public constructor (public readonly project:Project, public readonly slot:Slot|null) {
 		

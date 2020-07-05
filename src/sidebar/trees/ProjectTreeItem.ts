@@ -4,7 +4,7 @@ import { join } from 'path';
 import { TreeItem } from 'vscode';
 
 import { Slot } from '../../@types/hotkeys';
-import { Project } from '../../@types/projects';
+import { Project } from '../../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -32,9 +32,13 @@ export class ProjectTreeItem extends TreeItem {
 		
 		this.contextValue = `project-${type}`;
 		
+		let icon = `${type}`;
+		
+		if (type === 'folder') icon += `-color-${project.color || 0}`;
+		
 		this.iconPath = {
-			light: join(__filename, '..', '..', 'images', `project-${type}-light.svg`),
-			dark: join(__filename, '..', '..', 'images', `project-${type}-dark.svg`),
+			light: join(__filename, '..', '..', 'images', `project-${icon}-light.svg`),
+			dark: join(__filename, '..', '..', 'images', `project-${icon}-dark.svg`),
 		};
 		
 	}

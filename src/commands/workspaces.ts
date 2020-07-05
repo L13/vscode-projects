@@ -33,7 +33,14 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	treeView.onDidExpandElement(({ element }) => WorkspacesProvider.saveCollapseState(context, <GroupTreeItem>element, false));
 	
-	context.subscriptions.push(treeView);
+	treeView.onDidChangeSelection((event) => {
+		
+		if (event.selection[0] !== WorkspacesProvider.colorPicker) {
+			WorkspacesProvider.colorPicker.project = null;
+			WorkspacesProvider.currentProvider.refresh();
+		}
+		
+	});
 	
 	workspacesProvider.onDidChangeTreeData(() => StatusBar.current?.update());
 	
@@ -43,6 +50,8 @@ export function activate (context:vscode.ExtensionContext) {
 		HotkeySlots.create(context).update(project);
 		
 	});
+	
+	context.subscriptions.push(treeView);
 	
 	commands.register(context, {
 		'l13Projects.addToWorkspace': ({ project }) => WorkspacesProvider.addToWorkspace(project),
@@ -57,6 +66,19 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.renameProject': ({ project }) => WorkspacesProvider.renameProject(context, project),
 		'l13Projects.removeProject': ({ project }) => WorkspacesProvider.removeProject(context, project),
 		'l13Projects.clearProjects': () => WorkspacesProvider.clearProjects(context),
+		'l13Projects.pickColor1': ({ project }) => workspacesProvider.assignColor(project, 1),
+		'l13Projects.pickColor2': ({ project }) => workspacesProvider.assignColor(project, 2),
+		'l13Projects.pickColor3': ({ project }) => workspacesProvider.assignColor(project, 3),
+		'l13Projects.pickColor4': ({ project }) => workspacesProvider.assignColor(project, 4),
+		'l13Projects.pickColor5': ({ project }) => workspacesProvider.assignColor(project, 5),
+		'l13Projects.pickColor6': ({ project }) => workspacesProvider.assignColor(project, 6),
+		'l13Projects.removeColor': ({ project }) => workspacesProvider.assignColor(project, 0),
+		'l13Projects.selectColor': ({ project }) => {
+			
+			workspacesProvider.showColorPicker(project);
+			treeView.reveal(WorkspacesProvider.colorPicker, { focus: true, select: true });
+			
+		},
 	});
 	
 }

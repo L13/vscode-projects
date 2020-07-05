@@ -7,7 +7,7 @@ import * as files from '../common/files';
 import * as settings from '../common/Settings';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
-import { Project, TreeItems } from '../@types/projects';
+import { Project, TreeItems } from '../@types/workspaces';
 
 import { HotkeySlots } from '../features/HotkeySlots';
 import { CurrentProjectTreeItem } from './trees/CurrentProjectTreeItem';
