@@ -27,8 +27,8 @@ export class GroupSimpleTreeItem extends TreeItem {
 		this.id = name;
 		
 		this.iconPath = {
-			light: join(__filename, '..', '..', 'images', `${name}-light.svg`),
-			dark: join(__filename, '..', '..', 'images', `${name}-dark.svg`),
+			light: join(__filename, '..', '..', 'images', 'groups', `${name}-light.svg`),
+			dark: join(__filename, '..', '..', 'images', 'groups', `${name}-dark.svg`),
 		};
 		
 	}

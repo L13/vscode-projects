@@ -37,8 +37,8 @@ export class ProjectTreeItem extends TreeItem {
 		if (type === 'folder') icon += `-color-${project.color || 0}`;
 		
 		this.iconPath = {
-			light: join(__filename, '..', '..', 'images', `project-${icon}-light.svg`),
-			dark: join(__filename, '..', '..', 'images', `project-${icon}-dark.svg`),
+			light: join(__filename, '..', '..', 'images', 'types', `project-${icon}-light.svg`),
+			dark: join(__filename, '..', '..', 'images', 'types', `project-${icon}-dark.svg`),
 		};
 		
 	}

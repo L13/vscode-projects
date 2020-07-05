@@ -27,8 +27,8 @@ export class GroupTypeTreeItem extends TreeItem {
 		this.id = `group-${name}`;
 		
 		this.iconPath = {
-			light: join(__filename, '..', '..', 'images', `${name}-light.svg`),
-			dark: join(__filename, '..', '..', 'images', `${name}-dark.svg`),
+			light: join(__filename, '..', '..', 'images', 'types', `${name}-light.svg`),
+			dark: join(__filename, '..', '..', 'images', 'types', `${name}-dark.svg`),
 		};
 		
 	}

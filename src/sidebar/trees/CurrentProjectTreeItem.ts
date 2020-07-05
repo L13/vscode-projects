@@ -27,8 +27,8 @@ export class CurrentProjectTreeItem extends TreeItem {
 		this.contextValue = `current-project-${type}`;
 		
 		this.iconPath = {
-			light: join(__filename, '..', '..', 'images', `current-project-${type}-light.svg`),
-			dark: join(__filename, '..', '..', 'images', `current-project-${type}-dark.svg`),
+			light: join(__filename, '..', '..', 'images', 'current', `current-project-${type}-light.svg`),
+			dark: join(__filename, '..', '..', 'images', 'current', `current-project-${type}-dark.svg`),
 		};
 		
 	}

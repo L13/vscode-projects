@@ -108,8 +108,8 @@
 				"command": "l13Projects.addProject",
 				"title": "Projects: Add Project",
 				"icon": {
-					"light": "images/project-save-light.svg",
-					"dark": "images/project-save-dark.svg"
+					"light": "images/workspaces/project-save-light.svg",
+					"dark": "images/workspaces/project-save-dark.svg"
 				}
 			},
 			{
@@ -120,8 +120,8 @@
 				"command": "l13Projects.refreshProjects",
 				"title": "Projects: Refresh Projects",
 				"icon": {
-					"light": "images/project-refresh-light.svg",
-					"dark": "images/project-refresh-dark.svg"
+					"light": "images/workspaces/project-refresh-light.svg",
+					"dark": "images/workspaces/project-refresh-dark.svg"
 				}
 			},
 			{
@@ -228,39 +228,39 @@
 				"command": "l13Projects.removeColor",
 				"title": "Remove Color",
 				"icon": {
-					"light": "images/color-remove-light.svg",
-					"dark": "images/color-remove-dark.svg"
+					"light": "images/picker/color-remove-light.svg",
+					"dark": "images/picker/color-remove-dark.svg"
 				}
 			},
 			{
 				"command": "l13Projects.pickColor1",
 				"title": "Pick Color 1",
-				"icon": "images/color-1.svg"
+				"icon": "images/picker/color-1.svg"
 			},
 			{
 				"command": "l13Projects.pickColor2",
 				"title": "Pick Color 2",
-				"icon": "images/color-2.svg"
+				"icon": "images/picker/color-2.svg"
 			},
 			{
 				"command": "l13Projects.pickColor3",
 				"title": "Pick Color 3",
-				"icon": "images/color-3.svg"
+				"icon": "images/picker/color-3.svg"
 			},
 			{
 				"command": "l13Projects.pickColor4",
 				"title": "Pick Color 4",
-				"icon": "images/color-4.svg"
+				"icon": "images/picker/color-4.svg"
 			},
 			{
 				"command": "l13Projects.pickColor5",
 				"title": "Pick Color 5",
-				"icon": "images/color-5.svg"
+				"icon": "images/picker/color-5.svg"
 			},
 			{
 				"command": "l13Projects.pickColor6",
 				"title": "Pick Color 6",
-				"icon": "images/color-6.svg"
+				"icon": "images/picker/color-6.svg"
 			}
 		],
 		"keybindings": [

@@ -26,8 +26,8 @@ export class UnknownProjectTreeItem extends TreeItem {
 		super(project.label);
 		
 		this.iconPath = {
-			light: join(__filename, '..', '..', 'images', `unknown-project-light.svg`),
-			dark: join(__filename, '..', '..', 'images', `unknown-project-dark.svg`),
+			light: join(__filename, '..', '..', 'images', 'unknown', `unknown-project-light.svg`),
+			dark: join(__filename, '..', '..', 'images', 'unknown', `unknown-project-dark.svg`),
 		};
 		
 	}

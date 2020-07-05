@@ -27,7 +27,7 @@ export class ColorPickerTreeItem extends TreeItem {
 		
 		super('');
 		
-		this.iconPath = join(__filename, '..', '..', 'images', 'color-picker.svg');
+		this.iconPath = join(__filename, '..', '..', 'images', 'picker', 'color-picker.svg');
 		
 	}
 	

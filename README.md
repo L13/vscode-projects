@@ -2,16 +2,11 @@
 
 Manage your workspaces and projects in Visual Studio Code.
 
-![Projects](images/preview.png)
+![Projects](images/previews/preview.png)
 
-## What's new in Projects 0.14.0
+## What's new in Projects 0.15.0
 
-- Added welcome view to empty workspaces view.
-- Added save dialog to unknown workspace.
-- Added `l13Projects.sortWorkspacesBy` to group and sort workspaces.
-- Added `l13Projects.initialWorkspacesGroupState` to set the initial state of the workspace groups.
-- Added keyboard shortcuts for workspace slots `Ctrl/Cmd + L Ctrl/Cmd + 1 .. 9`.
-- Added keyboard shortcut for previous workspace `Ctrl/Cmd + L Ctrl/Cmd + 0`.
+- Added colors for projects. Changes icon and status bar color.
 
 ## Index
 
@@ -38,22 +33,23 @@ Manage your workspaces and projects in Visual Studio Code.
 * Cache detected folders and workspaces between sessions.
 * Sort workspaces by name, type or simple group.
 * Assign a workspace to a slot to open it with a keyboard shortcut.
+* Select a color for a project which changes also the statusbar for the workspace.
 
 ### Workspaces
 
-![Projects](images/preview-workspaces.png)
+![Projects](images/previews/preview-workspaces.png)
 
 ### Quick Pick for Favorites or Projects and Keyboard Shortcuts for Slots
 
-![Projects Quick Menu](images/preview-quick-menu.png)
+![Projects Quick Menu](images/previews/preview-quick-menu.png)
 
 ### Supports the extension [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
 
-![Projects Diff Folders](images/preview-l13-diff.png)
+![Projects Diff Folders](images/previews/preview-l13-diff.png)
 
 ### Icons
 
-![Projects Icons](images/preview-icons.png)
+![Projects Icons](images/previews/preview-icons.png)
 
 Priority of icons and labels for saved projects and detected folders and workspaces.
 
@@ -105,6 +101,7 @@ macOS
 * `Cmd + Alt + P` - Open the quick menu to pick a favorite.
 * `Cmd + Alt + Shift + P` - Open the quick menu to pick a project.
 * `Cmd + L Cmd + 1 .. 9` - Open a workspace in the slot 1 - 9.
+* `Cmd + L Cmd + 0` - Open a prevoious active workspace.
 
 Windows / Linux
 
@@ -112,6 +109,7 @@ Windows / Linux
 * `Ctrl + Alt + P` - Open the quick menu to pick a favorite.
 * `Ctrl + Alt + Shift + P` - Open the quick menu to pick a project.
 * `Ctrl + L Ctrl + 1 .. 9` - Open a workspace in the slot 1 - 9.
+* `Ctrl + L Ctrl + 0` - Open a prevoious active workspace.
 
 If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`.
 
