@@ -25,7 +25,8 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	const workspacesProvider = WorkspacesProvider.createProvider(context);
 	const treeView = vscode.window.createTreeView('l13ProjectsWorkspaces', {
-		treeDataProvider: workspacesProvider
+		treeDataProvider: workspacesProvider,
+		showCollapseAll: true,
 	});
 	
 	treeView.onDidCollapseElement(({ element }) => WorkspacesProvider.saveCollapseState(context, <GroupTreeItem>element, true));
@@ -44,7 +45,6 @@ export function activate (context:vscode.ExtensionContext) {
 	});
 	
 	commands.register(context, {
-		'l13Projects.collapseAll': () => WorkspacesProvider.currentProvider?.collapseAll(),
 		'l13Projects.addToWorkspace': ({ project }) => WorkspacesProvider.addToWorkspace(project),
 		'l13Projects.openProject': ({ project }) => files.open(project.path),
 		'l13Projects.openProjectInCurrentWindow': ({ project }) => files.open(project.path, false),

@@ -17,27 +17,18 @@ import { GroupType } from '../../@types/groups';
 
 export class GroupTypeTreeItem extends TreeItem {
 	
-	// triggers the tree view to recreate all items for collapse all
-	private static stateVersion:number = 0;
-	
-	public static updateStateVersion () {
-		
-		GroupTypeTreeItem.stateVersion = 1 - GroupTypeTreeItem.stateVersion;
-		
-	}
-	
 	public constructor (public readonly group:GroupType) {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
-		const type = group.type;
+		const name = `group-type-${group.type}`;
 		
-		this.contextValue = `group-type-${type}`;
-		this.id = `group-type-${type}-${GroupTypeTreeItem.stateVersion}`;
+		this.contextValue = name;
+		this.id = name;
 		
 		this.iconPath = {
-			light: join(__filename, '..', '..', 'images', `group-type-${type}-light.svg`),
-			dark: join(__filename, '..', '..', 'images', `group-type-${type}-dark.svg`),
+			light: join(__filename, '..', '..', 'images', `${name}-light.svg`),
+			dark: join(__filename, '..', '..', 'images', `${name}-dark.svg`),
 		};
 		
 	}

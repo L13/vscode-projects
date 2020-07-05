@@ -637,35 +637,6 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	public collapseAll () {
-		
-		if (sortWorkspacesBy === 'Name') return;
-		
-		const GROUP_STATES = sortWorkspacesBy === 'Simple' ? GROUP_STATES_BY_SIMPLE : GROUP_STATES_BY_TYPE;
-		const groups:(GroupSimple|GroupType)[] = sortWorkspacesBy === 'Simple' ? this.groupSimples : this.groupTypes;
-		const groupTreeItem = sortWorkspacesBy === 'Simple' ? GroupSimpleTreeItem : GroupTypeTreeItem;
-		const groupStates:(GroupSimpleState|GroupTypeState)[] = this.context.globalState.get(GROUP_STATES, []);
-		
-		groupTreeItem.updateStateVersion();
-		
-		groups.forEach((group) => {
-			
-			const type = group.type;
-			
-			group.collapsed = true;
-			
-			if (!groupStates.some((groupState) => groupState.type === type ? groupState.collapsed = true : false)) {
-				groupStates.push({ type, collapsed: true });
-			}
-			
-		});
-		
-		this.context.globalState.update(GROUP_STATES, groupStates);
-		
-		this.refresh();
-		
-	}
-	
 	public static async clearProjects (context:vscode.ExtensionContext) {
 		
 		const value = await dialogs.confirm(`Delete all projects?'`, 'Delete');

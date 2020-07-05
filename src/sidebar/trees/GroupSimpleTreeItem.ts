@@ -17,27 +17,18 @@ import { GroupSimple } from '../../@types/groups';
 
 export class GroupSimpleTreeItem extends TreeItem {
 	
-	// triggers the tree view to recreate all items for collapse all
-	private static stateVersion:number = 0;
-	
-	public static updateStateVersion () {
-		
-		GroupSimpleTreeItem.stateVersion = 1 - GroupSimpleTreeItem.stateVersion;
-		
-	}
-	
 	public constructor (public readonly group:GroupSimple) {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
-		const type = group.type;
+		const name = `group-simple-${group.type}`;
 		
-		this.contextValue = `group-simple-${type}`;
-		this.id = `group-simple-${type}-${GroupSimpleTreeItem.stateVersion}`;
+		this.contextValue = name;
+		this.id = name;
 		
 		this.iconPath = {
-			light: join(__filename, '..', '..', 'images', `group-simple-${type}-light.svg`),
-			dark: join(__filename, '..', '..', 'images', `group-simple-${type}-dark.svg`),
+			light: join(__filename, '..', '..', 'images', `${name}-light.svg`),
+			dark: join(__filename, '..', '..', 'images', `${name}-dark.svg`),
 		};
 		
 	}
