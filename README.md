@@ -59,15 +59,17 @@ Priority of icons and labels for saved projects and detected folders and workspa
 
 ## Available Commands
 
-* `l13Projects.addProject` - Add folders and workspaces to the project list by dialog.
-* `l13Projects.saveProject` - Save the folder or workspace in the project list.
-* `l13Projects.clearProjects` - Delete all saved projects in the project list.
-* `l13Projects.clearFavorites` - Delete all favorites.
-* `l13Projects.pickFavorite` - Open the quick menu and pick a favorite.
-* `l13Projects.pickProject` - Open the quick menu and pick a project.
-* `l13Projects.refreshProjects` - Refresh all detected folders and workspaces.
-* `l13Projects.slot1 .. .slot9` - Open a workspace of a slot.
-* `l13Projects.previousWorkspace` - Open the previous active workspace.
+* `Projects: Add Project` - Add folders and workspaces to the project list by dialog.
+* `Projects: Save Project` - Save the folder or workspace in the project list.
+* `Projects: Delete All Projects` - Delete all saved projects in the project list.
+* `Projects: Delete All Favorites` - Delete all favorites.
+* `Projects: Select Favorite` - Open the quick menu and pick a favorite.
+* `Projects: Select Project` - Open the quick menu and pick a project.
+* `Projects: Refresh Projects` - Refresh all detected folders and workspaces.
+* `Projects: Slot 1 .. 9` - Open a workspace assigned to a slot.
+* `Projects: Clear Slot` - Clear a slot.
+* `Projects: Clear All Slots` - Clear all slots.
+* `Projects: Go to previous Workspace` - Open the previous active workspace.
 
 ## Available Settings
 

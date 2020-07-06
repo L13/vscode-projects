@@ -174,7 +174,7 @@
 			},
 			{
 				"command": "l13Projects.removeSlot",
-				"title": "Projects: Remove Slot"
+				"title": "Projects: Clear Slot"
 			},
 			{
 				"command": "l13Projects.clearSlots",
@@ -182,43 +182,43 @@
 			},
 			{
 				"command": "l13Projects.slot1",
-				"title": "Project Slot 1"
+				"title": "Projects: Slot 1"
 			},
 			{
 				"command": "l13Projects.slot2",
-				"title": "Project Slot 2"
+				"title": "Projects: Slot 2"
 			},
 			{
 				"command": "l13Projects.slot3",
-				"title": "Project Slot 3"
+				"title": "Projects: Slot 3"
 			},
 			{
 				"command": "l13Projects.slot4",
-				"title": "Project Slot 4"
+				"title": "Projects: Slot 4"
 			},
 			{
 				"command": "l13Projects.slot5",
-				"title": "Project Slot 5"
+				"title": "Projects: Slot 5"
 			},
 			{
 				"command": "l13Projects.slot6",
-				"title": "Project Slot 6"
+				"title": "Projects: Slot 6"
 			},
 			{
 				"command": "l13Projects.slot7",
-				"title": "Project Slot 7"
+				"title": "Projects: Slot 7"
 			},
 			{
 				"command": "l13Projects.slot8",
-				"title": "Project Slot 8"
+				"title": "Projects: Slot 8"
 			},
 			{
 				"command": "l13Projects.slot9",
-				"title": "Project Slot 9"
+				"title": "Projects: Slot 9"
 			},
 			{
 				"command": "l13Projects.previousWorkspace",
-				"title": "Previous Workspace"
+				"title": "Projects: Go to previous Workspace"
 			},
 			{
 				"command": "l13Projects.selectColor",
