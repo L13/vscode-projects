@@ -123,10 +123,13 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Open in new Window` - Open the favorite project in a new window. Ignores `l13Projects.openInNewWindow`.
 * `Open in Terminal` - Opens the favorite project in the VS Code terminal.
 * `Assign to Slot` - Assign the folder, workspace or project to a slot 1 - 9 to open it with a keyboard shortcut directly.
+* `Select for Compare` - Select a folder, workspace or project for a comparison. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Compare with Selected` - Compare the folder, workspace or project with the current selection. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Compare with Workspace` - Compares the favorite project with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Open in Diff Folders` - Opens the favorite project in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
-* `Rename` - Change the name of the favorite.
-* `Delete` - Delete the favorite project from favorites.
+* `Rename` - Change the name of the favorite project.
+* `Remove` - Remove the project, repository or workspace from favorites.
+* `Delete` - Delete the project.
 
 macOS
 
@@ -152,6 +155,9 @@ Linux
 * `Add to Favorites` - Add the folder, workspace or project to the favorites.
 * `Open in Terminal` - Open the folder, workspace or project in the terminal.
 * `Assign to Slot` - Assign the folder, workspace or project to a slot 1 - 9 to open it with a keyboard shortcut.
+* `Select Color` - Select a color for a project. The color also appears in the status bar.
+* `Select for Compare` - Select a folder, workspace or project for a comparison. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Compare with Selected` - Compare the folder, workspace or project with the current selection. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Compare with Workspace` - Compares the folder, workspace or project with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Open in Diff Folders` - Opens the folder, workspace or project in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Rename` - Change the name of a project.
@@ -181,7 +187,7 @@ Linux
 
 * `Click` - Reveal the current folder or workspace file in the Finder/Explorer.
 
-### VS Code Explorer
+### Visual Studio Code Explorer
 
 #### Context Menu
 

@@ -6,6 +6,9 @@ All notable changes to the "Projects" extension will be documented in this file.
 ### Added
 - Added colors for projects. Changes icon and status bar color.
 
+### Changed
+- Changed wording `Delete` to `Remove` for favorites.
+
 ## [0.14.1] - 2020-07-05
 
 ### Fixed

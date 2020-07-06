@@ -94,7 +94,7 @@
 			},
 			{
 				"command": "l13Projects.removeFavorite",
-				"title": "Delete"
+				"title": "Remove"
 			},
 			{
 				"command": "l13Projects.clearFavorites",

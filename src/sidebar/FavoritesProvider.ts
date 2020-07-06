@@ -118,7 +118,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	public static updateFavorite (context:vscode.ExtensionContext, { path, label, type }:Project) {
+	public static updateFavorite (context:vscode.ExtensionContext, { color, path, label, type }:Project) {
 		
 		const favorites:Project[] = getFavorites(context);
 		
@@ -126,6 +126,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 			if (favorite.path === path) {
 				favorite.label = label;
 				favorite.type = type;
+				favorite.color = color;
 				favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				context.globalState.update(FAVORITES, favorites);
 				FavoritesProvider.currentProvider?.refresh();
@@ -141,10 +142,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 		if (favorite.label === value || value === undefined) return;
 		
-		if (!value) {
-			vscode.window.showErrorMessage(`Favorite with no name is not valid!`);
-			return;
-		}
+		if (!value) return vscode.window.showErrorMessage(`Favorite with no name is not valid!`);
 		
 		favorite.label = value;
 		FavoritesProvider.updateFavorite(context, favorite);
@@ -154,7 +152,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	public static async removeFavorite (context:vscode.ExtensionContext, favorite:Project) {
 		
-		const value = await vscode.window.showInformationMessage(`Delete favorite "${favorite.label}"?`, { modal: true }, 'Delete');
+		const value = await vscode.window.showInformationMessage(`Remove favorite "${favorite.label}"?`, { modal: true }, 'Remove');
 		
 		if (value) {
 			const favorites:Project[] = getFavorites(context);

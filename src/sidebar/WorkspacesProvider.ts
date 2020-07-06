@@ -159,7 +159,8 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	public assignColor (project:Project, color:number) {
 		
-		project.color = color;
+		if (color) project.color = color;
+		else delete project.color;
 		
 		WorkspacesProvider.colorPicker.project = null;
 		WorkspacesProvider.updateProject(this.context, project);

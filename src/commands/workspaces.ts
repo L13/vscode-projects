@@ -37,7 +37,7 @@ export function activate (context:vscode.ExtensionContext) {
 		
 		if (event.selection[0] !== WorkspacesProvider.colorPicker) {
 			WorkspacesProvider.colorPicker.project = null;
-			WorkspacesProvider.currentProvider.refresh();
+			workspacesProvider.refresh();
 		}
 		
 	});
