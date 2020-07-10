@@ -66,7 +66,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	public getChildren (element?:TreeItems) :Thenable<TreeItems[]> {
 		
-		const workspacePath:string = settings.getWorkspacePath();
+		const workspacePath:string = settings.getCurrentWorkspacePath();
 		const slots = this.slots;
 		
 		return Promise.resolve(this.favorites.map((favorite) => {

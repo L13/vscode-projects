@@ -59,6 +59,7 @@ gulp.task('script', () => {
 		external: [
 			'child_process',
 			'fs',
+			'jsonc-parser',
 			'path',
 			'vscode',
 		],
@@ -81,6 +82,7 @@ gulp.task('script', () => {
 			globals: {
 				child_process: 'child_process',
 				fs: 'fs',
+				jsoncParser: 'jsonc-parser',
 				path: 'path',
 				vscode: 'vscode',
 			},

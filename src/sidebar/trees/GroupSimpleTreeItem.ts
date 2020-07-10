@@ -7,7 +7,7 @@ import { GroupSimple } from '../../@types/groups';
 
 //	Variables __________________________________________________________________
 
-
+const basePath = join(__dirname, '..', 'images', 'groups');
 
 //	Initialize _________________________________________________________________
 
@@ -27,8 +27,8 @@ export class GroupSimpleTreeItem extends TreeItem {
 		this.id = name;
 		
 		this.iconPath = {
-			light: join(__filename, '..', '..', 'images', 'groups', `${name}-light.svg`),
-			dark: join(__filename, '..', '..', 'images', 'groups', `${name}-dark.svg`),
+			light: join(basePath, `${name}-light.svg`),
+			dark: join(basePath, `${name}-dark.svg`),
 		};
 		
 	}

@@ -8,7 +8,7 @@ import { Project } from '../../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
-
+const basePath = join(__dirname, '..', 'images', 'types');
 
 //	Initialize _________________________________________________________________
 
@@ -34,11 +34,11 @@ export class ProjectTreeItem extends TreeItem {
 		
 		let icon = `${type}`;
 		
-		if (type === 'folder') icon += `-color-${project.color || 0}`;
+		if (type === 'folder' || type === 'folders') icon += `-color-${project.color || 0}`;
 		
 		this.iconPath = {
-			light: join(__filename, '..', '..', 'images', 'types', `project-${icon}-light.svg`),
-			dark: join(__filename, '..', '..', 'images', 'types', `project-${icon}-dark.svg`),
+			light: join(basePath, `project-${icon}-light.svg`),
+			dark: join(basePath, `project-${icon}-dark.svg`),
 		};
 		
 	}

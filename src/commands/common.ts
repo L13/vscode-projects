@@ -25,9 +25,9 @@ export function activate (context:vscode.ExtensionContext) {
 	commands.register(context, {
 		'l13Projects.openInNewWindow': (uri) => vscode.commands.executeCommand('vscode.openFolder', uri, true),
 		'l13Projects.openInCurrentWindow': (uri) => vscode.commands.executeCommand('vscode.openFolder', uri, false),
-		'l13Projects.showProjectInFinder': (item) => files.reveal(item?.project.path || settings.getWorkspacePath()),
-		'l13Projects.showProjectInExplorer': (item) => files.reveal(item?.project.path || settings.getWorkspacePath()),
-		'l13Projects.showProjectInFolder': (item) => files.reveal(item?.project.path || settings.getWorkspacePath()),
+		'l13Projects.showProjectInFinder': (item) => files.reveal(item?.project.path || settings.getCurrentWorkspacePath()),
+		'l13Projects.showProjectInExplorer': (item) => files.reveal(item?.project.path || settings.getCurrentWorkspacePath()),
+		'l13Projects.showProjectInFolder': (item) => files.reveal(item?.project.path || settings.getCurrentWorkspacePath()),
 		'l13Projects.openInTerminal': ({ project }) => terminal.open(getFolderPath(project)),
 	});
 

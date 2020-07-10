@@ -8,7 +8,7 @@ import { Project } from '../../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
-
+const basePath = join(__dirname, '..', 'images', 'current');
 
 //	Initialize _________________________________________________________________
 
@@ -26,9 +26,13 @@ export class CurrentProjectTreeItem extends TreeItem {
 		
 		this.contextValue = `current-project-${type}`;
 		
+		const icon = `${type}`;
+		
+		// if (type === 'folder' || type === 'folders') icon += `-color-${project.color || 0}`;
+		
 		this.iconPath = {
-			light: join(__filename, '..', '..', 'images', 'current', `current-project-${type}-light.svg`),
-			dark: join(__filename, '..', '..', 'images', 'current', `current-project-${type}-dark.svg`),
+			light: join(basePath, `current-project-${icon}-light.svg`),
+			dark: join(basePath, `current-project-${icon}-dark.svg`),
 		};
 		
 	}

@@ -261,6 +261,11 @@
 				"command": "l13Projects.pickColor6",
 				"title": "Pick Color 6",
 				"icon": "images/picker/color-6.svg"
+			},
+			{
+				"command": "l13Projects.pickColor7",
+				"title": "Pick Color 7",
+				"icon": "images/picker/color-7.svg"
 			}
 		],
 		"keybindings": [
@@ -427,6 +432,10 @@
 				{
 					"command": "l13Projects.pickColor6",
 					"when": "false"
+				},
+				{
+					"command": "l13Projects.pickColor7",
+					"when": "false"
 				}
 			],
 			"explorer/context": [
@@ -539,7 +548,7 @@
 				},
 				{
 					"command": "l13Projects.removeColor",
-					"group": "inline@7",
+					"group": "inline@8",
 					"when": "view == l13ProjectsWorkspaces && viewItem == color-picker"
 				},
 				{
@@ -570,6 +579,11 @@
 				{
 					"command": "l13Projects.pickColor6",
 					"group": "inline@6",
+					"when": "view == l13ProjectsWorkspaces && viewItem == color-picker"
+				},
+				{
+					"command": "l13Projects.pickColor7",
+					"group": "inline@7",
 					"when": "view == l13ProjectsWorkspaces && viewItem == color-picker"
 				}
 			]
@@ -704,5 +718,8 @@
 		"tslint": "^6.1.0",
 		"typescript": "^3.8.3",
 		"vscode-test": "^1.0.2"
+	},
+	"dependencies": {
+		"jsonc-parser": "^2.3.0"
 	}
 }

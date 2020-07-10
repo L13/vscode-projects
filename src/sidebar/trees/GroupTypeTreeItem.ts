@@ -7,7 +7,7 @@ import { GroupType } from '../../@types/groups';
 
 //	Variables __________________________________________________________________
 
-
+const basePath = join(__dirname, '..', 'images', 'types');
 
 //	Initialize _________________________________________________________________
 
@@ -27,8 +27,8 @@ export class GroupTypeTreeItem extends TreeItem {
 		this.id = `group-${name}`;
 		
 		this.iconPath = {
-			light: join(__filename, '..', '..', 'images', 'types', `${name}-light.svg`),
-			dark: join(__filename, '..', '..', 'images', 'types', `${name}-dark.svg`),
+			light: join(basePath, `${name}-light.svg`),
+			dark: join(basePath, `${name}-dark.svg`),
 		};
 		
 	}

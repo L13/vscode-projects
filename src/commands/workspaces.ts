@@ -72,6 +72,7 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.pickColor4': ({ project }) => workspacesProvider.assignColor(project, 4),
 		'l13Projects.pickColor5': ({ project }) => workspacesProvider.assignColor(project, 5),
 		'l13Projects.pickColor6': ({ project }) => workspacesProvider.assignColor(project, 6),
+		'l13Projects.pickColor7': ({ project }) => workspacesProvider.assignColor(project, 7),
 		'l13Projects.removeColor': ({ project }) => workspacesProvider.assignColor(project, 0),
 		'l13Projects.selectColor': ({ project }) => {
 			

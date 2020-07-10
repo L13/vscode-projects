@@ -151,7 +151,7 @@ export class HotkeySlots {
 	public static saveCurrentWorkspace (context:vscode.ExtensionContext) {
 	
 		const workspacePaths = context.globalState.get(CURRENT_WORKSPACE, []);
-		const workspacePath = settings.getWorkspacePath();
+		const workspacePath = settings.getCurrentWorkspacePath();
 		
 		if (workspacePath && workspacePaths[0] !== workspacePath) {
 			workspacePaths.unshift(workspacePath);

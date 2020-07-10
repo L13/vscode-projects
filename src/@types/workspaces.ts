@@ -16,6 +16,12 @@ import { GroupTreeItem } from './groups';
 
 //	Exports ____________________________________________________________________
 
+export type StatusbarColors = {
+	'statusBar.background':string,
+	'statusBar.foreground':string,
+	'statusBarItem.hoverBackground':string,
+};
+
 export type Project = {
 	path:string,
 	label:string,
