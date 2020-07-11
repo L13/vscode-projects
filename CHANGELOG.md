@@ -4,10 +4,14 @@ All notable changes to the "Projects" extension will be documented in this file.
 ## [0.15.0] - 2020-07-19
 
 ### Added
-- Added colors for projects. Changes icon and status bar color.
+- Added colors for projects. Change icon and status bar color to 7 different colors.
+- Added `Copy Path` to context menu for folders, projects and workspaces.
 
 ### Changed
 - Changed wording `Delete` to `Remove` for favorites.
+
+### Fixed
+- Fixed `Projects: Go to previous Workspace` if keyboard shortcut was pressed multiple times fast.
 
 ## [0.14.1] - 2020-07-05
 

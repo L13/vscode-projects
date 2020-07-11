@@ -6,7 +6,8 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ## What's new in Projects 0.15.0
 
-- Added colors for projects. Changes icon and status bar color.
+- Added colors for projects. Change icon and status bar color to 7 different colors.
+- Added `Copy Path` to context menu for folders, projects and workspaces.
 
 ## Index
 
@@ -33,7 +34,7 @@ Manage your workspaces and projects in Visual Studio Code.
 * Cache detected folders and workspaces between sessions.
 * Sort workspaces by name, type or simple group.
 * Assign a workspace to a slot to open it with a keyboard shortcut.
-* Select a color for a project which changes also the statusbar for the workspace.
+* Select a color for a project which changes also the status bar for the workspace.
 
 ### Workspaces
 
@@ -42,6 +43,10 @@ Manage your workspaces and projects in Visual Studio Code.
 ### Quick Pick for Favorites or Projects and Keyboard Shortcuts for Slots
 
 ![Projects Quick Menu](images/previews/preview-quick-menu.png)
+
+### Colors
+
+![Projects Colors](images/previews/preview-colors.png)
 
 ### Supports the extension [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
 
@@ -103,7 +108,7 @@ macOS
 * `Cmd + Alt + P` - Open the quick menu to pick a favorite.
 * `Cmd + Alt + Shift + P` - Open the quick menu to pick a project.
 * `Cmd + L Cmd + 1 .. 9` - Open a workspace in the slot 1 - 9.
-* `Cmd + L Cmd + 0` - Open a prevoious active workspace.
+* `Cmd + L Cmd + 0` - Open the previous active workspace.
 
 Windows / Linux
 
@@ -111,7 +116,7 @@ Windows / Linux
 * `Ctrl + Alt + P` - Open the quick menu to pick a favorite.
 * `Ctrl + Alt + Shift + P` - Open the quick menu to pick a project.
 * `Ctrl + L Ctrl + 1 .. 9` - Open a workspace in the slot 1 - 9.
-* `Ctrl + L Ctrl + 0` - Open a prevoious active workspace.
+* `Ctrl + L Ctrl + 0` - Open the previous active workspace.
 
 If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`.
 
@@ -124,11 +129,12 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Open` - Open the favorite project in the current window. Ignores `l13Projects.openInNewWindow`.
 * `Open in new Window` - Open the favorite project in a new window. Ignores `l13Projects.openInNewWindow`.
 * `Open in Terminal` - Opens the favorite project in the VS Code terminal.
-* `Assign to Slot` - Assign the folder, workspace or project to a slot 1 - 9 to open it with a keyboard shortcut directly.
+* `Assign to Slot` - Assign the folder, workspace or project to a slot 1 - 9 to open it with a keyboard shortcut.
 * `Select for Compare` - Select a folder, workspace or project for a comparison. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Compare with Selected` - Compare the folder, workspace or project with the current selection. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Compare with Workspace` - Compares the favorite project with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Open in Diff Folders` - Opens the favorite project in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Copy Path` - Copy the path of the project, repository or workspace to the clipboard.
 * `Rename` - Change the name of the favorite project.
 * `Remove` - Remove the project, repository or workspace from favorites.
 * `Delete` - Delete the project.
@@ -154,7 +160,7 @@ Linux
 * `Open` - Open the folder, workspace or project in the current window. Ignores `l13Projects.openInNewWindow`.
 * `Open in new Window` - Open the folder, workspace or project in a new window. Ignores `l13Projects.openInNewWindow`.
 * `Save Project` - Save the folder or workspace as a project.
-* `Add to Favorites` - Add the folder, workspace or project to the favorites.
+* `Add to Favorites` - Add the folder, workspace or project to favorites.
 * `Open in Terminal` - Open the folder, workspace or project in the terminal.
 * `Assign to Slot` - Assign the folder, workspace or project to a slot 1 - 9 to open it with a keyboard shortcut.
 * `Select Color` - Select a color for a project. The color also appears in the status bar.
@@ -162,6 +168,7 @@ Linux
 * `Compare with Selected` - Compare the folder, workspace or project with the current selection. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Compare with Workspace` - Compares the folder, workspace or project with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Open in Diff Folders` - Opens the folder, workspace or project in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Copy Path` - Copy the path of the project, repository or workspace to the clipboard.
 * `Rename` - Change the name of a project.
 * `Delete` - Delete the project.
 

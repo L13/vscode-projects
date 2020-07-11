@@ -143,8 +143,11 @@ export class HotkeySlots {
 	public previousWorkspace () {
 		
 		const workspacesPaths = this.context.globalState.get(CURRENT_WORKSPACE, []);
+		const workspacePath = settings.getCurrentWorkspacePath();
 		
-		if (workspacesPaths[1]) files.open(workspacesPaths[1]);
+		if (workspacesPaths[1] && workspacesPaths[1] !== workspacePath) files.open(workspacesPaths[1]);
+	//	Fixes async saveCurrentWorkspace if keyboard shortcut was pressed multiple times really fast
+		else if (workspacesPaths[0] && workspacesPaths[0] !== workspacePath) files.open(workspacesPaths[0]);
 		
 	}
 	
