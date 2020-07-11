@@ -85,7 +85,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	public static async pickFavorite (context:vscode.ExtensionContext) {
 		
-		const favorites:Project[] = getFavorites(context);
+		const favorites:Project[] = getFavorites(context, true);
 		
 		if (favorites.length) {
 			const items = favorites.map((project) => ({

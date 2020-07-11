@@ -40,6 +40,12 @@ export class HotkeySlots {
 		
 	}
 	
+	public refresh () {
+		
+		this.slots = this.context.globalState.get(SLOTS, []);
+		
+	}
+	
 	public async assign (project:Project) {
 		
 		const slots = this.slots;

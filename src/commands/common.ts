@@ -9,6 +9,9 @@ import * as settings from '../common/settings';
 import * as terminal from '../common/terminal';
 
 import { Project } from '../@types/workspaces';
+import { HotkeySlots } from '../features/HotkeySlots';
+import { FavoritesProvider } from '../sidebar/FavoritesProvider';
+import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
 
 //	Variables __________________________________________________________________
 
@@ -21,6 +24,17 @@ import { Project } from '../@types/workspaces';
 //	Exports ____________________________________________________________________
 
 export function activate (context:vscode.ExtensionContext) {
+	
+	context.subscriptions.push(vscode.window.onDidChangeWindowState(({ focused }) => {
+		
+		if (focused) { // Update data if changes in another workspace have been done
+			HotkeySlots.saveCurrentWorkspace(context);
+			HotkeySlots.current?.refresh();
+			FavoritesProvider.currentProvider?.refresh();
+			WorkspacesProvider.currentProvider?.refresh();
+		}
+		
+	}));
 	
 	commands.register(context, {
 		'l13Projects.openInNewWindow': (uri) => vscode.commands.executeCommand('vscode.openFolder', uri, true),
