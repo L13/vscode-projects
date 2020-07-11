@@ -26,9 +26,9 @@ export class CurrentProjectTreeItem extends TreeItem {
 		
 		this.contextValue = `current-project-${type}`;
 		
-		const icon = `${type}`;
+		let icon = `${type}`;
 		
-		// if (type === 'folder' || type === 'folders') icon += `-color-${project.color || 0}`;
+		if (type === 'folder' || type === 'folders') icon += `-color-${project.color || 0}`;
 		
 		this.iconPath = {
 			light: join(basePath, `current-project-${icon}-light.svg`),
