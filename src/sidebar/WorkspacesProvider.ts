@@ -157,6 +157,14 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
+	public hideColorPicker () {
+		
+		WorkspacesProvider.colorPicker.project = null;
+		
+		this.refresh();
+		
+	}
+	
 	public assignColor (project:Project, color:number) {
 		
 		if (color) project.color = color;
@@ -672,9 +680,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	public static async clearProjects (context:vscode.ExtensionContext) {
 		
-		const value = await dialogs.confirm(`Delete all projects?'`, 'Delete');
-	
-		if (value) {
+		if (await dialogs.confirm(`Delete all projects?'`, 'Delete')) {
 			context.globalState.update(PROJECTS, []);
 			WorkspacesProvider.createProvider(context).refresh();
 		}

@@ -29,6 +29,7 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.showProjectInExplorer': (item) => files.reveal(item?.project.path || settings.getCurrentWorkspacePath()),
 		'l13Projects.showProjectInFolder': (item) => files.reveal(item?.project.path || settings.getCurrentWorkspacePath()),
 		'l13Projects.openInTerminal': ({ project }) => terminal.open(getFolderPath(project)),
+		'l13Projects.copyPath': ({ project }) => vscode.env.clipboard.writeText(project.path),
 	});
 
 }

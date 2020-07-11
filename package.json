@@ -233,6 +233,14 @@
 				}
 			},
 			{
+				"command": "l13Projects.hideColorPicker",
+				"title": "Hide Color Picker",
+				"icon": {
+					"light": "images/picker/hide-color-picker-light.svg",
+					"dark": "images/picker/hide-color-picker-dark.svg"
+				}
+			},
+			{
 				"command": "l13Projects.pickColor1",
 				"title": "Pick Color 1",
 				"icon": "images/picker/color-1.svg"
@@ -266,6 +274,10 @@
 				"command": "l13Projects.pickColor7",
 				"title": "Pick Color 7",
 				"icon": "images/picker/color-7.svg"
+			},
+			{
+				"command": "l13Projects.copyPath",
+				"title": "Copy Path"
 			}
 		],
 		"keybindings": [
@@ -410,6 +422,10 @@
 					"when": "false"
 				},
 				{
+					"command": "l13Projects.hideColorPicker",
+					"when": "false"
+				},
+				{
 					"command": "l13Projects.pickColor1",
 					"when": "false"
 				},
@@ -435,6 +451,10 @@
 				},
 				{
 					"command": "l13Projects.pickColor7",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.copyPath",
 					"when": "false"
 				}
 			],
@@ -527,14 +547,24 @@
 					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?project-(folders?)$/"
 				},
 				{
-					"command": "l13Projects.assignSlot",
-					"group": "navigation@7",
-					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
-				},
-				{
 					"command": "l13Projects.removeProject",
 					"group": "7_modification@3",
 					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?project-(folders?)$/"
+				},
+				{
+					"command": "l13Projects.copyPath",
+					"group": "6_copypath@1",
+					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
+				},
+				{
+					"command": "l13Projects.copyPath",
+					"group": "6_copypath@1",
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
+				},
+				{
+					"command": "l13Projects.assignSlot",
+					"group": "navigation@7",
+					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
 				},
 				{
 					"command": "l13Projects.assignSlot",
@@ -549,6 +579,11 @@
 				{
 					"command": "l13Projects.removeColor",
 					"group": "inline@8",
+					"when": "view == l13ProjectsWorkspaces && viewItem == color-picker"
+				},
+				{
+					"command": "l13Projects.hideColorPicker",
+					"group": "inline@9",
 					"when": "view == l13ProjectsWorkspaces && viewItem == color-picker"
 				},
 				{
