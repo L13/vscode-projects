@@ -68,9 +68,9 @@ Priority of icons and labels for saved projects and detected folders and workspa
 * `Projects: Save Project` - Save the folder or workspace in the project list.
 * `Projects: Delete All Projects` - Delete all saved projects in the project list.
 * `Projects: Delete All Favorites` - Delete all favorites.
-* `Projects: Select Favorite` - Open the quick menu and pick a favorite.
-* `Projects: Select Project` - Open the quick menu and pick a project.
-* `Projects: Refresh Projects` - Refresh all detected folders and workspaces.
+* `Projects: Open Favorite Workspace` - Open the quick menu and pick a favorite.
+* `Projects: Open Workspace` - Open the quick menu and pick a project.
+* `Projects: Refresh Workspaces` - Refresh all detected folders and workspaces.
 * `Projects: Slot 1 .. 9` - Open a workspace assigned to a slot.
 * `Projects: Clear Slot` - Clear a slot.
 * `Projects: Clear All Slots` - Clear all slots.

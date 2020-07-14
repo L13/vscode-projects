@@ -78,7 +78,7 @@
 			},
 			{
 				"command": "l13Projects.pickFavorite",
-				"title": "Projects: Select Favorite"
+				"title": "Projects: Open Favorite Workspace"
 			},
 			{
 				"command": "l13Projects.addToFavorites",
@@ -102,7 +102,7 @@
 			},
 			{
 				"command": "l13Projects.pickProject",
-				"title": "Projects: Select Project"
+				"title": "Projects: Open Workspace"
 			},
 			{
 				"command": "l13Projects.addProject",
@@ -118,7 +118,7 @@
 			},
 			{
 				"command": "l13Projects.refreshProjects",
-				"title": "Projects: Refresh Projects",
+				"title": "Projects: Refresh Workspaces",
 				"icon": {
 					"light": "images/workspaces/project-refresh-light.svg",
 					"dark": "images/workspaces/project-refresh-dark.svg"
@@ -167,6 +167,10 @@
 			{
 				"command": "l13Projects.openInTerminal",
 				"title": "Open in Terminal"
+			},
+			{
+				"command": "l13Projects.copyPath",
+				"title": "Copy Path"
 			},
 			{
 				"command": "l13Projects.assignSlot",
@@ -242,42 +246,38 @@
 			},
 			{
 				"command": "l13Projects.pickColor1",
-				"title": "Pick Color 1",
+				"title": "Purple",
 				"icon": "images/picker/color-1.svg"
 			},
 			{
 				"command": "l13Projects.pickColor2",
-				"title": "Pick Color 2",
+				"title": "Blue",
 				"icon": "images/picker/color-2.svg"
 			},
 			{
 				"command": "l13Projects.pickColor3",
-				"title": "Pick Color 3",
+				"title": "Green",
 				"icon": "images/picker/color-3.svg"
 			},
 			{
 				"command": "l13Projects.pickColor4",
-				"title": "Pick Color 4",
+				"title": "Yellow",
 				"icon": "images/picker/color-4.svg"
 			},
 			{
 				"command": "l13Projects.pickColor5",
-				"title": "Pick Color 5",
+				"title": "Orange",
 				"icon": "images/picker/color-5.svg"
 			},
 			{
 				"command": "l13Projects.pickColor6",
-				"title": "Pick Color 6",
+				"title": "Red",
 				"icon": "images/picker/color-6.svg"
 			},
 			{
 				"command": "l13Projects.pickColor7",
-				"title": "Pick Color 7",
+				"title": "Grey",
 				"icon": "images/picker/color-7.svg"
-			},
-			{
-				"command": "l13Projects.copyPath",
-				"title": "Copy Path"
 			}
 		],
 		"keybindings": [
