@@ -39,7 +39,7 @@ export const colors:StatusbarColors[] = [
 		'statusBarItem.hoverBackground': '#beb012',
 	},
 	{ // orange
-		'statusBar.background': '#e0891f',
+		'statusBar.background': '#ce7e1c',
 		'statusBar.foreground': '#ffffff',
 		'statusBarItem.hoverBackground': '#ff8e00',
 	},
@@ -49,9 +49,9 @@ export const colors:StatusbarColors[] = [
 		'statusBarItem.hoverBackground': '#e65b42',
 	},
 	{ // grey
-		'statusBar.background': '#858585',
+		'statusBar.background': '#7d7d7d',
 		'statusBar.foreground': '#ffffff',
-		'statusBarItem.hoverBackground': '#949494',
+		'statusBarItem.hoverBackground': '#8c8c8c',
 	},
 ];
 

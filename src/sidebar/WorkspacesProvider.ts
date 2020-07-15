@@ -16,8 +16,8 @@ import * as files from '../common/files';
 import * as settings from '../common/settings';
 
 import { HotkeySlots } from '../features/HotkeySlots';
+import { colors } from '../statusbar/colors';
 
-import { colors } from './colors';
 import { ColorPickerTreeItem } from './trees/ColorPickerTreeItem';
 import { CurrentProjectTreeItem } from './trees/CurrentProjectTreeItem';
 import { GroupSimpleTreeItem } from './trees/GroupSimpleTreeItem';

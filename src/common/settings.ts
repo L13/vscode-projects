@@ -75,9 +75,11 @@ function updateSettingsFile (workspaceSettingsPath:string, statusbarColors:Statu
 	
 	if (!Object.keys(colorCustomizations).length) colorCustomizations = undefined;
 	
+	const [tabSize, insertSpaces] = indentSettings();
 	const edits = jsoncParser.modify(workspaceSettings, jsonpath, colorCustomizations, {
 		formattingOptions: {
-			tabSize: 4,
+			tabSize,
+			insertSpaces,
 		}
 	});
 	
@@ -104,11 +106,22 @@ function createSettingsFile (workspaceSettingsPath:string, statusbarColors:Statu
 	}
 	
 	if (Object.keys(colorCustomizations).length) {
+		const [tabSize, insertSpaces] = indentSettings();
 		const dirname = path.dirname(workspaceSettingsPath);
 		if (!fs.existsSync(dirname)) fs.mkdirSync(dirname);
 		fs.writeFileSync(workspaceSettingsPath, JSON.stringify({
 			[COLOR_CUSTOMIZATIONS]: colorCustomizations,
-		}, null, '\t'));
+		}, null, insertSpaces ? tabSize : '\t'));
 	}
+	
+}
+
+function indentSettings () :[number, boolean] {
+	
+	const configEditor = vscode.workspace.getConfiguration('editor');
+	const tabSize = configEditor.get('tabSize', 4);
+	const insertSpaces = configEditor.get('insertSpaces', true);
+	
+	return [tabSize, insertSpaces];
 	
 }
