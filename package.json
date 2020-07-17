@@ -94,7 +94,7 @@
 			},
 			{
 				"command": "l13Projects.removeFavorite",
-				"title": "Remove"
+				"title": "Delete"
 			},
 			{
 				"command": "l13Projects.clearFavorites",
@@ -544,32 +544,17 @@
 				{
 					"command": "l13Projects.removeProject",
 					"group": "7_modification@3",
-					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?project-(folders?)$/"
-				},
-				{
-					"command": "l13Projects.removeProject",
-					"group": "7_modification@3",
 					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?project-(folders?)$/"
 				},
 				{
 					"command": "l13Projects.copyPath",
 					"group": "6_copypath@1",
-					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
-				},
-				{
-					"command": "l13Projects.copyPath",
-					"group": "6_copypath@1",
-					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
 				},
 				{
 					"command": "l13Projects.assignSlot",
 					"group": "navigation@7",
-					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
-				},
-				{
-					"command": "l13Projects.assignSlot",
-					"group": "navigation@7",
-					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
 				},
 				{
 					"command": "l13Projects.selectColor",

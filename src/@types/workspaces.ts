@@ -27,6 +27,7 @@ export type Project = {
 	label:string,
 	type:'folder'|'folders'|'git'|'vscode'|'workspace',
 	color?:number,
+	removed?:boolean,
 	deleted?:boolean,
 };
 

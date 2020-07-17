@@ -48,7 +48,7 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ![Projects Colors](images/previews/preview-colors.png)
 
-![Projects Colors](images/previews/preview-statusbar.png)
+![Projects Status Bar Colors](images/previews/preview-statusbar.png)
 
 ### Supports the extension [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
 

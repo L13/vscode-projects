@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
+import { formatLabel } from '../@l13/formats';
 import { walktree } from '../@l13/fse';
 
 import { File, Options } from '../@types/files';
@@ -255,7 +256,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 					for (const file of Object.values(files)) {
 						const pathname = file.type === 'file' ? file.path : path.dirname(file.path);
 						detectedProjects.push({
-							label: path.basename(pathname, '.code-workspace'),
+							label: formatLabel(pathname),
 							path: pathname,
 							type,
 						});
@@ -438,7 +439,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	private addUnknownItem (list:TreeItems[], workspacePath:string) {
 		
 		list.unshift(new UnknownProjectTreeItem({
-			label: path.basename(workspacePath, '.code-workspace'),
+			label: formatLabel(workspacePath),
 			path: workspacePath,
 			type: settings.isCodeWorkspace(workspacePath) ? 'folders' : 'folder',
 		}));
@@ -474,6 +475,26 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		} else this.addItems(list, workspacePath);
 		
 		return Promise.resolve(list);
+		
+	}
+	
+	// private hasWorkspace (fsPath:string) {
+		
+	// 	for (const project of this.cache) {
+	// 		if (project.path === fsPath) return true;
+	// 	}
+		
+	// 	return false;
+		
+	// }
+	
+	private getWorkspace (fsPath:string) {
+		
+		for (const project of this.cache) {
+			if (project.path === fsPath) return project;
+		}
+		
+		return null;
 		
 	}
 	
@@ -536,7 +557,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 			
 			if (stat.isDirectory() || stat.isFile() && settings.isCodeWorkspace(path.basename(fsPath))) return true;
 			
-			vscode.window.showErrorMessage(`'${fsPath}' is not a folder or a ".code-workspace" file!`);
+			vscode.window.showErrorMessage(`"${fsPath}" is not a folder or a ".code-workspace" file!`);
 			
 			return false;
 			
@@ -546,7 +567,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 			
 			if (projects.some(({ path }) => path === fsPath)) return;
 			
-			saveProject(projects, fsPath, path.basename(fsPath, '.code-workspace'));
+			saveProject(projects, fsPath, formatLabel(fsPath));
 			
 		});
 		
@@ -570,7 +591,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 			}
 			
 			const value = await vscode.window.showInputBox({
-				value: path.basename(fsPath, '.code-workspace'),
+				value: formatLabel(fsPath),
 				placeHolder: 'Please enter a name for the project',
 			});
 			
@@ -629,9 +650,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	public static async removeProject (context:vscode.ExtensionContext, project:Project) {
 		
-		const value = await dialogs.confirm(`Delete project "${project.label}"?`, 'Delete');
-		
-		if (value) {
+		if (await dialogs.confirm(`Delete project "${project.label}"?`, 'Delete')) {
 			
 			const projects:Project[] = context.globalState.get(PROJECTS) || [];
 			const fsPath = project.path;
@@ -640,16 +659,11 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 				if (projects[i].path === fsPath) {
 					projects.splice(i, 1);
 					context.globalState.update(PROJECTS, projects);
-					const provider = WorkspacesProvider.createProvider(context);
+					if (project.color) settings.updateStatusBarColorSettings(project.path, colors[0]);
+					const provider = WorkspacesProvider.currentProvider;
 					provider.refresh();
-					for (const pro of provider.cache) {
-						if (pro.path === fsPath) {
-							WorkspacesProvider._onDidChangeProject.fire(pro);
-							return;
-						}
-					}
-					project.label = path.basename(fsPath, '.code-workspace');
-					project.type = settings.isCodeWorkspace(fsPath) ? 'folders' : 'folder';
+					project.removed = true;
+					project = provider.getWorkspace(fsPath) || project;
 					WorkspacesProvider._onDidChangeProject.fire(project);
 					return;
 				}

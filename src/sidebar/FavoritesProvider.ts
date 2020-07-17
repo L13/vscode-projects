@@ -112,27 +112,38 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 			return vscode.window.showErrorMessage(`Project "${project.label}" exists in favorites!`);
 		}
 		
-		favorites.push({ label: project.label, path: project.path, type: project.type });
+		favorites.push({
+			label: project.label,
+			path: project.path,
+			type: project.type,
+			color: project.color,
+		});
+		
 		favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 		
 		context.globalState.update(FAVORITES, favorites);
 		
-		vscode.window.showInformationMessage(`Added "${project.label} to favorites."`);
+		vscode.window.showInformationMessage(`Added "${project.label}" to favorites`);
 		
 		FavoritesProvider.currentProvider?.refresh();
 		
 	}
 	
-	public static updateFavorite (context:vscode.ExtensionContext, { color, path, label, type }:Project) {
+	public static updateFavorite (context:vscode.ExtensionContext, project:Project) {
 		
 		const favorites:Project[] = getFavorites(context);
+		const fsPath = project.path;
 		
-		for (const favorite of favorites) {
-			if (favorite.path === path) {
-				favorite.label = label;
-				favorite.type = type;
-				favorite.color = color;
-				favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+		for (let i = 0; i < favorites.length; i++) {
+			const favorite = favorites[i];
+			if (favorite.path === fsPath) {
+				if (!project.removed) {
+					const type = favorite.type = project.type;
+					if (type === 'folder' || type === 'folders') favorite.color = project.color;
+					else delete favorite.color;
+					favorite.label = project.label;
+					favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+				} else favorites.splice(i, 1);
 				context.globalState.update(FAVORITES, favorites);
 				FavoritesProvider.currentProvider?.refresh();
 				break;
@@ -157,7 +168,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	public static async removeFavorite (context:vscode.ExtensionContext, favorite:Project) {
 		
-		if (await dialogs.confirm(`Remove favorite "${favorite.label}"?`, 'Remove')) {
+		if (await dialogs.confirm(`Delete favorite "${favorite.label}"?`, 'Delete')) {
 			const favorites:Project[] = getFavorites(context);
 			
 			for (let i = 0; i < favorites.length; i++) {

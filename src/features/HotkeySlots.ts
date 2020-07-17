@@ -90,8 +90,13 @@ export class HotkeySlots {
 		
 		const slots = this.slots;
 		
-		for (const slot of slots) {
-			if (slot?.path === project.path) slots[slot.index].label = project.label;
+		for (let i = 0; i < slots.length; i++) {
+			const slot = slots[i];
+			if (slot?.path === project.path) {
+				if (!project.removed) slots[slot.index].label = project.label;
+				else delete slots[i];
+				break;
+			}
 		}
 		
 		this.context.globalState.update(SLOTS, slots);
