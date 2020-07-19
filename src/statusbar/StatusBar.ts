@@ -1,13 +1,13 @@
 //	Imports ____________________________________________________________________
 
-import { basename } from 'path';
 import * as vscode from 'vscode';
 
+import { formatLabel } from '../@l13/formats';
 import { isMacOs, isWindows } from '../@l13/platforms';
-import { Project } from '../@types/projects';
+
+import { Project } from '../@types/workspaces';
 
 import * as settings from '../common/settings';
-import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
 
 //	Variables __________________________________________________________________
 
@@ -41,13 +41,13 @@ export class StatusBar {
 	
 	public update () :void {
 		
-		const workspacePath = settings.getWorkspacePath();
+		const workspacePath = settings.getCurrentWorkspacePath();
 		
 		if (workspacePath) {
-			const icon = WorkspacesProvider.isWorkspace(workspacePath) ? 'submodule' : 'directory';
+			const icon = settings.isCodeWorkspace(workspacePath) ? 'submodule' : 'directory';
 			const name:string = this.getProjectName('projects', workspacePath) || this.getProjectName('favorites', workspacePath);
 			
-			this.statusBarItem.text = `$(file-${icon}) ${name || basename(workspacePath, '.code-workspace')}`;
+			this.statusBarItem.text = `$(file-${icon}) ${name || formatLabel(workspacePath)}`;
 		}
 		
 	}

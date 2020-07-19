@@ -2,7 +2,7 @@
 	"name": "l13-projects",
 	"displayName": "Projects",
 	"description": "Manage your workspaces and projects in Visual Studio Code",
-	"version": "0.14.1",
+	"version": "0.15.0",
 	"publisher": "L13RARY",
 	"license": "SEE LICENCE IN LICENCE.md",
 	"homepage": "https://github.com/l13/vscode-projects/blob/master/README.md",
@@ -78,7 +78,7 @@
 			},
 			{
 				"command": "l13Projects.pickFavorite",
-				"title": "Projects: Select Favorite"
+				"title": "Projects: Open Favorite Workspace"
 			},
 			{
 				"command": "l13Projects.addToFavorites",
@@ -102,14 +102,14 @@
 			},
 			{
 				"command": "l13Projects.pickProject",
-				"title": "Projects: Select Project"
+				"title": "Projects: Open Workspace"
 			},
 			{
 				"command": "l13Projects.addProject",
 				"title": "Projects: Add Project",
 				"icon": {
-					"light": "images/project-save-light.svg",
-					"dark": "images/project-save-dark.svg"
+					"light": "images/workspaces/project-save-light.svg",
+					"dark": "images/workspaces/project-save-dark.svg"
 				}
 			},
 			{
@@ -118,18 +118,10 @@
 			},
 			{
 				"command": "l13Projects.refreshProjects",
-				"title": "Projects: Refresh Projects",
+				"title": "Projects: Refresh Workspaces",
 				"icon": {
-					"light": "images/project-refresh-light.svg",
-					"dark": "images/project-refresh-dark.svg"
-				}
-			},
-			{
-				"command": "l13Projects.collapseAll",
-				"title": "Collapse All",
-				"icon": {
-					"light": "images/collapse-group-light.svg",
-					"dark": "images/collapse-group-dark.svg"
+					"light": "images/workspaces/project-refresh-light.svg",
+					"dark": "images/workspaces/project-refresh-dark.svg"
 				}
 			},
 			{
@@ -177,12 +169,16 @@
 				"title": "Open in Terminal"
 			},
 			{
+				"command": "l13Projects.copyPath",
+				"title": "Copy Path"
+			},
+			{
 				"command": "l13Projects.assignSlot",
 				"title": "Assign to Slot"
 			},
 			{
 				"command": "l13Projects.removeSlot",
-				"title": "Projects: Remove Slot"
+				"title": "Projects: Clear Slot"
 			},
 			{
 				"command": "l13Projects.clearSlots",
@@ -190,43 +186,98 @@
 			},
 			{
 				"command": "l13Projects.slot1",
-				"title": "Project Slot 1"
+				"title": "Projects: Slot 1"
 			},
 			{
 				"command": "l13Projects.slot2",
-				"title": "Project Slot 2"
+				"title": "Projects: Slot 2"
 			},
 			{
 				"command": "l13Projects.slot3",
-				"title": "Project Slot 3"
+				"title": "Projects: Slot 3"
 			},
 			{
 				"command": "l13Projects.slot4",
-				"title": "Project Slot 4"
+				"title": "Projects: Slot 4"
 			},
 			{
 				"command": "l13Projects.slot5",
-				"title": "Project Slot 5"
+				"title": "Projects: Slot 5"
 			},
 			{
 				"command": "l13Projects.slot6",
-				"title": "Project Slot 6"
+				"title": "Projects: Slot 6"
 			},
 			{
 				"command": "l13Projects.slot7",
-				"title": "Project Slot 7"
+				"title": "Projects: Slot 7"
 			},
 			{
 				"command": "l13Projects.slot8",
-				"title": "Project Slot 8"
+				"title": "Projects: Slot 8"
 			},
 			{
 				"command": "l13Projects.slot9",
-				"title": "Project Slot 9"
+				"title": "Projects: Slot 9"
 			},
 			{
 				"command": "l13Projects.previousWorkspace",
-				"title": "Previous Workspace"
+				"title": "Projects: Go to previous Workspace"
+			},
+			{
+				"command": "l13Projects.selectColor",
+				"title": "Select Color"
+			},
+			{
+				"command": "l13Projects.removeColor",
+				"title": "Remove Color",
+				"icon": {
+					"light": "images/picker/color-remove-light.svg",
+					"dark": "images/picker/color-remove-dark.svg"
+				}
+			},
+			{
+				"command": "l13Projects.hideColorPicker",
+				"title": "Hide Color Picker",
+				"icon": {
+					"light": "images/picker/hide-color-picker-light.svg",
+					"dark": "images/picker/hide-color-picker-dark.svg"
+				}
+			},
+			{
+				"command": "l13Projects.pickColor1",
+				"title": "Purple",
+				"icon": "images/picker/color-1.svg"
+			},
+			{
+				"command": "l13Projects.pickColor2",
+				"title": "Blue",
+				"icon": "images/picker/color-2.svg"
+			},
+			{
+				"command": "l13Projects.pickColor3",
+				"title": "Green",
+				"icon": "images/picker/color-3.svg"
+			},
+			{
+				"command": "l13Projects.pickColor4",
+				"title": "Yellow",
+				"icon": "images/picker/color-4.svg"
+			},
+			{
+				"command": "l13Projects.pickColor5",
+				"title": "Orange",
+				"icon": "images/picker/color-5.svg"
+			},
+			{
+				"command": "l13Projects.pickColor6",
+				"title": "Red",
+				"icon": "images/picker/color-6.svg"
+			},
+			{
+				"command": "l13Projects.pickColor7",
+				"title": "Grey",
+				"icon": "images/picker/color-7.svg"
 			}
 		],
 		"keybindings": [
@@ -359,11 +410,51 @@
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.collapseAll",
+					"command": "l13Projects.assignSlot",
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.assignSlot",
+					"command": "l13Projects.selectColor",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.removeColor",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.hideColorPicker",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.pickColor1",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.pickColor2",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.pickColor3",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.pickColor4",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.pickColor5",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.pickColor6",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.pickColor7",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.copyPath",
 					"when": "false"
 				}
 			],
@@ -387,11 +478,6 @@
 					"command": "l13Projects.refreshProjects",
 					"when": "view == l13ProjectsWorkspaces",
 					"group": "navigation@2"
-				},
-				{
-					"command": "l13Projects.collapseAll",
-					"when": "view == l13ProjectsWorkspaces && l13ProjectGroups",
-					"group": "navigation@3"
 				}
 			],
 			"view/item/context": [
@@ -458,22 +544,67 @@
 				{
 					"command": "l13Projects.removeProject",
 					"group": "7_modification@3",
-					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?project-(folders?)$/"
-				},
-				{
-					"command": "l13Projects.assignSlot",
-					"group": "navigation@7",
-					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
-				},
-				{
-					"command": "l13Projects.removeProject",
-					"group": "7_modification@3",
 					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?project-(folders?)$/"
 				},
 				{
+					"command": "l13Projects.copyPath",
+					"group": "6_copypath@1",
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
+				},
+				{
 					"command": "l13Projects.assignSlot",
 					"group": "navigation@7",
-					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
+				},
+				{
+					"command": "l13Projects.selectColor",
+					"group": "navigation@8",
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?project-folders?$/"
+				},
+				{
+					"command": "l13Projects.removeColor",
+					"group": "inline@8",
+					"when": "view == l13ProjectsWorkspaces && viewItem == color-picker"
+				},
+				{
+					"command": "l13Projects.hideColorPicker",
+					"group": "inline@9",
+					"when": "view == l13ProjectsWorkspaces && viewItem == color-picker"
+				},
+				{
+					"command": "l13Projects.pickColor1",
+					"group": "inline@1",
+					"when": "view == l13ProjectsWorkspaces && viewItem == color-picker"
+				},
+				{
+					"command": "l13Projects.pickColor2",
+					"group": "inline@2",
+					"when": "view == l13ProjectsWorkspaces && viewItem == color-picker"
+				},
+				{
+					"command": "l13Projects.pickColor3",
+					"group": "inline@3",
+					"when": "view == l13ProjectsWorkspaces && viewItem == color-picker"
+				},
+				{
+					"command": "l13Projects.pickColor4",
+					"group": "inline@4",
+					"when": "view == l13ProjectsWorkspaces && viewItem == color-picker"
+				},
+				{
+					"command": "l13Projects.pickColor5",
+					"group": "inline@5",
+					"when": "view == l13ProjectsWorkspaces && viewItem == color-picker"
+				},
+				{
+					"command": "l13Projects.pickColor6",
+					"group": "inline@6",
+					"when": "view == l13ProjectsWorkspaces && viewItem == color-picker"
+				},
+				{
+					"command": "l13Projects.pickColor7",
+					"group": "inline@7",
+					"when": "view == l13ProjectsWorkspaces && viewItem == color-picker"
 				}
 			]
 		},
@@ -607,5 +738,8 @@
 		"tslint": "^6.1.0",
 		"typescript": "^3.8.3",
 		"vscode-test": "^1.0.2"
+	},
+	"dependencies": {
+		"jsonc-parser": "^2.3.0"
 	}
 }

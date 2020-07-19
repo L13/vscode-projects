@@ -6,7 +6,7 @@ import * as files from '../common/files';
 import * as settings from '../common/settings';
 
 import { Item, Slot } from '../@types/hotkeys';
-import { Project } from '../@types/projects';
+import { Project } from '../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -37,6 +37,12 @@ export class HotkeySlots {
 	private constructor (private readonly context:vscode.ExtensionContext) {
 		
 		this.slots = context.globalState.get(SLOTS, []);
+		
+	}
+	
+	public refresh () {
+		
+		this.slots = this.context.globalState.get(SLOTS, []);
 		
 	}
 	
@@ -84,8 +90,13 @@ export class HotkeySlots {
 		
 		const slots = this.slots;
 		
-		for (const slot of slots) {
-			if (slot?.path === project.path) slots[slot.index].label = project.label;
+		for (let i = 0; i < slots.length; i++) {
+			const slot = slots[i];
+			if (slot?.path === project.path) {
+				if (!project.removed) slots[slot.index].label = project.label;
+				else delete slots[i];
+				break;
+			}
 		}
 		
 		this.context.globalState.update(SLOTS, slots);
@@ -143,15 +154,18 @@ export class HotkeySlots {
 	public previousWorkspace () {
 		
 		const workspacesPaths = this.context.globalState.get(CURRENT_WORKSPACE, []);
+		const workspacePath = settings.getCurrentWorkspacePath();
 		
-		if (workspacesPaths[1]) files.open(workspacesPaths[1]);
+		if (workspacesPaths[1] && workspacesPaths[1] !== workspacePath) files.open(workspacesPaths[1]);
+	//	Fixes async saveCurrentWorkspace if keyboard shortcut was pressed multiple times really fast
+		else if (workspacesPaths[0] && workspacesPaths[0] !== workspacePath) files.open(workspacesPaths[0]);
 		
 	}
 	
 	public static saveCurrentWorkspace (context:vscode.ExtensionContext) {
 	
 		const workspacePaths = context.globalState.get(CURRENT_WORKSPACE, []);
-		const workspacePath = settings.getWorkspacePath();
+		const workspacePath = settings.getCurrentWorkspacePath();
 		
 		if (workspacePath && workspacePaths[0] !== workspacePath) {
 			workspacePaths.unshift(workspacePath);

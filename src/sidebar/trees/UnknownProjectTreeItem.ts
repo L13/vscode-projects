@@ -3,11 +3,15 @@
 import { join } from 'path';
 import { TreeItem } from 'vscode';
 
-import { Project } from '../../@types/projects';
+import { Project } from '../../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
-
+const basePath = join(__dirname, '..', 'images', 'unknown');
+const iconPath = {
+	light: join(basePath, `unknown-project-light.svg`),
+	dark: join(basePath, `unknown-project-dark.svg`),
+};
 
 //	Initialize _________________________________________________________________
 
@@ -19,16 +23,13 @@ export class UnknownProjectTreeItem extends TreeItem {
 	
 	public contextValue = 'unknown-project';
 	
+	public iconPath = iconPath;
+	
 	public description:string = 'Unknown workspace';
 	
 	public constructor (public readonly project:Project) {
 		
 		super(project.label);
-		
-		this.iconPath = {
-			light: join(__filename, '..', '..', 'images', `unknown-project-light.svg`),
-			dark: join(__filename, '..', '..', 'images', `unknown-project-dark.svg`),
-		};
 		
 	}
 	
