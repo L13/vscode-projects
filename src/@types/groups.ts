@@ -1,6 +1,6 @@
 //	Imports ____________________________________________________________________
 
-import { Project } from './projects';
+import { Project } from './workspaces';
 
 import { GroupSimpleTreeItem } from '../sidebar/trees/GroupSimpleTreeItem';
 import { GroupTypeTreeItem } from '../sidebar/trees/GroupTypeTreeItem';

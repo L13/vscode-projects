@@ -31,12 +31,6 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	HotkeySlots.saveCurrentWorkspace(context);
 	
-	context.subscriptions.push(vscode.window.onDidChangeWindowState(({ focused }) => {
-		
-		if (focused) HotkeySlots.saveCurrentWorkspace(context);
-		
-	}));
-	
 	commands.register(context, {
 		'l13Projects.assignSlot': async ({ project }) => hotkeySlots.assign(project),
 		'l13Projects.removeSlot': () => hotkeySlots.remove(),

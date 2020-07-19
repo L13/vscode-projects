@@ -7,7 +7,7 @@ import { GroupType } from '../../@types/groups';
 
 //	Variables __________________________________________________________________
 
-
+const basePath = join(__dirname, '..', 'images', 'types');
 
 //	Initialize _________________________________________________________________
 
@@ -17,27 +17,18 @@ import { GroupType } from '../../@types/groups';
 
 export class GroupTypeTreeItem extends TreeItem {
 	
-	// triggers the tree view to recreate all items for collapse all
-	private static stateVersion:number = 0;
-	
-	public static updateStateVersion () {
-		
-		GroupTypeTreeItem.stateVersion = 1 - GroupTypeTreeItem.stateVersion;
-		
-	}
-	
 	public constructor (public readonly group:GroupType) {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
-		const type = group.type;
+		const name = `project-${group.type}`;
 		
-		this.contextValue = `group-type-${type}`;
-		this.id = `group-type-${type}-${GroupTypeTreeItem.stateVersion}`;
+		this.contextValue = `group-${name}`;
+		this.id = `group-${name}`;
 		
 		this.iconPath = {
-			light: join(__filename, '..', '..', 'images', `group-type-${type}-light.svg`),
-			dark: join(__filename, '..', '..', 'images', `group-type-${type}-dark.svg`),
+			light: join(basePath, `${name}-light.svg`),
+			dark: join(basePath, `${name}-dark.svg`),
 		};
 		
 	}
