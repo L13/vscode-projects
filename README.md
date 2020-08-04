@@ -34,7 +34,7 @@ Manage your workspaces and projects in Visual Studio Code.
 * Cache detected folders and workspaces between sessions.
 * Sort workspaces by name, type or simple group.
 * Assign a workspace to a slot to open it with a keyboard shortcut.
-* Select a color for a project which changes also the status bar for the workspace.
+* Select a color for a project which also changes the status bar color for the workspace.
 
 ### Workspaces
 
@@ -138,8 +138,7 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Open in Diff Folders` - Opens the favorite project in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Copy Path` - Copy the path of the project, repository or workspace to the clipboard.
 * `Rename` - Change the name of the favorite project.
-* `Remove` - Remove the project, repository or workspace from favorites.
-* `Delete` - Delete the project.
+* `Delete` - Remove the project, repository or workspace from favorites.
 
 macOS
 

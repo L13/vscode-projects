@@ -179,7 +179,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	private detectProjects () {
+	private detectWorkspaces () {
 		
 		const gitFolders = settings.get('git.folders', []);
 		const vscodeFolders = settings.get('vsCode.folders', []);
@@ -205,11 +205,10 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	public refreshProjects () :void {
+	public refreshWorkspaces () :void {
 		
-		this.detectProjects();
-		
-		this._onDidChangeTreeData.fire();
+		this.detectProjectColors();
+		this.detectWorkspaces();
 		
 	}
 	
@@ -224,6 +223,33 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	public getTreeItem (element:ProjectTreeItem) :vscode.TreeItem {
 		
 		return element;
+		
+	}
+	
+	private detectProjectColors () {
+		
+		const projects = this.context.globalState.get(PROJECTS, []);
+		
+		projects.forEach((project) => {
+			
+			const statusBarColors = settings.getStatusBarColorSettings(project.path);
+			
+			if (statusBarColors) {
+				colors:for (let i = 1; i < colors.length; i++) {
+					const color:any = colors[i];
+					for (const name in color) {
+						if (color[name] !== statusBarColors[name]) continue colors;
+					}
+					project.color = i;
+					break colors;
+				}
+			}
+			
+		});
+		
+		this.context.globalState.update(PROJECTS, projects);
+		
+		this.refresh();
 		
 	}
 	
@@ -456,7 +482,8 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 		if (this.initCache) {
 			this.updateCache();
-			this.detectProjects();
+			this.detectProjectColors();
+			this.detectWorkspaces();
 			this.initCache = false;
 		}
 		
@@ -527,7 +554,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	public static async pickProject (context:vscode.ExtensionContext) {
 		
 		const projectProvider = WorkspacesProvider.createProvider(context);
-		const items = projectProvider.initCache ? Promise.all(projectProvider.detectProjects()).then(() => {
+		const items = projectProvider.initCache ? Promise.all(projectProvider.detectWorkspaces()).then(() => {
 			
 			projectProvider.initCache = false;
 			

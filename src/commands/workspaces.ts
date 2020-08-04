@@ -63,7 +63,7 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.addProject': () => WorkspacesProvider.addProject(context),
 		'l13Projects.saveProject': () => WorkspacesProvider.saveProject(context),
 		'l13Projects.saveDetectedProject': ({ project }) => WorkspacesProvider.saveProject(context, project),
-		'l13Projects.refreshProjects': () => WorkspacesProvider.createProvider(context).refreshProjects(),
+		'l13Projects.refreshProjects': () => WorkspacesProvider.createProvider(context).refreshWorkspaces(),
 		'l13Projects.renameProject': ({ project }) => WorkspacesProvider.renameProject(context, project),
 		'l13Projects.removeProject': ({ project }) => WorkspacesProvider.removeProject(context, project),
 		'l13Projects.clearProjects': () => WorkspacesProvider.clearProjects(context),
