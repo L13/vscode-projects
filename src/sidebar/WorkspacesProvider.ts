@@ -241,6 +241,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 						if (color[name] !== statusBarColors[name]) continue colors;
 					}
 					project.color = i;
+					WorkspacesProvider._onDidChangeProject.fire(project);
 					break colors;
 				}
 			}

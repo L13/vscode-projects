@@ -4,7 +4,7 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ![Projects](images/previews/preview.png)
 
-## What's new in Projects 0.15.0
+## What's new in Projects 0.16.0
 
 - Added colors for projects. Change icon and status bar color to 7 different colors.
 - Added `Copy Path` to context menu for folders, projects and workspaces.

@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to the "Projects" extension will be documented in this file.
 
+## [0.16.0] - 2020-08-09
+
+### Added
+- Added icon color update to `Projects: Refresh Workspaces`.
+
 ## [0.15.0] - 2020-07-19
 
 ### Added
