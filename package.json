@@ -113,6 +113,14 @@
 				}
 			},
 			{
+				"command": "l13Projects.addProjectWorkspace",
+				"title": "Projects: Add Project Workspace",
+				"icon": {
+					"light": "images/workspaces/project-workspace-save-light.svg",
+					"dark": "images/workspaces/project-workspace-save-dark.svg"
+				}
+			},
+			{
 				"command": "l13Projects.saveProject",
 				"title": "Projects: Save Project"
 			},
@@ -475,9 +483,14 @@
 					"group": "navigation@1"
 				},
 				{
+					"command": "l13Projects.addProjectWorkspace",
+					"when": "!isMac && view == l13ProjectsWorkspaces",
+					"group": "navigation@2"
+				},
+				{
 					"command": "l13Projects.refreshProjects",
 					"when": "view == l13ProjectsWorkspaces",
-					"group": "navigation@2"
+					"group": "navigation@3"
 				}
 			],
 			"view/item/context": [

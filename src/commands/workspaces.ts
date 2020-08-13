@@ -61,6 +61,7 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.openProjectInNewWindow': ({ project }) => files.open(project.path, true),
 		'l13Projects.pickProject': () => WorkspacesProvider.pickProject(context),
 		'l13Projects.addProject': () => WorkspacesProvider.addProject(context),
+		'l13Projects.addProjectWorkspace': () => WorkspacesProvider.addProjectWorkspace(context),
 		'l13Projects.saveProject': () => WorkspacesProvider.saveProject(context),
 		'l13Projects.saveDetectedProject': ({ project }) => WorkspacesProvider.saveProject(context, project),
 		'l13Projects.refreshProjects': () => WorkspacesProvider.createProvider(context).refreshWorkspaces(),

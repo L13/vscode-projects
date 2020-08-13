@@ -7,6 +7,7 @@ import * as vscode from 'vscode';
 import { sortCaseInsensitive } from '../@l13/arrays';
 import { formatLabel } from '../@l13/formats';
 import { walktree } from '../@l13/fse';
+import { isMacOs } from '../@l13/platforms';
 
 import { File, Options } from '../@types/files';
 import { GroupSimple, GroupSimpleState, GroupTreeItem, GroupType, GroupTypeState, InitialState, WorkspaceSortting } from '../@types/groups';
@@ -571,25 +572,41 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	public static async addProject (context:vscode.ExtensionContext) {
 		
-		const uris = await dialogs.open();
+		const uris = isMacOs ? await dialogs.open() : await dialogs.openFolder();
 		
 		if (!uris) return;
 		
 		const projects:Project[] = context.globalState.get(PROJECTS) || [];
 		const length = projects.length;
 		
-		uris.filter((uri) => {
+		uris.forEach((uri) => {
 			
 			const fsPath = uri.fsPath;
-			const stat = fs.lstatSync(fsPath);
 			
-			if (stat.isDirectory() || stat.isFile() && settings.isCodeWorkspace(path.basename(fsPath))) return true;
+			if (projects.some(({ path }) => path === fsPath)) return;
 			
-			vscode.window.showErrorMessage(`"${fsPath}" is not a folder or a ".code-workspace" file!`);
+			saveProject(projects, fsPath, formatLabel(fsPath));
 			
-			return false;
-			
-		}).forEach((uri) => {
+		});
+		
+		if (projects.length === length) return;
+		
+		context.globalState.update(PROJECTS, projects);
+		
+		WorkspacesProvider.currentProvider?.refresh();
+		
+	}
+	
+	public static async addProjectWorkspace (context:vscode.ExtensionContext) {
+		
+		const uris = await dialogs.openFile();
+		
+		if (!uris) return;
+		
+		const projects:Project[] = context.globalState.get(PROJECTS) || [];
+		const length = projects.length;
+		
+		uris.forEach((uri) => {
 			
 			const fsPath = uri.fsPath;
 			
