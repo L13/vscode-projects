@@ -6,8 +6,8 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ## What's new in Projects 0.16.0
 
-- Added colors for projects. Change icon and status bar color to 7 different colors.
-- Added `Copy Path` to context menu for folders, projects and workspaces.
+- Added icon color update to `Projects: Refresh Workspaces`.
+- Added `Projects: Add Project Workspace` for Windows and Linux.
 
 ## Index
 
@@ -66,8 +66,7 @@ Priority of icons and labels for saved projects and detected folders and workspa
 
 ## Available Commands
 
-* `Projects: Add Project` - Add folders and workspaces to the project list by dialog.
-* `Projects: Save Project` - Save the folder or workspace in the project list.
+* `Projects: Save Project` - Save the detected folder or workspace in the project list.
 * `Projects: Delete All Projects` - Delete all saved projects in the project list.
 * `Projects: Delete All Favorites` - Delete all favorites.
 * `Projects: Open Favorite Workspace` - Open the quick menu and pick a favorite.
@@ -77,6 +76,15 @@ Priority of icons and labels for saved projects and detected folders and workspa
 * `Projects: Clear Slot` - Clear a slot.
 * `Projects: Clear All Slots` - Clear all slots.
 * `Projects: Go to previous Workspace` - Open the previous active workspace.
+
+macOS
+
+* `Projects: Add Project` - Add folders and workspaces to the project list by dialog.
+
+Widnows and Linux
+
+* `Projects: Add Project` - Add folders to the project list by dialog.
+* `Projects: Add Project Workspace` - Add workspaces to the project list by dialog.
 
 ## Available Settings
 
