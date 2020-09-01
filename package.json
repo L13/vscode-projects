@@ -638,6 +638,9 @@
 				"l13Projects.git.folders": {
 					"type": "array",
 					"default": [],
+					"items": {
+						"type": "string"
+					},
 					"description": "Indicates the folders to search for Git repositories"
 				},
 				"l13Projects.git.maxDepthRecursion": {
@@ -654,11 +657,17 @@
 						"CVS",
 						"node_modules"
 					],
+					"items": {
+						"type": "string"
+					},
 					"description": "Indicates folders to be ignored, like \".hg\", \".svn\", \"CVS\", \"node_modules\", etc."
 				},
 				"l13Projects.vsCode.folders": {
 					"type": "array",
 					"default": [],
+					"items": {
+						"type": "string"
+					},
 					"description": "Indicates the folders to search for VS Code projects"
 				},
 				"l13Projects.vsCode.maxDepthRecursion": {
@@ -675,11 +684,17 @@
 						"CVS",
 						"node_modules"
 					],
+					"items": {
+						"type": "string"
+					},
 					"description": "Indicates folders to be ignored, like \".git\", \".hg\", \".svn\", \"CVS\", \"node_modules\", etc."
 				},
 				"l13Projects.workspace.folders": {
 					"type": "array",
 					"default": [],
+					"items": {
+						"type": "string"
+					},
 					"description": "Indicates the folders to search for VS Code projects"
 				},
 				"l13Projects.workspace.maxDepthRecursion": {
@@ -697,6 +712,9 @@
 						"CVS",
 						"node_modules"
 					],
+					"items": {
+						"type": "string"
+					},
 					"description": "Indicates folders to be ignored, like \".git\", \".hg\", \".svn\", \"CVS\", \"node_modules\", etc."
 				},
 				"l13Projects.initialWorkspacesGroupState": {
