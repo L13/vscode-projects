@@ -7,6 +7,7 @@ import * as vscode from 'vscode';
 import { sortCaseInsensitive } from '../@l13/arrays';
 import { formatLabel } from '../@l13/formats';
 import { walktree } from '../@l13/fse';
+import { isMacOs } from '../@l13/platforms';
 
 import { File, Options } from '../@types/files';
 import { GroupSimple, GroupSimpleState, GroupTreeItem, GroupType, GroupTypeState, InitialState, WorkspaceSortting } from '../@types/groups';
@@ -179,7 +180,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	private detectProjects () {
+	private detectWorkspaces () {
 		
 		const gitFolders = settings.get('git.folders', []);
 		const vscodeFolders = settings.get('vsCode.folders', []);
@@ -205,11 +206,10 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	public refreshProjects () :void {
+	public refreshWorkspaces () :void {
 		
-		this.detectProjects();
-		
-		this._onDidChangeTreeData.fire();
+		this.detectProjectColors();
+		this.detectWorkspaces();
 		
 	}
 	
@@ -224,6 +224,34 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	public getTreeItem (element:ProjectTreeItem) :vscode.TreeItem {
 		
 		return element;
+		
+	}
+	
+	private detectProjectColors () {
+		
+		const projects = this.context.globalState.get(PROJECTS, []);
+		
+		projects.forEach((project) => {
+			
+			const statusBarColors = settings.getStatusBarColorSettings(project.path);
+			
+			if (statusBarColors) {
+				colors:for (let i = 1; i < colors.length; i++) {
+					const color:any = colors[i];
+					for (const name in color) {
+						if (color[name] !== statusBarColors[name]) continue colors;
+					}
+					project.color = i;
+					WorkspacesProvider._onDidChangeProject.fire(project);
+					break colors;
+				}
+			}
+			
+		});
+		
+		this.context.globalState.update(PROJECTS, projects);
+		
+		this.refresh();
 		
 	}
 	
@@ -456,7 +484,8 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 		if (this.initCache) {
 			this.updateCache();
-			this.detectProjects();
+			this.detectProjectColors();
+			this.detectWorkspaces();
 			this.initCache = false;
 		}
 		
@@ -527,7 +556,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	public static async pickProject (context:vscode.ExtensionContext) {
 		
 		const projectProvider = WorkspacesProvider.createProvider(context);
-		const items = projectProvider.initCache ? Promise.all(projectProvider.detectProjects()).then(() => {
+		const items = projectProvider.initCache ? Promise.all(projectProvider.detectWorkspaces()).then(() => {
 			
 			projectProvider.initCache = false;
 			
@@ -543,25 +572,41 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	public static async addProject (context:vscode.ExtensionContext) {
 		
-		const uris = await dialogs.open();
+		const uris = isMacOs ? await dialogs.open() : await dialogs.openFolder();
 		
 		if (!uris) return;
 		
 		const projects:Project[] = context.globalState.get(PROJECTS) || [];
 		const length = projects.length;
 		
-		uris.filter((uri) => {
+		uris.forEach((uri) => {
 			
 			const fsPath = uri.fsPath;
-			const stat = fs.lstatSync(fsPath);
 			
-			if (stat.isDirectory() || stat.isFile() && settings.isCodeWorkspace(path.basename(fsPath))) return true;
+			if (projects.some(({ path }) => path === fsPath)) return;
 			
-			vscode.window.showErrorMessage(`"${fsPath}" is not a folder or a ".code-workspace" file!`);
+			saveProject(projects, fsPath, formatLabel(fsPath));
 			
-			return false;
-			
-		}).forEach((uri) => {
+		});
+		
+		if (projects.length === length) return;
+		
+		context.globalState.update(PROJECTS, projects);
+		
+		WorkspacesProvider.currentProvider?.refresh();
+		
+	}
+	
+	public static async addProjectWorkspace (context:vscode.ExtensionContext) {
+		
+		const uris = await dialogs.openFile();
+		
+		if (!uris) return;
+		
+		const projects:Project[] = context.globalState.get(PROJECTS) || [];
+		const length = projects.length;
+		
+		uris.forEach((uri) => {
 			
 			const fsPath = uri.fsPath;
 			

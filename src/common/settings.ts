@@ -51,15 +51,35 @@ export function getCurrentWorkspacePath () {
 export function updateStatusBarColorSettings (workspacePath:string, statusbarColors:StatusbarColors) {
 	
 	const useCodeWorkspace = isCodeWorkspace(workspacePath);
-	const workspaceSettingsPath = useCodeWorkspace ? workspacePath : path.join(workspacePath, '.vscode', 'settings.json');
+	const workspaceSettingsPath = useCodeWorkspace ? workspacePath : getSettingsPath(workspacePath);
 	
-	if (useCodeWorkspace || fs.existsSync(workspaceSettingsPath)) {
-		updateSettingsFile(workspaceSettingsPath, statusbarColors, useCodeWorkspace);
-	} else createSettingsFile(workspaceSettingsPath, statusbarColors);
+	if (fs.existsSync(workspaceSettingsPath)) updateSettingsFile(workspaceSettingsPath, statusbarColors, useCodeWorkspace);
+	else createSettingsFile(workspaceSettingsPath, statusbarColors);
+	
+}
+
+export function getStatusBarColorSettings (workspacePath:string) {
+	
+	const workspaceSettingsPath = isCodeWorkspace(workspacePath) ? workspacePath : getSettingsPath(workspacePath);
+	
+	if (fs.existsSync(workspaceSettingsPath)) {
+		const workspaceSettings = fs.readFileSync(workspaceSettingsPath, 'utf-8');
+		const json = jsoncParser.parse(workspaceSettings);
+		
+		return json.settings?.[COLOR_CUSTOMIZATIONS] || json[COLOR_CUSTOMIZATIONS] || null;
+	}
+	
+	return null;
 	
 }
 
 //	Functions __________________________________________________________________
+
+function getSettingsPath (workspacePath:string) {
+	
+	return path.join(workspacePath, '.vscode', 'settings.json');
+	
+}
 
 function updateSettingsFile (workspaceSettingsPath:string, statusbarColors:StatusbarColors, useCodeWorkspace:boolean) {
 	
