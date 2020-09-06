@@ -25,7 +25,7 @@ export type StatusbarColors = {
 export type Project = {
 	path:string,
 	label:string,
-	type:'folder'|'folders'|'git'|'vscode'|'workspace',
+	type:'folder'|'folders'|'git'|'subfolder'|'vscode'|'workspace',
 	color?:number,
 	removed?:boolean,
 	deleted?:boolean,

@@ -3,7 +3,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { Callback, Options, WalkTreeJob } from '../@types/files';
+import { Callback, FileMap, Options, WalkTreeJob } from '../@types/files';
 
 //	Variables __________________________________________________________________
 
@@ -33,6 +33,42 @@ export function walktree (cwd:string, options:Callback|Options, callback?:Callba
 	};
 	
 	_walktree(job, cwd, maxDepth);
+	
+}
+
+export function subfolders (cwd:string, options:Callback|Options, callback:Callback) {
+	
+	callback = typeof options === 'function' ? options : callback;
+	
+	const findIgnore = Array.isArray((<Options>options).ignore) ? createFindGlob((<string[]>(<Options>options).ignore)) : null;
+	
+	fs.readdir(cwd, (error, names) => {
+		
+		if (error) return callback(error);
+		
+		const result:FileMap = {};
+		
+		if (findIgnore) names = names.filter((name) => !findIgnore.test(name));
+					
+		names.forEach((name) => {
+			
+			const pathname = path.join(cwd, name);
+			const stat = fs.statSync(pathname);
+			
+			if (stat.isDirectory()) {
+				result[pathname] = {
+					folder: cwd,
+					path: pathname,
+					relative: name,
+					type: 'folder',
+				}
+			}
+			
+		});
+		
+		callback(null, result);
+		
+	});
 	
 }
 
@@ -98,9 +134,8 @@ function _walktree (job:WalkTreeJob, cwd:string, depth:number, relative:string =
 					if (job.type === 'folder' && job.find.test(name)) {
 						job.result[pathname] = {
 							folder: cwd,
-							path: pathname,
-							relative: nextRelative,
-							stat,
+							path: path.dirname(pathname),
+							relative,
 							type: 'folder',
 						};
 					} else if (depth > 0) return _walktree(job, cwd, depth - 1, nextRelative);
@@ -109,7 +144,6 @@ function _walktree (job:WalkTreeJob, cwd:string, depth:number, relative:string =
 						folder: cwd,
 						path: pathname,
 						relative: nextRelative,
-						stat,
 						type: 'file',
 					};
 				}

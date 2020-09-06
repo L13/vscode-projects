@@ -12,13 +12,12 @@ import { Stats } from 'fs';
 
 //	Exports ____________________________________________________________________
 
-export type Callback = (error?:null|Error, result?:StatsMap) => void;
+export type Callback = (error?:null|Error, result?:FileMap) => void;
 
 export type File = {
 	path:string,
 	folder:string,
 	relative:string,
-	stat?:Stats,
 	type?:'file'|'folder'|'symlink',
 };
 
@@ -28,7 +27,7 @@ export type WalkTreeJob = {
 	type:'file'|'folder',
 	ignore:null|RegExp,
 	tasks:number,
-	result:StatsMap,
+	result:FileMap,
 	done:(error?:Error) => void,
 };
 
@@ -45,7 +44,7 @@ export type Options = {
 	maxDepth?:number,
 };
 
-export type StatsMap = {
+export type FileMap = {
 	[pathname:string]:File,
 };
 
