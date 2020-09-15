@@ -48,6 +48,7 @@ export class StatusBar {
 			const name:string = this.getProjectName('projects', workspacePath) || this.getProjectName('favorites', workspacePath);
 			
 			this.statusBarItem.text = `$(file-${icon}) ${name || formatLabel(workspacePath)}`;
+			this.statusBarItem.tooltip = workspacePath;
 		}
 		
 	}

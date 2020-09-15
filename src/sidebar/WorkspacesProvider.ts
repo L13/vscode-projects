@@ -70,7 +70,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		{ label: 'Project Workspaces', type: 'folders', collapsed: false },
 		{ label: 'Git', type: 'git', collapsed: false },
 		{ label: 'Visual Studio Code', type: 'vscode', collapsed: false },
-		{ label: 'VS Code Workspaces', type: 'workspace', collapsed: false },
+		{ label: 'Workspaces', type: 'workspace', collapsed: false },
 		{ label: 'Subfolders', type: 'subfolder', collapsed: false },
 	];
 	
