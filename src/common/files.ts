@@ -1,6 +1,7 @@
 //	Imports ____________________________________________________________________
 
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
+import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
@@ -28,18 +29,20 @@ export function open (pathname:string, newWindow?:boolean) {
 	
 export function reveal (pathname:string) :void {
 	
-	let process:ChildProcessWithoutNullStreams = null;
+	if (fs.existsSync(pathname)) {
+		let process:ChildProcessWithoutNullStreams = null;
 	
-	if (isMacOs) process = showFileInFinder(pathname);
-	else if (isWindows) process = showFileInExplorer(pathname);
-	else process = showFileInFolder(pathname);
-	
-	process.on('error', (error:Error) => {
+		if (isMacOs) process = showFileInFinder(pathname);
+		else if (isWindows) process = showFileInExplorer(pathname);
+		else process = showFileInFolder(pathname);
 		
-		process.kill();
-		vscode.window.showErrorMessage(error.message);
-		
-	});
+		process.on('error', (error:Error) => {
+			
+			process.kill();
+			vscode.window.showErrorMessage(error.message);
+			
+		});
+	} else vscode.window.showErrorMessage(`Path "${pathname}" doesn't exist!`);
 	
 }
 

@@ -6,10 +6,10 @@ import * as vscode from 'vscode';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
 import { formatLabel } from '../@l13/formats';
-import { walktree } from '../@l13/fse';
+import { subfolders, walktree } from '../@l13/fse';
 import { isMacOs } from '../@l13/platforms';
 
-import { File, Options } from '../@types/files';
+import { FileMap, Options } from '../@types/files';
 import { GroupSimple, GroupSimpleState, GroupTreeItem, GroupType, GroupTypeState, InitialState, WorkspaceSortting } from '../@types/groups';
 import { Project, TreeItems } from '../@types/workspaces';
 
@@ -63,19 +63,22 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	public gitProjects:Project[] = [];
 	public vscodeProjects:Project[] = [];
 	public workspaceProjects:Project[] = [];
+	public subfolderProjects:Project[] = [];
 	
 	public groupTypes:GroupType[] = [
 		{ label: 'Projects', type: 'folder', collapsed: false },
 		{ label: 'Project Workspaces', type: 'folders', collapsed: false },
 		{ label: 'Git', type: 'git', collapsed: false },
 		{ label: 'Visual Studio Code', type: 'vscode', collapsed: false },
-		{ label: 'VS Code Workspaces', type: 'workspace', collapsed: false },
+		{ label: 'Workspaces', type: 'workspace', collapsed: false },
+		{ label: 'Subfolders', type: 'subfolder', collapsed: false },
 	];
 	
 	public groupSimples:GroupSimple[] = [
 		{ label: 'Projects', type: 'project', projectTypes: ['folder', 'folders'], collapsed: false },
 		{ label: 'Git', type: 'git', projectTypes: ['git'], collapsed: false },
 		{ label: 'Visual Studio Code', type: 'vscode', projectTypes: ['vscode', 'workspace'], collapsed: false },
+		{ label: 'Subfolders', type: 'subfolder', projectTypes: ['subfolder'], collapsed: false },
 	];
 	
 	private slots:HotkeySlots = null;
@@ -95,6 +98,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 			this.gitProjects = context.globalState.get('cacheGitProjects') || [];
 			this.vscodeProjects = context.globalState.get('cacheVSCodeProjects') || [];
 			this.workspaceProjects = context.globalState.get('cacheWorkspaceProjects') || [];
+			this.subfolderProjects = context.globalState.get('cacheSubfolderProjects') || [];
 			this.initCache = false;
 		}
 		
@@ -185,6 +189,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		const gitFolders = settings.get('git.folders', []);
 		const vscodeFolders = settings.get('vsCode.folders', []);
 		const workspaceFolders = settings.get('workspace.folders', []);
+		const subfolderFolders = settings.get('subfolder.folders', []);
 		const promises:Promise<any>[] = [];
 		
 		return promises.concat(this.detectProjectsFor('cacheGitProjects', this.gitProjects = [], 'git', gitFolders, {
@@ -202,6 +207,11 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 			type: 'file',
 			maxDepth: settings.get('workspace.maxDepthRecursion', 1),
 			ignore: settings.get('workspace.ignore', []),
+		}), this.detectProjectsFor('cacheSubfolderProjects', this.subfolderProjects = [], 'subfolder', subfolderFolders, {
+			find: null,
+			type: 'folder',
+			maxDepth: 1,
+			ignore: settings.get('subfolder.ignore', []),
 		}));
 		
 	}
@@ -255,26 +265,9 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	private detectProjectsFor (cacheName: string, detectedProjects:Project[], type:'git'|'vscode'|'workspace', paths:string[], options:Options) {
+	private detectProjectsFor (cacheName:string, detectedProjects:Project[], type:'git'|'subfolder'|'vscode'|'workspace', paths:string[], options:Options) {
 		
-		const promises:Promise<{ [relative:string]: File }>[] = [];
-		
-		paths.forEach((path) => {
-			
-			if (fs.existsSync(path)) {
-				promises.push(new Promise((resolve, reject) => {
-					
-					walktree(path, options, (error, result) => {
-						
-						if (error) reject(error);
-						else resolve(result);
-						
-					});
-					
-				}));
-			}
-			
-		});
+		const promises:Promise<FileMap>[] = type === 'subfolder' ? createSubfolderDetection(paths, options) : createWorkspaceDetection(paths, options);
 		
 		if (promises.length) {
 			return [Promise.all(promises).then((results) => {
@@ -282,7 +275,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 				results.forEach((files) => {
 					
 					for (const file of Object.values(files)) {
-						const pathname = file.type === 'file' ? file.path : path.dirname(file.path);
+						const pathname = file.path;
 						detectedProjects.push({
 							label: formatLabel(pathname),
 							path: pathname,
@@ -312,7 +305,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		this.projects = this.context.globalState.get(PROJECTS) || [];
 		this.projects.forEach((project) => project.deleted = !fs.existsSync(project.path));
 		
-		const all = (<Project[]>[]).concat(this.projects, this.gitProjects, this.vscodeProjects, this.workspaceProjects);
+		const all = (<Project[]>[]).concat(this.projects, this.gitProjects, this.vscodeProjects, this.workspaceProjects, this.subfolderProjects);
 		const once:{ [name:string]:Project } = {};
 		
 		all.forEach((project) => {
@@ -327,6 +320,8 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 				if (project.type === 'git') return once[project.path] = project;
 				if (type === 'vscode') return;
 				if (project.type === 'vscode') return once[project.path] = project;
+				if (type === 'subfolder') return;
+				if (project.type === 'subfolder') return once[project.path] = project;
 			} else once[project.path] = project;
 			
 		});
@@ -371,6 +366,9 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 				case 'vscode':
 				case 'workspace':
 					simpleType = 'vscode';
+					break;
+				case 'subfolder':
+					simpleType = 'subfolder';
 					break;
 			}
 		
@@ -763,5 +761,55 @@ function saveProject (projects:Project[], fsPath:string, value:string) :Project 
 	projects.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 	
 	return project;
+	
+}
+
+function createWorkspaceDetection (paths:string[], options:Options) {
+	
+	const promises:Promise<FileMap>[] = [];
+	
+	paths.forEach((path) => {
+			
+		if (fs.existsSync(path)) {
+			promises.push(new Promise((resolve, reject) => {
+				
+				walktree(path, options, (error, result) => {
+					
+					if (error) reject(error);
+					else resolve(result);
+					
+				});
+				
+			}));
+		}
+		
+	});
+	
+	return promises;
+	
+}
+
+function createSubfolderDetection (paths:string[], options:Options) {
+	
+	const promises:Promise<FileMap>[] = [];
+	
+	paths.forEach((path) => {
+			
+		if (fs.existsSync(path)) {
+			promises.push(new Promise((resolve, reject) => {
+				
+				subfolders(path, options, (error, result) => {
+					
+					if (error) reject(error);
+					else resolve(result);
+					
+				});
+				
+			}));
+		}
+		
+	});
+	
+	return promises;
 	
 }

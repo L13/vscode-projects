@@ -19,24 +19,24 @@ export type GroupTreeItem = GroupSimpleTreeItem|GroupTypeTreeItem;
 
 export type GroupSimple = {
 	label:string,
-	type:'project'|'git'|'vscode',
+	type:'project'|'git'|'vscode'|'subfolder',
 	projectTypes:(Project['type'])[]
 	collapsed:boolean,
 };
 
 export type GroupSimpleState = {
-	type:'project'|'git'|'vscode',
+	type:'project'|'git'|'vscode'|'subfolder',
 	collapsed:boolean,
 };
 
 export type GroupType = {
 	label:string,
-	type:'folder'|'folders'|'git'|'vscode'|'workspace',
+	type:'folder'|'folders'|'git'|'vscode'|'workspace'|'subfolder',
 	collapsed:boolean,
 };
 
 export type GroupTypeState = {
-	type:'folder'|'folders'|'git'|'vscode'|'workspace',
+	type:'folder'|'folders'|'git'|'vscode'|'workspace'|'subfolder',
 	collapsed:boolean,
 };
 
