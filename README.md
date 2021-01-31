@@ -4,10 +4,10 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ![Projects](images/previews/preview.png)
 
-## What's new in Projects 0.16.0
+## What's new in Projects 0.17.0
 
-- Added icon color update to `Projects: Refresh Workspaces`.
-- Added `Projects: Add Project Workspace` for Windows and Linux.
+- Added detection for subfolders in a folder.
+- Added project/workspace path to status bar.
 
 ## Index
 
@@ -92,13 +92,15 @@ Widnows and Linux
 * `l13Projects.useCacheForDetectedProjects` - If true detected folders and workspaces will be stored  between window sessions. Default value is false.
 * `l13Projects.git.folders` - The folders to search for Git repositories.
 * `l13Projects.git.maxDepthRecursion` - The maximum depth of folder recursion for Git repositories.
-* `l13Projects.git.ignore` - The folders which will be ignored for search.
+* `l13Projects.git.ignore` - The folders which should be ignored.
 * `l13Projects.vsCode.folders` - The folders to search for VS Code projects.
 * `l13Projects.vsCode.maxDepthRecursion` - The maximum depth of folder recursion for VS Code projects.
-* `l13Projects.vsCode.ignore` - The folders which will be ignored for search.
+* `l13Projects.vsCode.ignore` - The folders which should be ignored.
 * `l13Projects.workspace.folders` - The folders to search for VS Code workspaces.
 * `l13Projects.workspace.maxDepthRecursion` - The maximum depth of folder recursion for VS Code workspaces.
-* `l13Projects.workspace.ignore` - The folders which will be ignored for search.
+* `l13Projects.workspace.ignore` - The folders which should be ignored.
+* `l13Projects.subfolder.folders` - The folders to search for subfolders.
+* `l13Projects.subfolder.ignore` - The folders which should be ignored.
 * `l13Projects.sortWorkspacesBy` - Sort workspaces by name, simple or type. 
 	* `Name` - (default) Sort all workspaces by name.
 	* `Simple` - Group all workspaces by simple type. 
