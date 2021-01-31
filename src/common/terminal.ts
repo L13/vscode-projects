@@ -1,5 +1,6 @@
 //	Imports ____________________________________________________________________
 
+import * as fs from 'fs';
 import * as vscode from 'vscode';
 
 //	Variables __________________________________________________________________
@@ -12,9 +13,10 @@ import * as vscode from 'vscode';
 
 //	Exports ____________________________________________________________________
 
-export function open (pathanme:string) {
-
-	vscode.window.createTerminal({ cwd: pathanme }).show();
+export function open (pathname:string) {
+	
+	if (fs.existsSync(pathname)) vscode.window.createTerminal({ cwd: pathname }).show();
+	else vscode.window.showErrorMessage(`Path "${pathname}" doesn't exist!`);
 	
 }
 

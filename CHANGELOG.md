@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to the "Projects" extension will be documented in this file.
 
+## [0.17.0] - 2021-01-31
+
+### Added
+- Added detection for subfolders in a folder.
+- Added project/workspace path to status bar.
+
 ## [0.16.0] - 2020-09-06
 
 ### Added

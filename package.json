@@ -2,7 +2,7 @@
 	"name": "l13-projects",
 	"displayName": "Projects",
 	"description": "Manage your workspaces and projects in Visual Studio Code",
-	"version": "0.16.0",
+	"version": "0.17.0",
 	"publisher": "L13RARY",
 	"license": "SEE LICENCE IN LICENCE.md",
 	"homepage": "https://github.com/l13/vscode-projects/blob/master/README.md",
@@ -502,52 +502,52 @@
 				{
 					"command": "l13Projects.removeFavorite",
 					"group": "7_modification@2",
-					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
+					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?project-(folders?|git|subfolder|vscode|workspace)$/"
 				},
 				{
 					"command": "l13Projects.openProjectInCurrentWindow",
 					"group": "navigation@1",
-					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^project-(folders?|git|vscode|workspace)$/"
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^project-(folders?|git|subfolder|vscode|workspace)$/"
 				},
 				{
 					"command": "l13Projects.openProjectInNewWindow",
 					"group": "navigation@2",
-					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^project-(folders?|git|vscode|workspace)$/"
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^project-(folders?|git|subfolder|vscode|workspace)$/"
 				},
 				{
 					"command": "l13Projects.saveDetectedProject",
 					"group": "navigation@3",
-					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^((current-)?project-(git|vscode|workspace)|unknown-project)$/"
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^((current-)?project-(git|subfolder|vscode|workspace)|unknown-project)$/"
 				},
 				{
 					"command": "l13Projects.addToFavorites",
 					"group": "navigation@4",
-					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?project-(folders?|git|subfolder|vscode|workspace)$/"
 				},
 				{
 					"command": "l13Projects.showProjectInFinder",
 					"group": "navigation@5",
-					"when": "isMac && view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?project-(folders?|git|vscode|workspace)|unknown-project)$/"
+					"when": "isMac && view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?project-(folders?|git|subfolder|vscode|workspace)|unknown-project)$/"
 				},
 				{
 					"command": "l13Projects.showProjectInExplorer",
 					"group": "navigation@5",
-					"when": "isWindows && view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?project-(folders?|git|vscode|workspace)|unknown-project)$/"
+					"when": "isWindows && view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?project-(folders?|git|subfolder|vscode|workspace)|unknown-project)$/"
 				},
 				{
 					"command": "l13Projects.showProjectInFolder",
 					"group": "navigation@5",
-					"when": "isLinux && view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?project-(folders?|git|vscode|workspace)|unknown-project)$/"
+					"when": "isLinux && view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?project-(folders?|git|subfolder|vscode|workspace)|unknown-project)$/"
 				},
 				{
 					"command": "l13Projects.openInTerminal",
 					"group": "navigation@6",
-					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?project-(folders?|git|vscode|workspace)|unknown-project)$/"
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?project-(folders?|git|subfolder|vscode|workspace)|unknown-project)$/"
 				},
 				{
 					"command": "l13Projects.addToWorkspace",
 					"group": "2_workspace@1",
-					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^project-(folder|git|vscode)$/"
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^project-(folder|git|subfolder|vscode)$/"
 				},
 				{
 					"command": "l13Projects.renameProject",
@@ -562,12 +562,12 @@
 				{
 					"command": "l13Projects.copyPath",
 					"group": "6_copypath@1",
-					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(current-)?project-(folders?|git|subfolder|vscode|workspace)$/"
 				},
 				{
 					"command": "l13Projects.assignSlot",
 					"group": "navigation@7",
-					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(current-)?project-(folders?|git|vscode|workspace)$/"
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(current-)?project-(folders?|git|subfolder|vscode|workspace)$/"
 				},
 				{
 					"command": "l13Projects.selectColor",
@@ -716,6 +716,29 @@
 						"type": "string"
 					},
 					"description": "Indicates folders to be ignored, like \".git\", \".hg\", \".svn\", \"CVS\", \"node_modules\", etc."
+				},
+				"l13Projects.subfolder.folders": {
+					"type": "array",
+					"default": [],
+					"items": {
+						"type": "string"
+					},
+					"description": "Indicates the folders to search for subfolder"
+				},
+				"l13Projects.subfolder.ignore": {
+					"type": "array",
+					"default": [
+						".git",
+						".hg",
+						".svn",
+						".vscode",
+						"CVS",
+						"node_modules"
+					],
+					"items": {
+						"type": "string"
+					},
+					"description": "Indicates folders to be ignored, like \".hg\", \".git\", \".svn\", \"CVS\", \"node_modules\", etc."
 				},
 				"l13Projects.initialWorkspacesGroupState": {
 					"type": "string",
