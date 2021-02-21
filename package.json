@@ -2,7 +2,7 @@
 	"name": "l13-projects",
 	"displayName": "Projects",
 	"description": "Manage your workspaces and projects in Visual Studio Code",
-	"version": "0.17.0",
+	"version": "0.18.0",
 	"publisher": "L13RARY",
 	"license": "SEE LICENCE IN LICENCE.md",
 	"homepage": "https://github.com/l13/vscode-projects/blob/master/README.md",

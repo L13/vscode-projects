@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to the "Projects" extension will be documented in this file.
 
+## [0.18.0] - 2021-02-28
+
+### Added
+- Added groups for favorites.
+
 ## [0.17.0] - 2021-01-31
 
 ### Added
