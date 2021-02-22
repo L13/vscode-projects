@@ -37,13 +37,13 @@ export function activate (context:vscode.ExtensionContext) {
 	}));
 	
 	commands.register(context, {
-		'l13Projects.openInNewWindow': (uri) => vscode.commands.executeCommand('vscode.openFolder', uri, true),
-		'l13Projects.openInCurrentWindow': (uri) => vscode.commands.executeCommand('vscode.openFolder', uri, false),
-		'l13Projects.showProjectInFinder': (item) => files.reveal(item?.project.path || settings.getCurrentWorkspacePath()),
-		'l13Projects.showProjectInExplorer': (item) => files.reveal(item?.project.path || settings.getCurrentWorkspacePath()),
-		'l13Projects.showProjectInFolder': (item) => files.reveal(item?.project.path || settings.getCurrentWorkspacePath()),
-		'l13Projects.openInTerminal': ({ project }) => terminal.open(getFolderPath(project)),
-		'l13Projects.copyPath': ({ project }) => vscode.env.clipboard.writeText(project.path),
+		'l13Projects.action.explorer.openInNewWindow': (uri) => vscode.commands.executeCommand('vscode.openFolder', uri, true),
+		'l13Projects.action.explorer.openInCurrentWindow': (uri) => vscode.commands.executeCommand('vscode.openFolder', uri, false),
+		'l13Projects.action.workspace.revealInFinder': (item) => files.reveal(item?.project.path || settings.getCurrentWorkspacePath()),
+		'l13Projects.action.workspace.revealInExplorer': (item) => files.reveal(item?.project.path || settings.getCurrentWorkspacePath()),
+		'l13Projects.action.workspace.openContainingFolder': (item) => files.reveal(item?.project.path || settings.getCurrentWorkspacePath()),
+		'l13Projects.action.workspace.openInTerminal': ({ project }) => terminal.open(getFolderPath(project)),
+		'l13Projects.action.workspace.copyPath': ({ project }) => vscode.env.clipboard.writeText(project.path),
 	});
 
 }

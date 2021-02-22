@@ -35,11 +35,11 @@ export function activate (context:vscode.ExtensionContext) {
 	});
 	
 	commands.register(context, {
-		'l13Projects.pickFavorite': () => FavoritesProvider.pickFavorite(context),
-		'l13Projects.addToFavorites': ({ project }) => FavoritesProvider.addToFavorites(context, project),
-		'l13Projects.renameFavorite': ({ project }) => FavoritesProvider.renameFavorite(context, project),
-		'l13Projects.removeFavorite': ({ project }) => FavoritesProvider.removeFavorite(context, project),
-		'l13Projects.clearFavorites': () => FavoritesProvider.clearFavorites(context),
+		'l13Projects.action.favorite.pick': () => FavoritesProvider.pickFavorite(context),
+		'l13Projects.action.workspaces.addToFavorites': ({ project }) => FavoritesProvider.addToFavorites(context, project),
+		'l13Projects.action.favorite.rename': ({ project }) => FavoritesProvider.renameFavorite(context, project),
+		'l13Projects.action.favorite.remove': ({ project }) => FavoritesProvider.removeFavorite(context, project),
+		'l13Projects.action.favorites.clear': () => FavoritesProvider.clearFavorites(context),
 	});
 	
 }

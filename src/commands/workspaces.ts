@@ -54,36 +54,36 @@ export function activate (context:vscode.ExtensionContext) {
 	context.subscriptions.push(treeView);
 	
 	commands.register(context, {
-		'l13Projects.addToWorkspace': ({ project }) => WorkspacesProvider.addToWorkspace(project),
+		'l13Projects.action.workspace.addToWorkspace': ({ project }) => WorkspacesProvider.addToWorkspace(project),
 		
-		'l13Projects.openProject': ({ project }) => files.open(project.path),
-		'l13Projects.openProjectInCurrentWindow': ({ project }) => files.open(project.path, false),
-		'l13Projects.openProjectInNewWindow': ({ project }) => files.open(project.path, true),
-		'l13Projects.pickProject': () => WorkspacesProvider.pickProject(context),
-		'l13Projects.addProject': () => WorkspacesProvider.addProject(context),
-		'l13Projects.addProjectWorkspace': () => WorkspacesProvider.addProjectWorkspace(context),
-		'l13Projects.saveProject': () => WorkspacesProvider.saveProject(context),
-		'l13Projects.saveDetectedProject': ({ project }) => WorkspacesProvider.saveProject(context, project),
-		'l13Projects.refreshProjects': () => WorkspacesProvider.createProvider(context).refreshWorkspaces(),
-		'l13Projects.renameProject': ({ project }) => WorkspacesProvider.renameProject(context, project),
-		'l13Projects.removeProject': ({ project }) => WorkspacesProvider.removeProject(context, project),
-		'l13Projects.clearProjects': () => WorkspacesProvider.clearProjects(context),
+		'l13Projects.action.workspace.open': ({ project }) => files.open(project.path),
+		'l13Projects.action.workspace.openInCurrentWindow': ({ project }) => files.open(project.path, false),
+		'l13Projects.action.workspace.openInNewWindow': ({ project }) => files.open(project.path, true),
+		'l13Projects.action.workspace.pick': () => WorkspacesProvider.pickProject(context),
+		'l13Projects.action.workspaces.addProject': () => WorkspacesProvider.addProject(context),
+		'l13Projects.action.workspaces.addProjectWorkspace': () => WorkspacesProvider.addProjectWorkspace(context),
+		'l13Projects.action.workspaces.saveProject': () => WorkspacesProvider.saveProject(context),
+		'l13Projects.action.workspaces.saveDetectedProject': ({ project }) => WorkspacesProvider.saveProject(context, project),
+		'l13Projects.action.workspaces.refresh': () => WorkspacesProvider.createProvider(context).refreshWorkspaces(),
+		'l13Projects.action.project.rename': ({ project }) => WorkspacesProvider.renameProject(context, project),
+		'l13Projects.action.project.remove': ({ project }) => WorkspacesProvider.removeProject(context, project),
+		'l13Projects.action.projects.clear': () => WorkspacesProvider.clearProjects(context),
 		
-		'l13Projects.selectColor': ({ project }) => {
+		'l13Projects.action.project.selectColor': ({ project }) => {
 			
 			workspacesProvider.showColorPicker(project);
 			treeView.reveal(WorkspacesProvider.colorPicker, { focus: true, select: true });
 			
 		},
-		'l13Projects.pickColor1': ({ project }) => workspacesProvider.assignColor(project, 1),
-		'l13Projects.pickColor2': ({ project }) => workspacesProvider.assignColor(project, 2),
-		'l13Projects.pickColor3': ({ project }) => workspacesProvider.assignColor(project, 3),
-		'l13Projects.pickColor4': ({ project }) => workspacesProvider.assignColor(project, 4),
-		'l13Projects.pickColor5': ({ project }) => workspacesProvider.assignColor(project, 5),
-		'l13Projects.pickColor6': ({ project }) => workspacesProvider.assignColor(project, 6),
-		'l13Projects.pickColor7': ({ project }) => workspacesProvider.assignColor(project, 7),
-		'l13Projects.removeColor': ({ project }) => workspacesProvider.assignColor(project, 0),
-		'l13Projects.hideColorPicker': ({ project }) => workspacesProvider.hideColorPicker(),
+		'l13Projects.action.project.pickColor1': ({ project }) => workspacesProvider.assignColor(project, 1),
+		'l13Projects.action.project.pickColor2': ({ project }) => workspacesProvider.assignColor(project, 2),
+		'l13Projects.action.project.pickColor3': ({ project }) => workspacesProvider.assignColor(project, 3),
+		'l13Projects.action.project.pickColor4': ({ project }) => workspacesProvider.assignColor(project, 4),
+		'l13Projects.action.project.pickColor5': ({ project }) => workspacesProvider.assignColor(project, 5),
+		'l13Projects.action.project.pickColor6': ({ project }) => workspacesProvider.assignColor(project, 6),
+		'l13Projects.action.project.pickColor7': ({ project }) => workspacesProvider.assignColor(project, 7),
+		'l13Projects.action.project.removeColor': ({ project }) => workspacesProvider.assignColor(project, 0),
+		'l13Projects.action.project.hideColorPicker': () => workspacesProvider.hideColorPicker(),
 	});
 	
 }

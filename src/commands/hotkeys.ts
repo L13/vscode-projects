@@ -32,19 +32,19 @@ export function activate (context:vscode.ExtensionContext) {
 	HotkeySlots.saveCurrentWorkspace(context);
 	
 	commands.register(context, {
-		'l13Projects.assignSlot': async ({ project }) => hotkeySlots.assign(project),
-		'l13Projects.removeSlot': () => hotkeySlots.remove(),
-		'l13Projects.clearSlots': () => hotkeySlots.clear(),
-		'l13Projects.slot1': () => hotkeySlots.open(1),
-		'l13Projects.slot2': () => hotkeySlots.open(2),
-		'l13Projects.slot3': () => hotkeySlots.open(3),
-		'l13Projects.slot4': () => hotkeySlots.open(4),
-		'l13Projects.slot5': () => hotkeySlots.open(5),
-		'l13Projects.slot6': () => hotkeySlots.open(6),
-		'l13Projects.slot7': () => hotkeySlots.open(7),
-		'l13Projects.slot8': () => hotkeySlots.open(8),
-		'l13Projects.slot9': () => hotkeySlots.open(9),
-		'l13Projects.previousWorkspace': () => hotkeySlots.previousWorkspace(),
+		'l13Projects.action.workspace.assignSlot': async ({ project }) => hotkeySlots.assign(project),
+		'l13Projects.action.workspace.removeSlot': () => hotkeySlots.remove(),
+		'l13Projects.action.hotkeys.clearAllSlots': () => hotkeySlots.clear(),
+		'l13Projects.action.hotkey.slot1': () => hotkeySlots.open(1),
+		'l13Projects.action.hotkey.slot2': () => hotkeySlots.open(2),
+		'l13Projects.action.hotkey.slot3': () => hotkeySlots.open(3),
+		'l13Projects.action.hotkey.slot4': () => hotkeySlots.open(4),
+		'l13Projects.action.hotkey.slot5': () => hotkeySlots.open(5),
+		'l13Projects.action.hotkey.slot6': () => hotkeySlots.open(6),
+		'l13Projects.action.hotkey.slot7': () => hotkeySlots.open(7),
+		'l13Projects.action.hotkey.slot8': () => hotkeySlots.open(8),
+		'l13Projects.action.hotkey.slot9': () => hotkeySlots.open(9),
+		'l13Projects.action.hotkey.previousWorkspace': () => hotkeySlots.previousWorkspace(),
 	});
 	
 }

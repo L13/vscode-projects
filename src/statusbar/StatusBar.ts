@@ -11,12 +11,12 @@ import * as settings from '../common/settings';
 
 //	Variables __________________________________________________________________
 
-let command = 'l13Projects.showProjectInFolder';
+let command = 'l13Projects.action.workspace.openContainingFolder';
 
 //	Initialize _________________________________________________________________
 
-if (isMacOs) command = 'l13Projects.showProjectInFinder';
-else if (isWindows) command = 'l13Projects.showProjectInExplorer';
+if (isMacOs) command = 'l13Projects.action.workspace.revealInFinder';
+else if (isWindows) command = 'l13Projects.action.workspace.revealInExplorer';
 
 //	Exports ____________________________________________________________________
 

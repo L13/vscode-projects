@@ -20,7 +20,7 @@ export class ProjectTreeItem extends TreeItem {
 	
 	public command = {
 		arguments: [this],
-		command: 'l13Projects.openProject',
+		command: 'l13Projects.action.workspace.open',
 		title: 'Open Project',
 	};
 	
