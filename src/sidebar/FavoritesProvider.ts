@@ -83,10 +83,8 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoriteTreeIt
 		const slots = this.slots;
 		let groupId:number;
 		
-		if (element) {
-			groupId = (<FavoriteGroupTreeItem>element).favoriteGroup.id;
-			this.favoriteGroups.forEach((favoriteGroup) => list.push(new FavoriteGroupTreeItem(favoriteGroup)));
-		}
+		if (element) groupId = (<FavoriteGroupTreeItem>element).favoriteGroup.id;
+		else this.favoriteGroups.forEach((favoriteGroup) => list.push(new FavoriteGroupTreeItem(favoriteGroup)));
 		
 		this.favorites.filter((favorite) => favorite.groupId === groupId).forEach((favorite) => {
 				

@@ -41,11 +41,7 @@ export class ProjectTreeItem extends TreeItem {
 			dark: join(basePath, `project-${icon}-dark.svg`),
 		};
 		
-	}
-	
-	public get tooltip () :string {
-		
-		return this.project.path;
+		this.tooltip = project.path;
 		
 	}
 	

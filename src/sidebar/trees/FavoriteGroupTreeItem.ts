@@ -22,7 +22,7 @@ export class FavoriteGroupTreeItem extends vscode.TreeItem {
 		
 		super(favoriteGroup.label, favoriteGroup.collapsed ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.Expanded);
 		
-		this.id = `${favoriteGroup.id}`;
+		this.id = `favorite-group-${favoriteGroup.id}`;
 		
 	}
 	

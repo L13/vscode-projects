@@ -492,6 +492,30 @@
 				{
 					"command": "l13Projects.action.workspace.copyPath",
 					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.favorites.group.add",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.favorite.addToGroup",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.favorite.removeFromGroup",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.favorites.group.openAll",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.favorites.group.rename",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.favorites.group.remove",
+					"when": "false"
 				}
 			],
 			"explorer/context": [
@@ -505,6 +529,11 @@
 				}
 			],
 			"view/title": [
+				{
+					"command": "l13Projects.action.favorites.group.add",
+					"when": "view == l13ProjectsFavorites",
+					"group": "navigation@1"
+				},
 				{
 					"command": "l13Projects.action.workspaces.addProject",
 					"when": "view == l13ProjectsWorkspaces",
@@ -551,6 +580,11 @@
 					"command": "l13Projects.action.workspaces.addToFavorites",
 					"group": "navigation@4",
 					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?project-(folders?|git|subfolder|vscode|workspace)$/"
+				},
+				{
+					"command": "l13Projects.action.favorite.addToGroup",
+					"group": "navigation@4",
+					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?project-(folders?|git|subfolder|vscode|workspace)$/"
 				},
 				{
 					"command": "l13Projects.action.workspace.revealInFinder",
