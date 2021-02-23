@@ -9,6 +9,7 @@ import * as settings from '../common/Settings';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
 import { Favorite, FavoriteGroup, FavoriteTreeItems } from '../@types/favorites';
+import { InitialState } from '../@types/groups';
 import { Project } from '../@types/workspaces';
 
 import { HotkeySlots } from '../features/HotkeySlots';
@@ -55,12 +56,18 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoriteTreeIt
 		this.favorites = getFavorites(this.context);
 		this.favoriteGroups = this.context.globalState.get(FAVORITE_GROUPS, []);
 		this.slots = HotkeySlots.create(this.context);
+		const initialState:InitialState = settings.get('initialFavoritesGroupState', 'Remember');
+		
+		if (initialState !== 'Remember') {
+			this.favoriteGroups.forEach((favoriteGroup) => favoriteGroup.collapsed = initialState === 'Collapsed');
+		}
 		
 	}
 	
 	public refresh () :void {
 		
 		this.favorites = getFavorites(this.context);
+		this.favoriteGroups = this.context.globalState.get(FAVORITE_GROUPS, []);
 		
 		this._onDidChangeTreeData.fire();
 		
@@ -342,6 +349,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoriteTreeIt
 		
 		if (await dialogs.confirm(`Delete all favorites?'`, 'Delete')) {
 			context.globalState.update(FAVORITES, []);
+			context.globalState.update(FAVORITE_GROUPS, []);
 			FavoritesProvider.currentProvider?.refresh();
 		}
 		

@@ -118,7 +118,7 @@
 			},
 			{
 				"command": "l13Projects.action.favorites.group.openAll",
-				"title": "Open All"
+				"title": "Open in new Windows"
 			},
 			{
 				"command": "l13Projects.action.favorites.group.rename",
@@ -552,6 +552,21 @@
 			],
 			"view/item/context": [
 				{
+					"command": "l13Projects.action.favorites.group.openAll",
+					"group": "navigation@1",
+					"when": "view =~ /^l13ProjectsFavorites$/ && viewItem == favoriteGroup"
+				},
+				{
+					"command": "l13Projects.action.favorites.group.rename",
+					"group": "7_modification@1",
+					"when": "view =~ /^l13ProjectsFavorites$/ && viewItem == favoriteGroup"
+				},
+				{
+					"command": "l13Projects.action.favorites.group.remove",
+					"group": "7_modification@2",
+					"when": "view =~ /^l13ProjectsFavorites$/ && viewItem == favoriteGroup"
+				},
+				{
 					"command": "l13Projects.action.favorite.removeFromGroup",
 					"group": "7_modification@1",
 					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?subfavorite-(folders?|git|subfolder|vscode|workspace)$/"
@@ -806,6 +821,21 @@
 						"type": "string"
 					},
 					"description": "Indicates folders to be ignored, like \".hg\", \".git\", \".svn\", \"CVS\", \"node_modules\", etc."
+				},
+				"l13Projects.initialFavoritesGroupState": {
+					"type": "string",
+					"default": "Remember",
+					"enum": [
+						"Remember",
+						"Collapsed",
+						"Expanded"
+					],
+					"description": "Indicates if a favorite group should be collapsed, expanded or remembered in its initial state.",
+					"enumDescriptions": [
+						"Remember the collpased and expanded state of each group.",
+						"Show all groups collapsed at start.",
+						"Show all groups expanded at start."
+					]
 				},
 				"l13Projects.initialWorkspacesGroupState": {
 					"type": "string",
