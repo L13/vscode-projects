@@ -2,8 +2,9 @@
 
 import { Project } from './workspaces';
 
+import { CurrentFavoriteTreeItem } from '../sidebar/trees/CurrentFavoriteTreeItem';
 import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
-import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
+import { FavoriteTreeItem } from '../sidebar/trees/FavoriteTreeItem';
 
 //	Variables __________________________________________________________________
 
@@ -19,7 +20,7 @@ export interface Favorite extends Project {
 	groupId:number,
 };
 
-export type FavoriteTreeItems = ProjectTreeItem|FavoriteGroupTreeItem;
+export type FavoriteTreeItems = CurrentFavoriteTreeItem|FavoriteTreeItem|FavoriteGroupTreeItem;
 
 export type FavoriteGroup = {
 	label:string;

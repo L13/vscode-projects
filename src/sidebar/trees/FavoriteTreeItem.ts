@@ -3,8 +3,8 @@
 import { join } from 'path';
 import { TreeItem } from 'vscode';
 
+import { Favorite } from '../../@types/favorites';
 import { Slot } from '../../@types/hotkeys';
-import { Project } from '../../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -16,7 +16,7 @@ const basePath = join(__dirname, '..', 'images', 'types');
 
 //	Exports ____________________________________________________________________
 
-export class ProjectTreeItem extends TreeItem {
+export class FavoriteTreeItem extends TreeItem {
 	
 	public command = {
 		arguments: [this],
@@ -24,7 +24,7 @@ export class ProjectTreeItem extends TreeItem {
 		title: 'Open Project',
 	};
 	
-	public constructor (public readonly project:Project, public readonly slot:Slot|null) {
+	public constructor (public readonly project:Favorite, public readonly slot:Slot|null) {
 		
 		super(project.label);
 		
@@ -37,7 +37,7 @@ export class ProjectTreeItem extends TreeItem {
 		
 		if (type === 'folder' || type === 'folders') icon += `-color-${project.color || 0}`;
 		
-		this.contextValue = `project-${type}`;
+		this.contextValue = `${project.groupId != null ? 'sub' : ''}favorite-${type}`;
 		this.tooltip = project.path;
 		this.description = info.join(' ');
 		

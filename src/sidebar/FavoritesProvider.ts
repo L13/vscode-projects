@@ -9,12 +9,12 @@ import * as settings from '../common/Settings';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
 import { Favorite, FavoriteGroup, FavoriteTreeItems } from '../@types/favorites';
-import { Project, TreeItems } from '../@types/workspaces';
+import { Project } from '../@types/workspaces';
 
 import { HotkeySlots } from '../features/HotkeySlots';
-import { CurrentProjectTreeItem } from './trees/CurrentProjectTreeItem';
+import { CurrentFavoriteTreeItem } from './trees/CurrentFavoriteTreeItem';
 import { FavoriteGroupTreeItem } from './trees/FavoriteGroupTreeItem';
-import { ProjectTreeItem } from './trees/ProjectTreeItem';
+import { FavoriteTreeItem } from './trees/FavoriteTreeItem';
 
 //	Variables __________________________________________________________________
 
@@ -92,10 +92,8 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoriteTreeIt
 			
 			if (!hasCurrentProject && workspacePath && workspacePath === favorite.path) {
 				hasCurrentProject = true;
-				return new CurrentProjectTreeItem(favorite, slot);
-			}
-			
-			list.push(new ProjectTreeItem(favorite, slot));
+				list.push(new CurrentFavoriteTreeItem(favorite, slot));
+			} else list.push(new FavoriteTreeItem(favorite, slot));
 			
 		});
 		

@@ -23,35 +23,18 @@ export class CurrentProjectTreeItem extends TreeItem {
 		super(project.label);
 		
 		const type = project.type;
-		
-		this.contextValue = `current-project-${type}`;
-		
 		let icon = `${type}`;
 		
 		if (type === 'folder' || type === 'folders') icon += `-color-${project.color || 0}`;
+		
+		this.contextValue = `current-project-${type}`;
+		this.tooltip = project.path;
+		this.description = `${slot ? `[${slot.index}] ` : ''}Current workspace`;
 		
 		this.iconPath = {
 			light: join(basePath, `current-project-${icon}-light.svg`),
 			dark: join(basePath, `current-project-${icon}-dark.svg`),
 		};
-		
-	}
-	
-	public get tooltip () :string {
-		
-		return this.project.path;
-		
-	}
-	
-	public get description () :string {
-		
-		const info:string[] = [];
-		
-		if (this.slot) info.push(`[${this.slot.index}]`);
-		
-		info.push('Current workspace');
-		
-		return info.join(' ');
 		
 	}
 	
