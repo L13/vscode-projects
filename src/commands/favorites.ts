@@ -54,13 +54,7 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.favorites.clear': () => FavoritesProvider.clearFavorites(context),
 		
 		'l13Projects.action.favorites.group.add': () => FavoritesProvider.addFavoriteGroup(context),
-		'l13Projects.action.favorites.group.openAll': ({ favoriteGroup }) => {
-			
-			const favorites = FavoritesProvider.getFavoritesByGroup(context, favoriteGroup);
-			
-			favorites.forEach((favorite) => files.open(favorite.path, true));
-			
-		},
+		'l13Projects.action.favorites.group.openAll': ({ favoriteGroup }) => FavoritesProvider.openFavoritesByGroupId(context, favoriteGroup.id),
 		'l13Projects.action.favorites.group.rename': ({ favoriteGroup }) => FavoritesProvider.renameFavoriteGroup(context, favoriteGroup),
 		'l13Projects.action.favorites.group.remove': ({ favoriteGroup }) => FavoritesProvider.removeFavoriteGroup(context, favoriteGroup),
 	});

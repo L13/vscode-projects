@@ -17,7 +17,7 @@ import { FavoriteTreeItem } from '../sidebar/trees/FavoriteTreeItem';
 //	Exports ____________________________________________________________________
 
 export interface Favorite extends Project {
-	groupId:number,
+	groupId?:number,
 };
 
 export type FavoriteTreeItems = CurrentFavoriteTreeItem|FavoriteTreeItem|FavoriteGroupTreeItem;
@@ -27,8 +27,6 @@ export type FavoriteGroup = {
 	id:number;
 	collapsed:boolean;
 };
-
-
 
 //	Functions __________________________________________________________________
 
