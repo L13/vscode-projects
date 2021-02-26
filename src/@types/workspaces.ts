@@ -25,13 +25,21 @@ export type StatusbarColors = {
 export type Project = {
 	path:string,
 	label:string,
-	type:'folder'|'folders'|'git'|'subfolder'|'vscode'|'workspace',
+	type:'folder'|'folders'|WorkspaceTypes,
 	color?:number,
 	removed?:boolean,
 	deleted?:boolean,
 };
 
 export type TreeItems = ColorPickerTreeItem|CurrentProjectTreeItem|ProjectTreeItem|GroupTreeItem|UnknownProjectTreeItem;
+
+// export type Workspace = {
+// 	path:string,
+// 	label:string,
+// 	type:WorkspaceTypes,
+// };
+
+export type WorkspaceTypes = 'git'|'subfolder'|'vscode'|'workspace';
 
 //	Functions __________________________________________________________________
 

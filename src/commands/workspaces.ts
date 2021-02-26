@@ -59,7 +59,7 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspace.open': ({ project }) => files.open(project.path),
 		'l13Projects.action.workspace.openInCurrentWindow': ({ project }) => files.open(project.path, false),
 		'l13Projects.action.workspace.openInNewWindow': ({ project }) => files.open(project.path, true),
-		'l13Projects.action.workspace.pick': () => WorkspacesProvider.pickProject(context),
+		'l13Projects.action.workspace.pick': () => WorkspacesProvider.pickWorkspace(context),
 		'l13Projects.action.workspaces.addProject': () => WorkspacesProvider.addProject(context),
 		'l13Projects.action.workspaces.addProjectWorkspace': () => WorkspacesProvider.addProjectWorkspace(context),
 		'l13Projects.action.workspaces.saveProject': () => WorkspacesProvider.saveProject(context),
