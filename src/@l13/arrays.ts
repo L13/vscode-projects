@@ -12,6 +12,19 @@
 
 //	Exports ____________________________________________________________________
 
+export function remove (values:any[], value:any) {
+	
+	const index = values.indexOf(value);
+	
+	if (index !== -1) {
+		values.splice(index, 1);
+		return true;
+	}
+	
+	return false;
+	
+}
+
 export function sortCaseInsensitive (a:string, b:string) {
 	
 	a = a.toLowerCase();

@@ -33,11 +33,13 @@ export type Project = {
 
 export type TreeItems = ColorPickerTreeItem|CurrentProjectTreeItem|ProjectTreeItem|GroupTreeItem|UnknownProjectTreeItem;
 
-// export type Workspace = {
-// 	path:string,
-// 	label:string,
-// 	type:WorkspaceTypes,
-// };
+export type WorkspaceGroup = {
+	label:string;
+	id:number;
+	collapsed:boolean;
+	paths:string[],
+	type:'custom',
+};
 
 export type WorkspaceTypes = 'git'|'subfolder'|'vscode'|'workspace';
 

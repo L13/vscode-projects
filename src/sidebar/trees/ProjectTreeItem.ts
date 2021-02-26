@@ -24,7 +24,7 @@ export class ProjectTreeItem extends TreeItem {
 		title: 'Open Project',
 	};
 	
-	public constructor (public readonly project:Project, public readonly slot:Slot|null) {
+	public constructor (public readonly project:Project, public readonly slot:Slot|null, isSubProject:boolean = false) {
 		
 		super(project.label);
 		
@@ -37,7 +37,7 @@ export class ProjectTreeItem extends TreeItem {
 		
 		if (type === 'folder' || type === 'folders') icon += `-color-${project.color || 0}`;
 		
-		this.contextValue = `project-${type}`;
+		this.contextValue = `${isSubProject ? 'sub' : ''}project-${type}`;
 		this.tooltip = project.path;
 		this.description = info.join(' ');
 		

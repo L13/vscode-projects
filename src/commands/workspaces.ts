@@ -65,6 +65,14 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspaces.saveProject': () => WorkspacesProvider.saveProject(context),
 		'l13Projects.action.workspaces.saveDetectedProject': ({ project }) => WorkspacesProvider.saveProject(context, project),
 		'l13Projects.action.workspaces.refresh': () => WorkspacesProvider.createProvider(context).refreshWorkspaces(),
+		
+		'l13Projects.action.workspaces.group.add': () => WorkspacesProvider.addWorkspaceGroup(context),
+		'l13Projects.action.workspace.addToGroup': ({ project }) => WorkspacesProvider.addWorkspaceToGroup(context, project),
+		'l13Projects.action.workspace.removeFromGroup': ({ project }) => WorkspacesProvider.removeFromWorkspaceGroup(context, project),
+		'l13Projects.action.workspaces.group.openAll': ({ group }) => WorkspacesProvider.openWorkspacesByGroup(group),
+		'l13Projects.action.workspaces.group.rename': ({ group }) => WorkspacesProvider.renameWorkspaceGroup(context, group),
+		'l13Projects.action.workspaces.group.remove': ({ group }) => WorkspacesProvider.removeWorkspaceGroup(context, group),
+		
 		'l13Projects.action.project.rename': ({ project }) => WorkspacesProvider.renameProject(context, project),
 		'l13Projects.action.project.remove': ({ project }) => WorkspacesProvider.removeProject(context, project),
 		'l13Projects.action.projects.clear': () => WorkspacesProvider.clearProjects(context),

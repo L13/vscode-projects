@@ -297,17 +297,6 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoriteTreeIt
 		
 	}
 	
-	public static saveCollapseState (context:vscode.ExtensionContext, item:FavoriteGroupTreeItem, state:boolean) {
-		
-		const favoriteGroups = getFavoriteGroups(context);
-		const groupId = item.favoriteGroup.id;
-		
-		favoriteGroups.some((favoriteGroup) => favoriteGroup.id === groupId ? (favoriteGroup.collapsed = state) || true : false);
-		
-		updateFavoriteGroups(context, favoriteGroups, true);
-		
-	}
-	
 	public static async renameFavoriteGroup (context:vscode.ExtensionContext, favoriteGroup:FavoriteGroup) {
 		
 		const value = await vscode.window.showInputBox({
@@ -361,6 +350,17 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoriteTreeIt
 		
 	}
 	
+	public static saveCollapseState (context:vscode.ExtensionContext, item:FavoriteGroupTreeItem, state:boolean) {
+		
+		const favoriteGroups = getFavoriteGroups(context);
+		const groupId = item.favoriteGroup.id;
+		
+		favoriteGroups.some((favoriteGroup) => favoriteGroup.id === groupId ? (favoriteGroup.collapsed = state) || true : false);
+		
+		updateFavoriteGroups(context, favoriteGroups, true);
+		
+	}
+	
 	public static async clearFavorites (context:vscode.ExtensionContext) {
 		
 		if (await dialogs.confirm(`Delete all favorites?'`, 'Delete')) {
@@ -405,7 +405,6 @@ function updateFavoriteGroups (context:vscode.ExtensionContext, favoriteGroups:F
 	if (refresh) FavoritesProvider.currentProvider?.refresh();
 	
 }
-
 
 function getNextGroupId (favoriteGroups:FavoriteGroup[]) :number {
 	

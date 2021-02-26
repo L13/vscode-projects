@@ -3,14 +3,14 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 
-import { sortCaseInsensitive } from '../@l13/arrays';
+import { remove, sortCaseInsensitive } from '../@l13/arrays';
 import { formatLabel } from '../@l13/formats';
 import { subfolders, walktree } from '../@l13/fse';
 import { isMacOs } from '../@l13/platforms';
 
 import { FileMap, Options } from '../@types/files';
-import { GroupSimple, GroupSimpleState, GroupTreeItem, GroupType, GroupTypeState, InitialState, WorkspaceSortting } from '../@types/groups';
-import { Project, TreeItems, WorkspaceTypes } from '../@types/workspaces';
+import { GroupCustomState, GroupSimple, GroupSimpleState, GroupTreeItem, GroupType, GroupTypeState, InitialState, WorkspaceSorting } from '../@types/groups';
+import { Project, TreeItems, WorkspaceGroup, WorkspaceTypes } from '../@types/workspaces';
 
 import * as dialogs from '../common/dialogs';
 import * as files from '../common/files';
@@ -21,6 +21,7 @@ import { colors } from '../statusbar/colors';
 
 import { ColorPickerTreeItem } from './trees/ColorPickerTreeItem';
 import { CurrentProjectTreeItem } from './trees/CurrentProjectTreeItem';
+import { GroupCustomTreeItem } from './trees/GroupCustomTreeItem';
 import { GroupSimpleTreeItem } from './trees/GroupSimpleTreeItem';
 import { GroupTypeTreeItem } from './trees/GroupTypeTreeItem';
 import { ProjectTreeItem } from './trees/ProjectTreeItem';
@@ -33,9 +34,12 @@ const findVSCodeFolder:RegExp = /^\.vscode$/;
 
 const GROUP_STATES_BY_TYPE = 'groupStatesByType';
 const GROUP_STATES_BY_SIMPLE = 'groupStatesBySimple';
-const PROJECTS = 'projects';
+const GROUP_STATES_BY_GROUP = 'groupStatesByGroup';
 
-let sortWorkspacesBy:WorkspaceSortting = settings.get('sortWorkspacesBy');
+const PROJECTS = 'projects';
+const WORKSPACE_GROUPS = 'workspaceGroups';
+
+let sortWorkspacesBy:WorkspaceSorting = settings.get('sortWorkspacesBy');
 
 //	Initialize _________________________________________________________________
 
@@ -321,6 +325,68 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
+	private addCustomGroups (list:TreeItems[], workspacePath:string) {
+		
+		const workspaceGroups = getWorkspaceGroups(this.context);
+		let paths:string[] = [];
+		
+		workspaceGroups.forEach((workspaceGroup) => {
+			
+			paths = paths.concat(workspaceGroup.paths);
+			list.push(new GroupCustomTreeItem(workspaceGroup));
+			
+		});
+		
+		const colorPickerProject = WorkspacesProvider.colorPicker.project;
+		const slots = this.slots;
+		let hasCurrentWorkspace = false;
+		
+		this.cache.forEach((workspace) => {
+			
+			if (paths.includes(workspace.path)) return;
+			
+			const slot = slots.get(workspace);
+			
+			if (!hasCurrentWorkspace && workspacePath && workspacePath === workspace.path) {
+				hasCurrentWorkspace = true;
+				list.push(new CurrentProjectTreeItem(workspace, slot));
+			} else list.push(new ProjectTreeItem(workspace, slot));
+			
+			if (colorPickerProject?.path === workspace.path) {
+				list.push(WorkspacesProvider.colorPicker);
+			}
+			
+		});
+		
+		if (workspacePath && !hasCurrentWorkspace) this.addUnknownItem(list, workspacePath);
+		
+	}
+	
+	private addCustomGroupItems (list:TreeItems[], paths:string[], workspacePath:string) {
+		
+		const colorPickerProject = WorkspacesProvider.colorPicker.project;
+		const slots = this.slots;
+		let hasCurrentWorkspace = false;
+		
+		this.cache.forEach((workspace) => {
+			
+			if (!paths.includes(workspace.path)) return;
+					
+			const slot = slots.get(workspace);
+			
+			if (!hasCurrentWorkspace && workspacePath && workspacePath === workspace.path) {
+				hasCurrentWorkspace = true;
+				list.push(new CurrentProjectTreeItem(workspace, slot, true));
+			} else list.push(new ProjectTreeItem(workspace, slot, true));
+			
+			if (colorPickerProject && colorPickerProject.path === workspace.path) {
+				list.push(WorkspacesProvider.colorPicker);
+			}
+			
+		});
+		
+	}
+	
 	private addSimpleGroups (list:TreeItems[], workspacePath:string) {
 		
 		const isUnknownWorkspace = this.isUnknownWorkspace(workspacePath);
@@ -409,10 +475,12 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 					
 			if (type === workspace.type) {
 				const slot = slots.get(workspace);
+				
 				if (!hasCurrentWorkspace && workspacePath && workspacePath === workspace.path) {
 					hasCurrentWorkspace = true;
 					list.push(new CurrentProjectTreeItem(workspace, slot));
 				} else list.push(new ProjectTreeItem(workspace, slot));
+				
 				if (colorPickerProject && (type === 'folder' || type === 'folders') && colorPickerProject.path === workspace.path) {
 					list.push(WorkspacesProvider.colorPicker);
 				}
@@ -489,10 +557,12 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		if (sortWorkspacesBy !== 'Name') {
 			if (element) {
 				const type = (<GroupTreeItem>element).group.type;
-				if (sortWorkspacesBy === 'Simple') this.addSimpleGroupItems(list, type, workspacePath);
+				if (sortWorkspacesBy === 'Group') this.addCustomGroupItems(list, (<GroupCustomTreeItem>element).group.paths, workspacePath);
+				else if (sortWorkspacesBy === 'Simple') this.addSimpleGroupItems(list, type, workspacePath);
 				else this.addTypeGroupItems(list, type, workspacePath);
 			} else {
-				if (sortWorkspacesBy === 'Simple') this.addSimpleGroups(list, workspacePath);
+				if (sortWorkspacesBy === 'Group') this.addCustomGroups(list, workspacePath);
+				else if (sortWorkspacesBy === 'Simple') this.addSimpleGroups(list, workspacePath);
 				else this.addTypeGroups(list, workspacePath);
 			}
 		} else this.addItems(list, workspacePath);
@@ -698,12 +768,113 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
+	public static async addWorkspaceGroup (context:vscode.ExtensionContext) {
+		
+		const label = await vscode.window.showInputBox({
+			placeHolder: 'Please enter a name for the group.',
+		});
+		
+		if (!label) return;
+		
+		const workspaceGroups = getWorkspaceGroups(context);
+		
+		for (const workspaceGroup of workspaceGroups) {
+			if (workspaceGroup.label === label) {
+				return vscode.window.showErrorMessage(`Workspace group "${label}" exists!`);
+			}
+		}
+		
+		workspaceGroups.push({ label, id: getNextGroupId(workspaceGroups), collapsed: false, paths: [], type: 'custom' });
+		workspaceGroups.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
+		updateWorkspaceGroups(context, workspaceGroups, true);
+		
+	}
+	
+	public static openWorkspacesByGroup (workspaceGroup:WorkspaceGroup) {
+		
+		workspaceGroup.paths.forEach((path) => files.open(path, true));
+		
+	}
+	
+	public static async addWorkspaceToGroup (context:vscode.ExtensionContext, workspace:Project) {
+		
+		const workspaceGroups = getWorkspaceGroups(context);
+		
+		if (!workspaceGroups.length) await WorkspacesProvider.addWorkspaceGroup(context);
+		
+		const workspaceGroup = workspaceGroups.length > 1 ? await vscode.window.showQuickPick(workspaceGroups) : workspaceGroups[0];
+		
+		if (workspaceGroup && !workspaceGroup.paths.includes(workspace.path)) {
+			workspaceGroups.some((group) => remove(group.paths, workspace.path));
+			workspaceGroup.paths.push(workspace.path);
+			workspaceGroup.paths.sort();
+			updateWorkspaceGroups(context, workspaceGroups, true);
+		}
+		
+	}
+	
+	public static removeFromWorkspaceGroup (context:vscode.ExtensionContext, workspace:Project) {
+		
+		const workspaceGroups = getWorkspaceGroups(context);
+		
+		workspaceGroups.some((workspaceGroup) => remove(workspaceGroup.paths, workspace.path));
+		
+		updateWorkspaceGroups(context, workspaceGroups, true);
+		
+	}
+	
+	public static async renameWorkspaceGroup (context:vscode.ExtensionContext, workspaceGroup:WorkspaceGroup) {
+		
+		const value = await vscode.window.showInputBox({
+			placeHolder: 'Please enter a new name for the group.',
+			value: workspaceGroup.label,
+		});
+		
+		if (!value || workspaceGroup.label === value) return;
+		
+		const workspaceGroups = getWorkspaceGroups(context);
+		const groupId = workspaceGroup.id;
+		
+		for (const group of workspaceGroups) {
+			if (group.id === groupId) {
+				group.label = value;
+				workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+				updateWorkspaceGroups(context, workspaceGroups, true);
+				break;
+			}
+		}
+		
+	}
+	
+	public static async removeWorkspaceGroup (context:vscode.ExtensionContext, workspaceGroup:WorkspaceGroup) {
+		
+		const value = await dialogs.confirm(`Delete favorite group "${workspaceGroup.label}"?`, 'Delete');
+		
+		if (value) {
+			const workspaceGroups = getWorkspaceGroups(context);
+			const groupId = workspaceGroup.id;
+			
+			for (let i = 0; i < workspaceGroups.length; i++) {
+				if (workspaceGroups[i].id === groupId) {
+					workspaceGroups.splice(i, 1);
+					updateWorkspaceGroups(context, workspaceGroups, true);
+					break;
+				}
+			}
+		}
+		
+	}
+	
 	public static saveCollapseState (context:vscode.ExtensionContext, item:GroupTreeItem, state:boolean) {
 		
 		if (sortWorkspacesBy === 'Name') return;
 		
-		const groupStates = sortWorkspacesBy === 'Simple' ? GROUP_STATES_BY_SIMPLE : GROUP_STATES_BY_TYPE;
-		const groups:(GroupSimpleState|GroupTypeState)[] = context.globalState.get(groupStates, []);
+		let groupStates = GROUP_STATES_BY_TYPE;
+		
+		if (sortWorkspacesBy === 'Group') groupStates = GROUP_STATES_BY_GROUP;
+		else if (sortWorkspacesBy === 'Simple') groupStates = GROUP_STATES_BY_SIMPLE;
+		
+		const groups:(GroupCustomState|GroupSimpleState|GroupTypeState)[] = context.globalState.get(groupStates, []);
 		const groupType = item.group.type;
 		
 		if (!groups.some((group) => group.type === groupType ? (group.collapsed = state) || true : false)) {
@@ -755,6 +926,37 @@ function updateProjects (context:vscode.ExtensionContext, projects:Project[], re
 	context.globalState.update(PROJECTS, projects);
 	
 	if (refresh) WorkspacesProvider.currentProvider?.refresh();
+	
+}
+
+function getWorkspaceGroups (context:vscode.ExtensionContext) :WorkspaceGroup[] {
+	
+	return context.globalState.get(WORKSPACE_GROUPS, []);
+	
+}
+
+function updateWorkspaceGroups (context:vscode.ExtensionContext, workspaceGroups:WorkspaceGroup[], refresh?:boolean) {
+	
+	context.globalState.update(WORKSPACE_GROUPS, workspaceGroups);
+	
+	if (refresh) WorkspacesProvider.currentProvider?.refresh();
+	
+}
+
+function getNextGroupId (workspaceGroups:WorkspaceGroup[]) :number {
+	
+	if (!workspaceGroups.length) return 0;
+	
+	const groupIds = workspaceGroups.map((favoriteGroup) => favoriteGroup.id);
+	const maxGroupId = Math.max.apply(null, groupIds);
+	let i = 0;
+	
+	while (i <= maxGroupId) {
+		if (!groupIds.includes(i)) return i;
+		i++;
+	}
+	
+	return i;
 	
 }
 

@@ -2,6 +2,7 @@
 
 import { Project } from './workspaces';
 
+import { GroupCustomTreeItem } from '../sidebar/trees/GroupCustomTreeItem';
 import { GroupSimpleTreeItem } from '../sidebar/trees/GroupSimpleTreeItem';
 import { GroupTypeTreeItem } from '../sidebar/trees/GroupTypeTreeItem';
 
@@ -15,7 +16,17 @@ import { GroupTypeTreeItem } from '../sidebar/trees/GroupTypeTreeItem';
 
 //	Exports ____________________________________________________________________
 
-export type GroupTreeItem = GroupSimpleTreeItem|GroupTypeTreeItem;
+export type GroupTreeItem = GroupCustomTreeItem|GroupSimpleTreeItem|GroupTypeTreeItem;
+
+export type GroupCustom = {
+	label:string,
+	collapsed:boolean,
+};
+
+export type GroupCustomState = {
+	type:'custom',
+	collapsed:boolean,
+};
 
 export type GroupSimple = {
 	label:string,
@@ -42,7 +53,7 @@ export type GroupTypeState = {
 
 export type InitialState = 'Collapsed'|'Expanded'|'Remember';
 
-export type WorkspaceSortting = 'Name'|'Simple'|'Type';
+export type WorkspaceSorting = 'Group'|'Name'|'Simple'|'Type';
 
 //	Functions __________________________________________________________________
 
