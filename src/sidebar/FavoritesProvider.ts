@@ -10,7 +10,7 @@ import * as settings from '../common/Settings';
 import { remove, sortCaseInsensitive } from '../@l13/arrays';
 import { Favorite, FavoriteGroup, FavoritesTreeItems } from '../@types/favorites';
 import { InitialState } from '../@types/groups';
-import { Project } from '../@types/workspaces';
+import { Project, WorkspaceGroup } from '../@types/workspaces';
 
 import { HotkeySlots } from '../features/HotkeySlots';
 import { CurrentFavoriteTreeItem } from './trees/CurrentFavoriteTreeItem';
@@ -159,42 +159,42 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 		
 	}
 	
-	public static addToFavorites (context:vscode.ExtensionContext, project:Project) {
+	public static addToFavorites (context:vscode.ExtensionContext, workspace:Project) {
 		
 		const favorites = getFavorites(context);
 		
-		if (favorites.some(({ path }) => path === project.path)) {
-			return vscode.window.showErrorMessage(`Project "${project.label}" exists in favorites!`);
+		if (favorites.some(({ path }) => path === workspace.path)) {
+			return vscode.window.showErrorMessage(`Project "${workspace.label}" exists in favorites!`);
 		}
 		
 		favorites.push({
-			label: project.label,
-			path: project.path,
-			type: project.type,
-			color: project.color,
+			label: workspace.label,
+			path: workspace.path,
+			type: workspace.type,
+			color: workspace.color,
 		});
 		
 		favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 		
 		updateFavorites(context, favorites, true);
 		
-		vscode.window.showInformationMessage(`Added "${project.label}" to favorites`);
+		vscode.window.showInformationMessage(`Added "${workspace.label}" to favorites`);
 		
 	}
 	
-	public static updateFavorite (context:vscode.ExtensionContext, project:Project) {
+	public static updateFavorite (context:vscode.ExtensionContext, workspace:Project) {
 		
 		const favorites = getFavorites(context);
-		const fsPath = project.path;
+		const fsPath = workspace.path;
 		
 		for (let i = 0; i < favorites.length; i++) {
 			const favorite = favorites[i];
 			if (favorite.path === fsPath) {
-				if (!project.removed) {
-					const type = favorite.type = project.type;
-					if (type === 'folder' || type === 'folders') favorite.color = project.color;
+				if (!workspace.removed) {
+					const type = favorite.type = workspace.type;
+					if (type === 'folder' || type === 'folders') favorite.color = workspace.color;
 					else delete favorite.color;
-					favorite.label = project.label;
+					favorite.label = workspace.label;
 					favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				} else favorites.splice(i, 1);
 				updateFavorites(context, favorites, true);
@@ -268,6 +268,50 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 			favoriteGroup.paths.sort();
 			updateFavoriteGroups(context, favoriteGroups, true);
 		}
+		
+	}
+	
+	public static addGroupToFavorites (context:vscode.ExtensionContext, group:WorkspaceGroup, workspaces:Project[]) {
+		
+		const favoriteGroups = getFavoriteGroups(context);
+		const label = group.label;
+		
+		for (const favoriteGroup of favoriteGroups) {
+			if (favoriteGroup.label === label) return vscode.window.showErrorMessage(`Favorite group "${label}" exists!`);
+		}
+		
+		const paths = group.paths;
+		
+		favoriteGroups.forEach((favoriteGroup) => {
+			
+			paths.forEach((path) => remove(favoriteGroup.paths, path));
+			
+		});
+		
+		favoriteGroups.push({ label, id: getNextGroupId(favoriteGroups), collapsed: false, paths: group.paths });
+		favoriteGroups.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
+		
+		const favorites = getFavorites(context);
+		
+		workspaces.forEach((workspace) => {
+			
+			if (favorites.some(({ path }) => path === workspace.path)) return;
+			
+			favorites.push({
+				label: workspace.label,
+				path: workspace.path,
+				type: workspace.type,
+				color: workspace.color,
+			});
+			
+		});
+		
+		favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+		
+		updateFavorites(context, favorites);
+		updateFavoriteGroups(context, favoriteGroups, true);
+		
+		vscode.window.showInformationMessage(`Added group "${label}" to favorites`);
 		
 	}
 	

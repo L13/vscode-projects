@@ -586,7 +586,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	private getWorkspace (fsPath:string) {
+	public getWorkspaceByPath (fsPath:string) {
 		
 		for (const workspace of this.cache) {
 			if (workspace.path === fsPath) return workspace;
@@ -772,7 +772,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 					const provider = WorkspacesProvider.currentProvider;
 					provider.refresh();
 					project.removed = true;
-					project = provider.getWorkspace(fsPath) || project;
+					project = provider.getWorkspaceByPath(fsPath) || project;
 					WorkspacesProvider._onDidChangeProject.fire(project);
 					return;
 				}

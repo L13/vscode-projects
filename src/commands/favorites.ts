@@ -10,6 +10,7 @@ import { FavoriteTreeItems } from '../@types/favorites';
 import { HotkeySlots } from '../features/HotkeySlots';
 import { FavoritesProvider } from '../sidebar/FavoritesProvider';
 import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
+import { GroupCustomTreeItem } from '../sidebar/trees/GroupCustomTreeItem';
 import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
 import { StatusBar } from '../statusbar/StatusBar';
@@ -47,11 +48,11 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	commands.register(context, {
 		'l13Projects.action.workspaces.addToFavorites': ({ project }:ProjectTreeItem) => FavoritesProvider.addToFavorites(context, project),
-		'l13Projects.action.workspaces.group.addToFavorites': ({ group }) => {
+		'l13Projects.action.workspaces.group.addToFavorites': ({ group }:GroupCustomTreeItem) => {
 			
-			// const workspaces = WorkspacesProvider.getWorkspacesByPaths(group.);
+			const workspaces = group.paths.map((path) => WorkspacesProvider.currentProvider?.getWorkspaceByPath(path));
 			
-			// FavoritesProvider.addGroupToFavorites(group);
+			FavoritesProvider.addGroupToFavorites(context, group, workspaces.filter((workspace) => !!workspace));
 			
 		},
 		
