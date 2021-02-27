@@ -366,7 +366,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 				group.label = value;
 				favoriteGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				updateFavoriteGroups(context, favoriteGroups, true);
-				FavoritesProvider._onDidChangeFavoriteGroup.fire(favoriteGroup);
+				FavoritesProvider._onDidChangeFavoriteGroup.fire(group);
 				break;
 			}
 		}

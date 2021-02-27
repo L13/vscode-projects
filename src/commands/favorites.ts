@@ -57,7 +57,7 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	commands.register(context, {
 		'l13Projects.action.workspaces.addToFavorites': ({ project }:ProjectTreeItem) => FavoritesProvider.addToFavorites(context, project),
-		'l13Projects.action.workspaces.group.copyToFavorites': ({ group }:GroupCustomTreeItem) => {
+		'l13Projects.action.workspaces.group.addToFavorites': ({ group }:GroupCustomTreeItem) => {
 			
 			const workspaces = group.paths.map((path) => WorkspacesProvider.currentProvider?.getWorkspaceByPath(path));
 			

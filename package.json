@@ -181,8 +181,8 @@
 				"title": "Open in new Windows"
 			},
 			{
-				"command": "l13Projects.action.workspaces.group.copyToFavorites",
-				"title": "Copy to Favorites"
+				"command": "l13Projects.action.workspaces.group.addToFavorites",
+				"title": "Add to Favorites"
 			},
 			{
 				"command": "l13Projects.action.workspaces.group.rename",
@@ -570,7 +570,7 @@
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaces.group.copyToFavorites",
+					"command": "l13Projects.action.workspaces.group.addToFavorites",
 					"when": "false"
 				},
 				{
@@ -656,7 +656,7 @@
 					"when": "view == l13ProjectsWorkspaces && viewItem == workspaceGroup"
 				},
 				{
-					"command": "l13Projects.action.workspaces.group.copyToFavorites",
+					"command": "l13Projects.action.workspaces.group.addToFavorites",
 					"group": "navigation@2",
 					"when": "view == l13ProjectsWorkspaces && viewItem == workspaceGroup"
 				},

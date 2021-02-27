@@ -618,28 +618,54 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	private createQuickPickItems () {
 		
-		return this.cache.map((project) => ({
-			label: project.label,
-			description: project.path,
-			detail: project.deleted ? '$(alert) Path does not exist' : '',
-		}));
+		const workspaceGroups = getWorkspaceGroups(this.context);
+		const items:{ label:string, description:string, paths:string[], detail?:string }[] = [];
+		
+		workspaceGroups.forEach((workspaceGroup) => {
+			
+			const paths = workspaceGroup.paths;
+			const names = this.cache.filter((workspace) => paths.includes(workspace.path));
+			
+			items.push({
+				label: workspaceGroup.label,
+				description: names.map((favorite) => favorite.label).join(', '),
+				paths: workspaceGroup.paths,
+			});
+			
+		});
+		
+		this.cache.forEach((project) => {
+			
+			items.push({
+				label: project.label,
+				description: project.path,
+				detail: project.deleted ? '$(alert) Path does not exist' : '',
+				paths: null,
+			});
+			
+		});
+		
+		return items;
 		
 	}
 	
 	public static async pickWorkspace (context:vscode.ExtensionContext) {
 		
-		const projectProvider = WorkspacesProvider.createProvider(context);
+		const workspacesProvider = WorkspacesProvider.createProvider(context);
 		
-		if (projectProvider.initCache) {
-			await projectProvider.detectWorkspaces();
-			projectProvider.initCache = false;
+		if (workspacesProvider.initCache) {
+			await workspacesProvider.detectWorkspaces();
+			workspacesProvider.initCache = false;
 		}
 		
-		const value = await vscode.window.showQuickPick(projectProvider.createQuickPickItems(), {
+		const item = await vscode.window.showQuickPick(workspacesProvider.createQuickPickItems(), {
 			placeHolder: 'Select a project',
 		})
 		
-		if (value) files.open(value.description);
+		if (item) {
+			if (item.paths) files.openAll(item.paths);
+			else files.open(item.description);
+		}
 		
 	}
 	
@@ -872,7 +898,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 				group.label = value;
 				workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				updateWorkspaceGroups(context, workspaceGroups, true);
-				WorkspacesProvider._onDidChangeWorkspaceGroup.fire(workspaceGroup);
+				WorkspacesProvider._onDidChangeWorkspaceGroup.fire(group);
 				break;
 			}
 		}
