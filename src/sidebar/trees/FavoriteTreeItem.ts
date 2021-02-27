@@ -24,7 +24,7 @@ export class FavoriteTreeItem extends TreeItem {
 		title: 'Open Project',
 	};
 	
-	public constructor (public readonly project:Favorite, public readonly slot:Slot|null) {
+	public constructor (public readonly project:Favorite, public readonly slot:Slot|null, isSubProject:boolean = false) {
 		
 		super(project.label);
 		
@@ -37,7 +37,7 @@ export class FavoriteTreeItem extends TreeItem {
 		
 		if (type === 'folder' || type === 'folders') icon += `-color-${project.color || 0}`;
 		
-		this.contextValue = `${project.groupId != null ? 'sub' : ''}favorite-${type}`;
+		this.contextValue = `${isSubProject ? 'sub' : ''}favorite-${type}`;
 		this.tooltip = project.path;
 		this.description = info.join(' ');
 		

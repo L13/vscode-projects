@@ -98,8 +98,8 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 				
 				if (!hasCurrentProject && workspacePath && workspacePath === favorite.path) {
 					hasCurrentProject = true;
-					list.push(new CurrentFavoriteTreeItem(favorite, slot));
-				} else list.push(new FavoriteTreeItem(favorite, slot));
+					list.push(new CurrentFavoriteTreeItem(favorite, slot, true));
+				} else list.push(new FavoriteTreeItem(favorite, slot, true));
 				
 			});
 		} else {
@@ -133,12 +133,15 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 		const favoriteGroups = getFavoriteGroups(context);
 		
 		if (favorites.length || favoriteGroups.length) {
-			const groups = favoriteGroups.map((group) => {
+			const groups = favoriteGroups.map((favoriteGroup) => {
+				
+				const paths = favoriteGroup.paths;
+				const names = favorites.filter((favorite) => paths.includes(favorite.path));
 				
 				return {
-					label: group.label,
-					description: '',
-					paths: group.paths,
+					label: favoriteGroup.label,
+					description: names.map((favorite) => favorite.label).join(', '),
+					paths: favoriteGroup.paths,
 				};
 				
 			});
@@ -177,8 +180,6 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 		favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 		
 		updateFavorites(context, favorites, true);
-		
-		vscode.window.showInformationMessage(`Added "${workspace.label}" to favorites`);
 		
 	}
 	
@@ -271,47 +272,48 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 		
 	}
 	
-	public static addGroupToFavorites (context:vscode.ExtensionContext, group:WorkspaceGroup, workspaces:Project[]) {
+	public static async addGroupToFavorites (context:vscode.ExtensionContext, group:WorkspaceGroup, workspaces:Project[]) {
 		
 		const favoriteGroups = getFavoriteGroups(context);
 		const label = group.label;
 		
 		for (const favoriteGroup of favoriteGroups) {
-			if (favoriteGroup.label === label) return vscode.window.showErrorMessage(`Favorite group "${label}" exists!`);
+			if (favoriteGroup.label === label) {
+				const BUTTON_REPLACE = 'Replace';
+				const value = await vscode.window.showInformationMessage(`Replace favorite group "${label}"?`, 'Cancel', BUTTON_REPLACE);
+				if (value !== BUTTON_REPLACE) return;
+				remove(favoriteGroups, favoriteGroup);
+				break;
+			}
 		}
 		
 		const paths = group.paths;
 		
-		favoriteGroups.forEach((favoriteGroup) => {
-			
-			paths.forEach((path) => remove(favoriteGroup.paths, path));
-			
-		});
+		for (const favoriteGroup of favoriteGroups) {
+			for (const path of paths) remove(favoriteGroup.paths, path);
+		}
 		
 		favoriteGroups.push({ label, id: getNextGroupId(favoriteGroups), collapsed: false, paths: group.paths });
 		favoriteGroups.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
 		
 		const favorites = getFavorites(context);
 		
-		workspaces.forEach((workspace) => {
-			
-			if (favorites.some(({ path }) => path === workspace.path)) return;
-			
+		workspaces: for (const workspace of workspaces) {
+			for (const favorite of favorites) {
+				if (favorite.path === workspace.path) continue workspaces;
+			}
 			favorites.push({
 				label: workspace.label,
 				path: workspace.path,
 				type: workspace.type,
 				color: workspace.color,
 			});
-			
-		});
+		}
 		
 		favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 		
 		updateFavorites(context, favorites);
 		updateFavoriteGroups(context, favoriteGroups, true);
-		
-		vscode.window.showInformationMessage(`Added group "${label}" to favorites`);
 		
 	}
 	
@@ -350,7 +352,8 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 	
 	public static async removeFavoriteGroup (context:vscode.ExtensionContext, favoriteGroup:FavoriteGroup) {
 		
-		const value = await dialogs.confirm(`Delete favorite group "${favoriteGroup.label}"?`, 'Delete');
+		const BUTTON_DELETE_GROUP_AND_FAVORITES = 'Delete Group and Favorites';
+		const value = await dialogs.confirm(`Delete favorite group "${favoriteGroup.label}"?`, 'Delete', BUTTON_DELETE_GROUP_AND_FAVORITES);
 		
 		if (value) {
 			const favoriteGroups = getFavoriteGroups(context);
@@ -359,10 +362,23 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 			for (let i = 0; i < favoriteGroups.length; i++) {
 				if (favoriteGroups[i].id === groupId) {
 					favoriteGroups.splice(i, 1);
-					updateFavoriteGroups(context, favoriteGroups, true);
 					break;
 				}
 			}
+			
+			if (value === BUTTON_DELETE_GROUP_AND_FAVORITES) {
+				
+				const favorites = getFavorites(context);
+				const paths = favoriteGroup.paths;
+				
+				for (let i = 0; i < favorites.length; i++) {
+					if (paths.includes(favorites[i].path)) favorites.splice(i, 1);
+				}
+				
+				updateFavorites(context, favorites);
+			}
+			
+			updateFavoriteGroups(context, favoriteGroups, true);
 		}
 		
 	}
@@ -380,7 +396,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 	
 	public static async clearFavorites (context:vscode.ExtensionContext) {
 		
-		if (await dialogs.confirm(`Delete all favorites?'`, 'Delete')) {
+		if (await dialogs.confirm(`Delete all favorites and groups?'`, 'Delete')) {
 			updateFavorites(context, []);
 			updateFavoriteGroups(context, [], true);
 		}

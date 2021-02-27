@@ -48,7 +48,7 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	commands.register(context, {
 		'l13Projects.action.workspaces.addToFavorites': ({ project }:ProjectTreeItem) => FavoritesProvider.addToFavorites(context, project),
-		'l13Projects.action.workspaces.group.addToFavorites': ({ group }:GroupCustomTreeItem) => {
+		'l13Projects.action.workspaces.group.copyToFavorites': ({ group }:GroupCustomTreeItem) => {
 			
 			const workspaces = group.paths.map((path) => WorkspacesProvider.currentProvider?.getWorkspaceByPath(path));
 			
@@ -62,12 +62,12 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.favorite.rename': ({ project }:FavoriteTreeItems) => FavoritesProvider.renameFavorite(context, project),
 		'l13Projects.action.favorite.remove': ({ project }:FavoriteTreeItems) => FavoritesProvider.removeFavorite(context, project),
 		
-		'l13Projects.action.favorites.clear': () => FavoritesProvider.clearFavorites(context),
-		
 		'l13Projects.action.favorites.group.add': () => FavoritesProvider.addFavoriteGroup(context),
 		'l13Projects.action.favorites.group.openAll': ({ favoriteGroup }:FavoriteGroupTreeItem) => files.openAll(favoriteGroup.paths),
 		'l13Projects.action.favorites.group.rename': ({ favoriteGroup }:FavoriteGroupTreeItem) => FavoritesProvider.renameFavoriteGroup(context, favoriteGroup),
 		'l13Projects.action.favorites.group.remove': ({ favoriteGroup }:FavoriteGroupTreeItem) => FavoritesProvider.removeFavoriteGroup(context, favoriteGroup),
+		
+		'l13Projects.action.favorites.clear': () => FavoritesProvider.clearFavorites(context),
 	});
 	
 }

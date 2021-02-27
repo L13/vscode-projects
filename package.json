@@ -98,7 +98,7 @@
 			},
 			{
 				"command": "l13Projects.action.favorites.clear",
-				"title": "Projects: Delete All Favorites"
+				"title": "Projects: Delete All Favorites and Groups"
 			},
 			{
 				"command": "l13Projects.action.favorites.group.add",
@@ -154,7 +154,7 @@
 			},
 			{
 				"command": "l13Projects.action.workspaces.refresh",
-				"title": "Projects: Refresh Workspaces",
+				"title": "Refresh",
 				"icon": {
 					"light": "images/workspaces/project-refresh-light.svg",
 					"dark": "images/workspaces/project-refresh-dark.svg"
@@ -181,8 +181,8 @@
 				"title": "Open in new Windows"
 			},
 			{
-				"command": "l13Projects.action.workspaces.group.addToFavorites",
-				"title": "Add to Favorites"
+				"command": "l13Projects.action.workspaces.group.copyToFavorites",
+				"title": "Copy to Favorites"
 			},
 			{
 				"command": "l13Projects.action.workspaces.group.rename",
@@ -562,11 +562,15 @@
 					"when": "false"
 				},
 				{
+					"command": "l13Projects.action.workspaces.refresh",
+					"when": "false"
+				},
+				{
 					"command": "l13Projects.action.workspaces.group.openAll",
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaces.group.addToFavorites",
+					"command": "l13Projects.action.workspaces.group.copyToFavorites",
 					"when": "false"
 				},
 				{
@@ -652,7 +656,7 @@
 					"when": "view == l13ProjectsWorkspaces && viewItem == workspaceGroup"
 				},
 				{
-					"command": "l13Projects.action.workspaces.group.addToFavorites",
+					"command": "l13Projects.action.workspaces.group.copyToFavorites",
 					"group": "navigation@2",
 					"when": "view == l13ProjectsWorkspaces && viewItem == workspaceGroup"
 				},

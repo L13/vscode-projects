@@ -18,7 +18,7 @@ const basePath = join(__dirname, '..', 'images', 'current');
 
 export class CurrentFavoriteTreeItem extends TreeItem {
 	
-	public constructor (public readonly project:Favorite, public readonly slot:Slot|null) {
+	public constructor (public readonly project:Favorite, public readonly slot:Slot|null, isSubProject:boolean = false) {
 		
 		super(project.label);
 		
@@ -27,7 +27,7 @@ export class CurrentFavoriteTreeItem extends TreeItem {
 		
 		if (type === 'folder' || type === 'folders') icon += `-color-${project.color || 0}`;
 		
-		this.contextValue = `current-${project.groupId != null ? 'sub' : ''}favorite-${type}`;
+		this.contextValue = `current-${isSubProject ? 'sub' : ''}favorite-${type}`;
 		this.tooltip = project.path;
 		this.description = `${slot ? `[${slot.index}] ` : ''}Current workspace`;
 		
