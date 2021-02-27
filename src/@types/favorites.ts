@@ -16,16 +16,17 @@ import { FavoriteTreeItem } from '../sidebar/trees/FavoriteTreeItem';
 
 //	Exports ____________________________________________________________________
 
-export interface Favorite extends Project {
-	groupId?:number,
-};
+export interface Favorite extends Project {};
 
-export type FavoriteTreeItems = CurrentFavoriteTreeItem|FavoriteTreeItem|FavoriteGroupTreeItem;
+export type FavoritesTreeItems = FavoriteTreeItems|FavoriteGroupTreeItem;
+
+export type FavoriteTreeItems = CurrentFavoriteTreeItem|FavoriteTreeItem;
 
 export type FavoriteGroup = {
-	label:string;
-	id:number;
-	collapsed:boolean;
+	label:string,
+	id:number,
+	collapsed:boolean,
+	paths:string[],
 };
 
 //	Functions __________________________________________________________________

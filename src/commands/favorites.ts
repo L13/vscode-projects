@@ -5,9 +5,12 @@ import * as vscode from 'vscode';
 import * as commands from '../common/commands';
 import * as files from '../common/files';
 
+import { FavoriteTreeItems } from '../@types/favorites';
+
 import { HotkeySlots } from '../features/HotkeySlots';
 import { FavoritesProvider } from '../sidebar/FavoritesProvider';
 import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
+import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
 import { StatusBar } from '../statusbar/StatusBar';
 
@@ -43,20 +46,27 @@ export function activate (context:vscode.ExtensionContext) {
 	});
 	
 	commands.register(context, {
-		'l13Projects.action.workspaces.addToFavorites': ({ project }) => FavoritesProvider.addToFavorites(context, project),
+		'l13Projects.action.workspaces.addToFavorites': ({ project }:ProjectTreeItem) => FavoritesProvider.addToFavorites(context, project),
+		'l13Projects.action.workspaces.group.addToFavorites': ({ group }) => {
+			
+			// const workspaces = WorkspacesProvider.getWorkspacesByPaths(group.);
+			
+			// FavoritesProvider.addGroupToFavorites(group);
+			
+		},
 		
 		'l13Projects.action.favorite.pick': () => FavoritesProvider.pickFavorite(context),
-		'l13Projects.action.favorite.addToGroup': ({ project }) => FavoritesProvider.addToFavoriteGroup(context, project),
-		'l13Projects.action.favorite.removeFromGroup': ({ project }) => FavoritesProvider.removeFromFavoriteGroup(context, project),
-		'l13Projects.action.favorite.rename': ({ project }) => FavoritesProvider.renameFavorite(context, project),
-		'l13Projects.action.favorite.remove': ({ project }) => FavoritesProvider.removeFavorite(context, project),
+		'l13Projects.action.favorite.addToGroup': ({ project }:FavoriteTreeItems) => FavoritesProvider.addFavoriteToGroup(context, project),
+		'l13Projects.action.favorite.removeFromGroup': ({ project }:FavoriteTreeItems) => FavoritesProvider.removeFromFavoriteGroup(context, project),
+		'l13Projects.action.favorite.rename': ({ project }:FavoriteTreeItems) => FavoritesProvider.renameFavorite(context, project),
+		'l13Projects.action.favorite.remove': ({ project }:FavoriteTreeItems) => FavoritesProvider.removeFavorite(context, project),
 		
 		'l13Projects.action.favorites.clear': () => FavoritesProvider.clearFavorites(context),
 		
 		'l13Projects.action.favorites.group.add': () => FavoritesProvider.addFavoriteGroup(context),
-		'l13Projects.action.favorites.group.openAll': ({ favoriteGroup }) => FavoritesProvider.openFavoritesByGroupId(context, favoriteGroup.id),
-		'l13Projects.action.favorites.group.rename': ({ favoriteGroup }) => FavoritesProvider.renameFavoriteGroup(context, favoriteGroup),
-		'l13Projects.action.favorites.group.remove': ({ favoriteGroup }) => FavoritesProvider.removeFavoriteGroup(context, favoriteGroup),
+		'l13Projects.action.favorites.group.openAll': ({ favoriteGroup }:FavoriteGroupTreeItem) => files.openAll(favoriteGroup.paths),
+		'l13Projects.action.favorites.group.rename': ({ favoriteGroup }:FavoriteGroupTreeItem) => FavoritesProvider.renameFavoriteGroup(context, favoriteGroup),
+		'l13Projects.action.favorites.group.remove': ({ favoriteGroup }:FavoriteGroupTreeItem) => FavoritesProvider.removeFavoriteGroup(context, favoriteGroup),
 	});
 	
 }

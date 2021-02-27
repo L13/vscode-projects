@@ -31,12 +31,14 @@ export type Project = {
 	deleted?:boolean,
 };
 
-export type TreeItems = ColorPickerTreeItem|CurrentProjectTreeItem|ProjectTreeItem|GroupTreeItem|UnknownProjectTreeItem;
+export type WorkspacesTreeItems = ColorPickerTreeItem|GroupTreeItem|WorkspaceTreeItems;
+
+export type WorkspaceTreeItems = CurrentProjectTreeItem|ProjectTreeItem|UnknownProjectTreeItem;
 
 export type WorkspaceGroup = {
-	label:string;
-	id:number;
-	collapsed:boolean;
+	label:string,
+	id:number,
+	collapsed:boolean,
 	paths:string[],
 	type:'custom',
 };

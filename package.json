@@ -181,12 +181,20 @@
 				"title": "Open in new Windows"
 			},
 			{
+				"command": "l13Projects.action.workspaces.group.addToFavorites",
+				"title": "Add to Favorites"
+			},
+			{
 				"command": "l13Projects.action.workspaces.group.rename",
 				"title": "Rename"
 			},
 			{
 				"command": "l13Projects.action.workspaces.group.remove",
 				"title": "Delete"
+			},
+			{
+				"command": "l13Projects.action.workspaces.groups.clear",
+				"title": "Projects: Delete All Workspace Groups"
 			},
 			{
 				"command": "l13Projects.action.workspaces.saveDetectedProject",
@@ -558,6 +566,10 @@
 					"when": "false"
 				},
 				{
+					"command": "l13Projects.action.workspaces.group.addToFavorites",
+					"when": "false"
+				},
+				{
 					"command": "l13Projects.action.workspaces.group.rename",
 					"when": "false"
 				},
@@ -637,6 +649,11 @@
 				{
 					"command": "l13Projects.action.workspaces.group.openAll",
 					"group": "navigation@1",
+					"when": "view == l13ProjectsWorkspaces && viewItem == workspaceGroup"
+				},
+				{
+					"command": "l13Projects.action.workspaces.group.addToFavorites",
+					"group": "navigation@2",
 					"when": "view == l13ProjectsWorkspaces && viewItem == workspaceGroup"
 				},
 				{

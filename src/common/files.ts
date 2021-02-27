@@ -26,6 +26,16 @@ export function open (pathname:string, newWindow?:boolean) {
 	vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(pathname), newWindow);
 	
 }
+
+export function openAll (pathnames:string[]) {
+	
+	pathnames.forEach((pathname) => {
+		
+		vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(pathname), true);
+		
+	});
+	
+}
 	
 export function reveal (pathname:string) :void {
 	

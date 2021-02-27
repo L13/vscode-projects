@@ -10,7 +10,7 @@ import { isMacOs } from '../@l13/platforms';
 
 import { FileMap, Options } from '../@types/files';
 import { GroupCustomState, GroupSimple, GroupSimpleState, GroupTreeItem, GroupType, GroupTypeState, InitialState, WorkspaceSorting } from '../@types/groups';
-import { Project, TreeItems, WorkspaceGroup, WorkspaceTypes } from '../@types/workspaces';
+import { Project, WorkspaceGroup, WorkspacesTreeItems, WorkspaceTypes } from '../@types/workspaces';
 
 import * as dialogs from '../common/dialogs';
 import * as files from '../common/files';
@@ -47,10 +47,10 @@ let sortWorkspacesBy:WorkspaceSorting = settings.get('sortWorkspacesBy');
 
 //	Exports ____________________________________________________________________
 
-export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
+export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTreeItems> {
 	
-	private _onDidChangeTreeData:vscode.EventEmitter<TreeItems|undefined> = new vscode.EventEmitter<TreeItems|undefined>();
-	public readonly onDidChangeTreeData:vscode.Event<TreeItems|undefined> = this._onDidChangeTreeData.event;
+	private _onDidChangeTreeData:vscode.EventEmitter<WorkspacesTreeItems|undefined> = new vscode.EventEmitter<WorkspacesTreeItems|undefined>();
+	public readonly onDidChangeTreeData:vscode.Event<WorkspacesTreeItems|undefined> = this._onDidChangeTreeData.event;
 	
 	private static _onDidChangeProject:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
 	public static readonly onDidChangeProject:vscode.Event<Project> = WorkspacesProvider._onDidChangeProject.event;
@@ -215,7 +215,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 			type: 'folder',
 			maxDepth: 1,
 			ignore: settings.get('subfolder.ignore', []),
-		})));
+		}))).then(() => this.cleanupUnknownPaths());
 		
 	}
 	
@@ -231,6 +231,21 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		this.updateCache();
 		
 		this._onDidChangeTreeData.fire();
+		
+	}
+	
+	private cleanupUnknownPaths () {
+		
+		const workspaceGroups = getWorkspaceGroups(this.context);
+		const paths = this.cache.map((workspace) => workspace.path);
+		
+		workspaceGroups.forEach((workspaceGroup) => {
+			
+			workspaceGroup.paths = workspaceGroup.paths.filter((path) => paths.includes(path));
+			
+		});
+		
+		updateWorkspaceGroups(this.context, workspaceGroups, true);
 		
 	}
 	
@@ -325,7 +340,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	private addCustomGroups (list:TreeItems[], workspacePath:string) {
+	private addCustomGroups (list:WorkspacesTreeItems[], workspacePath:string) {
 		
 		const workspaceGroups = getWorkspaceGroups(this.context);
 		let paths:string[] = [];
@@ -362,7 +377,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	private addCustomGroupItems (list:TreeItems[], paths:string[], workspacePath:string) {
+	private addCustomGroupItems (list:WorkspacesTreeItems[], paths:string[], workspacePath:string) {
 		
 		const colorPickerProject = WorkspacesProvider.colorPicker.project;
 		const slots = this.slots;
@@ -387,7 +402,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	private addSimpleGroups (list:TreeItems[], workspacePath:string) {
+	private addSimpleGroups (list:WorkspacesTreeItems[], workspacePath:string) {
 		
 		const isUnknownWorkspace = this.isUnknownWorkspace(workspacePath);
 		
@@ -401,7 +416,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	private addSimpleGroupItems (list:TreeItems[], type:string, workspacePath:string) {
+	private addSimpleGroupItems (list:WorkspacesTreeItems[], type:string, workspacePath:string) {
 		
 		const colorPickerProject = WorkspacesProvider.colorPicker.project;
 		const slots = this.slots;
@@ -447,7 +462,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	private addTypeGroups (list:TreeItems[], workspacePath:string) {
+	private addTypeGroups (list:WorkspacesTreeItems[], workspacePath:string) {
 		
 		const isUnknownWorkspace = this.isUnknownWorkspace(workspacePath);
 		const isCodeWorkspace = settings.isCodeWorkspace(workspacePath);
@@ -464,7 +479,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	private addTypeGroupItems (list:TreeItems[], type:string, workspacePath:string) {
+	private addTypeGroupItems (list:WorkspacesTreeItems[], type:string, workspacePath:string) {
 		
 		const colorPickerProject = WorkspacesProvider.colorPicker.project;
 		const workspaceFile = vscode.workspace.workspaceFile;
@@ -495,7 +510,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	private addItems (list:TreeItems[], workspacePath:string) {
+	private addItems (list:WorkspacesTreeItems[], workspacePath:string) {
 		
 		const colorPickerProject = WorkspacesProvider.colorPicker.project;
 		const slots = this.slots;
@@ -520,7 +535,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	private addUnknownItem (list:TreeItems[], workspacePath:string) {
+	private addUnknownItem (list:WorkspacesTreeItems[], workspacePath:string) {
 		
 		list.unshift(new UnknownProjectTreeItem({
 			label: formatLabel(workspacePath),
@@ -530,7 +545,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	public getParent (element:TreeItems) {
+	public getParent (element:WorkspacesTreeItems) {
 		
 		return Promise.resolve(undefined);
 		
@@ -542,7 +557,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	public getChildren (element?:TreeItems) :Thenable<TreeItems[]> {
+	public getChildren (element?:WorkspacesTreeItems) :Thenable<WorkspacesTreeItems[]> {
 		
 		if (this.initCache) {
 			this.updateCache();
@@ -552,7 +567,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		}
 		
 		const workspacePath:string = settings.getCurrentWorkspacePath();
-		const list:TreeItems[] = [];
+		const list:WorkspacesTreeItems[] = [];
 		
 		if (sortWorkspacesBy !== 'Name') {
 			if (element) {
@@ -790,12 +805,6 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 	}
 	
-	public static openWorkspacesByGroup (workspaceGroup:WorkspaceGroup) {
-		
-		workspaceGroup.paths.forEach((path) => files.open(path, true));
-		
-	}
-	
 	public static async addWorkspaceToGroup (context:vscode.ExtensionContext, workspace:Project) {
 		
 		const workspaceGroups = getWorkspaceGroups(context);
@@ -848,7 +857,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 	
 	public static async removeWorkspaceGroup (context:vscode.ExtensionContext, workspaceGroup:WorkspaceGroup) {
 		
-		const value = await dialogs.confirm(`Delete favorite group "${workspaceGroup.label}"?`, 'Delete');
+		const value = await dialogs.confirm(`Delete workspace group "${workspaceGroup.label}"?`, 'Delete');
 		
 		if (value) {
 			const workspaceGroups = getWorkspaceGroups(context);
@@ -891,6 +900,14 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<TreeItems> {
 		
 		if (await dialogs.confirm(`Delete all projects?'`, 'Delete')) {
 			updateProjects(context, [], true);
+		}
+		
+	}
+	
+	public static async clearWorkspaceGroups (context:vscode.ExtensionContext) {
+		
+		if (await dialogs.confirm(`Delete all workspace groups?'`, 'Delete')) {
+			updateWorkspaceGroups(context, [], true);
 		}
 		
 	}
