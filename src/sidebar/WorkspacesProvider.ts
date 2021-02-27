@@ -16,6 +16,7 @@ import { Project, WorkspaceGroup, WorkspacesTreeItems, WorkspaceTypes } from '..
 import * as dialogs from '../common/dialogs';
 import * as files from '../common/files';
 import * as settings from '../common/settings';
+import * as states from '../common/states';
 
 import { HotkeySlots } from '../features/HotkeySlots';
 import { colors } from '../statusbar/colors';
@@ -36,9 +37,6 @@ const findVSCodeFolder:RegExp = /^\.vscode$/;
 const GROUP_STATES_BY_TYPE = 'groupStatesByType';
 const GROUP_STATES_BY_SIMPLE = 'groupStatesBySimple';
 const GROUP_STATES_BY_GROUP = 'groupStatesByGroup';
-
-const PROJECTS = 'projects';
-const WORKSPACE_GROUPS = 'workspaceGroups';
 
 let sortWorkspacesBy:WorkspaceSorting = settings.get('sortWorkspacesBy');
 
@@ -240,7 +238,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	private cleanupUnknownPaths () {
 		
-		const workspaceGroups = getWorkspaceGroups(this.context);
+		const workspaceGroups = states.getWorkspaceGroups(this.context);
 		const paths = this.cache.map((workspace) => workspace.path);
 		
 		workspaceGroups.forEach((workspaceGroup) => {
@@ -249,13 +247,14 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			
 		});
 		
-		updateWorkspaceGroups(this.context, workspaceGroups, true);
+		states.updateWorkspaceGroups(this.context, workspaceGroups);
+		this.refresh();
 		
 	}
 	
 	private detectProjectColors () {
 		
-		const projects = getProjects(this.context);
+		const projects = states.getProjects(this.context);
 		
 		projects.forEach((project) => {
 			
@@ -275,7 +274,8 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			
 		});
 		
-		updateProjects(this.context, projects, true);
+		states.updateProjects(this.context, projects);
+		this.refresh();
 		
 	}
 	
@@ -315,7 +315,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	private updateCache () {
 		
-		this.projects = getProjects(this.context);
+		this.projects = states.getProjects(this.context);
 		this.projects.forEach((project) => project.deleted = !fs.existsSync(project.path));
 		
 		const all = (<Project[]>[]).concat(this.projects, this.gitProjects, this.vscodeProjects, this.workspaceProjects, this.subfolderProjects);
@@ -346,7 +346,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	private addCustomGroups (list:WorkspacesTreeItems[], workspacePath:string) {
 		
-		const workspaceGroups = getWorkspaceGroups(this.context);
+		const workspaceGroups = states.getWorkspaceGroups(this.context);
 		let paths:string[] = [];
 		
 		workspaceGroups.forEach((workspaceGroup) => {
@@ -618,7 +618,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	private createQuickPickItems () {
 		
-		const workspaceGroups = getWorkspaceGroups(this.context);
+		const workspaceGroups = states.getWorkspaceGroups(this.context);
 		const items:{ label:string, description:string, paths:string[], detail?:string }[] = [];
 		
 		workspaceGroups.forEach((workspaceGroup) => {
@@ -675,7 +675,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		if (!uris) return;
 		
-		const projects = getProjects(context);
+		const projects = states.getProjects(context);
 		const length = projects.length;
 		
 		uris.forEach((uri) => {
@@ -690,7 +690,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		if (projects.length === length) return;
 		
-		updateProjects(context, projects);
+		states.updateProjects(context, projects);
 		
 		WorkspacesProvider.currentProvider?.refresh();
 		
@@ -702,7 +702,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		if (!uris) return;
 		
-		const projects = getProjects(context);
+		const projects = states.getProjects(context);
 		const length = projects.length;
 		
 		uris.forEach((uri) => {
@@ -717,7 +717,9 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		if (projects.length === length) return;
 		
-		updateProjects(context, projects, true);
+		states.updateProjects(context, projects);
+		
+		WorkspacesProvider.currentProvider?.refresh();
 		
 	}
 	
@@ -726,7 +728,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		const fsPath:string = project ? project.path : settings.getCurrentWorkspacePath();
 		
 		if (fsPath) {
-			const projects = getProjects(context);
+			const projects = states.getProjects(context);
 			
 			if (projects.some(({ path }) => path === fsPath)) {
 				return vscode.window.showErrorMessage(`Project exists!`);
@@ -742,7 +744,8 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			const newProject:Project = addProject(projects, fsPath, value);
 			
 			WorkspacesProvider._onDidChangeProject.fire(newProject);
-			updateProjects(context, projects, true);
+			states.updateProjects(context, projects);
+			WorkspacesProvider.currentProvider?.refresh();
 			
 		} else if (vscode.workspace.workspaceFile && vscode.workspace.workspaceFile.scheme === 'untitled') {
 			vscode.window.showWarningMessage(`Please save your current workspace first.`);
@@ -753,14 +756,15 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	public static updateProject (context:vscode.ExtensionContext, project:Project) {
 		
-		const projects = getProjects(context);
+		const projects = states.getProjects(context);
 		
 		for (const pro of projects) {
 			if (pro.path === project.path) {
 				pro.label = project.label;
 				pro.color = project.color;
 				projects.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				updateProjects(context, projects, true);
+				states.updateProjects(context, projects);
+				WorkspacesProvider.currentProvider?.refresh();
 				break;
 			}
 		}
@@ -791,13 +795,13 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		if (await dialogs.confirm(`Delete project "${project.label}"?`, 'Delete')) {
 			
-			const projects = getProjects(context);
+			const projects = states.getProjects(context);
 			const fsPath = project.path;
 			
 			for (let i = 0; i < projects.length; i++) {
 				if (projects[i].path === fsPath) {
 					projects.splice(i, 1);
-					updateProjects(context, projects);
+					states.updateProjects(context, projects);
 					if (project.color) settings.updateStatusBarColorSettings(project.path, colors[0]);
 					const provider = WorkspacesProvider.currentProvider;
 					provider.refresh();
@@ -821,7 +825,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		if (!label) return;
 		
-		const workspaceGroups = getWorkspaceGroups(context);
+		const workspaceGroups = states.getWorkspaceGroups(context);
 		
 		for (const workspaceGroup of workspaceGroups) {
 			if (workspaceGroup.label === label) {
@@ -829,15 +833,24 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			}
 		}
 		
-		workspaceGroups.push({ label, id: getNextGroupId(workspaceGroups), collapsed: false, paths: [], type: 'custom' });
+		workspaceGroups.push({
+			label,
+			id: states.getNextGroupId(context),
+			collapsed: false,
+			paths: [],
+			type: 'custom'
+		});
+		
 		workspaceGroups.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
-		updateWorkspaceGroups(context, workspaceGroups, true);
+		
+		states.updateWorkspaceGroups(context, workspaceGroups);
+		WorkspacesProvider.currentProvider?.refresh();
 		
 	}
 	
 	public static async addWorkspaceToGroup (context:vscode.ExtensionContext, workspace:Project) {
 		
-		const workspaceGroups = getWorkspaceGroups(context);
+		const workspaceGroups = states.getWorkspaceGroups(context);
 		
 		if (!workspaceGroups.length) await WorkspacesProvider.addWorkspaceGroup(context);
 		
@@ -847,7 +860,8 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			workspaceGroups.some((group) => remove(group.paths, workspace.path));
 			workspaceGroup.paths.push(workspace.path);
 			workspaceGroup.paths.sort();
-			updateWorkspaceGroups(context, workspaceGroups, true);
+			states.updateWorkspaceGroups(context, workspaceGroups);
+			WorkspacesProvider.currentProvider?.refresh();
 			WorkspacesProvider._onDidChangeWorkspaceGroup.fire(workspaceGroup);
 		}
 		
@@ -855,14 +869,15 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	public static async updateWorkspaceGroup (context:vscode.ExtensionContext, favoriteGroup:FavoriteGroup) {
 		
-		const workspaceGroups = getWorkspaceGroups(context);
+		const workspaceGroups = states.getWorkspaceGroups(context);
 		
 		for (const workspaceGroup of workspaceGroups) {
-			if (workspaceGroup.label === favoriteGroup.label || workspaceGroup.paths.every((path) => favoriteGroup.paths.includes(path))) {
+			if (workspaceGroup.id === favoriteGroup.id) {
 				workspaceGroup.label = favoriteGroup.label;
 				workspaceGroup.paths = favoriteGroup.paths;
 				workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				updateWorkspaceGroups(context, workspaceGroups, true);
+				states.updateWorkspaceGroups(context, workspaceGroups);
+				WorkspacesProvider.currentProvider?.refresh();
 				break;
 			}
 		}
@@ -871,11 +886,12 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	public static removeFromWorkspaceGroup (context:vscode.ExtensionContext, workspace:Project) {
 		
-		const workspaceGroups = getWorkspaceGroups(context);
+		const workspaceGroups = states.getWorkspaceGroups(context);
 		const workspaceGroup = workspaceGroups.find((group) => remove(group.paths, workspace.path));
 		
 		if (workspaceGroup) {
-			updateWorkspaceGroups(context, workspaceGroups, true);
+			states.updateWorkspaceGroups(context, workspaceGroups);
+			WorkspacesProvider.currentProvider?.refresh();
 			WorkspacesProvider._onDidChangeWorkspaceGroup.fire(workspaceGroup);
 		}
 		
@@ -890,14 +906,15 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		if (!value || workspaceGroup.label === value) return;
 		
-		const workspaceGroups = getWorkspaceGroups(context);
+		const workspaceGroups = states.getWorkspaceGroups(context);
 		const groupId = workspaceGroup.id;
 		
 		for (const group of workspaceGroups) {
 			if (group.id === groupId) {
 				group.label = value;
 				workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				updateWorkspaceGroups(context, workspaceGroups, true);
+				states.updateWorkspaceGroups(context, workspaceGroups);
+				WorkspacesProvider.currentProvider?.refresh();
 				WorkspacesProvider._onDidChangeWorkspaceGroup.fire(group);
 				break;
 			}
@@ -910,13 +927,14 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		const value = await dialogs.confirm(`Delete workspace group "${workspaceGroup.label}"?`, 'Delete');
 		
 		if (value) {
-			const workspaceGroups = getWorkspaceGroups(context);
+			const workspaceGroups = states.getWorkspaceGroups(context);
 			const groupId = workspaceGroup.id;
 			
 			for (let i = 0; i < workspaceGroups.length; i++) {
 				if (workspaceGroups[i].id === groupId) {
 					workspaceGroups.splice(i, 1);
-					updateWorkspaceGroups(context, workspaceGroups, true);
+					states.updateWorkspaceGroups(context, workspaceGroups);
+					WorkspacesProvider.currentProvider?.refresh();
 					break;
 				}
 			}
@@ -949,7 +967,8 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	public static async clearProjects (context:vscode.ExtensionContext) {
 		
 		if (await dialogs.confirm(`Delete all projects?'`, 'Delete')) {
-			updateProjects(context, [], true);
+			states.updateProjects(context, []);
+			WorkspacesProvider.currentProvider?.refresh();
 		}
 		
 	}
@@ -957,7 +976,8 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	public static async clearWorkspaceGroups (context:vscode.ExtensionContext) {
 		
 		if (await dialogs.confirm(`Delete all workspace groups?'`, 'Delete')) {
-			updateWorkspaceGroups(context, [], true);
+			states.updateWorkspaceGroups(context, []);
+			WorkspacesProvider.currentProvider?.refresh();
 		}
 		
 	}
@@ -979,51 +999,6 @@ function addProject (projects:Project[], fsPath:string, value:string) :Project {
 	projects.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 	
 	return project;
-	
-}
-
-function getProjects (context:vscode.ExtensionContext) :Project[] {
-	
-	return context.globalState.get(PROJECTS, []);
-	
-}
-
-function updateProjects (context:vscode.ExtensionContext, projects:Project[], refresh:boolean = false) {
-	
-	context.globalState.update(PROJECTS, projects);
-	
-	if (refresh) WorkspacesProvider.currentProvider?.refresh();
-	
-}
-
-function getWorkspaceGroups (context:vscode.ExtensionContext) :WorkspaceGroup[] {
-	
-	return context.globalState.get(WORKSPACE_GROUPS, []);
-	
-}
-
-function updateWorkspaceGroups (context:vscode.ExtensionContext, workspaceGroups:WorkspaceGroup[], refresh?:boolean) {
-	
-	context.globalState.update(WORKSPACE_GROUPS, workspaceGroups);
-	
-	if (refresh) WorkspacesProvider.currentProvider?.refresh();
-	
-}
-
-function getNextGroupId (workspaceGroups:WorkspaceGroup[]) :number {
-	
-	if (!workspaceGroups.length) return 0;
-	
-	const groupIds = workspaceGroups.map((workspaceGroup) => workspaceGroup.id);
-	const maxGroupId = Math.max.apply(null, groupIds);
-	let i = 0;
-	
-	while (i <= maxGroupId) {
-		if (!groupIds.includes(i)) return i;
-		i++;
-	}
-	
-	return i;
 	
 }
 

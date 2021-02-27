@@ -61,7 +61,7 @@ export function activate (context:vscode.ExtensionContext) {
 			
 			const workspaces = group.paths.map((path) => WorkspacesProvider.currentProvider?.getWorkspaceByPath(path));
 			
-			FavoritesProvider.addGroupToFavorites(context, group, workspaces.filter((workspace) => !!workspace));
+			FavoritesProvider.addWorkspaceGroupToFavorites(context, group, workspaces.filter((workspace) => !!workspace));
 			
 		},
 		
