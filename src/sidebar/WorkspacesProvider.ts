@@ -8,6 +8,7 @@ import { formatLabel } from '../@l13/formats';
 import { subfolders, walktree } from '../@l13/fse';
 import { isMacOs } from '../@l13/platforms';
 
+import { FavoriteGroup } from '../@types/favorites';
 import { FileMap, Options } from '../@types/files';
 import { GroupCustomState, GroupSimple, GroupSimpleState, GroupTreeItem, GroupType, GroupTypeState, InitialState, WorkspaceSorting } from '../@types/groups';
 import { Project, WorkspaceGroup, WorkspacesTreeItems, WorkspaceTypes } from '../@types/workspaces';
@@ -54,6 +55,9 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	private static _onDidChangeProject:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
 	public static readonly onDidChangeProject:vscode.Event<Project> = WorkspacesProvider._onDidChangeProject.event;
+	
+	private static _onDidChangeWorkspaceGroup:vscode.EventEmitter<WorkspaceGroup> = new vscode.EventEmitter<WorkspaceGroup>();
+	public static readonly onDidChangeWorkspaceGroup:vscode.Event<WorkspaceGroup> = WorkspacesProvider._onDidChangeWorkspaceGroup.event;
 	
 	public static colorPicker = new ColorPickerTreeItem();
 	
@@ -818,6 +822,23 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			workspaceGroup.paths.push(workspace.path);
 			workspaceGroup.paths.sort();
 			updateWorkspaceGroups(context, workspaceGroups, true);
+			WorkspacesProvider._onDidChangeWorkspaceGroup.fire(workspaceGroup);
+		}
+		
+	}
+	
+	public static async updateWorkspaceGroup (context:vscode.ExtensionContext, favoriteGroup:FavoriteGroup) {
+		
+		const workspaceGroups = getWorkspaceGroups(context);
+		
+		for (const workspaceGroup of workspaceGroups) {
+			if (workspaceGroup.label === favoriteGroup.label || workspaceGroup.paths.every((path) => favoriteGroup.paths.includes(path))) {
+				workspaceGroup.label = favoriteGroup.label;
+				workspaceGroup.paths = favoriteGroup.paths;
+				workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+				updateWorkspaceGroups(context, workspaceGroups, true);
+				break;
+			}
 		}
 		
 	}
@@ -825,10 +846,12 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	public static removeFromWorkspaceGroup (context:vscode.ExtensionContext, workspace:Project) {
 		
 		const workspaceGroups = getWorkspaceGroups(context);
+		const workspaceGroup = workspaceGroups.find((group) => remove(group.paths, workspace.path));
 		
-		workspaceGroups.some((workspaceGroup) => remove(workspaceGroup.paths, workspace.path));
-		
-		updateWorkspaceGroups(context, workspaceGroups, true);
+		if (workspaceGroup) {
+			updateWorkspaceGroups(context, workspaceGroups, true);
+			WorkspacesProvider._onDidChangeWorkspaceGroup.fire(workspaceGroup);
+		}
 		
 	}
 	
@@ -849,6 +872,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 				group.label = value;
 				workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				updateWorkspaceGroups(context, workspaceGroups, true);
+				WorkspacesProvider._onDidChangeWorkspaceGroup.fire(workspaceGroup);
 				break;
 			}
 		}
@@ -964,7 +988,7 @@ function getNextGroupId (workspaceGroups:WorkspaceGroup[]) :number {
 	
 	if (!workspaceGroups.length) return 0;
 	
-	const groupIds = workspaceGroups.map((favoriteGroup) => favoriteGroup.id);
+	const groupIds = workspaceGroups.map((workspaceGroup) => workspaceGroup.id);
 	const maxGroupId = Math.max.apply(null, groupIds);
 	let i = 0;
 	

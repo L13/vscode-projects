@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';
+import * as settings from '../common/settings';
 
 import { FavoriteTreeItems } from '../@types/favorites';
 
@@ -43,6 +44,14 @@ export function activate (context:vscode.ExtensionContext) {
 		
 		WorkspacesProvider.updateProject(context, favorite);
 		HotkeySlots.create(context).update(favorite);
+		
+	});
+	
+	FavoritesProvider.onDidChangeFavoriteGroup((favoriteGroup) => {
+		
+		if (settings.get('linkFavoriteAndWorkspaceGroups', true)) {
+			WorkspacesProvider.updateWorkspaceGroup(context, favoriteGroup);
+		}
 		
 	});
 	

@@ -36,6 +36,9 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 	private static _onDidChangeFavorite:vscode.EventEmitter<Favorite> = new vscode.EventEmitter<Favorite>();
 	public static readonly onDidChangeFavorite:vscode.Event<Favorite> = FavoritesProvider._onDidChangeFavorite.event;
 	
+	private static _onDidChangeFavoriteGroup:vscode.EventEmitter<FavoriteGroup> = new vscode.EventEmitter<FavoriteGroup>();
+	public static readonly onDidChangeFavoriteGroup:vscode.Event<FavoriteGroup> = FavoritesProvider._onDidChangeFavoriteGroup.event;
+	
 	public favorites:Favorite[] = [];
 	public favoriteGroups:FavoriteGroup[] = [];
 	
@@ -268,6 +271,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 			favoriteGroup.paths.push(favorite.path);
 			favoriteGroup.paths.sort();
 			updateFavoriteGroups(context, favoriteGroups, true);
+			FavoritesProvider._onDidChangeFavoriteGroup.fire(favoriteGroup);
 		}
 		
 	}
@@ -317,13 +321,31 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 		
 	}
 	
-	public static removeFromFavoriteGroup (context:vscode.ExtensionContext, favorite:Favorite) {
+	public static async updateFavoriteGroup (context:vscode.ExtensionContext, workspaceGroup:FavoriteGroup) {
 		
 		const favoriteGroups = getFavoriteGroups(context);
 		
-		favoriteGroups.some((workspaceGroup) => remove(workspaceGroup.paths, favorite.path));
+		for (const favoriteGroup of favoriteGroups) {
+			if (favoriteGroup.label === workspaceGroup.label || favoriteGroup.paths.every((path) => workspaceGroup.paths.includes(path))) {
+				favoriteGroup.label = workspaceGroup.label;
+				favoriteGroup.paths = workspaceGroup.paths;
+				favoriteGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+				updateFavoriteGroups(context, favoriteGroups, true);
+				break;
+			}
+		}
 		
-		updateFavoriteGroups(context, favoriteGroups, true);
+	}
+	
+	public static removeFromFavoriteGroup (context:vscode.ExtensionContext, favorite:Favorite) {
+		
+		const favoriteGroups = getFavoriteGroups(context);
+		const favoriteGroup = favoriteGroups.find((group) => remove(group.paths, favorite.path));
+		
+		if (favoriteGroup) {
+			updateFavoriteGroups(context, favoriteGroups, true);
+			FavoritesProvider._onDidChangeFavoriteGroup.fire(favoriteGroup);
+		}
 		
 	}
 	
@@ -344,6 +366,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 				group.label = value;
 				favoriteGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				updateFavoriteGroups(context, favoriteGroups, true);
+				FavoritesProvider._onDidChangeFavoriteGroup.fire(favoriteGroup);
 				break;
 			}
 		}
