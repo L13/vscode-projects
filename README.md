@@ -4,10 +4,11 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ![Projects](images/previews/preview.png)
 
-## What's new in Projects 0.17.0
+## What's new in Projects 0.18.0
 
-- Added detection for subfolders in a folder.
-- Added project/workspace path to status bar.
+- Added groups for favorites and workspaces.
+- Added `Group` to `l13Projects.sortWorkspacesBy`.
+- Changed context group for `Open in current Window` and `Open in new Window`.
 
 ## Index
 
@@ -40,17 +41,17 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ![Projects](images/previews/preview-workspaces.png)
 
-### Quick Pick for Favorites or Projects and Keyboard Shortcuts for Slots
+### Quick Pick and Keyboard Shortcuts
 
 ![Projects Quick Menu](images/previews/preview-quick-menu.png)
 
-### Colors
+### Status Bar Colors
 
 ![Projects Colors](images/previews/preview-colors.png)
 
 ![Projects Status Bar Colors](images/previews/preview-statusbar.png)
 
-### Supports the extension [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
+### Supports the Extension [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
 
 ![Diff Folders](images/previews/preview-diff-folders.png)
 
@@ -63,6 +64,7 @@ Priority of icons and labels for saved projects and detected folders and workspa
 1. project / project-workspace
 1. git-repository
 1. vscode / vscode-workspace
+1. subfolder
 
 ## Available Commands
 
@@ -71,20 +73,20 @@ Priority of icons and labels for saved projects and detected folders and workspa
 * `Projects: Delete All Favorites` - Delete all favorites.
 * `Projects: Open Favorite Workspace` - Open the quick menu and pick a favorite.
 * `Projects: Open Workspace` - Open the quick menu and pick a project.
-* `Projects: Refresh Workspaces` - Refresh all detected folders and workspaces.
 * `Projects: Slot 1 .. 9` - Open a workspace assigned to a slot.
 * `Projects: Clear Slot` - Clear a slot.
 * `Projects: Clear All Slots` - Clear all slots.
 * `Projects: Go to previous Workspace` - Open the previous active workspace.
+* `Refresh` - Refresh all detected folders and workspaces.
 
 macOS
 
-* `Projects: Add Project` - Add folders and workspaces to the project list by dialog.
+* `Add Project` - Add folders and workspaces to the project list by dialog.
 
 Widnows and Linux
 
-* `Projects: Add Project` - Add folders to the project list by dialog.
-* `Projects: Add Project Workspace` - Add workspaces to the project list by dialog.
+* `Add Project` - Add folders to the project list by dialog.
+* `Add Project Workspace` - Add workspaces to the project list by dialog.
 
 ## Available Settings
 
@@ -103,6 +105,7 @@ Widnows and Linux
 * `l13Projects.subfolder.ignore` - The folders which should be ignored.
 * `l13Projects.sortWorkspacesBy` - Sort workspaces by name, simple or type. 
 	* `Name` - (default) Sort all workspaces by name.
+	* `Group` - Sort all workspaces by custom groups. 
 	* `Simple` - Group all workspaces by simple type. 
 	* `Type` - Group all workspaces by type. 
 * `l13Projects.initialWorkspacesGroupState` - Set the initial state of a group.
@@ -112,9 +115,9 @@ Widnows and Linux
 
 ## Mouse and Keyboard Shortcuts
 
-## Global
+### Global
 
-macOS
+#### macOS
 
 * `Cmd + L Cmd + P` - Open the projects view.
 * `Cmd + Alt + P` - Open the quick menu to pick a favorite.
@@ -122,7 +125,7 @@ macOS
 * `Cmd + L Cmd + 1 .. 9` - Open a workspace in the slot 1 - 9.
 * `Cmd + L Cmd + 0` - Open the previous active workspace.
 
-Windows / Linux
+#### Windows / Linux
 
 * `Ctrl + L Ctrl + P` - Open the projects view.
 * `Ctrl + Alt + P` - Open the quick menu to pick a favorite.
@@ -136,10 +139,18 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 
 * `Click` - Open a favorite folder, workspace or project. If `l13Projects.openInNewWindow` is true the project opens in a new window.
 
-#### Context menu
+### Favorites Context Icons
+
+#### All Platforms
+
+* `New Group` - Add a new workspace group.
+* `Collapse All` - Collapse all groups.
+
+### Favorites Context menu
 
 * `Open` - Open the favorite project in the current window. Ignores `l13Projects.openInNewWindow`.
 * `Open in new Window` - Open the favorite project in a new window. Ignores `l13Projects.openInNewWindow`.
+* `Add to Group` - Add a project, repository or workspace to a favorite group.
 * `Open in Terminal` - Opens the favorite project in the VS Code terminal.
 * `Assign to Slot` - Assign the folder, workspace or project to a slot 1 - 9 to open it with a keyboard shortcut.
 * `Select for Compare` - Select a folder, workspace or project for a comparison. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
@@ -147,18 +158,19 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Compare with Workspace` - Compares the favorite project with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Open in Diff Folders` - Opens the favorite project in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Copy Path` - Copy the path of the project, repository or workspace to the clipboard.
+* `Remove from Group` - Remove a project, repository or workspace from a favorite group.
 * `Rename` - Change the name of the favorite project.
 * `Delete` - Remove the project, repository or workspace from favorites.
 
-macOS
+#### macOS
 
 * `Reveal in Finder` - Opens the favorite project in the finder.
 
-Windows
+#### Windows
 
 * `Reveal in Explorer` - Opens the favorite project in the explorer.
 
-Linux
+#### Linux
 
 * `Open Containing Folder` - Opens the favorite project in the file manager.
 
@@ -166,12 +178,30 @@ Linux
 
 * `Click` - Open a folder, workspace or project. If `l13Projects.openInNewWindow` is true the project opens in a new window.
 
-#### Context menu
+### Workspaces Context Icons
+
+#### All Platforms
+
+* `New Group` - Add a new workspace group. Requires `l13Projects.sortWorkspacesBy` to be `Group`.
+* `Refresh` - Refresh workspace list.
+* `Collapse All` - Collapse all groups.
+
+#### macOS
+
+* `Add Project` - Add a folder or workspace file as project to the workspace list.
+
+#### Windows / Linux
+
+* `Add Project` - Add a folder as project to the workspace list.
+* `Add Project Workspace` - Add a workspace file as project workspace to the workspace list.
+
+### Workspaces Context menu
 
 * `Open` - Open the folder, workspace or project in the current window. Ignores `l13Projects.openInNewWindow`.
 * `Open in new Window` - Open the folder, workspace or project in a new window. Ignores `l13Projects.openInNewWindow`.
 * `Save Project` - Save the folder or workspace as a project.
 * `Add to Favorites` - Add the folder, workspace or project to favorites.
+* `Add to Group` - Add a project, repository or workspace to a workspace group.
 * `Open in Terminal` - Open the folder, workspace or project in the terminal.
 * `Assign to Slot` - Assign the folder, workspace or project to a slot 1 - 9 to open it with a keyboard shortcut.
 * `Select Color` - Select a color for a project. The color also appears in the status bar.
@@ -180,18 +210,19 @@ Linux
 * `Compare with Workspace` - Compares the folder, workspace or project with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Open in Diff Folders` - Opens the folder, workspace or project in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Copy Path` - Copy the path of the project, repository or workspace to the clipboard.
+* `Remove from Group` - Remove a project, repository or workspace from a workspace group.
 * `Rename` - Change the name of a project.
 * `Delete` - Delete the project.
 
-macOS
+#### macOS
 
 * `Reveal in Finder` - Opens the folder or VS Code workspace file in the Finder.
 
-Windows
+#### Windows
 
 * `Reveal in Explorer` - Opens the folder or VS Code workspace file in the Explorer.
 
-Linux
+#### Linux
 
 * `Open Containing Folder` - Opens the folder or VS Code workspace file in the file manager.
 
@@ -207,9 +238,7 @@ Linux
 
 * `Click` - Reveal the current folder or workspace file in the Finder/Explorer.
 
-### Visual Studio Code Explorer
-
-#### Context Menu
+### Visual Studio Code Explorer Context Menu
 
 * `Open in current Window` - Opens the selected file or folder in the current VS Code Window.
 * `Open in new Window` - Opens the selected file or folder in a new VS Code Window.

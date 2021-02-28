@@ -1,10 +1,14 @@
 # Change Log
 All notable changes to the "Projects" extension will be documented in this file.
 
-## [0.18.0] - 2021-02-28
+## [0.18.0] - 2021-03-14
 
 ### Added
-- Added groups for favorites.
+- Added groups for favorites and workspaces.
+- Added `Group` to `l13Projects.sortWorkspacesBy`.
+
+### Changed
+- Changed context group for `Open in current Window` and `Open in new Window`.
 
 ## [0.17.0] - 2021-01-31
 
