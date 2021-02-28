@@ -3,10 +3,11 @@
 import * as vscode from 'vscode';
 
 import { Favorite } from '../@types/favorites';
-import { Project } from '../@types/workspaces';
 
 import * as settings from '../common/settings';
 import * as states from '../common/states';
+
+import { ColorPickerTreeItem } from '../sidebar/trees/ColorPickerTreeItem';
 
 import { colors } from '../statusbar/colors';
 
@@ -59,9 +60,12 @@ export class StatusBartColor {
 		
 	}
 	
-	public static assignColor (context:vscode.ExtensionContext, currentProject:Project, color:number) {
+	public static assignColor (context:vscode.ExtensionContext, colorPicker:ColorPickerTreeItem, color:number) {
 		
 		const projects = states.getProjects(context);
+		const currentProject = colorPicker.project;
+		
+		colorPicker.project = null;
 		
 		for (const project of projects) {
 			if (currentProject.path === project.path) {

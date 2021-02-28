@@ -77,11 +77,11 @@
 				"title": "Open in current Window"
 			},
 			{
-				"command": "l13Projects.action.favorite.pick",
+				"command": "l13Projects.action.favorites.pickFavorite",
 				"title": "Projects: Open Favorite Workspace"
 			},
 			{
-				"command": "l13Projects.action.workspaces.addToFavorites",
+				"command": "l13Projects.action.workspace.addToFavorites",
 				"title": "Add to Favorites"
 			},
 			{
@@ -129,7 +129,7 @@
 				"title": "Delete"
 			},
 			{
-				"command": "l13Projects.action.workspace.pick",
+				"command": "l13Projects.action.workspaces.pickWorkspace",
 				"title": "Projects: Open Workspace"
 			},
 			{
@@ -361,12 +361,12 @@
 			{
 				"mac": "meta+alt+p",
 				"key": "ctrl+alt+p",
-				"command": "l13Projects.action.favorite.pick"
+				"command": "l13Projects.action.favorites.pickFavorite"
 			},
 			{
 				"mac": "meta+alt+shift+p",
 				"key": "ctrl+alt+shift+p",
-				"command": "l13Projects.action.workspace.pick"
+				"command": "l13Projects.action.workspaces.pickWorkspace"
 			},
 			{
 				"mac": "meta+l meta+1",
@@ -430,7 +430,7 @@
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaces.addToFavorites",
+					"command": "l13Projects.action.workspace.addToFavorites",
 					"when": "false"
 				},
 				{
@@ -696,7 +696,7 @@
 					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^((current-)?(project|subproject)-(git|subfolder|vscode|workspace)|unknown-project)$/"
 				},
 				{
-					"command": "l13Projects.action.workspaces.addToFavorites",
+					"command": "l13Projects.action.workspace.addToFavorites",
 					"group": "navigation@4",
 					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?(project|subproject)-(folders?|git|subfolder|vscode|workspace)$/"
 				},

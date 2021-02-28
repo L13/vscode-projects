@@ -61,7 +61,6 @@ export function activate (context:vscode.ExtensionContext) {
 	FavoriteGroups.onDidChangeFavoriteGroups(() => favoritesProvider.refresh());
 	
 	commands.register(context, {
-		'l13Projects.action.favorite.pick': () => Favorites.pickFavorite(context),
 		'l13Projects.action.favorite.addToGroup': ({ project }:FavoriteTreeItems) => FavoriteGroups.addFavoriteToGroup(context, project),
 		'l13Projects.action.favorite.removeFromGroup': ({ project }:FavoriteTreeItems) => FavoriteGroups.removeFromFavoriteGroup(context, project),
 		'l13Projects.action.favorite.rename': ({ project }:FavoriteTreeItems) => Favorites.renameFavorite(context, project),
@@ -72,6 +71,7 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.favorites.group.rename': ({ favoriteGroup }:FavoriteGroupTreeItem) => FavoriteGroups.renameFavoriteGroup(context, favoriteGroup),
 		'l13Projects.action.favorites.group.remove': ({ favoriteGroup }:FavoriteGroupTreeItem) => FavoriteGroups.removeFavoriteGroup(context, favoriteGroup),
 		
+		'l13Projects.action.favorites.pickFavorite': () => Favorites.pickFavorite(context),
 		'l13Projects.action.favorites.clear': () => Favorites.clearFavorites(context),
 	});
 	
