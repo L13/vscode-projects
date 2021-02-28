@@ -4,16 +4,23 @@ import * as vscode from 'vscode';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';
-import * as settings from '../common/settings';
 
 import { GroupTreeItem } from '../@types/groups';
 import { WorkspaceTreeItems } from '../@types/workspaces';
 
 import { HotkeySlots } from '../features/HotkeySlots';
-import { FavoritesProvider } from '../sidebar/FavoritesProvider';
+
 import { GroupCustomTreeItem } from '../sidebar/trees/GroupCustomTreeItem';
 import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
+
+import { FavoriteGroups } from '../states/FavoriteGroups';
+import { Favorites } from '../states/Favorites';
+import { StatusBartColor } from '../states/StatusBarColor';
+import { WorkspaceGroups } from '../states/WorkspaceGroups';
+import { Workspaces } from '../states/Workspaces';
+
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
+
 import { StatusBar } from '../statusbar/StatusBar';
 
 //	Variables __________________________________________________________________
@@ -49,46 +56,64 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	workspacesProvider.onDidChangeTreeData(() => StatusBar.current?.update());
 	
-	WorkspacesProvider.onDidChangeProject((project) => {
+	Workspaces.onDidUpdateProject((project) => {
 		
-		FavoritesProvider.updateFavorite(context, project);
+		if (project.removed) project = workspacesProvider.getWorkspaceByPath(project.path) || project;
+		
+		Favorites.updateFavorite(context, project);
 		HotkeySlots.create(context).update(project);
 		
 	});
 	
-	WorkspacesProvider.onDidChangeWorkspaceGroup((workspaceGroup) => {
+	WorkspaceGroups.onDidUpdateWorkspaceGroup((workspaceGroup) => {
 		
-		if (settings.get('linkFavoriteAndWorkspaceGroups', true)) {
-			FavoritesProvider.updateFavoriteGroup(context, workspaceGroup);
-		}
+		FavoriteGroups.updateFavoriteGroup(context, workspaceGroup);
 		
 	});
+	
+	StatusBartColor.onDidUpdateColor((project) => {
+		
+		Favorites.updateFavorite(context, project);
+		
+	});
+	
+	Workspaces.onDidChangeWorkspaces(() => workspacesProvider.refresh());
+	WorkspaceGroups.onDidChangeWorkspaceGroups(() => workspacesProvider.refresh());
+	StatusBartColor.onDidChangeColor(() => workspacesProvider.refresh());
 	
 	context.subscriptions.push(treeView);
 	
 	commands.register(context, {
+		'l13Projects.action.workspaces.addToFavorites': ({ project }:ProjectTreeItem) => Favorites.addToFavorites(context, project),
+		'l13Projects.action.workspaces.group.addToFavorites': ({ group }:GroupCustomTreeItem) => {
+			
+			const workspaces = group.paths.map((path) => workspacesProvider.getWorkspaceByPath(path));
+			
+			FavoriteGroups.addWorkspaceGroupToFavorites(context, group, workspaces.filter((workspace) => !!workspace));
+			
+		},
 		'l13Projects.action.workspace.addToWorkspace': ({ project }:WorkspaceTreeItems) => WorkspacesProvider.addToWorkspace(project),
 		
 		'l13Projects.action.workspace.open': ({ project }:WorkspaceTreeItems) => files.open(project.path),
 		'l13Projects.action.workspace.openInCurrentWindow': ({ project }:WorkspaceTreeItems) => files.open(project.path, false),
 		'l13Projects.action.workspace.openInNewWindow': ({ project }:WorkspaceTreeItems) => files.open(project.path, true),
-		'l13Projects.action.workspace.pick': () => WorkspacesProvider.pickWorkspace(context),
-		'l13Projects.action.workspaces.addProject': () => WorkspacesProvider.addProject(context),
-		'l13Projects.action.workspaces.addProjectWorkspace': () => WorkspacesProvider.addProjectWorkspace(context),
-		'l13Projects.action.workspaces.saveProject': () => WorkspacesProvider.saveProject(context),
-		'l13Projects.action.workspaces.saveDetectedProject': ({ project }:WorkspaceTreeItems) => WorkspacesProvider.saveProject(context, project),
+		'l13Projects.action.workspace.pick': async () => Workspaces.pickWorkspace(await workspacesProvider.createQuickPickItems()),
+		'l13Projects.action.workspaces.addProject': () => Workspaces.addProject(context),
+		'l13Projects.action.workspaces.addProjectWorkspace': () => Workspaces.addProjectWorkspace(context),
+		'l13Projects.action.workspaces.saveProject': () => Workspaces.saveProject(context),
+		'l13Projects.action.workspaces.saveDetectedProject': ({ project }:WorkspaceTreeItems) => Workspaces.saveProject(context, project),
 		'l13Projects.action.workspaces.refresh': () => WorkspacesProvider.createProvider(context).refreshWorkspaces(),
 		
-		'l13Projects.action.workspaces.group.add': () => WorkspacesProvider.addWorkspaceGroup(context),
-		'l13Projects.action.workspace.addToGroup': ({ project }:WorkspaceTreeItems) => WorkspacesProvider.addWorkspaceToGroup(context, project),
-		'l13Projects.action.workspace.removeFromGroup': ({ project }:WorkspaceTreeItems) => WorkspacesProvider.removeFromWorkspaceGroup(context, project),
+		'l13Projects.action.workspaces.group.add': () => WorkspaceGroups.addWorkspaceGroup(context),
+		'l13Projects.action.workspace.addToGroup': ({ project }:WorkspaceTreeItems) => WorkspaceGroups.addWorkspaceToGroup(context, project),
+		'l13Projects.action.workspace.removeFromGroup': ({ project }:WorkspaceTreeItems) => WorkspaceGroups.removeFromWorkspaceGroup(context, project),
 		'l13Projects.action.workspaces.group.openAll': ({ group }:GroupCustomTreeItem) => files.openAll(group.paths),
-		'l13Projects.action.workspaces.group.rename': ({ group }:GroupCustomTreeItem) => WorkspacesProvider.renameWorkspaceGroup(context, group),
-		'l13Projects.action.workspaces.group.remove': ({ group }:GroupCustomTreeItem) => WorkspacesProvider.removeWorkspaceGroup(context, group),
-		'l13Projects.action.workspaces.groups.clear': () => WorkspacesProvider.clearWorkspaceGroups(context),
+		'l13Projects.action.workspaces.group.rename': ({ group }:GroupCustomTreeItem) => WorkspaceGroups.renameWorkspaceGroup(context, group),
+		'l13Projects.action.workspaces.group.remove': ({ group }:GroupCustomTreeItem) => WorkspaceGroups.removeWorkspaceGroup(context, group),
+		'l13Projects.action.workspaces.groups.clear': () => WorkspaceGroups.clearWorkspaceGroups(context),
 		
-		'l13Projects.action.project.rename': ({ project }:ProjectTreeItem) => WorkspacesProvider.renameProject(context, project),
-		'l13Projects.action.project.remove': ({ project }:ProjectTreeItem) => WorkspacesProvider.removeProject(context, project),
+		'l13Projects.action.project.rename': ({ project }:ProjectTreeItem) => Workspaces.renameProject(context, project),
+		'l13Projects.action.project.remove': ({ project }:ProjectTreeItem) => Workspaces.removeProject(context, project),
 		'l13Projects.action.projects.clear': () => WorkspacesProvider.clearProjects(context),
 		
 		'l13Projects.action.project.selectColor': ({ project }:ProjectTreeItem) => {
@@ -97,14 +122,54 @@ export function activate (context:vscode.ExtensionContext) {
 			treeView.reveal(WorkspacesProvider.colorPicker, { focus: true, select: true });
 			
 		},
-		'l13Projects.action.project.pickColor1': ({ project }:ProjectTreeItem) => workspacesProvider.assignColor(project, 1),
-		'l13Projects.action.project.pickColor2': ({ project }:ProjectTreeItem) => workspacesProvider.assignColor(project, 2),
-		'l13Projects.action.project.pickColor3': ({ project }:ProjectTreeItem) => workspacesProvider.assignColor(project, 3),
-		'l13Projects.action.project.pickColor4': ({ project }:ProjectTreeItem) => workspacesProvider.assignColor(project, 4),
-		'l13Projects.action.project.pickColor5': ({ project }:ProjectTreeItem) => workspacesProvider.assignColor(project, 5),
-		'l13Projects.action.project.pickColor6': ({ project }:ProjectTreeItem) => workspacesProvider.assignColor(project, 6),
-		'l13Projects.action.project.pickColor7': ({ project }:ProjectTreeItem) => workspacesProvider.assignColor(project, 7),
-		'l13Projects.action.project.removeColor': ({ project }:ProjectTreeItem) => workspacesProvider.assignColor(project, 0),
+		'l13Projects.action.project.pickColor1': ({ project }:ProjectTreeItem) => {
+			
+			WorkspacesProvider.colorPicker.project = null;
+			StatusBartColor.assignColor(context, project, 1);
+			
+		},
+		'l13Projects.action.project.pickColor2': ({ project }:ProjectTreeItem) => {
+			
+			WorkspacesProvider.colorPicker.project = null;
+			StatusBartColor.assignColor(context, project, 2);
+			
+		},
+		'l13Projects.action.project.pickColor3': ({ project }:ProjectTreeItem) => {
+			
+			WorkspacesProvider.colorPicker.project = null;
+			StatusBartColor.assignColor(context, project, 3);
+			
+		},
+		'l13Projects.action.project.pickColor4': ({ project }:ProjectTreeItem) => {
+			
+			WorkspacesProvider.colorPicker.project = null;
+			StatusBartColor.assignColor(context, project, 4);
+			
+		},
+		'l13Projects.action.project.pickColor5': ({ project }:ProjectTreeItem) => {
+			
+			WorkspacesProvider.colorPicker.project = null;
+			StatusBartColor.assignColor(context, project, 5);
+			
+		},
+		'l13Projects.action.project.pickColor6': ({ project }:ProjectTreeItem) => {
+			
+			WorkspacesProvider.colorPicker.project = null;
+			StatusBartColor.assignColor(context, project, 6);
+			
+		},
+		'l13Projects.action.project.pickColor7': ({ project }:ProjectTreeItem) => {
+			
+			WorkspacesProvider.colorPicker.project = null;
+			StatusBartColor.assignColor(context, project, 7);
+			
+		},
+		'l13Projects.action.project.removeColor': ({ project }:ProjectTreeItem) => {
+			
+			WorkspacesProvider.colorPicker.project = null;
+			StatusBartColor.assignColor(context, project, 0);
+			
+		},
 		'l13Projects.action.project.hideColorPicker': () => workspacesProvider.hideColorPicker(),
 	});
 	

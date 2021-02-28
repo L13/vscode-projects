@@ -39,6 +39,13 @@ export type WorkspaceGroup = {
 	type:'custom',
 };
 
+export type WorkspaceQuickPickItem = {
+	label:string,
+	description:string,
+	detail?:string
+	paths:string[],
+};
+
 export type WorkspacesTreeItems = ColorPickerTreeItem|GroupTreeItem|WorkspaceTreeItems;
 
 export type WorkspaceTreeItems = CurrentProjectTreeItem|ProjectTreeItem|UnknownProjectTreeItem;

@@ -4,16 +4,20 @@ import * as vscode from 'vscode';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';
-import * as settings from '../common/settings';
 
 import { FavoriteTreeItems } from '../@types/favorites';
 
 import { HotkeySlots } from '../features/HotkeySlots';
-import { FavoritesProvider } from '../sidebar/FavoritesProvider';
+
 import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
-import { GroupCustomTreeItem } from '../sidebar/trees/GroupCustomTreeItem';
-import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
-import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
+
+import { FavoriteGroups } from '../states/FavoriteGroups';
+import { Favorites } from '../states/Favorites';
+import { WorkspaceGroups } from '../states/WorkspaceGroups';
+import { Workspaces } from '../states/Workspaces';
+
+import { FavoritesProvider } from '../sidebar/FavoritesProvider';
+
 import { StatusBar } from '../statusbar/StatusBar';
 
 //	Variables __________________________________________________________________
@@ -34,49 +38,41 @@ export function activate (context:vscode.ExtensionContext) {
 		showCollapseAll: true,
 	});
 	
-	treeView.onDidCollapseElement(({ element }) => FavoritesProvider.saveCollapseState(context, <FavoriteGroupTreeItem>element, true));
+	treeView.onDidCollapseElement(({ element }) => FavoriteGroups.saveCollapseState(context, <FavoriteGroupTreeItem>element, true));
 	
-	treeView.onDidExpandElement(({ element }) => FavoritesProvider.saveCollapseState(context, <FavoriteGroupTreeItem>element, false));
+	treeView.onDidExpandElement(({ element }) => FavoriteGroups.saveCollapseState(context, <FavoriteGroupTreeItem>element, false));
 	
 	favoritesProvider.onDidChangeTreeData(() => StatusBar.current?.update());
 	
-	FavoritesProvider.onDidChangeFavorite((favorite) => {
+	Favorites.onDidUpdateFavorite((favorite) => {
 		
-		WorkspacesProvider.updateProject(context, favorite);
+		Workspaces.updateProject(context, favorite);
 		HotkeySlots.create(context).update(favorite);
 		
 	});
 	
-	FavoritesProvider.onDidChangeFavoriteGroup((favoriteGroup) => {
+	FavoriteGroups.onDidUpdateFavoriteGroup((favoriteGroup) => {
 		
-		if (settings.get('linkFavoriteAndWorkspaceGroups', true)) {
-			WorkspacesProvider.updateWorkspaceGroup(context, favoriteGroup);
-		}
+		WorkspaceGroups.updateWorkspaceGroup(context, favoriteGroup);
 		
 	});
 	
+	Favorites.onDidChangeFavorites(() => favoritesProvider.refresh());
+	FavoriteGroups.onDidChangeFavoriteGroups(() => favoritesProvider.refresh());
+	
 	commands.register(context, {
-		'l13Projects.action.workspaces.addToFavorites': ({ project }:ProjectTreeItem) => FavoritesProvider.addToFavorites(context, project),
-		'l13Projects.action.workspaces.group.addToFavorites': ({ group }:GroupCustomTreeItem) => {
-			
-			const workspaces = group.paths.map((path) => WorkspacesProvider.currentProvider?.getWorkspaceByPath(path));
-			
-			FavoritesProvider.addWorkspaceGroupToFavorites(context, group, workspaces.filter((workspace) => !!workspace));
-			
-		},
+		'l13Projects.action.favorite.pick': () => Favorites.pickFavorite(context),
+		'l13Projects.action.favorite.addToGroup': ({ project }:FavoriteTreeItems) => FavoriteGroups.addFavoriteToGroup(context, project),
+		'l13Projects.action.favorite.removeFromGroup': ({ project }:FavoriteTreeItems) => FavoriteGroups.removeFromFavoriteGroup(context, project),
+		'l13Projects.action.favorite.rename': ({ project }:FavoriteTreeItems) => Favorites.renameFavorite(context, project),
+		'l13Projects.action.favorite.remove': ({ project }:FavoriteTreeItems) => Favorites.removeFavorite(context, project),
 		
-		'l13Projects.action.favorite.pick': () => FavoritesProvider.pickFavorite(context),
-		'l13Projects.action.favorite.addToGroup': ({ project }:FavoriteTreeItems) => FavoritesProvider.addFavoriteToGroup(context, project),
-		'l13Projects.action.favorite.removeFromGroup': ({ project }:FavoriteTreeItems) => FavoritesProvider.removeFromFavoriteGroup(context, project),
-		'l13Projects.action.favorite.rename': ({ project }:FavoriteTreeItems) => FavoritesProvider.renameFavorite(context, project),
-		'l13Projects.action.favorite.remove': ({ project }:FavoriteTreeItems) => FavoritesProvider.removeFavorite(context, project),
-		
-		'l13Projects.action.favorites.group.add': () => FavoritesProvider.addFavoriteGroup(context),
+		'l13Projects.action.favorites.group.add': () => FavoriteGroups.addFavoriteGroup(context),
 		'l13Projects.action.favorites.group.openAll': ({ favoriteGroup }:FavoriteGroupTreeItem) => files.openAll(favoriteGroup.paths),
-		'l13Projects.action.favorites.group.rename': ({ favoriteGroup }:FavoriteGroupTreeItem) => FavoritesProvider.renameFavoriteGroup(context, favoriteGroup),
-		'l13Projects.action.favorites.group.remove': ({ favoriteGroup }:FavoriteGroupTreeItem) => FavoritesProvider.removeFavoriteGroup(context, favoriteGroup),
+		'l13Projects.action.favorites.group.rename': ({ favoriteGroup }:FavoriteGroupTreeItem) => FavoriteGroups.renameFavoriteGroup(context, favoriteGroup),
+		'l13Projects.action.favorites.group.remove': ({ favoriteGroup }:FavoriteGroupTreeItem) => FavoriteGroups.removeFavoriteGroup(context, favoriteGroup),
 		
-		'l13Projects.action.favorites.clear': () => FavoritesProvider.clearFavorites(context),
+		'l13Projects.action.favorites.clear': () => Favorites.clearFavorites(context),
 	});
 	
 }

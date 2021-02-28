@@ -298,7 +298,7 @@
 			},
 			{
 				"command": "l13Projects.action.project.selectColor",
-				"title": "Select Color"
+				"title": "Select Status Bar Color"
 			},
 			{
 				"command": "l13Projects.action.project.removeColor",
