@@ -2,21 +2,20 @@
 
 import * as vscode from 'vscode';
 
+import { FavoriteTreeItems } from '../@types/favorites';
+
 import * as commands from '../common/commands';
 import * as files from '../common/files';
 
-import { FavoriteTreeItems } from '../@types/favorites';
-
-import { HotkeySlots } from '../features/HotkeySlots';
-
+import { FavoritesProvider } from '../sidebar/FavoritesProvider';
 import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
 
 import { FavoriteGroups } from '../states/FavoriteGroups';
 import { Favorites } from '../states/Favorites';
+import { HotkeySlots } from '../states/HotkeySlots';
 import { WorkspaceGroups } from '../states/WorkspaceGroups';
 import { Workspaces } from '../states/Workspaces';
 
-import { FavoritesProvider } from '../sidebar/FavoritesProvider';
 
 import { StatusBar } from '../statusbar/StatusBar';
 

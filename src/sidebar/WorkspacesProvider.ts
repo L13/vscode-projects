@@ -11,11 +11,10 @@ import { FileMap, Options } from '../@types/files';
 import { GroupCustomState, GroupSimple, GroupSimpleState, GroupTreeItem, GroupType, GroupTypeState, InitialState, WorkspaceSorting } from '../@types/groups';
 import { Project, WorkspaceQuickPickItem, WorkspacesTreeItems, WorkspaceTypes } from '../@types/workspaces';
 
-import * as dialogs from '../common/dialogs';
 import * as settings from '../common/settings';
 import * as states from '../common/states';
 
-import { HotkeySlots } from '../features/HotkeySlots';
+import { HotkeySlots } from '../states/HotkeySlots';
 import { StatusBartColor } from '../states/StatusBarColor';
 
 import { ColorPickerTreeItem } from './trees/ColorPickerTreeItem';
@@ -35,8 +34,6 @@ const GROUP_STATES_BY_TYPE = 'groupStatesByType';
 const GROUP_STATES_BY_SIMPLE = 'groupStatesBySimple';
 const GROUP_STATES_BY_GROUP = 'groupStatesByGroup';
 
-let sortWorkspacesBy:WorkspaceSorting = settings.get('sortWorkspacesBy');
-
 //	Initialize _________________________________________________________________
 
 
@@ -52,6 +49,8 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	private initCache:boolean = true;
 	private cache:Project[] = [];
+	
+	public sortWorkspacesBy:WorkspaceSorting = settings.get('sortWorkspacesBy');
 	
 	public projects:Project[] = [];
 	public gitProjects:Project[] = [];
@@ -97,15 +96,6 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		}
 		
 		this.slots = HotkeySlots.create(this.context);
-		
-		vscode.workspace.onDidChangeConfiguration((event) => {
-			
-			if (event.affectsConfiguration('l13Projects.sortWorkspacesBy')) {
-				sortWorkspacesBy = settings.get('sortWorkspacesBy');
-				this.refresh();
-			}
-			
-		}, null, this.disposables);
 		
 		const groupTypeStates:GroupTypeState[] = context.globalState.get(GROUP_STATES_BY_TYPE, []);
 		const groupSimpleStates:GroupSimpleState[] = context.globalState.get(GROUP_STATES_BY_SIMPLE, []);
@@ -519,6 +509,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		const workspacePath:string = settings.getCurrentWorkspacePath();
 		const list:WorkspacesTreeItems[] = [];
+		const sortWorkspacesBy = this.sortWorkspacesBy;
 		
 		if (sortWorkspacesBy !== 'Name') {
 			if (element) {
@@ -601,7 +592,9 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	public static saveCollapseState (context:vscode.ExtensionContext, item:GroupTreeItem, state:boolean) {
+	public saveCollapseState (item:GroupTreeItem, state:boolean) {
+		
+		const sortWorkspacesBy = this.sortWorkspacesBy;
 		
 		if (sortWorkspacesBy === 'Name') return;
 		
@@ -610,7 +603,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		if (sortWorkspacesBy === 'Group') groupStates = GROUP_STATES_BY_GROUP;
 		else if (sortWorkspacesBy === 'Simple') groupStates = GROUP_STATES_BY_SIMPLE;
 		
-		const groups:(GroupCustomState|GroupSimpleState|GroupTypeState)[] = context.globalState.get(groupStates, []);
+		const groups:(GroupCustomState|GroupSimpleState|GroupTypeState)[] = this.context.globalState.get(groupStates, []);
 		const groupType = item.group.type;
 		
 		if (!groups.some((group) => group.type === groupType ? (group.collapsed = state) || true : false)) {
@@ -619,16 +612,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		item.group.collapsed = state;
 		
-		context.globalState.update(groupStates, groups);
-		
-	}
-	
-	public static async clearProjects (context:vscode.ExtensionContext) {
-		
-		if (await dialogs.confirm(`Delete all projects?'`, 'Delete')) {
-			states.updateProjects(context, []);
-			WorkspacesProvider.currentProvider?.refresh();
-		}
+		this.context.globalState.update(groupStates, groups);
 		
 	}
 	

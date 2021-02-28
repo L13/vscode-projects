@@ -192,6 +192,15 @@ export class Workspaces {
 		
 	}
 	
+	public static async clearProjects (context:vscode.ExtensionContext) {
+		
+		if (await dialogs.confirm(`Delete all projects?'`, 'Delete')) {
+			states.updateProjects(context, []);
+			Workspaces._onDidChangeWorkspaces.fire();
+		}
+		
+	}
+	
 }
 
 //	Functions __________________________________________________________________

@@ -8,7 +8,7 @@ import * as states from '../common/states';
 import { Favorite, FavoriteGroup, FavoritesTreeItems } from '../@types/favorites';
 import { InitialState } from '../@types/groups';
 
-import { HotkeySlots } from '../features/HotkeySlots';
+import { HotkeySlots } from '../states/HotkeySlots';
 import { CurrentFavoriteTreeItem } from './trees/CurrentFavoriteTreeItem';
 import { FavoriteGroupTreeItem } from './trees/FavoriteGroupTreeItem';
 import { FavoriteTreeItem } from './trees/FavoriteTreeItem';

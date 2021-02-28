@@ -2,13 +2,12 @@
 
 import * as vscode from 'vscode';
 
-import * as commands from '../common/commands';
-import * as files from '../common/files';
-
 import { GroupTreeItem } from '../@types/groups';
 import { WorkspaceTreeItems } from '../@types/workspaces';
 
-import { HotkeySlots } from '../features/HotkeySlots';
+import * as commands from '../common/commands';
+import * as files from '../common/files';
+import * as settings from '../common/settings';
 
 import { ColorPickerTreeItem } from '../sidebar/trees/ColorPickerTreeItem';
 import { GroupCustomTreeItem } from '../sidebar/trees/GroupCustomTreeItem';
@@ -16,6 +15,7 @@ import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
 
 import { FavoriteGroups } from '../states/FavoriteGroups';
 import { Favorites } from '../states/Favorites';
+import { HotkeySlots } from '../states/HotkeySlots';
 import { StatusBartColor } from '../states/StatusBarColor';
 import { WorkspaceGroups } from '../states/WorkspaceGroups';
 import { Workspaces } from '../states/Workspaces';
@@ -43,9 +43,9 @@ export function activate (context:vscode.ExtensionContext) {
 		showCollapseAll: true,
 	});
 	
-	treeView.onDidCollapseElement(({ element }) => WorkspacesProvider.saveCollapseState(context, <GroupTreeItem>element, true));
+	treeView.onDidCollapseElement(({ element }) => workspacesProvider.saveCollapseState(<GroupTreeItem>element, true));
 	
-	treeView.onDidExpandElement(({ element }) => WorkspacesProvider.saveCollapseState(context, <GroupTreeItem>element, false));
+	treeView.onDidExpandElement(({ element }) => workspacesProvider.saveCollapseState(<GroupTreeItem>element, false));
 	
 	treeView.onDidChangeSelection((event) => {
 		
@@ -84,6 +84,15 @@ export function activate (context:vscode.ExtensionContext) {
 	StatusBartColor.onDidChangeColor(() => workspacesProvider.refresh());
 	
 	context.subscriptions.push(treeView);
+	
+	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration((event) => {
+		
+		if (event.affectsConfiguration('l13Projects.sortWorkspacesBy')) {
+			workspacesProvider.sortWorkspacesBy = settings.get('sortWorkspacesBy');
+			workspacesProvider.refresh();
+		}
+		
+	}));
 	
 	commands.register(context, {
 		
@@ -135,7 +144,7 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.project.removeColor': () => StatusBartColor.assignColor(context, colorPicker, 0),
 		'l13Projects.action.project.hideColorPicker': () => workspacesProvider.hideColorPicker(),
 		
-		'l13Projects.action.projects.clear': () => WorkspacesProvider.clearProjects(context),
+		'l13Projects.action.projects.clear': () => Workspaces.clearProjects(context),
 	});
 	
 }

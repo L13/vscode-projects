@@ -3,15 +3,17 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 
+import { Project } from '../@types/workspaces';
+
 import * as commands from '../common/commands';
 import * as files from '../common/files';
 import * as settings from '../common/settings';
 import * as terminal from '../common/terminal';
 
-import { Project } from '../@types/workspaces';
-import { HotkeySlots } from '../features/HotkeySlots';
 import { FavoritesProvider } from '../sidebar/FavoritesProvider';
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
+
+import { HotkeySlots } from '../states/HotkeySlots';
 
 //	Variables __________________________________________________________________
 

@@ -4,9 +4,10 @@ import * as vscode from 'vscode';
 
 import * as commands from '../common/commands';
 
-import { HotkeySlots } from '../features/HotkeySlots';
 import { FavoritesProvider } from '../sidebar/FavoritesProvider';
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
+
+import { HotkeySlots } from '../states/HotkeySlots';
 
 //	Variables __________________________________________________________________
 
