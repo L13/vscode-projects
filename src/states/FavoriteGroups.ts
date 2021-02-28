@@ -77,6 +77,7 @@ export class FavoriteGroups {
 		
 		for (const favoriteGroup of favoriteGroups) {
 			if (favoriteGroup.label === label) {
+				if (favoriteGroup.id === workspaceGroup.id) return;
 				const BUTTON_REPLACE = 'Replace';
 				const value = await vscode.window.showInformationMessage(`Replace favorite group "${label}"?`, 'Cancel', BUTTON_REPLACE);
 				if (value !== BUTTON_REPLACE) return;
