@@ -100,29 +100,14 @@ export class FavoriteGroups {
 		
 		favoriteGroups.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
 		
-		const favorites = states.getFavorites(context);
+		addMissingFavorites(context, workspaces);
 		
-		workspaces: for (const workspace of workspaces) {
-			for (const favorite of favorites) {
-				if (favorite.path === workspace.path) continue workspaces;
-			}
-			favorites.push({
-				label: workspace.label,
-				path: workspace.path,
-				type: workspace.type,
-				color: workspace.color,
-			});
-		}
-		
-		favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-		
-		states.updateFavorites(context, favorites);
 		states.updateFavoriteGroups(context, favoriteGroups);
 		FavoriteGroups._onDidChangeFavoriteGroups.fire();
 		
 	}
 	
-	public static async updateFavoriteGroup (context:vscode.ExtensionContext, workspaceGroup:FavoriteGroup) {
+	public static async updateFavoriteGroup (context:vscode.ExtensionContext, workspaceGroup:FavoriteGroup, workspaces:Project[]) {
 		
 		const favoriteGroups = states.getFavoriteGroups(context);
 		
@@ -137,6 +122,7 @@ export class FavoriteGroups {
 				} else {
 					const paths = workspaceGroup.paths;
 					removePathsInFavoriteGroups(favoriteGroups, paths);
+					addMissingFavorites(context, workspaces);
 					favoriteGroup.label = workspaceGroup.label;
 					favoriteGroup.paths = paths;
 					favoriteGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
@@ -264,5 +250,27 @@ async function replaceFavoriteGroup (favoriteGroups:FavoriteGroup[], favoriteGro
 	if (value !== BUTTON_REPLACE) return false;
 	
 	return remove(favoriteGroups, favoriteGroup);
+	
+}
+
+function addMissingFavorites (context:vscode.ExtensionContext, workspaces:Project[]) {
+	
+	const favorites = states.getFavorites(context);
+		
+	workspaces: for (const workspace of workspaces) {
+		for (const favorite of favorites) {
+			if (favorite.path === workspace.path) continue workspaces;
+		}
+		favorites.push({
+			label: workspace.label,
+			path: workspace.path,
+			type: workspace.type,
+			color: workspace.color,
+		});
+	}
+	
+	favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+	
+	states.updateFavorites(context, favorites);
 	
 }

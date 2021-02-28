@@ -69,7 +69,9 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	WorkspaceGroups.onDidUpdateWorkspaceGroup((workspaceGroup) => {
 		
-		FavoriteGroups.updateFavoriteGroup(context, workspaceGroup);
+		const workspaces = workspaceGroup.paths.map((path) => workspacesProvider.getWorkspaceByPath(path));
+		
+		FavoriteGroups.updateFavoriteGroup(context, workspaceGroup, workspaces);
 		
 	});
 	
