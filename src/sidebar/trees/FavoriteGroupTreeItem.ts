@@ -25,11 +25,11 @@ export class FavoriteGroupTreeItem extends TreeItem {
 		
 	public iconPath = iconPath;
 	
-	public constructor (public readonly favoriteGroup:FavoriteGroup) {
+	public constructor (public readonly group:FavoriteGroup) {
 		
-		super(favoriteGroup.label, favoriteGroup.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
+		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
-		this.id = `favorite-group-${favoriteGroup.id}`;
+		this.id = `favorite-group-${group.id}`;
 		
 	}
 	

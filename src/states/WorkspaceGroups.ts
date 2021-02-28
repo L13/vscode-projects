@@ -161,6 +161,21 @@ export class WorkspaceGroups {
 		
 	}
 	
+	public static saveCollapseState (context:vscode.ExtensionContext, workspaceGroup:WorkspaceGroup, collapsed:boolean) {
+		
+		const workspaceGroups = states.getWorkspaceGroups(context);
+		const groupId = workspaceGroup.id;
+		
+		for (const group of workspaceGroups) {
+			if (group.id === groupId) {
+				group.collapsed = collapsed;
+				states.updateWorkspaceGroups(context, workspaceGroups);
+				break;
+			}
+		}
+		
+	}
+	
 }
 
 //	Functions __________________________________________________________________

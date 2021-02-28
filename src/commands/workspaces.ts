@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 
 import { GroupTreeItem } from '../@types/groups';
-import { WorkspaceTreeItems } from '../@types/workspaces';
+import { WorkspaceGroup, WorkspaceTreeItems } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';
@@ -43,9 +43,21 @@ export function activate (context:vscode.ExtensionContext) {
 		showCollapseAll: true,
 	});
 	
-	treeView.onDidCollapseElement(({ element }) => workspacesProvider.saveCollapseState(<GroupTreeItem>element, true));
+	treeView.onDidCollapseElement(({ element }) => {
+		
+		if ((<GroupTreeItem>element).group.type === 'custom') {
+			WorkspaceGroups.saveCollapseState(context, (<WorkspaceGroup>(<GroupTreeItem>element).group), true);
+		} else workspacesProvider.saveCollapseState(<GroupTreeItem>element, true);
+		
+	});
 	
-	treeView.onDidExpandElement(({ element }) => workspacesProvider.saveCollapseState(<GroupTreeItem>element, false));
+	treeView.onDidExpandElement(({ element }) => {
+		
+		if ((<GroupTreeItem>element).group.type === 'custom') {
+			WorkspaceGroups.saveCollapseState(context, (<WorkspaceGroup>(<GroupTreeItem>element).group), false);
+		} else workspacesProvider.saveCollapseState(<GroupTreeItem>element, false);
+		
+	});
 	
 	treeView.onDidChangeSelection((event) => {
 		

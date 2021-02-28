@@ -610,7 +610,7 @@
 				},
 				{
 					"command": "l13Projects.action.workspaces.group.add",
-					"when": "view == l13ProjectsWorkspaces && config.l13Projects.sortWorkspacesBy == Group",
+					"when": "view == l13ProjectsWorkspaces",
 					"group": "navigation@3"
 				},
 				{
@@ -673,7 +673,7 @@
 				{
 					"command": "l13Projects.action.workspace.addToGroup",
 					"group": "navigation@4",
-					"when": "view == l13ProjectsWorkspaces && config.l13Projects.sortWorkspacesBy == Group && viewItem =~ /^(current-)?(project|subproject)-(folders?|git|subfolder|vscode|workspace)$/"
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?(project|subproject)-(folders?|git|subfolder|vscode|workspace)$/"
 				},
 				{
 					"command": "l13Projects.action.workspace.removeFromGroup",
@@ -956,14 +956,12 @@
 					"default": "Name",
 					"enum": [
 						"Name",
-						"Group",
 						"Simple",
 						"Type"
 					],
 					"description": "Indicates how the workspaces should be sorted.",
 					"enumDescriptions": [
 						"Sort all workspaces by name.",
-						"Sort all workspaces by custom groups.",
 						"Group all workspaces by simple type.",
 						"Group all workspaces by type."
 					]

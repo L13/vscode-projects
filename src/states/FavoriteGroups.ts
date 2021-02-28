@@ -208,15 +208,18 @@ export class FavoriteGroups {
 		
 	}
 	
-	public static saveCollapseState (context:vscode.ExtensionContext, item:FavoriteGroupTreeItem, state:boolean) {
+	public static saveCollapseState (context:vscode.ExtensionContext, favoriteGroup:FavoriteGroup, collapsed:boolean) {
 		
 		const favoriteGroups = states.getFavoriteGroups(context);
-		const groupId = item.favoriteGroup.id;
+		const groupId = favoriteGroup.id;
 		
-		favoriteGroups.some((favoriteGroup) => favoriteGroup.id === groupId ? (favoriteGroup.collapsed = state) || true : false);
-		
-		states.updateFavoriteGroups(context, favoriteGroups);
-		FavoriteGroups._onDidChangeFavoriteGroups.fire();
+		for (const group of favoriteGroups) {
+			if (group.id === groupId) {
+				group.collapsed = collapsed;
+				states.updateFavoriteGroups(context, favoriteGroups);
+				break;
+			}
+		}
 		
 	}
 	

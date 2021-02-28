@@ -36,9 +36,17 @@ export function activate (context:vscode.ExtensionContext) {
 		showCollapseAll: true,
 	});
 	
-	treeView.onDidCollapseElement(({ element }) => FavoriteGroups.saveCollapseState(context, <FavoriteGroupTreeItem>element, true));
+	treeView.onDidCollapseElement(({ element }) => {
+		
+		FavoriteGroups.saveCollapseState(context, (<FavoriteGroupTreeItem>element).group, true);
+		
+	});
 	
-	treeView.onDidExpandElement(({ element }) => FavoriteGroups.saveCollapseState(context, <FavoriteGroupTreeItem>element, false));
+	treeView.onDidExpandElement(({ element }) => {
+		
+		FavoriteGroups.saveCollapseState(context, (<FavoriteGroupTreeItem>element).group, false);
+		
+	});
 	
 	favoritesProvider.onDidChangeTreeData(() => StatusBar.current?.update());
 	
@@ -70,9 +78,9 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.favorite.remove': ({ project }:FavoriteTreeItems) => Favorites.removeFavorite(context, project),
 		
 		'l13Projects.action.favorites.group.add': () => FavoriteGroups.addFavoriteGroup(context),
-		'l13Projects.action.favorites.group.openAll': ({ favoriteGroup }:FavoriteGroupTreeItem) => files.openAll(favoriteGroup.paths),
-		'l13Projects.action.favorites.group.rename': ({ favoriteGroup }:FavoriteGroupTreeItem) => FavoriteGroups.renameFavoriteGroup(context, favoriteGroup),
-		'l13Projects.action.favorites.group.remove': ({ favoriteGroup }:FavoriteGroupTreeItem) => FavoriteGroups.removeFavoriteGroup(context, favoriteGroup),
+		'l13Projects.action.favorites.group.openAll': ({ group: favoriteGroup }:FavoriteGroupTreeItem) => files.openAll(favoriteGroup.paths),
+		'l13Projects.action.favorites.group.rename': ({ group: favoriteGroup }:FavoriteGroupTreeItem) => FavoriteGroups.renameFavoriteGroup(context, favoriteGroup),
+		'l13Projects.action.favorites.group.remove': ({ group: favoriteGroup }:FavoriteGroupTreeItem) => FavoriteGroups.removeFavoriteGroup(context, favoriteGroup),
 		
 		'l13Projects.action.favorites.pickFavorite': () => Favorites.pickFavorite(context),
 		'l13Projects.action.favorites.clear': () => Favorites.clearFavorites(context),

@@ -127,6 +127,9 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 				
 			});
 		} else {
+			// const workspaceGroups = states.getWorkspaceGroups(context);
+			// workspaceGroups.forEach((workspaceGroup) => workspaceGroup.collapsed = initialState === 'Collapsed');
+			// states.updateWorkspaceGroups(context, workspaceGroups);
 			this.groupTypes.forEach((group) => group.collapsed = initialState === 'Collapsed');
 			this.groupSimples.forEach((group) => group.collapsed = initialState === 'Collapsed');
 		}
@@ -281,7 +284,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	private addCustomGroups (list:WorkspacesTreeItems[], workspacePath:string) {
+	private addCustomGroups (list:WorkspacesTreeItems[]) {
 		
 		const workspaceGroups = states.getWorkspaceGroups(this.context);
 		let paths:string[] = [];
@@ -292,6 +295,15 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			list.push(new GroupCustomTreeItem(workspaceGroup));
 			
 		});
+		
+	}
+	
+	private addNonCustomGroupItems (list:WorkspacesTreeItems[], workspacePath:string) {
+		
+		const workspaceGroups = states.getWorkspaceGroups(this.context);
+		let paths:string[] = [];
+		
+		workspaceGroups.forEach((workspaceGroup) => paths = paths.concat(workspaceGroup.paths));
 		
 		const colorPickerProject = this.colorPicker.project;
 		const slots = this.slots;
@@ -359,11 +371,17 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	private addSimpleGroupItems (list:WorkspacesTreeItems[], type:string, workspacePath:string) {
 		
+		const workspaceGroups = states.getWorkspaceGroups(this.context);
 		const colorPickerProject = this.colorPicker.project;
 		const slots = this.slots;
 		let hasCurrentWorkspace = false;
+		let paths:string[] = [];
+		
+		workspaceGroups.forEach((workspaceGroup) => paths = paths.concat(workspaceGroup.paths));
 		
 		this.cache.forEach((workspace) => {
+			
+			if (paths.includes(workspace.path)) return;
 						
 			let simpleType = null;
 			
@@ -422,12 +440,18 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	private addTypeGroupItems (list:WorkspacesTreeItems[], type:string, workspacePath:string) {
 		
+		const workspaceGroups = states.getWorkspaceGroups(this.context);
 		const colorPickerProject = this.colorPicker.project;
 		const workspaceFile = vscode.workspace.workspaceFile;
 		const slots = this.slots;
 		let hasCurrentWorkspace = false;
+		let paths:string[] = [];
+		
+		workspaceGroups.forEach((workspaceGroup) => paths = paths.concat(workspaceGroup.paths));
 		
 		this.cache.forEach((workspace) => {
+			
+			if (paths.includes(workspace.path)) return;
 					
 			if (type === workspace.type) {
 				const slot = slots.get(workspace);
@@ -448,31 +472,6 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		&& !hasCurrentWorkspace && this.isUnknownWorkspace(workspacePath)) {
 			this.addUnknownItem(list, workspacePath);
 		}
-		
-	}
-	
-	private addItems (list:WorkspacesTreeItems[], workspacePath:string) {
-		
-		const colorPickerProject = this.colorPicker.project;
-		const slots = this.slots;
-		let hasCurrentWorkspace = false;
-		
-		this.cache.forEach((workspace) => {
-			
-			const slot = slots.get(workspace);
-			
-			if (!hasCurrentWorkspace && workspacePath && workspacePath === workspace.path) {
-				hasCurrentWorkspace = true;
-				list.push(new CurrentProjectTreeItem(workspace, slot));
-			} else list.push(new ProjectTreeItem(workspace, slot));
-			
-			if (colorPickerProject?.path === workspace.path) {
-				list.push(this.colorPicker);
-			}
-			
-		});
-		
-		if (workspacePath && !hasCurrentWorkspace) this.addUnknownItem(list, workspacePath);
 		
 	}
 	
@@ -511,18 +510,17 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		const list:WorkspacesTreeItems[] = [];
 		const sortWorkspacesBy = this.sortWorkspacesBy;
 		
-		if (sortWorkspacesBy !== 'Name') {
-			if (element) {
-				const type = (<GroupTreeItem>element).group.type;
-				if (sortWorkspacesBy === 'Group') this.addCustomGroupItems(list, (<GroupCustomTreeItem>element).group.paths, workspacePath);
-				else if (sortWorkspacesBy === 'Simple') this.addSimpleGroupItems(list, type, workspacePath);
-				else this.addTypeGroupItems(list, type, workspacePath);
-			} else {
-				if (sortWorkspacesBy === 'Group') this.addCustomGroups(list, workspacePath);
-				else if (sortWorkspacesBy === 'Simple') this.addSimpleGroups(list, workspacePath);
-				else this.addTypeGroups(list, workspacePath);
-			}
-		} else this.addItems(list, workspacePath);
+		if (element) {
+			const type = (<GroupTreeItem>element).group.type;
+			if (type === 'custom') this.addCustomGroupItems(list, (<GroupCustomTreeItem>element).group.paths, workspacePath);
+			else if (sortWorkspacesBy === 'Simple') this.addSimpleGroupItems(list, type, workspacePath);
+			else this.addTypeGroupItems(list, type, workspacePath);
+		} else {
+			this.addCustomGroups(list);
+			if (sortWorkspacesBy === 'Simple') this.addSimpleGroups(list, workspacePath);
+			else if (sortWorkspacesBy === 'Type') this.addTypeGroups(list, workspacePath);
+			else this.addNonCustomGroupItems(list, workspacePath);
+		}
 		
 		return Promise.resolve(list);
 		
@@ -596,11 +594,9 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		const sortWorkspacesBy = this.sortWorkspacesBy;
 		
-		if (sortWorkspacesBy === 'Name') return;
+		let groupStates = GROUP_STATES_BY_GROUP;
 		
-		let groupStates = GROUP_STATES_BY_TYPE;
-		
-		if (sortWorkspacesBy === 'Group') groupStates = GROUP_STATES_BY_GROUP;
+		if (sortWorkspacesBy === 'Type') groupStates = GROUP_STATES_BY_TYPE;
 		else if (sortWorkspacesBy === 'Simple') groupStates = GROUP_STATES_BY_SIMPLE;
 		
 		const groups:(GroupCustomState|GroupSimpleState|GroupTypeState)[] = this.context.globalState.get(groupStates, []);

@@ -80,7 +80,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 		let paths:string[] = [];
 		
 		if (element) {
-			paths = (<FavoriteGroupTreeItem>element).favoriteGroup.paths;
+			paths = (<FavoriteGroupTreeItem>element).group.paths;
 			addItems(list, this.favorites, paths, slots, true);
 		} else {
 			this.favoriteGroups.forEach((favoriteGroup) => {
