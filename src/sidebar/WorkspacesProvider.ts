@@ -15,7 +15,7 @@ import * as settings from '../common/settings';
 import * as states from '../common/states';
 
 import { HotkeySlots } from '../states/HotkeySlots';
-import { StatusBartColor } from '../states/StatusBarColor';
+import { StatusBarColor } from '../states/StatusBarColor';
 
 import { ColorPickerTreeItem } from './trees/ColorPickerTreeItem';
 import { CurrentProjectTreeItem } from './trees/CurrentProjectTreeItem';
@@ -187,7 +187,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	public refreshWorkspaces () {
 		
-		StatusBartColor.detectProjectColors(this.context);
+		StatusBarColor.detectProjectColors(this.context);
 		this.detectWorkspaces();
 		
 	}
@@ -502,7 +502,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		if (this.initCache) {
 			this.updateCache();
-			StatusBartColor.detectProjectColors(this.context);
+			StatusBarColor.detectProjectColors(this.context);
 			this.detectWorkspaces();
 			this.initCache = false;
 		}

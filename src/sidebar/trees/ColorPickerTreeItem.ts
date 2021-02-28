@@ -7,7 +7,7 @@ import { Project } from '../../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
-
+const iconPath = join(__filename, '..', '..', 'images', 'picker', 'color-picker.svg');
 
 //	Initialize _________________________________________________________________
 
@@ -23,13 +23,7 @@ export class ColorPickerTreeItem extends TreeItem {
 	
 	public id = 'color-picker';
 	
-	public constructor () {
-		
-		super('');
-		
-		this.iconPath = join(__filename, '..', '..', 'images', 'picker', 'color-picker.svg');
-		
-	}
+	public iconPath = iconPath;
 	
 }
 

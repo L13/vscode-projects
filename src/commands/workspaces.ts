@@ -16,7 +16,7 @@ import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
 import { FavoriteGroups } from '../states/FavoriteGroups';
 import { Favorites } from '../states/Favorites';
 import { HotkeySlots } from '../states/HotkeySlots';
-import { StatusBartColor } from '../states/StatusBarColor';
+import { StatusBarColor } from '../states/StatusBarColor';
 import { WorkspaceGroups } from '../states/WorkspaceGroups';
 import { Workspaces } from '../states/Workspaces';
 
@@ -75,7 +75,7 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	});
 	
-	StatusBartColor.onDidUpdateColor((project) => {
+	StatusBarColor.onDidUpdateColor((project) => {
 		
 		Favorites.updateFavorite(context, project);
 		
@@ -83,7 +83,7 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	Workspaces.onDidChangeWorkspaces(() => workspacesProvider.refresh());
 	WorkspaceGroups.onDidChangeWorkspaceGroups(() => workspacesProvider.refresh());
-	StatusBartColor.onDidChangeColor(() => workspacesProvider.refresh());
+	StatusBarColor.onDidChangeColor(() => workspacesProvider.refresh());
 	
 	context.subscriptions.push(treeView);
 	
@@ -136,14 +136,14 @@ export function activate (context:vscode.ExtensionContext) {
 			treeView.reveal(colorPicker, { focus: true, select: true });
 			
 		},
-		'l13Projects.action.project.pickColor1': () => StatusBartColor.assignColor(context, colorPicker, 1),
-		'l13Projects.action.project.pickColor2': () => StatusBartColor.assignColor(context, colorPicker, 2),
-		'l13Projects.action.project.pickColor3': () => StatusBartColor.assignColor(context, colorPicker, 3),
-		'l13Projects.action.project.pickColor4': () => StatusBartColor.assignColor(context, colorPicker, 4),
-		'l13Projects.action.project.pickColor5': () => StatusBartColor.assignColor(context, colorPicker, 5),
-		'l13Projects.action.project.pickColor6': () => StatusBartColor.assignColor(context, colorPicker, 6),
-		'l13Projects.action.project.pickColor7': () => StatusBartColor.assignColor(context, colorPicker, 7),
-		'l13Projects.action.project.removeColor': () => StatusBartColor.assignColor(context, colorPicker, 0),
+		'l13Projects.action.project.pickColor1': () => StatusBarColor.assignColor(context, colorPicker, 1),
+		'l13Projects.action.project.pickColor2': () => StatusBarColor.assignColor(context, colorPicker, 2),
+		'l13Projects.action.project.pickColor3': () => StatusBarColor.assignColor(context, colorPicker, 3),
+		'l13Projects.action.project.pickColor4': () => StatusBarColor.assignColor(context, colorPicker, 4),
+		'l13Projects.action.project.pickColor5': () => StatusBarColor.assignColor(context, colorPicker, 5),
+		'l13Projects.action.project.pickColor6': () => StatusBarColor.assignColor(context, colorPicker, 6),
+		'l13Projects.action.project.pickColor7': () => StatusBarColor.assignColor(context, colorPicker, 7),
+		'l13Projects.action.project.removeColor': () => StatusBarColor.assignColor(context, colorPicker, 0),
 		'l13Projects.action.project.hideColorPicker': () => workspacesProvider.hideColorPicker(),
 		
 		'l13Projects.action.projects.clear': () => Workspaces.clearProjects(context),

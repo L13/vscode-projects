@@ -7,7 +7,11 @@ import { WorkspaceGroup } from '../../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
-const basePath = join(__dirname, '..', 'images', 'groups');
+const basePath = join(__dirname, '..', 'images', 'workspaces');
+const iconPath = {
+	light: join(basePath, `group-custom-light.svg`),
+	dark: join(basePath, `group-custom-dark.svg`),
+};
 
 //	Initialize _________________________________________________________________
 
@@ -19,18 +23,13 @@ export class GroupCustomTreeItem extends TreeItem {
 	
 	public contextValue = 'workspaceGroup';
 	
+	public iconPath = iconPath;
+	
 	public constructor (public readonly group:WorkspaceGroup) {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
-		const name = `group-custom`;
-		
 		this.id = `workspace-group-${group.id}`;
-		
-		this.iconPath = {
-			light: join(basePath, `${name}-light.svg`),
-			dark: join(basePath, `${name}-dark.svg`),
-		};
 		
 	}
 	

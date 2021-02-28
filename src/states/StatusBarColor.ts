@@ -21,13 +21,13 @@ import { colors } from '../statusbar/colors';
 
 //	Exports ____________________________________________________________________
 
-export class StatusBartColor {
+export class StatusBarColor {
 	
 	private static _onDidUpdateColor:vscode.EventEmitter<Favorite> = new vscode.EventEmitter<Favorite>();
-	public static readonly onDidUpdateColor:vscode.Event<Favorite> = StatusBartColor._onDidUpdateColor.event;
+	public static readonly onDidUpdateColor:vscode.Event<Favorite> = StatusBarColor._onDidUpdateColor.event;
 	
 	private static _onDidChangeColor:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
-	public static readonly onDidChangeColor:vscode.Event<undefined> = StatusBartColor._onDidChangeColor.event;
+	public static readonly onDidChangeColor:vscode.Event<undefined> = StatusBarColor._onDidChangeColor.event;
 	
 	public static detectProjectColors (context:vscode.ExtensionContext) {
 		
@@ -46,7 +46,7 @@ export class StatusBartColor {
 					}
 					project.color = i;
 					hasChangedColor = true;
-					StatusBartColor._onDidUpdateColor.fire(project);
+					StatusBarColor._onDidUpdateColor.fire(project);
 					break colors;
 				}
 			}
@@ -55,7 +55,7 @@ export class StatusBartColor {
 		
 		if (hasChangedColor) {
 			states.updateProjects(context, projects);
-			StatusBartColor._onDidChangeColor.fire();
+			StatusBarColor._onDidChangeColor.fire();
 		}
 		
 	}
@@ -73,8 +73,8 @@ export class StatusBartColor {
 				else delete project.color;
 				states.updateProjects(context, projects);
 				settings.updateStatusBarColorSettings(project.path, colors[color]);
-				StatusBartColor._onDidUpdateColor.fire(project);
-				StatusBartColor._onDidChangeColor.fire();
+				StatusBarColor._onDidUpdateColor.fire(project);
+				StatusBarColor._onDidChangeColor.fire();
 				break;
 			}
 		}
