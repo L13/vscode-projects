@@ -3,7 +3,6 @@
 import * as vscode from 'vscode';
 
 import * as dialogs from '../common/dialogs';
-import * as settings from '../common/settings';
 import * as states from '../common/states';
 
 import { remove, sortCaseInsensitive } from '../@l13/arrays';
@@ -60,11 +59,12 @@ export class FavoriteGroups {
 		const favoriteGroup = favoriteGroups.length > 1 ? await vscode.window.showQuickPick(favoriteGroups) : favoriteGroups[0];
 		
 		if (favoriteGroup && !favoriteGroup.paths.includes(favorite.path)) {
-			favoriteGroups.some((group) => remove(group.paths, favorite.path));
+			const previousFavoriteGroup = favoriteGroups.find((group) => remove(group.paths, favorite.path));
 			favoriteGroup.paths.push(favorite.path);
 			favoriteGroup.paths.sort();
 			states.updateFavoriteGroups(context, favoriteGroups);
 			FavoriteGroups._onDidChangeFavoriteGroups.fire();
+			if (previousFavoriteGroup) FavoriteGroups._onDidUpdateFavoriteGroup.fire(previousFavoriteGroup);
 			FavoriteGroups._onDidUpdateFavoriteGroup.fire(favoriteGroup);
 		}
 		
@@ -73,31 +73,29 @@ export class FavoriteGroups {
 	public static async addWorkspaceGroupToFavorites (context:vscode.ExtensionContext, workspaceGroup:WorkspaceGroup, workspaces:Project[]) {
 		
 		const favoriteGroups = states.getFavoriteGroups(context);
+		
+		for (const favoriteGroup of favoriteGroups) {
+			if (favoriteGroup.id === workspaceGroup.id) return;
+		}
+		
 		const label = workspaceGroup.label;
 		
 		for (const favoriteGroup of favoriteGroups) {
 			if (favoriteGroup.label === label) {
-				if (favoriteGroup.id === workspaceGroup.id) return;
-				const BUTTON_REPLACE = 'Replace';
-				const value = await vscode.window.showInformationMessage(`Replace favorite group "${label}"?`, 'Cancel', BUTTON_REPLACE);
-				if (value !== BUTTON_REPLACE) return;
-				remove(favoriteGroups, favoriteGroup);
+				if (!await replaceFavoriteGroup(favoriteGroups, favoriteGroup)) return;
 				break;
 			}
 		}
 		
 		const paths = workspaceGroup.paths;
-		const link = settings.get('linkFavoriteAndWorkspaceGroups', true);
 		
-		for (const favoriteGroup of favoriteGroups) {
-			for (const path of paths) remove(favoriteGroup.paths, path);
-		}
+		removePathsInFavoriteGroups(favoriteGroups, paths);
 		
 		favoriteGroups.push({
 			label,
-			id: link ? workspaceGroup.id : states.getNextGroupId(context),
+			id: workspaceGroup.id,
 			collapsed: false,
-			paths: workspaceGroup.paths
+			paths,
 		});
 		
 		favoriteGroups.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
@@ -130,9 +128,20 @@ export class FavoriteGroups {
 		
 		for (const favoriteGroup of favoriteGroups) {
 			if (favoriteGroup.id === workspaceGroup.id) {
-				favoriteGroup.label = workspaceGroup.label;
-				favoriteGroup.paths = workspaceGroup.paths;
-				favoriteGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+				const group = getFavoriteGroupByName(favoriteGroups, workspaceGroup.label);
+				
+				if (group && group.id !== workspaceGroup.id) {
+					if (!await replaceFavoriteGroup(favoriteGroups, group)) {
+						favoriteGroup.id = states.getNextGroupId(context);
+					}
+				} else {
+					const paths = workspaceGroup.paths;
+					removePathsInFavoriteGroups(favoriteGroups, paths);
+					favoriteGroup.label = workspaceGroup.label;
+					favoriteGroup.paths = paths;
+					favoriteGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+				}
+				
 				states.updateFavoriteGroups(context, favoriteGroups);
 				FavoriteGroups._onDidChangeFavoriteGroups.fire();
 				break;
@@ -229,3 +238,31 @@ export class FavoriteGroups {
 
 //	Functions __________________________________________________________________
 
+function removePathsInFavoriteGroups (favoriteGroups:FavoriteGroup[], paths:string[]) {
+		
+	for (const favoriteGroup of favoriteGroups) {
+		for (const path of paths) remove(favoriteGroup.paths, path);
+	}
+	
+}
+
+function getFavoriteGroupByName (favoriteGroups:FavoriteGroup[], label:string) {
+	
+	for (const favoriteGroup of favoriteGroups) {
+		if (favoriteGroup.label === label) return favoriteGroup;
+	}
+	
+	return null;
+	
+}
+
+async function replaceFavoriteGroup (favoriteGroups:FavoriteGroup[], favoriteGroup:FavoriteGroup) {
+	
+	const BUTTON_REPLACE = 'Replace';
+	const value = await vscode.window.showInformationMessage(`Replace favorite group "${favoriteGroup.label}"?`, 'Cancel', BUTTON_REPLACE);
+	
+	if (value !== BUTTON_REPLACE) return false;
+	
+	return remove(favoriteGroups, favoriteGroup);
+	
+}

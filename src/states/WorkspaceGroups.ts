@@ -118,10 +118,9 @@ export class WorkspaceGroups {
 		if (!value || workspaceGroup.label === value) return;
 		
 		const workspaceGroups = states.getWorkspaceGroups(context);
-		const groupId = workspaceGroup.id;
 		
 		for (const group of workspaceGroups) {
-			if (group.id === groupId) {
+			if (group.id === workspaceGroup.id) {
 				group.label = value;
 				workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				states.updateWorkspaceGroups(context, workspaceGroups);

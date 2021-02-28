@@ -967,11 +967,6 @@
 						"Group all workspaces by simple type.",
 						"Group all workspaces by type."
 					]
-				},
-				"l13Projects.linkFavoriteAndWorkspaceGroups": {
-					"type": "boolean",
-					"default": true,
-					"description": "Indicates if a favorite or workspace group has been modified the equivalent group in favorites or workspaces will also be updated."
 				}
 			}
 		}
