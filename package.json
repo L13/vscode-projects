@@ -104,8 +104,8 @@
 				"command": "l13Projects.action.favorites.group.add",
 				"title": "New Group",
 				"icon": {
-					"light": "images/favorites/group-new-light.svg",
-					"dark": "images/favorites/group-new-dark.svg"
+					"light": "images/workspaces/group-new-light.svg",
+					"dark": "images/workspaces/group-new-dark.svg"
 				}
 			},
 			{
@@ -238,7 +238,7 @@
 			},
 			{
 				"command": "l13Projects.action.workspace.openInTerminal",
-				"title": "Open in Terminal"
+				"title": "Open in Integrated Terminal"
 			},
 			{
 				"command": "l13Projects.action.workspace.copyPath",

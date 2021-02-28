@@ -131,14 +131,13 @@ export class Workspaces {
 		
 	}
 	
-	public static updateProject (context:vscode.ExtensionContext, project:Project) {
+	public static updateProject (context:vscode.ExtensionContext, favorite:Project) {
 		
 		const projects = states.getProjects(context);
 		
-		for (const pro of projects) {
-			if (pro.path === project.path) {
-				pro.label = project.label;
-				pro.color = project.color;
+		for (const project of projects) {
+			if (project.path === favorite.path && project.label !== favorite.label) {
+				project.label = favorite.label;
 				projects.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				states.updateProjects(context, projects);
 				Workspaces._onDidChangeWorkspaces.fire();

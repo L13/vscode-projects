@@ -16,7 +16,6 @@ import { HotkeySlots } from '../states/HotkeySlots';
 import { WorkspaceGroups } from '../states/WorkspaceGroups';
 import { Workspaces } from '../states/Workspaces';
 
-
 import { StatusBar } from '../statusbar/StatusBar';
 
 //	Variables __________________________________________________________________
@@ -44,6 +43,11 @@ export function activate (context:vscode.ExtensionContext) {
 	favoritesProvider.onDidChangeTreeData(() => StatusBar.current?.update());
 	
 	Favorites.onDidUpdateFavorite((favorite) => {
+		
+		if (favorite.removed) {
+			FavoriteGroups.removeFromFavoriteGroup(context, favorite);
+			delete favorite.removed; // don't delete hotkey slot
+		}
 		
 		Workspaces.updateProject(context, favorite);
 		HotkeySlots.create(context).update(favorite);

@@ -131,6 +131,8 @@ export class Favorites {
 				if (favorites[i].path === favorite.path) {
 					favorites.splice(i, 1);
 					states.updateFavorites(context, favorites);
+					favorite.removed = true;
+					Favorites._onDidUpdateFavorite.fire(favorite);
 					Favorites._onDidChangeFavorites.fire();
 					return;
 				}

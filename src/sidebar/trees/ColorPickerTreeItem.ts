@@ -25,6 +25,12 @@ export class ColorPickerTreeItem extends TreeItem {
 	
 	public iconPath = iconPath;
 	
+	public constructor () {
+		
+		super('');
+		
+	}
+	
 }
 
 //	Functions __________________________________________________________________

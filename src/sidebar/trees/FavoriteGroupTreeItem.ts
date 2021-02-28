@@ -1,16 +1,16 @@
 //	Imports ____________________________________________________________________
 
 import { join } from 'path';
-import * as vscode from 'vscode';
+import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 
 import { FavoriteGroup } from '../../@types/favorites';
 
 //	Variables __________________________________________________________________
 
-const basePath = join(__dirname, '..', 'images', 'favorites');
+const basePath = join(__dirname, '..', 'images', 'groups');
 const iconPath = {
-	light: join(basePath, `group-favorites-light.svg`),
-	dark: join(basePath, `group-favorites-dark.svg`),
+	light: join(basePath, `group-custom-light.svg`),
+	dark: join(basePath, `group-custom-dark.svg`),
 };
 
 //	Initialize _________________________________________________________________
@@ -19,7 +19,7 @@ const iconPath = {
 
 //	Exports ____________________________________________________________________
 
-export class FavoriteGroupTreeItem extends vscode.TreeItem {
+export class FavoriteGroupTreeItem extends TreeItem {
 	
 	public contextValue = 'favoriteGroup';
 		
@@ -27,7 +27,7 @@ export class FavoriteGroupTreeItem extends vscode.TreeItem {
 	
 	public constructor (public readonly favoriteGroup:FavoriteGroup) {
 		
-		super(favoriteGroup.label, favoriteGroup.collapsed ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.Expanded);
+		super(favoriteGroup.label, favoriteGroup.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
 		this.id = `favorite-group-${favoriteGroup.id}`;
 		
