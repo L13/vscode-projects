@@ -59,10 +59,15 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	Workspaces.onDidUpdateProject((project) => {
 		
-		if (project.removed) project = workspacesProvider.getWorkspaceByPath(project.path) || project;
-		
 		Favorites.updateFavorite(context, project);
 		HotkeySlots.create(context).update(project);
+		
+	});
+	
+	Workspaces.onDidDeleteProject((project) => {
+		
+		Favorites.removeFavorite(context, project, true);
+		HotkeySlots.create(context).remove(project);
 		
 	});
 	
@@ -71,6 +76,14 @@ export function activate (context:vscode.ExtensionContext) {
 		const workspaces = workspaceGroup.paths.map((path) => workspacesProvider.getWorkspaceByPath(path));
 		
 		FavoriteGroups.updateFavoriteGroup(context, workspaceGroup, workspaces);
+		HotkeySlots.create(context).updateGroup(workspaceGroup);
+		
+	});
+	
+	WorkspaceGroups.onDidDeleteWorkspaceGroup((workspaceGroup) => {
+		
+		FavoriteGroups.removeFavoriteGroup(context, workspaceGroup);
+		HotkeySlots.create(context).removeGroup(workspaceGroup);
 		
 	});
 	

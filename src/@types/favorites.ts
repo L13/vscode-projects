@@ -27,6 +27,7 @@ export type FavoriteGroup = {
 	id:number,
 	collapsed:boolean,
 	paths:string[],
+	removed?:boolean,
 };
 
 //	Functions __________________________________________________________________

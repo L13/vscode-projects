@@ -249,6 +249,10 @@
 				"title": "Assign to Slot"
 			},
 			{
+				"command": "l13Projects.action.workspaces.group.assignSlot",
+				"title": "Assign to Slot"
+			},
+			{
 				"command": "l13Projects.action.workspace.removeSlot",
 				"title": "Projects: Clear Slot"
 			},
@@ -483,6 +487,10 @@
 				},
 				{
 					"command": "l13Projects.action.workspace.assignSlot",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.workspaces.group.assignSlot",
 					"when": "false"
 				},
 				{
@@ -749,6 +757,11 @@
 					"command": "l13Projects.action.workspace.assignSlot",
 					"group": "navigation@7",
 					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(current-)?(favorite|project|subfavorite|subproject)-(folders?|git|subfolder|vscode|workspace)$/"
+				},
+				{
+					"command": "l13Projects.action.workspaces.group.assignSlot",
+					"group": "navigation@7",
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
 				},
 				{
 					"command": "l13Projects.action.project.selectColor",

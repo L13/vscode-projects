@@ -302,12 +302,15 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	private addCustomGroups (list:WorkspacesTreeItems[]) {
 		
+		const slots = this.slots;
 		let paths:string[] = [];
 		
 		this.workspaceGroups.forEach((workspaceGroup) => {
 			
+			const slot = slots.getGroup(workspaceGroup);;
+			
 			paths = paths.concat(workspaceGroup.paths);
-			list.push(new GroupCustomTreeItem(workspaceGroup));
+			list.push(new GroupCustomTreeItem(workspaceGroup, slot));
 			
 		});
 		

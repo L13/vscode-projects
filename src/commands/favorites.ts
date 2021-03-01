@@ -51,19 +51,29 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	Favorites.onDidUpdateFavorite((favorite) => {
 		
-		if (favorite.removed) {
-			FavoriteGroups.removeFromFavoriteGroup(context, favorite);
-			delete favorite.removed; // don't delete hotkey slot
-		}
-		
 		Workspaces.updateProject(context, favorite);
 		HotkeySlots.create(context).update(favorite);
+		
+	});
+	
+	Favorites.onDidDeleteFavorite((favorite) => {
+		
+		FavoriteGroups.removeFromFavoriteGroup(context, favorite);
 		
 	});
 	
 	FavoriteGroups.onDidUpdateFavoriteGroup((favoriteGroup) => {
 		
 		WorkspaceGroups.updateWorkspaceGroup(context, favoriteGroup);
+		HotkeySlots.create(context).updateGroup(favoriteGroup);
+		
+	});
+	
+	FavoriteGroups.onDidDeleteFavoriteGroup((favoriteGroup) => {
+		
+		if (!WorkspaceGroups.getWorkspaceGroupById(context, favoriteGroup.id)) {
+			HotkeySlots.create(context).removeGroup(favoriteGroup);
+		}
 		
 	});
 	

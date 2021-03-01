@@ -25,6 +25,9 @@ export class Favorites {
 	private static _onDidUpdateFavorite:vscode.EventEmitter<Favorite> = new vscode.EventEmitter<Favorite>();
 	public static readonly onDidUpdateFavorite:vscode.Event<Favorite> = Favorites._onDidUpdateFavorite.event;
 	
+	private static _onDidDeleteFavorite:vscode.EventEmitter<Favorite> = new vscode.EventEmitter<Favorite>();
+	public static readonly onDidDeleteFavorite:vscode.Event<Favorite> = Favorites._onDidDeleteFavorite.event;
+	
 	private static _onDidChangeFavorites:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
 	public static readonly onDidChangeFavorites:vscode.Event<undefined> = Favorites._onDidChangeFavorites.event;
 	
@@ -90,16 +93,13 @@ export class Favorites {
 		const favorites = states.getFavorites(context);
 		const fsPath = workspace.path;
 		
-		for (let i = 0; i < favorites.length; i++) {
-			const favorite = favorites[i];
+		for (const favorite of favorites) {
 			if (favorite.path === fsPath) {
-				if (!workspace.removed) {
 					const type = favorite.type = workspace.type;
 					if (type === 'folder' || type === 'folders') favorite.color = workspace.color;
 					else delete favorite.color;
 					favorite.label = workspace.label;
 					favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				} else favorites.splice(i, 1);
 				states.updateFavorites(context, favorites);
 				Favorites._onDidChangeFavorites.fire();
 				break;
@@ -122,17 +122,16 @@ export class Favorites {
 		
 	}
 	
-	public static async removeFavorite (context:vscode.ExtensionContext, favorite:Favorite) {
+	public static async removeFavorite (context:vscode.ExtensionContext, favorite:Favorite, force:boolean = false) {
 		
-		if (await dialogs.confirm(`Delete favorite "${favorite.label}"?`, 'Delete')) {
+		if (force || await dialogs.confirm(`Delete favorite "${favorite.label}"?`, 'Delete')) {
 			const favorites = states.getFavorites(context);
 			
 			for (let i = 0; i < favorites.length; i++) {
 				if (favorites[i].path === favorite.path) {
 					favorites.splice(i, 1);
 					states.updateFavorites(context, favorites);
-					favorite.removed = true;
-					Favorites._onDidUpdateFavorite.fire(favorite);
+					Favorites._onDidDeleteFavorite.fire(favorite);
 					Favorites._onDidChangeFavorites.fire();
 					return;
 				}

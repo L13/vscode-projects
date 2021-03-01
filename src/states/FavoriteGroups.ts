@@ -27,6 +27,9 @@ export class FavoriteGroups {
 	private static _onDidUpdateFavoriteGroup:vscode.EventEmitter<FavoriteGroup> = new vscode.EventEmitter<FavoriteGroup>();
 	public static readonly onDidUpdateFavoriteGroup:vscode.Event<FavoriteGroup> = FavoriteGroups._onDidUpdateFavoriteGroup.event;
 	
+	private static _onDidDeleteFavoriteGroup:vscode.EventEmitter<FavoriteGroup> = new vscode.EventEmitter<FavoriteGroup>();
+	public static readonly onDidDeleteFavoriteGroup:vscode.Event<FavoriteGroup> = FavoriteGroups._onDidDeleteFavoriteGroup.event;
+	
 	private static _onDidChangeFavoriteGroups:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
 	public static readonly onDidChangeFavoriteGroups:vscode.Event<undefined> = FavoriteGroups._onDidChangeFavoriteGroups.event;
 	
@@ -178,7 +181,11 @@ export class FavoriteGroups {
 	public static async removeFavoriteGroup (context:vscode.ExtensionContext, favoriteGroup:FavoriteGroup) {
 		
 		const BUTTON_DELETE_GROUP_AND_FAVORITES = 'Delete Group and Favorites';
-		const value = await dialogs.confirm(`Delete favorite group "${favoriteGroup.label}"?`, 'Delete', BUTTON_DELETE_GROUP_AND_FAVORITES);
+		const buttons = ['Delete'];
+		
+		if (favoriteGroup.paths.length) buttons.push(BUTTON_DELETE_GROUP_AND_FAVORITES);
+		
+		const value = await dialogs.confirm(`Delete favorite group "${favoriteGroup.label}"?`, ...buttons);
 		
 		if (value) {
 			const favoriteGroups = states.getFavoriteGroups(context);
@@ -187,6 +194,7 @@ export class FavoriteGroups {
 			for (let i = 0; i < favoriteGroups.length; i++) {
 				if (favoriteGroups[i].id === groupId) {
 					favoriteGroups.splice(i, 1);
+					FavoriteGroups._onDidDeleteFavoriteGroup.fire(favoriteGroup);
 					break;
 				}
 			}

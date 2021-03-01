@@ -35,7 +35,7 @@ export function getSlots (context:vscode.ExtensionContext) {
 
 export function updateSlots (context:vscode.ExtensionContext, slots:Slot[]) {
 	
-	context.globalState.get(SLOTS, slots);
+	context.globalState.update(SLOTS, slots);
 	
 }
 

@@ -64,7 +64,6 @@ export type Project = {
 	label:string,
 	type:'folder'|'folders'|WorkspaceTypes,
 	color?:number,
-	removed?:boolean,
 	deleted?:boolean,
 };
 

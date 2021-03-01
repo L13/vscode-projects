@@ -30,6 +30,9 @@ export class Workspaces {
 	private static _onDidUpdateProject:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
 	public static readonly onDidUpdateProject:vscode.Event<Project> = Workspaces._onDidUpdateProject.event;
 	
+	private static _onDidDeleteProject:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
+	public static readonly onDidDeleteProject:vscode.Event<Project> = Workspaces._onDidDeleteProject.event;
+	
 	private static _onDidChangeWorkspaces:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
 	public static readonly onDidChangeWorkspaces:vscode.Event<undefined> = Workspaces._onDidChangeWorkspaces.event;
 	
@@ -180,8 +183,7 @@ export class Workspaces {
 					states.updateProjects(context, projects);
 					if (project.color) settings.updateStatusBarColorSettings(project.path, colors[0]);
 					Workspaces._onDidChangeWorkspaces.fire();
-					project.removed = true;
-					Workspaces._onDidUpdateProject.fire(project);
+					Workspaces._onDidDeleteProject.fire(project);
 					return;
 				}
 			}

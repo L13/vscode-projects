@@ -29,8 +29,23 @@ export class WorkspaceGroups {
 	private static _onDidUpdateWorkspaceGroup:vscode.EventEmitter<WorkspaceGroup> = new vscode.EventEmitter<WorkspaceGroup>();
 	public static readonly onDidUpdateWorkspaceGroup:vscode.Event<WorkspaceGroup> = WorkspaceGroups._onDidUpdateWorkspaceGroup.event;
 	
+	private static _onDidDeleteWorkspaceGroup:vscode.EventEmitter<WorkspaceGroup> = new vscode.EventEmitter<WorkspaceGroup>();
+	public static readonly onDidDeleteWorkspaceGroup:vscode.Event<WorkspaceGroup> = WorkspaceGroups._onDidDeleteWorkspaceGroup.event;
+	
 	private static _onDidChangeWorkspaceGroups:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
 	public static readonly onDidChangeWorkspaceGroups:vscode.Event<undefined> = WorkspaceGroups._onDidChangeWorkspaceGroups.event;
+	
+	public static getWorkspaceGroupById (context:vscode.ExtensionContext, groupId:number) {
+		
+		const workspaceGroups = states.getWorkspaceGroups(context);
+		
+		for (const workspaceGroup of workspaceGroups) {
+			if (workspaceGroup.id === groupId) return workspaceGroup;
+		}
+		
+		return null;
+		
+	}
 	
 	public static async addWorkspaceGroup (context:vscode.ExtensionContext) {
 		
@@ -148,6 +163,7 @@ export class WorkspaceGroups {
 				if (workspaceGroups[i].id === groupId) {
 					workspaceGroups.splice(i, 1);
 					states.updateWorkspaceGroups(context, workspaceGroups);
+					WorkspaceGroups._onDidDeleteWorkspaceGroup.fire(workspaceGroup);
 					WorkspaceGroups._onDidChangeWorkspaceGroups.fire();
 					break;
 				}
