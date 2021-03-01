@@ -4,6 +4,7 @@ import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { remove } from '../@l13/arrays';
 
 import { isMacOs, isWindows } from '../@l13/platforms';
 
@@ -19,21 +20,26 @@ import * as settings from './settings';
 
 //	Exports ____________________________________________________________________
 
-export function open (pathname:string, newWindow?:boolean) {
+export function open (pathname:string, openInNewWindow?:boolean) {
 	
-	newWindow = newWindow ?? settings.get('openInNewWindow', false);
+	const newWindow = openInNewWindow ?? settings.get('openInNewWindow', false);
 	
 	vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(pathname), newWindow);
 	
 }
 
-export function openAll (pathnames:string[]) {
+export function openAll (pathnames:string[], openInNewWindow?:boolean) {
 	
-	pathnames.forEach((pathname) => {
-		
-		vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(pathname), true);
-		
-	});
+	const newWindow = openInNewWindow ?? settings.get('openInNewWindow', false);
+	const sortedPaths = pathnames.slice().sort();
+	let currentWorkspacePath = settings.getCurrentWorkspacePath();
+	
+	if (!newWindow) {
+		if (sortedPaths.includes(currentWorkspacePath)) remove(sortedPaths, currentWorkspacePath);
+		else currentWorkspacePath = sortedPaths.shift();
+		sortedPaths.forEach((pathname) => open(pathname, true));
+		open(currentWorkspacePath, false);
+	} else sortedPaths.forEach((pathname) => open(pathname, true));
 	
 }
 	

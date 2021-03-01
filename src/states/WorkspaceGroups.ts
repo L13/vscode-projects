@@ -5,10 +5,15 @@ import * as vscode from 'vscode';
 import { remove, sortCaseInsensitive } from '../@l13/arrays';
 
 import { FavoriteGroup } from '../@types/favorites';
+import { GroupSimpleState, GroupTypeState } from '../@types/groups';
 import { Project, WorkspaceGroup } from '../@types/workspaces';
 
 import * as dialogs from '../common/dialogs';
 import * as states from '../common/states';
+
+import { GroupCustomTreeItem } from '../sidebar/trees/GroupCustomTreeItem';
+import { GroupSimpleTreeItem } from '../sidebar/trees/GroupSimpleTreeItem';
+import { GroupTypeTreeItem } from '../sidebar/trees/GroupTypeTreeItem';
 
 //	Variables __________________________________________________________________
 
@@ -161,14 +166,14 @@ export class WorkspaceGroups {
 		
 	}
 	
-	public static saveCollapseState (context:vscode.ExtensionContext, workspaceGroup:WorkspaceGroup, collapsed:boolean) {
+	public static saveWorkspaceGroupState (context:vscode.ExtensionContext, item:GroupCustomTreeItem, collapsed:boolean) {
 		
 		const workspaceGroups = states.getWorkspaceGroups(context);
-		const groupId = workspaceGroup.id;
+		const groupId = item.group.id;
 		
-		for (const group of workspaceGroups) {
-			if (group.id === groupId) {
-				group.collapsed = collapsed;
+		for (const workspaceGroup of workspaceGroups) {
+			if (workspaceGroup.id === groupId) {
+				workspaceGroup.collapsed = collapsed;
 				states.updateWorkspaceGroups(context, workspaceGroups);
 				break;
 			}
@@ -176,7 +181,36 @@ export class WorkspaceGroups {
 		
 	}
 	
+	public static saveGroupSimpleState (context:vscode.ExtensionContext, item:GroupSimpleTreeItem, collapsed:boolean) {
+		
+		const groupStates = states.getGroupSimpleStates(context);
+		
+		addCollapseState(groupStates, item, collapsed);
+		states.updateGroupSimpleStates(context, groupStates);
+		
+	}
+	
+	public static saveGroupTypeState (context:vscode.ExtensionContext, item:GroupTypeTreeItem, collapsed:boolean) {
+		
+		const groupStates = states.getGroupSimpleStates(context);
+		
+		addCollapseState(groupStates, item, collapsed);
+		states.updateGroupSimpleStates(context, groupStates);
+		
+	}
+	
 }
 
 //	Functions __________________________________________________________________
 
+function addCollapseState (groupStates:(GroupSimpleState|GroupTypeState)[], item:GroupSimpleTreeItem|GroupTypeTreeItem, collapsed:boolean) {
+	
+	const type = item.group.type;
+	const groupState = groupStates.find((state) => state.type === type);
+	
+	if (groupState) groupState.collapsed = collapsed;
+	else groupStates.push({ type, collapsed });
+	
+	item.group.collapsed = collapsed;
+	
+}

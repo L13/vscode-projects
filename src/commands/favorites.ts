@@ -38,13 +38,13 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	treeView.onDidCollapseElement(({ element }) => {
 		
-		FavoriteGroups.saveCollapseState(context, (<FavoriteGroupTreeItem>element).group, true);
+		FavoriteGroups.saveFavoriteGroupState(context, (<FavoriteGroupTreeItem>element), true);
 		
 	});
 	
 	treeView.onDidExpandElement(({ element }) => {
 		
-		FavoriteGroups.saveCollapseState(context, (<FavoriteGroupTreeItem>element).group, false);
+		FavoriteGroups.saveFavoriteGroupState(context, (<FavoriteGroupTreeItem>element), false);
 		
 	});
 	
@@ -78,9 +78,8 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.favorite.remove': ({ project }:FavoriteTreeItems) => Favorites.removeFavorite(context, project),
 		
 		'l13Projects.action.favorites.group.add': () => FavoriteGroups.addFavoriteGroup(context),
-		'l13Projects.action.favorites.group.openAll': ({ group: favoriteGroup }:FavoriteGroupTreeItem) => files.openAll(favoriteGroup.paths),
-		'l13Projects.action.favorites.group.rename': ({ group: favoriteGroup }:FavoriteGroupTreeItem) => FavoriteGroups.renameFavoriteGroup(context, favoriteGroup),
-		'l13Projects.action.favorites.group.remove': ({ group: favoriteGroup }:FavoriteGroupTreeItem) => FavoriteGroups.removeFavoriteGroup(context, favoriteGroup),
+		'l13Projects.action.favorites.group.rename': ({ group }:FavoriteGroupTreeItem) => FavoriteGroups.renameFavoriteGroup(context, group),
+		'l13Projects.action.favorites.group.remove': ({ group }:FavoriteGroupTreeItem) => FavoriteGroups.removeFavoriteGroup(context, group),
 		
 		'l13Projects.action.favorites.pickFavorite': () => Favorites.pickFavorite(context),
 		'l13Projects.action.favorites.clear': () => Favorites.clearFavorites(context),

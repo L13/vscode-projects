@@ -2,12 +2,13 @@
 
 import * as vscode from 'vscode';
 
-import * as dialogs from '../common/dialogs';
-import * as states from '../common/states';
-
 import { remove, sortCaseInsensitive } from '../@l13/arrays';
+
 import { Favorite, FavoriteGroup } from '../@types/favorites';
 import { Project, WorkspaceGroup } from '../@types/workspaces';
+
+import * as dialogs from '../common/dialogs';
+import * as states from '../common/states';
 
 import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
 
@@ -208,14 +209,14 @@ export class FavoriteGroups {
 		
 	}
 	
-	public static saveCollapseState (context:vscode.ExtensionContext, favoriteGroup:FavoriteGroup, collapsed:boolean) {
+	public static saveFavoriteGroupState (context:vscode.ExtensionContext, item:FavoriteGroupTreeItem, collapsed:boolean) {
 		
 		const favoriteGroups = states.getFavoriteGroups(context);
-		const groupId = favoriteGroup.id;
+		const groupId = item.group.id;
 		
-		for (const group of favoriteGroups) {
-			if (group.id === groupId) {
-				group.collapsed = collapsed;
+		for (const favoriteGroup of favoriteGroups) {
+			if (favoriteGroup.id === groupId) {
+				favoriteGroup.collapsed = collapsed;
 				states.updateFavoriteGroups(context, favoriteGroups);
 				break;
 			}

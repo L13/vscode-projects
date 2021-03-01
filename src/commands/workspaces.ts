@@ -3,14 +3,15 @@
 import * as vscode from 'vscode';
 
 import { GroupTreeItem } from '../@types/groups';
-import { WorkspaceGroup, WorkspaceTreeItems } from '../@types/workspaces';
+import { WorkspaceTreeItems } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';
-import * as settings from '../common/settings';
 
 import { ColorPickerTreeItem } from '../sidebar/trees/ColorPickerTreeItem';
 import { GroupCustomTreeItem } from '../sidebar/trees/GroupCustomTreeItem';
+import { GroupSimpleTreeItem } from '../sidebar/trees/GroupSimpleTreeItem';
+import { GroupTypeTreeItem } from '../sidebar/trees/GroupTypeTreeItem';
 import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
 
 import { FavoriteGroups } from '../states/FavoriteGroups';
@@ -43,21 +44,8 @@ export function activate (context:vscode.ExtensionContext) {
 		showCollapseAll: true,
 	});
 	
-	treeView.onDidCollapseElement(({ element }) => {
-		
-		if ((<GroupTreeItem>element).group.type === 'custom') {
-			WorkspaceGroups.saveCollapseState(context, (<WorkspaceGroup>(<GroupTreeItem>element).group), true);
-		} else workspacesProvider.saveCollapseState(<GroupTreeItem>element, true);
-		
-	});
-	
-	treeView.onDidExpandElement(({ element }) => {
-		
-		if ((<GroupTreeItem>element).group.type === 'custom') {
-			WorkspaceGroups.saveCollapseState(context, (<WorkspaceGroup>(<GroupTreeItem>element).group), false);
-		} else workspacesProvider.saveCollapseState(<GroupTreeItem>element, false);
-		
-	});
+	treeView.onDidCollapseElement(({ element }) => saveCollapseState(context, <GroupTreeItem>element, true));
+	treeView.onDidExpandElement(({ element }) => saveCollapseState(context, <GroupTreeItem>element, false));
 	
 	treeView.onDidChangeSelection((event) => {
 		
@@ -99,15 +87,6 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	context.subscriptions.push(treeView);
 	
-	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration((event) => {
-		
-		if (event.affectsConfiguration('l13Projects.sortWorkspacesBy')) {
-			workspacesProvider.sortWorkspacesBy = settings.get('sortWorkspacesBy');
-			workspacesProvider.refresh();
-		}
-		
-	}));
-	
 	commands.register(context, {
 		
 		'l13Projects.action.workspace.open': ({ project }:WorkspaceTreeItems) => files.open(project.path),
@@ -134,7 +113,8 @@ export function activate (context:vscode.ExtensionContext) {
 			FavoriteGroups.addWorkspaceGroupToFavorites(context, group, workspaces.filter((workspace) => !!workspace));
 			
 		},
-		'l13Projects.action.workspaces.group.openAll': ({ group }:GroupCustomTreeItem) => files.openAll(group.paths),
+		'l13Projects.action.workspaces.group.openAllInCurrentWindows': ({ group }:GroupCustomTreeItem) => files.openAll(group.paths, false),
+		'l13Projects.action.workspaces.group.openAllInNewWindows': ({ group }:GroupCustomTreeItem) => files.openAll(group.paths, true),
 		'l13Projects.action.workspaces.group.rename': ({ group }:GroupCustomTreeItem) => WorkspaceGroups.renameWorkspaceGroup(context, group),
 		'l13Projects.action.workspaces.group.remove': ({ group }:GroupCustomTreeItem) => WorkspaceGroups.removeWorkspaceGroup(context, group),
 		'l13Projects.action.workspaces.groups.clear': () => WorkspaceGroups.clearWorkspaceGroups(context),
@@ -165,3 +145,10 @@ export function activate (context:vscode.ExtensionContext) {
 
 //	Functions __________________________________________________________________
 
+function saveCollapseState (context:vscode.ExtensionContext, item:GroupTreeItem, collapsed:boolean) {
+		
+	if (item instanceof GroupCustomTreeItem) WorkspaceGroups.saveWorkspaceGroupState(context, item, collapsed);
+	else if (item instanceof GroupSimpleTreeItem) WorkspaceGroups.saveGroupSimpleState(context, item, collapsed);
+	else if (item instanceof GroupTypeTreeItem) WorkspaceGroups.saveGroupTypeState(context, item, collapsed);
+	
+}

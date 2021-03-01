@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 
 import { Favorite, FavoriteGroup } from '../@types/favorites';
+import { GroupSimpleState, GroupTypeState } from '../@types/groups';
 import { Slot } from '../@types/hotkeys';
 import { Project, WorkspaceGroup } from '../@types/workspaces';
 
@@ -17,6 +18,9 @@ const FAVORITE_GROUPS = 'favoriteGroups';
 
 const PROJECTS = 'projects';
 const WORKSPACE_GROUPS = 'workspaceGroups';
+
+const GROUP_STATES_BY_TYPE = 'groupStatesByType';
+const GROUP_STATES_BY_SIMPLE = 'groupStatesBySimple';
 
 //	Initialize _________________________________________________________________
 
@@ -97,6 +101,30 @@ export function getWorkspaceGroups (context:vscode.ExtensionContext) :WorkspaceG
 export function updateWorkspaceGroups (context:vscode.ExtensionContext, workspaceGroups:WorkspaceGroup[]) {
 	
 	context.globalState.update(WORKSPACE_GROUPS, workspaceGroups);
+	
+}
+	
+export function getGroupSimpleStates (context:vscode.ExtensionContext) :GroupSimpleState[] {
+	
+	return context.globalState.get(GROUP_STATES_BY_SIMPLE, []);
+	
+}
+	
+export function updateGroupSimpleStates (context:vscode.ExtensionContext, groupStates:GroupSimpleState[]) {
+	
+	context.globalState.get(GROUP_STATES_BY_SIMPLE, groupStates);
+	
+}
+
+export function getGroupTypeStates (context:vscode.ExtensionContext) :GroupTypeState[] {
+	
+	return context.globalState.get(GROUP_STATES_BY_TYPE, []);
+	
+}
+
+export function updateGroupTypeStates (context:vscode.ExtensionContext, groupStates:GroupTypeState[]) {
+	
+	context.globalState.get(GROUP_STATES_BY_TYPE, groupStates);
 	
 }
 
