@@ -2,9 +2,11 @@
 
 import { ColorPickerTreeItem } from '../sidebar/trees/ColorPickerTreeItem';
 import { CurrentProjectTreeItem } from '../sidebar/trees/CurrentProjectTreeItem';
+import { GroupCustomTreeItem } from '../sidebar/trees/GroupCustomTreeItem';
+import { GroupSimpleTreeItem } from '../sidebar/trees/GroupSimpleTreeItem';
+import { GroupTypeTreeItem } from '../sidebar/trees/GroupTypeTreeItem';
 import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
 import { UnknownProjectTreeItem } from '../sidebar/trees/UnknownProjectTreeItem';
-import { GroupTreeItem } from './groups';
 
 //	Variables __________________________________________________________________
 
@@ -15,6 +17,41 @@ import { GroupTreeItem } from './groups';
 
 
 //	Exports ____________________________________________________________________
+
+export type GroupTreeItem = GroupCustomTreeItem|GroupSimpleTreeItem|GroupTypeTreeItem;
+
+export type GroupCustom = {
+	label:string,
+	collapsed:boolean,
+};
+
+export type GroupCustomState = {
+	type:'custom',
+	collapsed:boolean,
+};
+
+export type GroupSimple = {
+	label:string,
+	type:'project'|'git'|'vscode'|'subfolder',
+	projectTypes:(Project['type'])[]
+	collapsed:boolean,
+};
+
+export type GroupSimpleState = {
+	type:'project'|'git'|'vscode'|'subfolder',
+	collapsed:boolean,
+};
+
+export type GroupType = {
+	label:string,
+	type:'folder'|'folders'|'git'|'vscode'|'workspace'|'subfolder',
+	collapsed:boolean,
+};
+
+export type GroupTypeState = {
+	type:'folder'|'folders'|'git'|'vscode'|'workspace'|'subfolder',
+	collapsed:boolean,
+};
 
 export type StatusbarColors = {
 	'statusBar.background':string,

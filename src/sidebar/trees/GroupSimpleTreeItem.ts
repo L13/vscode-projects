@@ -3,7 +3,7 @@
 import { join } from 'path';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 
-import { GroupSimple } from '../../@types/groups';
+import { GroupSimple } from '../../@types/workspaces';
 
 //	Variables __________________________________________________________________
 

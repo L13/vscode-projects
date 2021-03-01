@@ -3,6 +3,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 
+import { CommonGroupTreeItems, CommonTreeItems } from '../@types/common';
 import { Project } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
@@ -39,13 +40,17 @@ export function activate (context:vscode.ExtensionContext) {
 	}));
 	
 	commands.register(context, {
-		'l13Projects.action.explorer.openInNewWindow': (uri) => vscode.commands.executeCommand('vscode.openFolder', uri, true),
-		'l13Projects.action.explorer.openInCurrentWindow': (uri) => vscode.commands.executeCommand('vscode.openFolder', uri, false),
-		'l13Projects.action.workspace.revealInFinder': (item) => files.reveal(item?.project.path || settings.getCurrentWorkspacePath()),
-		'l13Projects.action.workspace.revealInExplorer': (item) => files.reveal(item?.project.path || settings.getCurrentWorkspacePath()),
-		'l13Projects.action.workspace.openContainingFolder': (item) => files.reveal(item?.project.path || settings.getCurrentWorkspacePath()),
-		'l13Projects.action.workspace.openInTerminal': ({ project }) => terminal.open(getFolderPath(project)),
-		'l13Projects.action.workspace.copyPath': ({ project }) => vscode.env.clipboard.writeText(project.path),
+		'l13Projects.action.explorer.openInNewWindow': (uri:vscode.Uri) => vscode.commands.executeCommand('vscode.openFolder', uri, true),
+		'l13Projects.action.explorer.openInCurrentWindow': (uri:vscode.Uri) => vscode.commands.executeCommand('vscode.openFolder', uri, false),
+		
+		'l13Projects.action.workspace.revealInFinder': (item:CommonTreeItems) => files.reveal(item?.project.path || settings.getCurrentWorkspacePath()),
+		'l13Projects.action.workspace.revealInExplorer': (item:CommonTreeItems) => files.reveal(item?.project.path || settings.getCurrentWorkspacePath()),
+		'l13Projects.action.workspace.openContainingFolder': (item:CommonTreeItems) => files.reveal(item?.project.path || settings.getCurrentWorkspacePath()),
+		'l13Projects.action.workspace.openInTerminal': ({ project }:CommonTreeItems) => terminal.open(getFolderPath(project)),
+		'l13Projects.action.workspace.copyPath': ({ project }:CommonTreeItems) => vscode.env.clipboard.writeText(project.path),
+		
+		'l13Projects.action.workspaces.group.openAllInCurrentWindows': ({ group }:CommonGroupTreeItems) => files.openAll(group.paths, false),
+		'l13Projects.action.workspaces.group.openAllInNewWindows': ({ group }:CommonGroupTreeItems) => files.openAll(group.paths, true),
 	});
 
 }

@@ -5,8 +5,7 @@ import * as vscode from 'vscode';
 import { remove, sortCaseInsensitive } from '../@l13/arrays';
 
 import { FavoriteGroup } from '../@types/favorites';
-import { GroupSimpleState, GroupTypeState } from '../@types/groups';
-import { Project, WorkspaceGroup } from '../@types/workspaces';
+import { GroupSimpleState, GroupTypeState, Project, WorkspaceGroup } from '../@types/workspaces';
 
 import * as dialogs from '../common/dialogs';
 import * as states from '../common/states';

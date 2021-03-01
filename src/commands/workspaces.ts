@@ -2,8 +2,7 @@
 
 import * as vscode from 'vscode';
 
-import { GroupTreeItem } from '../@types/groups';
-import { WorkspaceTreeItems } from '../@types/workspaces';
+import { GroupTreeItem, WorkspaceTreeItems } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';
@@ -113,8 +112,6 @@ export function activate (context:vscode.ExtensionContext) {
 			FavoriteGroups.addWorkspaceGroupToFavorites(context, group, workspaces.filter((workspace) => !!workspace));
 			
 		},
-		'l13Projects.action.workspaces.group.openAllInCurrentWindows': ({ group }:GroupCustomTreeItem) => files.openAll(group.paths, false),
-		'l13Projects.action.workspaces.group.openAllInNewWindows': ({ group }:GroupCustomTreeItem) => files.openAll(group.paths, true),
 		'l13Projects.action.workspaces.group.rename': ({ group }:GroupCustomTreeItem) => WorkspaceGroups.renameWorkspaceGroup(context, group),
 		'l13Projects.action.workspaces.group.remove': ({ group }:GroupCustomTreeItem) => WorkspaceGroups.removeWorkspaceGroup(context, group),
 		'l13Projects.action.workspaces.groups.clear': () => WorkspaceGroups.clearWorkspaceGroups(context),

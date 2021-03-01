@@ -5,8 +5,8 @@ import * as vscode from 'vscode';
 import * as settings from '../common/settings';
 import * as states from '../common/states';
 
+import { InitialState } from '../@types/common';
 import { Favorite, FavoriteGroup, FavoritesTreeItems } from '../@types/favorites';
-import { InitialState } from '../@types/groups';
 
 import { HotkeySlots } from '../states/HotkeySlots';
 import { CurrentFavoriteTreeItem } from './trees/CurrentFavoriteTreeItem';

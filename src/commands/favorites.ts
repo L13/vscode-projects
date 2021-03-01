@@ -5,7 +5,6 @@ import * as vscode from 'vscode';
 import { FavoriteTreeItems } from '../@types/favorites';
 
 import * as commands from '../common/commands';
-import * as files from '../common/files';
 
 import { FavoritesProvider } from '../sidebar/FavoritesProvider';
 import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';

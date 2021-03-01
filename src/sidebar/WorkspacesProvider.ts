@@ -7,9 +7,18 @@ import { sortCaseInsensitive } from '../@l13/arrays';
 import { formatLabel } from '../@l13/formats';
 import { subfolders, walktree } from '../@l13/fse';
 
+import { InitialState, WorkspaceSorting } from '../@types/common';
 import { FileMap, Options } from '../@types/files';
-import { GroupSimple, GroupTreeItem, GroupType, InitialState, WorkspaceSorting } from '../@types/groups';
-import { Project, WorkspaceGroup, WorkspaceQuickPickItem, WorkspacesTreeItems, WorkspaceTypes } from '../@types/workspaces';
+import {
+	GroupSimple,
+	GroupTreeItem,
+	GroupType,
+	Project,
+	WorkspaceGroup,
+	WorkspaceQuickPickItem,
+	WorkspacesTreeItems,
+	WorkspaceTypes,
+} from '../@types/workspaces';
 
 import * as settings from '../common/settings';
 import * as states from '../common/states';

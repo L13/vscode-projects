@@ -4,9 +4,8 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 
 import { Favorite, FavoriteGroup } from '../@types/favorites';
-import { GroupSimpleState, GroupTypeState } from '../@types/groups';
 import { Slot } from '../@types/hotkeys';
-import { Project, WorkspaceGroup } from '../@types/workspaces';
+import { GroupSimpleState, GroupTypeState, Project, WorkspaceGroup } from '../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
