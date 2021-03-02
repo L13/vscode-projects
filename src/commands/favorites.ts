@@ -9,11 +9,11 @@ import * as commands from '../common/commands';
 import { FavoritesProvider } from '../sidebar/FavoritesProvider';
 import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
 
-import { FavoriteGroups } from '../states/FavoriteGroups';
-import { Favorites } from '../states/Favorites';
-import { HotkeySlots } from '../states/HotkeySlots';
-import { WorkspaceGroups } from '../states/WorkspaceGroups';
-import { Workspaces } from '../states/Workspaces';
+import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
+import { FavoritesState } from '../states/FavoritesState';
+import { HotkeySlotsState } from '../states/HotkeySlotsState';
+import { ProjectsState } from '../states/ProjectsState';
+import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 
 import { StatusBar } from '../statusbar/StatusBar';
 
@@ -29,69 +29,80 @@ import { StatusBar } from '../statusbar/StatusBar';
 
 export function activate (context:vscode.ExtensionContext) {
 	
-	const favoritesProvider = FavoritesProvider.createProvider(context);
+	const hotkeySlotsState = HotkeySlotsState.createHotkeySlotsState(context);
+	
+	const favoritesState = FavoritesState.createFavoritesState(context);
+	const favoriteGroupsState = FavoriteGroupsState.createFavoriteGroupsState(context);
+	const favoritesProvider = FavoritesProvider.createProvider({
+		favorites: favoritesState,
+		favoriteGroups: favoriteGroupsState,
+		hotkeySlots: hotkeySlotsState,
+	});
 	const treeView = vscode.window.createTreeView('l13ProjectsFavorites', {
 		treeDataProvider: favoritesProvider,
 		showCollapseAll: true,
 	});
 	
+	const workspacesState = ProjectsState.createProjectsState(context);
+	const workspaceGroupState = WorkspaceGroupsState.createWorkspaceGroupsState(context);
+	
 	treeView.onDidCollapseElement(({ element }) => {
 		
-		FavoriteGroups.saveFavoriteGroupState(context, (<FavoriteGroupTreeItem>element), true);
+		favoriteGroupsState.saveFavoriteGroupState((<FavoriteGroupTreeItem>element), true);
 		
 	});
 	
 	treeView.onDidExpandElement(({ element }) => {
 		
-		FavoriteGroups.saveFavoriteGroupState(context, (<FavoriteGroupTreeItem>element), false);
+		favoriteGroupsState.saveFavoriteGroupState((<FavoriteGroupTreeItem>element), false);
 		
 	});
 	
 	favoritesProvider.onDidChangeTreeData(() => StatusBar.current?.update());
 	
-	Favorites.onDidUpdateFavorite((favorite) => {
+	favoritesState.onDidUpdateFavorite((favorite) => {
 		
-		Workspaces.updateProject(context, favorite);
-		HotkeySlots.create(context).update(favorite);
-		
-	});
-	
-	Favorites.onDidDeleteFavorite((favorite) => {
-		
-		FavoriteGroups.removeFromFavoriteGroup(context, favorite);
+		workspacesState.updateProject(favorite);
+		hotkeySlotsState.update(favorite);
 		
 	});
 	
-	FavoriteGroups.onDidUpdateFavoriteGroup((favoriteGroup) => {
+	favoritesState.onDidDeleteFavorite((favorite) => {
 		
-		WorkspaceGroups.updateWorkspaceGroup(context, favoriteGroup);
-		HotkeySlots.create(context).updateGroup(favoriteGroup);
+		favoriteGroupsState.removeFromFavoriteGroup(favorite);
 		
 	});
 	
-	FavoriteGroups.onDidDeleteFavoriteGroup((favoriteGroup) => {
+	favoriteGroupsState.onDidUpdateFavoriteGroup((favoriteGroup) => {
 		
-		if (!WorkspaceGroups.getWorkspaceGroupById(context, favoriteGroup.id)) {
-			HotkeySlots.create(context).removeGroup(favoriteGroup);
+		workspaceGroupState.updateWorkspaceGroup(favoriteGroup);
+		hotkeySlotsState.updateGroup(favoriteGroup);
+		
+	});
+	
+	favoriteGroupsState.onDidDeleteFavoriteGroup((favoriteGroup) => {
+		
+		if (!workspaceGroupState.getWorkspaceGroupById(favoriteGroup.id)) {
+			hotkeySlotsState.removeGroup(favoriteGroup);
 		}
 		
 	});
 	
-	Favorites.onDidChangeFavorites(() => favoritesProvider.refresh());
-	FavoriteGroups.onDidChangeFavoriteGroups(() => favoritesProvider.refresh());
+	favoritesState.onDidChangeFavorites(() => favoritesProvider.refresh({ favorites: true }));
+	favoriteGroupsState.onDidChangeFavoriteGroups(() => favoritesProvider.refresh({ favoriteGroups: true }));
 	
 	commands.register(context, {
-		'l13Projects.action.favorite.addToGroup': ({ project }:FavoriteTreeItems) => FavoriteGroups.addFavoriteToGroup(context, project),
-		'l13Projects.action.favorite.removeFromGroup': ({ project }:FavoriteTreeItems) => FavoriteGroups.removeFromFavoriteGroup(context, project),
-		'l13Projects.action.favorite.rename': ({ project }:FavoriteTreeItems) => Favorites.renameFavorite(context, project),
-		'l13Projects.action.favorite.remove': ({ project }:FavoriteTreeItems) => Favorites.removeFavorite(context, project),
+		'l13Projects.action.favorite.addToGroup': ({ project }:FavoriteTreeItems) => favoriteGroupsState.addFavoriteToGroup(project),
+		'l13Projects.action.favorite.removeFromGroup': ({ project }:FavoriteTreeItems) => favoriteGroupsState.removeFromFavoriteGroup(project),
+		'l13Projects.action.favorite.rename': ({ project }:FavoriteTreeItems) => favoritesState.renameFavorite(project),
+		'l13Projects.action.favorite.remove': ({ project }:FavoriteTreeItems) => favoritesState.removeFavorite(project),
 		
-		'l13Projects.action.favorites.group.add': () => FavoriteGroups.addFavoriteGroup(context),
-		'l13Projects.action.favorites.group.rename': ({ group }:FavoriteGroupTreeItem) => FavoriteGroups.renameFavoriteGroup(context, group),
-		'l13Projects.action.favorites.group.remove': ({ group }:FavoriteGroupTreeItem) => FavoriteGroups.removeFavoriteGroup(context, group),
+		'l13Projects.action.favorites.group.add': () => favoriteGroupsState.addFavoriteGroup(),
+		'l13Projects.action.favorites.group.rename': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsState.renameFavoriteGroup(group),
+		'l13Projects.action.favorites.group.remove': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsState.removeFavoriteGroup(group),
 		
-		'l13Projects.action.favorites.pickFavorite': () => Favorites.pickFavorite(context),
-		'l13Projects.action.favorites.clear': () => Favorites.clearFavorites(context),
+		'l13Projects.action.favorites.pickFavorite': () => favoritesState.pickFavorite(),
+		'l13Projects.action.favorites.clear': () => favoritesState.clearFavorites(),
 	});
 	
 }

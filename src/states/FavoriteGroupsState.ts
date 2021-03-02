@@ -22,18 +22,34 @@ import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
 
 //	Exports ____________________________________________________________________
 
-export class FavoriteGroups {
+export class FavoriteGroupsState {
 	
-	private static _onDidUpdateFavoriteGroup:vscode.EventEmitter<FavoriteGroup> = new vscode.EventEmitter<FavoriteGroup>();
-	public static readonly onDidUpdateFavoriteGroup:vscode.Event<FavoriteGroup> = FavoriteGroups._onDidUpdateFavoriteGroup.event;
+	private static currentFavoriteGroupsState:FavoriteGroupsState = null;
 	
-	private static _onDidDeleteFavoriteGroup:vscode.EventEmitter<FavoriteGroup> = new vscode.EventEmitter<FavoriteGroup>();
-	public static readonly onDidDeleteFavoriteGroup:vscode.Event<FavoriteGroup> = FavoriteGroups._onDidDeleteFavoriteGroup.event;
+	public static createFavoriteGroupsState (context:vscode.ExtensionContext) {
+		
+		return FavoriteGroupsState.currentFavoriteGroupsState || (FavoriteGroupsState.currentFavoriteGroupsState = new FavoriteGroupsState(context));
+		
+	}
 	
-	private static _onDidChangeFavoriteGroups:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
-	public static readonly onDidChangeFavoriteGroups:vscode.Event<undefined> = FavoriteGroups._onDidChangeFavoriteGroups.event;
+	public constructor (private readonly context:vscode.ExtensionContext) {}
 	
-	public static async addFavoriteGroup (context:vscode.ExtensionContext) {
+	private _onDidUpdateFavoriteGroup:vscode.EventEmitter<FavoriteGroup> = new vscode.EventEmitter<FavoriteGroup>();
+	public readonly onDidUpdateFavoriteGroup:vscode.Event<FavoriteGroup> = this._onDidUpdateFavoriteGroup.event;
+	
+	private _onDidDeleteFavoriteGroup:vscode.EventEmitter<FavoriteGroup> = new vscode.EventEmitter<FavoriteGroup>();
+	public readonly onDidDeleteFavoriteGroup:vscode.Event<FavoriteGroup> = this._onDidDeleteFavoriteGroup.event;
+	
+	private _onDidChangeFavoriteGroups:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
+	public readonly onDidChangeFavoriteGroups:vscode.Event<undefined> = this._onDidChangeFavoriteGroups.event;
+	
+	public getFavoriteGroups () {
+		
+		return states.getFavoriteGroups(this.context);
+		
+	}
+	
+	public async addFavoriteGroup () {
 		
 		const label = await vscode.window.showInputBox({
 			placeHolder: 'Please enter a name for the group.',
@@ -41,24 +57,24 @@ export class FavoriteGroups {
 		
 		if (!label) return;
 		
-		const favoriteGroups = states.getFavoriteGroups(context);
+		const favoriteGroups = states.getFavoriteGroups(this.context);
 		
 		for (const favoriteGroup of favoriteGroups) {
 			if (favoriteGroup.label === label) return vscode.window.showErrorMessage(`Favorite group "${label}" exists!`);
 		}
 		
-		favoriteGroups.push({ label, id: states.getNextGroupId(context), collapsed: false, paths: [] });
+		favoriteGroups.push({ label, id: states.getNextGroupId(this.context), collapsed: false, paths: [] });
 		favoriteGroups.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
-		states.updateFavoriteGroups(context, favoriteGroups);
-		FavoriteGroups._onDidChangeFavoriteGroups.fire();
+		states.updateFavoriteGroups(this.context, favoriteGroups);
+		this._onDidChangeFavoriteGroups.fire();
 		
 	}
 	
-	public static async addFavoriteToGroup (context:vscode.ExtensionContext, favorite:Favorite) {
+	public async addFavoriteToGroup (favorite:Favorite) {
 		
-		const favoriteGroups = states.getFavoriteGroups(context);
+		const favoriteGroups = states.getFavoriteGroups(this.context);
 		
-		if (!favoriteGroups.length) await FavoriteGroups.addFavoriteGroup(context);
+		if (!favoriteGroups.length) await this.addFavoriteGroup();
 		
 		const favoriteGroup = favoriteGroups.length > 1 ? await vscode.window.showQuickPick(favoriteGroups) : favoriteGroups[0];
 		
@@ -66,17 +82,17 @@ export class FavoriteGroups {
 			const previousFavoriteGroup = favoriteGroups.find((group) => remove(group.paths, favorite.path));
 			favoriteGroup.paths.push(favorite.path);
 			favoriteGroup.paths.sort();
-			states.updateFavoriteGroups(context, favoriteGroups);
-			FavoriteGroups._onDidChangeFavoriteGroups.fire();
-			if (previousFavoriteGroup) FavoriteGroups._onDidUpdateFavoriteGroup.fire(previousFavoriteGroup);
-			FavoriteGroups._onDidUpdateFavoriteGroup.fire(favoriteGroup);
+			states.updateFavoriteGroups(this.context, favoriteGroups);
+			this._onDidChangeFavoriteGroups.fire();
+			if (previousFavoriteGroup) this._onDidUpdateFavoriteGroup.fire(previousFavoriteGroup);
+			this._onDidUpdateFavoriteGroup.fire(favoriteGroup);
 		}
 		
 	}
 	
-	public static async addWorkspaceGroupToFavorites (context:vscode.ExtensionContext, workspaceGroup:WorkspaceGroup, workspaces:Project[]) {
+	public async addWorkspaceGroupToFavorites (workspaceGroup:WorkspaceGroup, workspaces:Project[]) {
 		
-		const favoriteGroups = states.getFavoriteGroups(context);
+		const favoriteGroups = states.getFavoriteGroups(this.context);
 		
 		for (const favoriteGroup of favoriteGroups) {
 			if (favoriteGroup.id === workspaceGroup.id) return;
@@ -104,16 +120,16 @@ export class FavoriteGroups {
 		
 		favoriteGroups.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
 		
-		addMissingFavorites(context, workspaces);
+		addMissingFavorites(this.context, workspaces);
 		
-		states.updateFavoriteGroups(context, favoriteGroups);
-		FavoriteGroups._onDidChangeFavoriteGroups.fire();
+		states.updateFavoriteGroups(this.context, favoriteGroups);
+		this._onDidChangeFavoriteGroups.fire();
 		
 	}
 	
-	public static async updateFavoriteGroup (context:vscode.ExtensionContext, workspaceGroup:FavoriteGroup, workspaces:Project[]) {
+	public async updateFavoriteGroup (workspaceGroup:FavoriteGroup, workspaces:Project[]) {
 		
-		const favoriteGroups = states.getFavoriteGroups(context);
+		const favoriteGroups = states.getFavoriteGroups(this.context);
 		
 		for (const favoriteGroup of favoriteGroups) {
 			if (favoriteGroup.id === workspaceGroup.id) {
@@ -121,39 +137,39 @@ export class FavoriteGroups {
 				
 				if (group && group.id !== workspaceGroup.id) {
 					if (!await replaceFavoriteGroup(favoriteGroups, group)) {
-						favoriteGroup.id = states.getNextGroupId(context);
+						favoriteGroup.id = states.getNextGroupId(this.context);
 					}
 				} else {
 					const paths = workspaceGroup.paths;
 					removePathsInFavoriteGroups(favoriteGroups, paths);
-					addMissingFavorites(context, workspaces);
+					addMissingFavorites(this.context, workspaces);
 					favoriteGroup.label = workspaceGroup.label;
 					favoriteGroup.paths = paths;
 					favoriteGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				}
 				
-				states.updateFavoriteGroups(context, favoriteGroups);
-				FavoriteGroups._onDidChangeFavoriteGroups.fire();
+				states.updateFavoriteGroups(this.context, favoriteGroups);
+				this._onDidChangeFavoriteGroups.fire();
 				break;
 			}
 		}
 		
 	}
 	
-	public static removeFromFavoriteGroup (context:vscode.ExtensionContext, favorite:Favorite) {
+	public removeFromFavoriteGroup (favorite:Favorite) {
 		
-		const favoriteGroups = states.getFavoriteGroups(context);
+		const favoriteGroups = states.getFavoriteGroups(this.context);
 		const favoriteGroup = favoriteGroups.find((group) => remove(group.paths, favorite.path));
 		
 		if (favoriteGroup) {
-			states.updateFavoriteGroups(context, favoriteGroups);
-			FavoriteGroups._onDidChangeFavoriteGroups.fire();
-			FavoriteGroups._onDidUpdateFavoriteGroup.fire(favoriteGroup);
+			states.updateFavoriteGroups(this.context, favoriteGroups);
+			this._onDidChangeFavoriteGroups.fire();
+			this._onDidUpdateFavoriteGroup.fire(favoriteGroup);
 		}
 		
 	}
 	
-	public static async renameFavoriteGroup (context:vscode.ExtensionContext, favoriteGroup:FavoriteGroup) {
+	public async renameFavoriteGroup (favoriteGroup:FavoriteGroup) {
 		
 		const value = await vscode.window.showInputBox({
 			placeHolder: 'Please enter a new name for the group.',
@@ -162,23 +178,23 @@ export class FavoriteGroups {
 		
 		if (!value || favoriteGroup.label === value) return;
 		
-		const favoriteGroups = states.getFavoriteGroups(context);
+		const favoriteGroups = states.getFavoriteGroups(this.context);
 		const groupId = favoriteGroup.id;
 		
 		for (const group of favoriteGroups) {
 			if (group.id === groupId) {
 				group.label = value;
 				favoriteGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				states.updateFavoriteGroups(context, favoriteGroups);
-				FavoriteGroups._onDidChangeFavoriteGroups.fire();
-				FavoriteGroups._onDidUpdateFavoriteGroup.fire(group);
+				states.updateFavoriteGroups(this.context, favoriteGroups);
+				this._onDidChangeFavoriteGroups.fire();
+				this._onDidUpdateFavoriteGroup.fire(group);
 				break;
 			}
 		}
 		
 	}
 	
-	public static async removeFavoriteGroup (context:vscode.ExtensionContext, favoriteGroup:FavoriteGroup) {
+	public async removeFavoriteGroup (favoriteGroup:FavoriteGroup) {
 		
 		const BUTTON_DELETE_GROUP_AND_FAVORITES = 'Delete Group and Favorites';
 		const buttons = ['Delete'];
@@ -188,44 +204,44 @@ export class FavoriteGroups {
 		const value = await dialogs.confirm(`Delete favorite group "${favoriteGroup.label}"?`, ...buttons);
 		
 		if (value) {
-			const favoriteGroups = states.getFavoriteGroups(context);
+			const favoriteGroups = states.getFavoriteGroups(this.context);
 			const groupId = favoriteGroup.id;
 			
 			for (let i = 0; i < favoriteGroups.length; i++) {
 				if (favoriteGroups[i].id === groupId) {
 					favoriteGroups.splice(i, 1);
-					FavoriteGroups._onDidDeleteFavoriteGroup.fire(favoriteGroup);
+					this._onDidDeleteFavoriteGroup.fire(favoriteGroup);
 					break;
 				}
 			}
 			
 			if (value === BUTTON_DELETE_GROUP_AND_FAVORITES) {
 				
-				const favorites = states.getFavorites(context);
+				const favorites = states.getFavorites(this.context);
 				const paths = favoriteGroup.paths;
 				
 				for (let i = 0; i < favorites.length; i++) {
 					if (paths.includes(favorites[i].path)) favorites.splice(i, 1);
 				}
 				
-				states.updateFavorites(context, favorites);
+				states.updateFavorites(this.context, favorites);
 			}
 			
-			states.updateFavoriteGroups(context, favoriteGroups);
-			FavoriteGroups._onDidChangeFavoriteGroups.fire();
+			states.updateFavoriteGroups(this.context, favoriteGroups);
+			this._onDidChangeFavoriteGroups.fire();
 		}
 		
 	}
 	
-	public static saveFavoriteGroupState (context:vscode.ExtensionContext, item:FavoriteGroupTreeItem, collapsed:boolean) {
+	public saveFavoriteGroupState (item:FavoriteGroupTreeItem, collapsed:boolean) {
 		
-		const favoriteGroups = states.getFavoriteGroups(context);
+		const favoriteGroups = states.getFavoriteGroups(this.context);
 		const groupId = item.group.id;
 		
 		for (const favoriteGroup of favoriteGroups) {
 			if (favoriteGroup.id === groupId) {
 				favoriteGroup.collapsed = collapsed;
-				states.updateFavoriteGroups(context, favoriteGroups);
+				states.updateFavoriteGroups(this.context, favoriteGroups);
 				break;
 			}
 		}

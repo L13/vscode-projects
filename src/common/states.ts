@@ -21,6 +21,12 @@ const WORKSPACE_GROUPS = 'workspaceGroups';
 const GROUP_STATES_BY_TYPE = 'groupStatesByType';
 const GROUP_STATES_BY_SIMPLE = 'groupStatesBySimple';
 
+const WORKSPACES_CACHE = 'cache';
+const GIT_CACHE = 'cacheGitProjects';
+const VSCODE_CACHE = 'cacheVSCodeProjects';
+const VSCODE_WORKSAPCE_CACHE = 'cacheWorkspaceProjects';
+const SUBFOLDER_CACHE = 'cacheSubfolderProjects';
+
 //	Initialize _________________________________________________________________
 
 
@@ -124,6 +130,66 @@ export function getGroupTypeStates (context:vscode.ExtensionContext) :GroupTypeS
 export function updateGroupTypeStates (context:vscode.ExtensionContext, groupStates:GroupTypeState[]) {
 	
 	context.globalState.get(GROUP_STATES_BY_TYPE, groupStates);
+	
+}
+
+export function getWorkspacesCache (context:vscode.ExtensionContext) :Project[] {
+	
+	return context.globalState.get(WORKSPACES_CACHE, []);
+	
+}
+
+export function updateWorkspacesCache (context:vscode.ExtensionContext, cache:Project[]) {
+	
+	context.globalState.update(WORKSPACES_CACHE, cache);
+	
+}
+
+export function getGitCache (context:vscode.ExtensionContext) :Project[] {
+	
+	return context.globalState.get(GIT_CACHE, []);
+	
+}
+
+export function updateGitCache (context:vscode.ExtensionContext, cache:Project[]) {
+	
+	context.globalState.update(GIT_CACHE, cache);
+	
+}
+
+export function getVSCodeCache (context:vscode.ExtensionContext) :Project[] {
+	
+	return context.globalState.get(VSCODE_CACHE, []);
+	
+}
+
+export function updateVSCodeCache (context:vscode.ExtensionContext, cache:Project[]) {
+	
+	context.globalState.update(VSCODE_CACHE, cache);
+	
+}
+
+export function getVSCodeWorkspaceCache (context:vscode.ExtensionContext) :Project[] {
+	
+	return context.globalState.get(VSCODE_WORKSAPCE_CACHE, []);
+	
+}
+
+export function updateVSCodeWorkspaceCache (context:vscode.ExtensionContext, cache:Project[]) {
+	
+	context.globalState.update(VSCODE_WORKSAPCE_CACHE, cache);
+	
+}
+
+export function getSubfolderCache (context:vscode.ExtensionContext) :Project[] {
+	
+	return context.globalState.get(SUBFOLDER_CACHE, []);
+	
+}
+
+export function updateSubfolderCache (context:vscode.ExtensionContext, cache:Project[]) {
+	
+	context.globalState.update(SUBFOLDER_CACHE, cache);
 	
 }
 

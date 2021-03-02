@@ -1,5 +1,7 @@
 //	Imports ____________________________________________________________________
 
+import * as vscode from 'vscode';
+
 import { ColorPickerTreeItem } from '../sidebar/trees/ColorPickerTreeItem';
 import { CurrentProjectTreeItem } from '../sidebar/trees/CurrentProjectTreeItem';
 import { GroupCustomTreeItem } from '../sidebar/trees/GroupCustomTreeItem';
@@ -7,6 +9,10 @@ import { GroupSimpleTreeItem } from '../sidebar/trees/GroupSimpleTreeItem';
 import { GroupTypeTreeItem } from '../sidebar/trees/GroupTypeTreeItem';
 import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
 import { UnknownProjectTreeItem } from '../sidebar/trees/UnknownProjectTreeItem';
+
+import { HotkeySlotsState } from '../states/HotkeySlotsState';
+import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
+import { WorkspacesState } from '../states/WorkspacesState';
 
 //	Variables __________________________________________________________________
 
@@ -17,6 +23,8 @@ import { UnknownProjectTreeItem } from '../sidebar/trees/UnknownProjectTreeItem'
 
 
 //	Exports ____________________________________________________________________
+
+export type UpdateCacheCallback = (context:vscode.ExtensionContext, cache:Project[]) => void;
 
 export type GroupTreeItem = GroupCustomTreeItem|GroupSimpleTreeItem|GroupTypeTreeItem;
 
@@ -87,6 +95,17 @@ export type WorkspacesTreeItems = ColorPickerTreeItem|GroupTreeItem|WorkspaceTre
 export type WorkspaceTreeItems = CurrentProjectTreeItem|ProjectTreeItem|UnknownProjectTreeItem;
 
 export type WorkspaceTypes = 'git'|'subfolder'|'vscode'|'workspace';
+
+export type WorkspacesStates = {
+	hotkeySlots:HotkeySlotsState,
+	workspaces:WorkspacesState,
+	workspaceGroups:WorkspaceGroupsState,
+};
+
+export type RefreshWorkspacesStates = {
+	workspaces?:boolean,
+	workspaceGroups?:boolean,
+};
 
 //	Functions __________________________________________________________________
 

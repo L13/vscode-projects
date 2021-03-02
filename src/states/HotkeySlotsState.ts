@@ -20,20 +20,20 @@ import { Project, WorkspaceGroup } from '../@types/workspaces';
 
 //	Exports ____________________________________________________________________
 
-export class HotkeySlots {
+export class HotkeySlotsState {
+	
+	private static currentHotkeySlotsState:HotkeySlotsState;
+	
+	public static createHotkeySlotsState (context:vscode.ExtensionContext) {
+		
+		return HotkeySlotsState.currentHotkeySlotsState || (HotkeySlotsState.currentHotkeySlotsState = new HotkeySlotsState(context));
+		
+	}
 	
 	private _onDidChangeSlots:vscode.EventEmitter<Slot[]> = new vscode.EventEmitter<Slot[]>();
 	public readonly onDidChangeSlots:vscode.Event<Slot[]> = this._onDidChangeSlots.event;
 	
-	public static current:HotkeySlots;
-	
-	public slots:Slot[] = null;
-	
-	public static create (context:vscode.ExtensionContext) {
-		
-		return HotkeySlots.current || (HotkeySlots.current = new HotkeySlots(context));
-		
-	}
+	private slots:Slot[] = null;
 	
 	private constructor (private readonly context:vscode.ExtensionContext) {
 		
@@ -260,14 +260,14 @@ export class HotkeySlots {
 		
 	}
 	
-	public static saveCurrentWorkspace (context:vscode.ExtensionContext) {
+	public saveCurrentWorkspace () {
 	
-		const workspacePaths = states.getCurrentWorkspace(context);
+		const workspacePaths = states.getCurrentWorkspace(this.context);
 		const workspacePath = settings.getCurrentWorkspacePath();
 		
 		if (workspacePath && workspacePaths[0] !== workspacePath) {
 			workspacePaths.unshift(workspacePath);
-			states.updateCurrentWorkspace(context, workspacePaths);
+			states.updateCurrentWorkspace(this.context, workspacePaths);
 		}
 		
 	}

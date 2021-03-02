@@ -20,21 +20,37 @@ import { Project } from '../@types/workspaces';
 
 //	Exports ____________________________________________________________________
 
-export class Favorites {
+export class FavoritesState {
 	
-	private static _onDidUpdateFavorite:vscode.EventEmitter<Favorite> = new vscode.EventEmitter<Favorite>();
-	public static readonly onDidUpdateFavorite:vscode.Event<Favorite> = Favorites._onDidUpdateFavorite.event;
+	private static currentFavoritesState:FavoritesState = null;
 	
-	private static _onDidDeleteFavorite:vscode.EventEmitter<Favorite> = new vscode.EventEmitter<Favorite>();
-	public static readonly onDidDeleteFavorite:vscode.Event<Favorite> = Favorites._onDidDeleteFavorite.event;
-	
-	private static _onDidChangeFavorites:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
-	public static readonly onDidChangeFavorites:vscode.Event<undefined> = Favorites._onDidChangeFavorites.event;
-	
-	public static async pickFavorite (context:vscode.ExtensionContext) {
+	public static createFavoritesState (context:vscode.ExtensionContext) {
 		
-		const favorites = states.getFavorites(context, true);
-		const favoriteGroups = states.getFavoriteGroups(context);
+		return FavoritesState.currentFavoritesState || (FavoritesState.currentFavoritesState = new FavoritesState(context));
+		
+	}
+	
+	public constructor (private readonly context:vscode.ExtensionContext) {}
+	
+	private _onDidUpdateFavorite:vscode.EventEmitter<Favorite> = new vscode.EventEmitter<Favorite>();
+	public readonly onDidUpdateFavorite:vscode.Event<Favorite> = this._onDidUpdateFavorite.event;
+	
+	private _onDidDeleteFavorite:vscode.EventEmitter<Favorite> = new vscode.EventEmitter<Favorite>();
+	public readonly onDidDeleteFavorite:vscode.Event<Favorite> = this._onDidDeleteFavorite.event;
+	
+	private _onDidChangeFavorites:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
+	public readonly onDidChangeFavorites:vscode.Event<undefined> = this._onDidChangeFavorites.event;
+	
+	public getFavorites () {
+		
+		return states.getFavorites(this.context, true);
+		
+	}
+	
+	public async pickFavorite () {
+		
+		const favorites = states.getFavorites(this.context, true);
+		const favoriteGroups = states.getFavoriteGroups(this.context);
 		
 		if (favorites.length || favoriteGroups.length) {
 			const groups = favoriteGroups.map((favoriteGroup) => {
@@ -66,9 +82,9 @@ export class Favorites {
 		
 	}
 	
-	public static addToFavorites (context:vscode.ExtensionContext, workspace:Project) {
+	public addToFavorites (workspace:Project) {
 		
-		const favorites = states.getFavorites(context);
+		const favorites = states.getFavorites(this.context);
 		
 		if (favorites.some(({ path }) => path === workspace.path)) {
 			return vscode.window.showErrorMessage(`Project "${workspace.label}" exists in favorites!`);
@@ -83,14 +99,14 @@ export class Favorites {
 		
 		favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 		
-		states.updateFavorites(context, favorites);
-		Favorites._onDidChangeFavorites.fire();
+		states.updateFavorites(this.context, favorites);
+		this._onDidChangeFavorites.fire();
 		
 	}
 	
-	public static updateFavorite (context:vscode.ExtensionContext, workspace:Project) {
+	public updateFavorite (workspace:Project) {
 		
-		const favorites = states.getFavorites(context);
+		const favorites = states.getFavorites(this.context);
 		const fsPath = workspace.path;
 		
 		for (const favorite of favorites) {
@@ -100,15 +116,15 @@ export class Favorites {
 					else delete favorite.color;
 					favorite.label = workspace.label;
 					favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				states.updateFavorites(context, favorites);
-				Favorites._onDidChangeFavorites.fire();
+				states.updateFavorites(this.context, favorites);
+				this._onDidChangeFavorites.fire();
 				break;
 			}
 		}
 		
 	}
 	
-	public static async renameFavorite (context:vscode.ExtensionContext, favorite:Favorite) {
+	public async renameFavorite (favorite:Favorite) {
 		
 		const value = await vscode.window.showInputBox({ value: favorite.label });
 		
@@ -117,22 +133,22 @@ export class Favorites {
 		if (!value) return vscode.window.showErrorMessage(`Favorite with no name is not valid!`);
 		
 		favorite.label = value;
-		Favorites.updateFavorite(context, favorite);
-		Favorites._onDidUpdateFavorite.fire(favorite);
+		this.updateFavorite(favorite);
+		this._onDidUpdateFavorite.fire(favorite);
 		
 	}
 	
-	public static async removeFavorite (context:vscode.ExtensionContext, favorite:Favorite, force:boolean = false) {
+	public async removeFavorite (favorite:Favorite, force:boolean = false) {
 		
 		if (force || await dialogs.confirm(`Delete favorite "${favorite.label}"?`, 'Delete')) {
-			const favorites = states.getFavorites(context);
+			const favorites = states.getFavorites(this.context);
 			
 			for (let i = 0; i < favorites.length; i++) {
 				if (favorites[i].path === favorite.path) {
 					favorites.splice(i, 1);
-					states.updateFavorites(context, favorites);
-					Favorites._onDidDeleteFavorite.fire(favorite);
-					Favorites._onDidChangeFavorites.fire();
+					states.updateFavorites(this.context, favorites);
+					this._onDidDeleteFavorite.fire(favorite);
+					this._onDidChangeFavorites.fire();
 					return;
 				}
 			}
@@ -140,12 +156,12 @@ export class Favorites {
 		
 	}
 	
-	public static async clearFavorites (context:vscode.ExtensionContext) {
+	public async clearFavorites () {
 		
 		if (await dialogs.confirm(`Delete all favorites and groups?'`, 'Delete')) {
-			states.updateFavorites(context, []);
-			states.updateFavoriteGroups(context, []);
-			Favorites._onDidChangeFavorites.fire();
+			states.updateFavorites(this.context, []);
+			states.updateFavoriteGroups(this.context, []);
+			this._onDidChangeFavorites.fire();
 		}
 		
 	}

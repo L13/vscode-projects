@@ -24,20 +24,48 @@ import { GroupTypeTreeItem } from '../sidebar/trees/GroupTypeTreeItem';
 
 //	Exports ____________________________________________________________________
 
-export class WorkspaceGroups {
+export class WorkspaceGroupsState {
 	
-	private static _onDidUpdateWorkspaceGroup:vscode.EventEmitter<WorkspaceGroup> = new vscode.EventEmitter<WorkspaceGroup>();
-	public static readonly onDidUpdateWorkspaceGroup:vscode.Event<WorkspaceGroup> = WorkspaceGroups._onDidUpdateWorkspaceGroup.event;
+	private static currentWorkspaceGroupsState:WorkspaceGroupsState = null;
 	
-	private static _onDidDeleteWorkspaceGroup:vscode.EventEmitter<WorkspaceGroup> = new vscode.EventEmitter<WorkspaceGroup>();
-	public static readonly onDidDeleteWorkspaceGroup:vscode.Event<WorkspaceGroup> = WorkspaceGroups._onDidDeleteWorkspaceGroup.event;
-	
-	private static _onDidChangeWorkspaceGroups:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
-	public static readonly onDidChangeWorkspaceGroups:vscode.Event<undefined> = WorkspaceGroups._onDidChangeWorkspaceGroups.event;
-	
-	public static getWorkspaceGroupById (context:vscode.ExtensionContext, groupId:number) {
+	public static createWorkspaceGroupsState (context:vscode.ExtensionContext) {
 		
-		const workspaceGroups = states.getWorkspaceGroups(context);
+		return WorkspaceGroupsState.currentWorkspaceGroupsState || (WorkspaceGroupsState.currentWorkspaceGroupsState = new WorkspaceGroupsState(context));
+		
+	}
+	
+	public constructor (private readonly context:vscode.ExtensionContext) {}
+	
+	private _onDidUpdateWorkspaceGroup:vscode.EventEmitter<WorkspaceGroup> = new vscode.EventEmitter<WorkspaceGroup>();
+	public readonly onDidUpdateWorkspaceGroup:vscode.Event<WorkspaceGroup> = this._onDidUpdateWorkspaceGroup.event;
+	
+	private _onDidDeleteWorkspaceGroup:vscode.EventEmitter<WorkspaceGroup> = new vscode.EventEmitter<WorkspaceGroup>();
+	public readonly onDidDeleteWorkspaceGroup:vscode.Event<WorkspaceGroup> = this._onDidDeleteWorkspaceGroup.event;
+	
+	private _onDidChangeWorkspaceGroups:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
+	public readonly onDidChangeWorkspaceGroups:vscode.Event<undefined> = this._onDidChangeWorkspaceGroups.event;
+	
+	public getWorkspaceGroups () {
+		
+		return states.getWorkspaceGroups(this.context);
+		
+	}
+	
+	public getSimpleGroups () {
+		
+		return states.getGroupSimpleStates(this.context);
+		
+	}
+	
+	public getTypeGroups () {
+		
+		return states.getGroupTypeStates(this.context);
+		
+	}
+	
+	public getWorkspaceGroupById (groupId:number) {
+		
+		const workspaceGroups = states.getWorkspaceGroups(this.context);
 		
 		for (const workspaceGroup of workspaceGroups) {
 			if (workspaceGroup.id === groupId) return workspaceGroup;
@@ -47,7 +75,7 @@ export class WorkspaceGroups {
 		
 	}
 	
-	public static async addWorkspaceGroup (context:vscode.ExtensionContext) {
+	public async addWorkspaceGroup () {
 		
 		const label = await vscode.window.showInputBox({
 			placeHolder: 'Please enter a name for the group.',
@@ -55,7 +83,7 @@ export class WorkspaceGroups {
 		
 		if (!label) return;
 		
-		const workspaceGroups = states.getWorkspaceGroups(context);
+		const workspaceGroups = states.getWorkspaceGroups(this.context);
 		
 		for (const workspaceGroup of workspaceGroups) {
 			if (workspaceGroup.label === label) {
@@ -65,7 +93,7 @@ export class WorkspaceGroups {
 		
 		workspaceGroups.push({
 			label,
-			id: states.getNextGroupId(context),
+			id: states.getNextGroupId(this.context),
 			collapsed: false,
 			paths: [],
 			type: 'custom'
@@ -73,16 +101,16 @@ export class WorkspaceGroups {
 		
 		workspaceGroups.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
 		
-		states.updateWorkspaceGroups(context, workspaceGroups);
-		WorkspaceGroups._onDidChangeWorkspaceGroups.fire();
+		states.updateWorkspaceGroups(this.context, workspaceGroups);
+		this._onDidChangeWorkspaceGroups.fire();
 		
 	}
 	
-	public static async addWorkspaceToGroup (context:vscode.ExtensionContext, workspace:Project) {
+	public async addWorkspaceToGroup (workspace:Project) {
 		
-		const workspaceGroups = states.getWorkspaceGroups(context);
+		const workspaceGroups = states.getWorkspaceGroups(this.context);
 		
-		if (!workspaceGroups.length) await WorkspaceGroups.addWorkspaceGroup(context);
+		if (!workspaceGroups.length) await this.addWorkspaceGroup();
 		
 		const workspaceGroup = workspaceGroups.length > 1 ? await vscode.window.showQuickPick(workspaceGroups) : workspaceGroups[0];
 		
@@ -90,44 +118,44 @@ export class WorkspaceGroups {
 			workspaceGroups.some((group) => remove(group.paths, workspace.path));
 			workspaceGroup.paths.push(workspace.path);
 			workspaceGroup.paths.sort();
-			states.updateWorkspaceGroups(context, workspaceGroups);
-			WorkspaceGroups._onDidChangeWorkspaceGroups.fire();
-			WorkspaceGroups._onDidUpdateWorkspaceGroup.fire(workspaceGroup);
+			states.updateWorkspaceGroups(this.context, workspaceGroups);
+			this._onDidChangeWorkspaceGroups.fire();
+			this._onDidUpdateWorkspaceGroup.fire(workspaceGroup);
 		}
 		
 	}
 	
-	public static async updateWorkspaceGroup (context:vscode.ExtensionContext, favoriteGroup:FavoriteGroup) {
+	public async updateWorkspaceGroup (favoriteGroup:FavoriteGroup) {
 		
-		const workspaceGroups = states.getWorkspaceGroups(context);
+		const workspaceGroups = states.getWorkspaceGroups(this.context);
 		
 		for (const workspaceGroup of workspaceGroups) {
 			if (workspaceGroup.id === favoriteGroup.id) {
 				workspaceGroup.label = favoriteGroup.label;
 				workspaceGroup.paths = favoriteGroup.paths;
 				workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				states.updateWorkspaceGroups(context, workspaceGroups);
-				WorkspaceGroups._onDidChangeWorkspaceGroups.fire();
+				states.updateWorkspaceGroups(this.context, workspaceGroups);
+				this._onDidChangeWorkspaceGroups.fire();
 				break;
 			}
 		}
 		
 	}
 	
-	public static removeFromWorkspaceGroup (context:vscode.ExtensionContext, workspace:Project) {
+	public removeFromWorkspaceGroup (workspace:Project) {
 		
-		const workspaceGroups = states.getWorkspaceGroups(context);
+		const workspaceGroups = states.getWorkspaceGroups(this.context);
 		const workspaceGroup = workspaceGroups.find((group) => remove(group.paths, workspace.path));
 		
 		if (workspaceGroup) {
-			states.updateWorkspaceGroups(context, workspaceGroups);
-			WorkspaceGroups._onDidChangeWorkspaceGroups.fire();
-			WorkspaceGroups._onDidUpdateWorkspaceGroup.fire(workspaceGroup);
+			states.updateWorkspaceGroups(this.context, workspaceGroups);
+			this._onDidChangeWorkspaceGroups.fire();
+			this._onDidUpdateWorkspaceGroup.fire(workspaceGroup);
 		}
 		
 	}
 	
-	public static async renameWorkspaceGroup (context:vscode.ExtensionContext, workspaceGroup:WorkspaceGroup) {
+	public async renameWorkspaceGroup (workspaceGroup:WorkspaceGroup) {
 		
 		const value = await vscode.window.showInputBox({
 			placeHolder: 'Please enter a new name for the group.',
@@ -136,35 +164,35 @@ export class WorkspaceGroups {
 		
 		if (!value || workspaceGroup.label === value) return;
 		
-		const workspaceGroups = states.getWorkspaceGroups(context);
+		const workspaceGroups = states.getWorkspaceGroups(this.context);
 		
 		for (const group of workspaceGroups) {
 			if (group.id === workspaceGroup.id) {
 				group.label = value;
 				workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				states.updateWorkspaceGroups(context, workspaceGroups);
-				WorkspaceGroups._onDidChangeWorkspaceGroups.fire();
-				WorkspaceGroups._onDidUpdateWorkspaceGroup.fire(group);
+				states.updateWorkspaceGroups(this.context, workspaceGroups);
+				this._onDidChangeWorkspaceGroups.fire();
+				this._onDidUpdateWorkspaceGroup.fire(group);
 				break;
 			}
 		}
 		
 	}
 	
-	public static async removeWorkspaceGroup (context:vscode.ExtensionContext, workspaceGroup:WorkspaceGroup) {
+	public async removeWorkspaceGroup (workspaceGroup:WorkspaceGroup) {
 		
 		const value = await dialogs.confirm(`Delete workspace group "${workspaceGroup.label}"?`, 'Delete');
 		
 		if (value) {
-			const workspaceGroups = states.getWorkspaceGroups(context);
+			const workspaceGroups = states.getWorkspaceGroups(this.context);
 			const groupId = workspaceGroup.id;
 			
 			for (let i = 0; i < workspaceGroups.length; i++) {
 				if (workspaceGroups[i].id === groupId) {
 					workspaceGroups.splice(i, 1);
-					states.updateWorkspaceGroups(context, workspaceGroups);
-					WorkspaceGroups._onDidDeleteWorkspaceGroup.fire(workspaceGroup);
-					WorkspaceGroups._onDidChangeWorkspaceGroups.fire();
+					states.updateWorkspaceGroups(this.context, workspaceGroups);
+					this._onDidDeleteWorkspaceGroup.fire(workspaceGroup);
+					this._onDidChangeWorkspaceGroups.fire();
 					break;
 				}
 			}
@@ -172,45 +200,45 @@ export class WorkspaceGroups {
 		
 	}
 	
-	public static async clearWorkspaceGroups (context:vscode.ExtensionContext) {
+	public async clearWorkspaceGroups () {
 		
 		if (await dialogs.confirm(`Delete all workspace groups?'`, 'Delete')) {
-			states.updateWorkspaceGroups(context, []);
-			WorkspaceGroups._onDidChangeWorkspaceGroups.fire();
+			states.updateWorkspaceGroups(this.context, []);
+			this._onDidChangeWorkspaceGroups.fire();
 		}
 		
 	}
 	
-	public static saveWorkspaceGroupState (context:vscode.ExtensionContext, item:GroupCustomTreeItem, collapsed:boolean) {
+	public saveWorkspaceGroupState (item:GroupCustomTreeItem, collapsed:boolean) {
 		
-		const workspaceGroups = states.getWorkspaceGroups(context);
+		const workspaceGroups = states.getWorkspaceGroups(this.context);
 		const groupId = item.group.id;
 		
 		for (const workspaceGroup of workspaceGroups) {
 			if (workspaceGroup.id === groupId) {
 				workspaceGroup.collapsed = collapsed;
-				states.updateWorkspaceGroups(context, workspaceGroups);
+				states.updateWorkspaceGroups(this.context, workspaceGroups);
 				break;
 			}
 		}
 		
 	}
 	
-	public static saveGroupSimpleState (context:vscode.ExtensionContext, item:GroupSimpleTreeItem, collapsed:boolean) {
+	public saveGroupSimpleState (item:GroupSimpleTreeItem, collapsed:boolean) {
 		
-		const groupStates = states.getGroupSimpleStates(context);
+		const groupStates = states.getGroupSimpleStates(this.context);
 		
 		addCollapseState(groupStates, item, collapsed);
-		states.updateGroupSimpleStates(context, groupStates);
+		states.updateGroupSimpleStates(this.context, groupStates);
 		
 	}
 	
-	public static saveGroupTypeState (context:vscode.ExtensionContext, item:GroupTypeTreeItem, collapsed:boolean) {
+	public saveGroupTypeState (item:GroupTypeTreeItem, collapsed:boolean) {
 		
-		const groupStates = states.getGroupSimpleStates(context);
+		const groupStates = states.getGroupSimpleStates(this.context);
 		
 		addCollapseState(groupStates, item, collapsed);
-		states.updateGroupSimpleStates(context, groupStates);
+		states.updateGroupSimpleStates(this.context, groupStates);
 		
 	}
 	

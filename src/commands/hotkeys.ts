@@ -7,7 +7,7 @@ import * as commands from '../common/commands';
 import { FavoritesProvider } from '../sidebar/FavoritesProvider';
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
 
-import { HotkeySlots } from '../states/HotkeySlots';
+import { HotkeySlotsState } from '../states/HotkeySlotsState';
 
 //	Variables __________________________________________________________________
 
@@ -21,16 +21,16 @@ import { HotkeySlots } from '../states/HotkeySlots';
 
 export function activate (context:vscode.ExtensionContext) {
 	
-	const hotkeySlots = HotkeySlots.create(context);
+	const hotkeySlots = HotkeySlotsState.createHotkeySlotsState(context);
 	
 	hotkeySlots.onDidChangeSlots(() => {
 		
 		FavoritesProvider.currentProvider?.refresh();
-		WorkspacesProvider.currentProvider?.refresh();
+		WorkspacesProvider.currentWorkspacesProvider?.refresh();
 		
 	});
 	
-	HotkeySlots.saveCurrentWorkspace(context);
+	hotkeySlots.saveCurrentWorkspace();
 	
 	commands.register(context, {
 		'l13Projects.action.workspace.assignSlot': async ({ project }) => hotkeySlots.assign(project),

@@ -25,37 +25,34 @@ import { colors } from '../statusbar/colors';
 
 //	Exports ____________________________________________________________________
 
-export class Workspaces {
+export class ProjectsState {
 	
-	private static _onDidUpdateProject:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
-	public static readonly onDidUpdateProject:vscode.Event<Project> = Workspaces._onDidUpdateProject.event;
+	private static currentProjectsState:ProjectsState = null;
 	
-	private static _onDidDeleteProject:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
-	public static readonly onDidDeleteProject:vscode.Event<Project> = Workspaces._onDidDeleteProject.event;
-	
-	private static _onDidChangeWorkspaces:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
-	public static readonly onDidChangeWorkspaces:vscode.Event<undefined> = Workspaces._onDidChangeWorkspaces.event;
-	
-	public static async pickWorkspace (items:WorkspaceQuickPickItem[]) {
+	public static createProjectsState (context:vscode.ExtensionContext) {
 		
-		const item = await vscode.window.showQuickPick(items, {
-			placeHolder: 'Select a project',
-		})
-		
-		if (item) {
-			if (item.paths) files.openAll(item.paths);
-			else files.open(item.description);
-		}
+		return ProjectsState.currentProjectsState || (ProjectsState.currentProjectsState = new ProjectsState(context));
 		
 	}
 	
-	public static async addProject (context:vscode.ExtensionContext) {
+	public constructor (private readonly context:vscode.ExtensionContext) {}
+	
+	private _onDidUpdateProject:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
+	public readonly onDidUpdateProject:vscode.Event<Project> = this._onDidUpdateProject.event;
+	
+	private _onDidDeleteProject:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
+	public readonly onDidDeleteProject:vscode.Event<Project> = this._onDidDeleteProject.event;
+	
+	private _onDidChangeWorkspaces:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
+	public readonly onDidChangeWorkspaces:vscode.Event<undefined> = this._onDidChangeWorkspaces.event;
+	
+	public async addProject () {
 		
 		const uris = isMacOs ? await dialogs.open() : await dialogs.openFolder();
 		
 		if (!uris) return;
 		
-		const projects = states.getProjects(context);
+		const projects = states.getProjects(this.context);
 		const length = projects.length;
 		
 		uris.forEach((uri) => {
@@ -70,19 +67,19 @@ export class Workspaces {
 		
 		if (projects.length === length) return;
 		
-		states.updateProjects(context, projects);
+		states.updateProjects(this.context, projects);
 		
-		Workspaces._onDidChangeWorkspaces.fire();
+		this._onDidChangeWorkspaces.fire();
 		
 	}
 	
-	public static async addProjectWorkspace (context:vscode.ExtensionContext) {
+	public async addProjectWorkspace () {
 		
 		const uris = await dialogs.openFile();
 		
 		if (!uris) return;
 		
-		const projects = states.getProjects(context);
+		const projects = states.getProjects(this.context);
 		const length = projects.length;
 		
 		uris.forEach((uri) => {
@@ -97,18 +94,18 @@ export class Workspaces {
 		
 		if (projects.length === length) return;
 		
-		states.updateProjects(context, projects);
+		states.updateProjects(this.context, projects);
 		
-		Workspaces._onDidChangeWorkspaces.fire();
+		this._onDidChangeWorkspaces.fire();
 		
 	}
 	
-	public static async saveProject (context:vscode.ExtensionContext, project?:Project) {
+	public async saveProject (project?:Project) {
 		
 		const fsPath:string = project ? project.path : settings.getCurrentWorkspacePath();
 		
 		if (fsPath) {
-			const projects = states.getProjects(context);
+			const projects = states.getProjects(this.context);
 			
 			if (projects.some(({ path }) => path === fsPath)) {
 				return vscode.window.showErrorMessage(`Project exists!`);
@@ -123,9 +120,10 @@ export class Workspaces {
 			
 			const newProject:Project = addProject(projects, fsPath, value);
 			
-			Workspaces._onDidUpdateProject.fire(newProject);
-			states.updateProjects(context, projects);
-			Workspaces._onDidChangeWorkspaces.fire();
+			states.updateProjects(this.context, projects);
+			
+			this._onDidUpdateProject.fire(newProject);
+			this._onDidChangeWorkspaces.fire();
 			
 		} else if (vscode.workspace.workspaceFile && vscode.workspace.workspaceFile.scheme === 'untitled') {
 			vscode.window.showWarningMessage(`Please save your current workspace first.`);
@@ -134,23 +132,23 @@ export class Workspaces {
 		
 	}
 	
-	public static updateProject (context:vscode.ExtensionContext, favorite:Project) {
+	public updateProject (favorite:Project) {
 		
-		const projects = states.getProjects(context);
+		const projects = states.getProjects(this.context);
 		
 		for (const project of projects) {
 			if (project.path === favorite.path && project.label !== favorite.label) {
 				project.label = favorite.label;
 				projects.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				states.updateProjects(context, projects);
-				Workspaces._onDidChangeWorkspaces.fire();
+				states.updateProjects(this.context, projects);
+				this._onDidChangeWorkspaces.fire();
 				break;
 			}
 		}
 		
 	}
 	
-	public static async renameProject (context:vscode.ExtensionContext, project:Project) {
+	public async renameProject (project:Project) {
 		
 		const value = await vscode.window.showInputBox({
 			value: project.label,
@@ -165,25 +163,27 @@ export class Workspaces {
 		}
 		
 		project.label = value;
-		Workspaces.updateProject(context, project);
-		Workspaces._onDidUpdateProject.fire(project);
+		
+		this.updateProject(project);
+		
+		this._onDidUpdateProject.fire(project);
 		
 	}
 	
-	public static async removeProject (context:vscode.ExtensionContext, project:Project) {
+	public async removeProject (project:Project) {
 		
 		if (await dialogs.confirm(`Delete project "${project.label}"?`, 'Delete')) {
 			
-			const projects = states.getProjects(context);
+			const projects = states.getProjects(this.context);
 			const fsPath = project.path;
 			
 			for (let i = 0; i < projects.length; i++) {
 				if (projects[i].path === fsPath) {
 					projects.splice(i, 1);
-					states.updateProjects(context, projects);
+					states.updateProjects(this.context, projects);
 					if (project.color) settings.updateStatusBarColorSettings(project.path, colors[0]);
-					Workspaces._onDidChangeWorkspaces.fire();
-					Workspaces._onDidDeleteProject.fire(project);
+					this._onDidChangeWorkspaces.fire();
+					this._onDidDeleteProject.fire(project);
 					return;
 				}
 			}
@@ -193,11 +193,11 @@ export class Workspaces {
 		
 	}
 	
-	public static async clearProjects (context:vscode.ExtensionContext) {
+	public async clearProjects () {
 		
 		if (await dialogs.confirm(`Delete all projects?'`, 'Delete')) {
-			states.updateProjects(context, []);
-			Workspaces._onDidChangeWorkspaces.fire();
+			states.updateProjects(this.context, []);
+			this._onDidChangeWorkspaces.fire();
 		}
 		
 	}

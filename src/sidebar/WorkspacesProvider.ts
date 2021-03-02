@@ -1,30 +1,22 @@
 //	Imports ____________________________________________________________________
 
-import * as fs from 'fs';
 import * as vscode from 'vscode';
 
-import { sortCaseInsensitive } from '../@l13/arrays';
 import { formatLabel } from '../@l13/formats';
-import { subfolders, walktree } from '../@l13/fse';
 
 import { InitialState, WorkspaceSorting } from '../@types/common';
-import { FileMap, Options } from '../@types/files';
 import {
 	GroupSimple,
 	GroupTreeItem,
 	GroupType,
 	Project,
+	RefreshWorkspacesStates,
 	WorkspaceGroup,
-	WorkspaceQuickPickItem,
+	WorkspacesStates,
 	WorkspacesTreeItems,
-	WorkspaceTypes,
 } from '../@types/workspaces';
 
 import * as settings from '../common/settings';
-import * as states from '../common/states';
-
-import { HotkeySlots } from '../states/HotkeySlots';
-import { StatusBarColor } from '../states/StatusBarColor';
 
 import { ColorPickerTreeItem } from './trees/ColorPickerTreeItem';
 import { CurrentProjectTreeItem } from './trees/CurrentProjectTreeItem';
@@ -36,8 +28,7 @@ import { UnknownProjectTreeItem } from './trees/UnknownProjectTreeItem';
 
 //	Variables __________________________________________________________________
 
-const findGitFolder:RegExp = /^\.git$/;
-const findVSCodeFolder:RegExp = /^\.vscode$/;
+
 
 //	Initialize _________________________________________________________________
 
@@ -47,25 +38,26 @@ const findVSCodeFolder:RegExp = /^\.vscode$/;
 
 export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTreeItems> {
 	
+	public static currentWorkspacesProvider:WorkspacesProvider;
+	
+	public static createWorkspacesProvider (states:WorkspacesStates, colorPicker:ColorPickerTreeItem) {
+		
+		return WorkspacesProvider.currentWorkspacesProvider || (WorkspacesProvider.currentWorkspacesProvider = new WorkspacesProvider(states, colorPicker));
+		
+	}
+	
 	private _onDidChangeTreeData:vscode.EventEmitter<WorkspacesTreeItems|undefined> = new vscode.EventEmitter<WorkspacesTreeItems|undefined>();
 	public readonly onDidChangeTreeData:vscode.Event<WorkspacesTreeItems|undefined> = this._onDidChangeTreeData.event;
 	
 	private disposables:vscode.Disposable[] = [];
 	
-	private initCache:boolean = true;
-	private cache:Project[] = [];
-	
 	public sortWorkspacesBy:WorkspaceSorting = settings.get('sortWorkspacesBy');
-	
-	public projects:Project[] = [];
-	public gitProjects:Project[] = [];
-	public vscodeProjects:Project[] = [];
-	public workspaceProjects:Project[] = [];
-	public subfolderProjects:Project[] = [];
 	
 	public workspaceGroups:WorkspaceGroup[] = [];
 	
-	public groupTypes:GroupType[] = [
+	private cache:Project[] = null;
+	
+	private groupTypes:GroupType[] = [
 		{ label: 'Projects', type: 'folder', collapsed: false },
 		{ label: 'Project Workspaces', type: 'folders', collapsed: false },
 		{ label: 'Git', type: 'git', collapsed: false },
@@ -74,49 +66,24 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		{ label: 'Subfolders', type: 'subfolder', collapsed: false },
 	];
 	
-	public groupSimples:GroupSimple[] = [
+	private groupSimples:GroupSimple[] = [
 		{ label: 'Projects', type: 'project', projectTypes: ['folder', 'folders'], collapsed: false },
 		{ label: 'Git', type: 'git', projectTypes: ['git'], collapsed: false },
 		{ label: 'Visual Studio Code', type: 'vscode', projectTypes: ['vscode', 'workspace'], collapsed: false },
 		{ label: 'Subfolders', type: 'subfolder', projectTypes: ['subfolder'], collapsed: false },
 	];
 	
-	private slots:HotkeySlots = null;
-	
-	public static currentProvider:WorkspacesProvider;
-	
-	public static createProvider (context:vscode.ExtensionContext, colorPicker:ColorPickerTreeItem) {
+	private constructor (private readonly states:WorkspacesStates, private colorPicker:ColorPickerTreeItem) {
 		
-		return WorkspacesProvider.currentProvider || (WorkspacesProvider.currentProvider = new WorkspacesProvider(context, colorPicker));
-		
-	}
-	
-	private constructor (private context:vscode.ExtensionContext, private colorPicker:ColorPickerTreeItem) {
-		
-		if (settings.get('useCacheForDetectedProjects')) {
-			this.cache = context.globalState.get('cache') || [];
-			this.gitProjects = context.globalState.get('cacheGitProjects') || [];
-			this.vscodeProjects = context.globalState.get('cacheVSCodeProjects') || [];
-			this.workspaceProjects = context.globalState.get('cacheWorkspaceProjects') || [];
-			this.subfolderProjects = context.globalState.get('cacheSubfolderProjects') || [];
-			this.initCache = false;
+		if (settings.get('useCacheForDetectedProjects', false)) {
+			this.cache = states.workspaces.getWorkspacesCache();
 		}
 		
-		this.slots = HotkeySlots.create(this.context);
-		this.workspaceGroups = states.getWorkspaceGroups(context);
+		this.workspaceGroups = states.workspaceGroups.getWorkspaceGroups();
 		
-		const groupSimpleStates = states.getGroupSimpleStates(context);
-		const groupTypeStates = states.getGroupTypeStates(context);
+		const groupSimpleStates = states.workspaceGroups.getSimpleGroups();
+		const groupTypeStates = states.workspaceGroups.getTypeGroups();
 		const initialState:InitialState = settings.get('initialWorkspacesGroupState', 'Remember');
-		
-		context.subscriptions.push(vscode.workspace.onDidChangeConfiguration((event) => {
-			
-			if (event.affectsConfiguration('l13Projects.sortWorkspacesBy')) {
-				this.sortWorkspacesBy = settings.get('sortWorkspacesBy');
-				this.refresh();
-			}
-			
-		}));
 		
 		if (initialState === 'Remember') {
 			groupTypeStates.forEach((state) => {
@@ -171,138 +138,18 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	private detectWorkspaces () {
+	public refresh (refreshStates?:RefreshWorkspacesStates) {
 		
-		const gitFolders = settings.get('git.folders', []);
-		const vscodeFolders = settings.get('vsCode.folders', []);
-		const workspaceFolders = settings.get('workspace.folders', []);
-		const subfolderFolders = settings.get('subfolder.folders', []);
-		const promises:Promise<any>[] = [];
-		
-		return Promise.all(promises.concat(this.detectWorkspacesFor('cacheGitProjects', this.gitProjects = [], 'git', gitFolders, {
-			find: findGitFolder,
-			type: 'folder',
-			maxDepth: settings.get('git.maxDepthRecursion', 1),
-			ignore: settings.get('git.ignore', []),
-		}), this.detectWorkspacesFor('cacheVSCodeProjects', this.vscodeProjects = [], 'vscode', vscodeFolders, {
-			find: findVSCodeFolder,
-			type: 'folder',
-			maxDepth: settings.get('vsCode.maxDepthRecursion', 1),
-			ignore: settings.get('vsCode.ignore', []),
-		}), this.detectWorkspacesFor('cacheWorkspaceProjects', this.workspaceProjects = [], 'workspace', workspaceFolders, {
-			find: settings.findExtWorkspace,
-			type: 'file',
-			maxDepth: settings.get('workspace.maxDepthRecursion', 1),
-			ignore: settings.get('workspace.ignore', []),
-		}), this.detectWorkspacesFor('cacheSubfolderProjects', this.subfolderProjects = [], 'subfolder', subfolderFolders, {
-			find: null,
-			type: 'folder',
-			maxDepth: 1,
-			ignore: settings.get('subfolder.ignore', []),
-		}))).then(() => this.cleanupUnknownPaths());
-		
-	}
-	
-	public refreshWorkspaces () {
-		
-		StatusBarColor.detectProjectColors(this.context);
-		this.detectWorkspaces();
-		
-	}
-	
-	public refresh () {
-		
-		this.updateCache();
-		this.workspaceGroups = states.getWorkspaceGroups(this.context);
+		if (refreshStates?.workspaces) this.cache = this.states.workspaces.getWorkspacesCache();
+		if (refreshStates?.workspaceGroups) this.workspaceGroups = this.states.workspaceGroups.getWorkspaceGroups();
 		
 		this._onDidChangeTreeData.fire();
 		
 	}
 	
-	private cleanupUnknownPaths () {
-		
-		const workspaceGroups = states.getWorkspaceGroups(this.context);
-		const paths = this.cache.map((workspace) => workspace.path);
-		
-		workspaceGroups.forEach((workspaceGroup) => {
-			
-			workspaceGroup.paths = workspaceGroup.paths.filter((path) => paths.includes(path));
-			
-		});
-		
-		states.updateWorkspaceGroups(this.context, workspaceGroups);
-		this.refresh();
-		
-	}
-	
-	private detectWorkspacesFor (name:string, workspaces:Project[], type:WorkspaceTypes, paths:string[], options:Options) {
-		
-		const promises:Promise<FileMap>[] = type === 'subfolder' ? createSubfolderDetection(paths, options) : createWorkspaceDetection(paths, options);
-		
-		if (promises.length) {
-			return [Promise.all(promises).then((results) => {
-				
-				results.forEach((files) => {
-					
-					for (const file of Object.values(files)) {
-						const pathname = file.path;
-						workspaces.push({
-							label: formatLabel(pathname),
-							path: pathname,
-							type,
-						});
-					}
-					
-				});
-				
-				workspaces.sort(({ label:a }:Project, { label:b }:Project) => sortCaseInsensitive(a, b));
-				
-				this.context.globalState.update(name, workspaces);
-				this.refresh();
-				
-			}, (error) => { vscode.window.showErrorMessage(error.message); })];
-		}
-		
-		this.refresh();
-		
-		return [];
-		
-	}
-	
-	private updateCache () {
-		
-		this.projects = states.getProjects(this.context);
-		this.projects.forEach((project) => project.deleted = !fs.existsSync(project.path));
-		
-		const all = (<Project[]>[]).concat(this.projects, this.gitProjects, this.vscodeProjects, this.workspaceProjects, this.subfolderProjects);
-		const once:{ [name:string]:Project } = {};
-		
-		all.forEach((workspace) => {
-			
-			if (once[workspace.path]) {
-				const type = once[workspace.path].type;
-				if (type === 'folder') return;
-				if (workspace.type === 'folder') return once[workspace.path] = workspace;
-				if (type === 'folders') return;
-				if (workspace.type === 'folders') return once[workspace.path] = workspace;
-				if (type === 'git') return;
-				if (workspace.type === 'git') return once[workspace.path] = workspace;
-				if (type === 'vscode') return;
-				if (workspace.type === 'vscode') return once[workspace.path] = workspace;
-				if (type === 'subfolder') return;
-				if (workspace.type === 'subfolder') return once[workspace.path] = workspace;
-			} else once[workspace.path] = workspace;
-			
-		});
-		
-		this.cache = Object.values(once).sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-		this.context.globalState.update('cache', this.cache);
-		
-	}
-	
 	private addCustomGroups (list:WorkspacesTreeItems[]) {
 		
-		const slots = this.slots;
+		const slots = this.states.hotkeySlots;
 		let paths:string[] = [];
 		
 		this.workspaceGroups.forEach((workspaceGroup) => {
@@ -323,7 +170,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		this.workspaceGroups.forEach((workspaceGroup) => paths = paths.concat(workspaceGroup.paths));
 		
 		const colorPickerProject = this.colorPicker.project;
-		const slots = this.slots;
+		const slots = this.states.hotkeySlots;
 		let hasCurrentWorkspace = false;
 		
 		this.cache.forEach((workspace) => {
@@ -350,7 +197,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	private addCustomGroupItems (list:WorkspacesTreeItems[], paths:string[], workspacePath:string) {
 		
 		const colorPickerProject = this.colorPicker.project;
-		const slots = this.slots;
+		const slots = this.states.hotkeySlots;
 		let hasCurrentWorkspace = false;
 		
 		this.cache.forEach((workspace) => {
@@ -389,7 +236,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	private addSimpleGroupItems (list:WorkspacesTreeItems[], type:string, workspacePath:string) {
 		
 		const colorPickerProject = this.colorPicker.project;
-		const slots = this.slots;
+		const slots = this.states.hotkeySlots;
 		let hasCurrentWorkspace = false;
 		let paths:string[] = [];
 		
@@ -458,7 +305,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		const colorPickerProject = this.colorPicker.project;
 		const workspaceFile = vscode.workspace.workspaceFile;
-		const slots = this.slots;
+		const slots = this.states.hotkeySlots;
 		let hasCurrentWorkspace = false;
 		let paths:string[] = [];
 		
@@ -512,17 +359,16 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	public getChildren (element?:WorkspacesTreeItems) {
+	public async getChildren (element?:WorkspacesTreeItems) {
 		
-		if (this.initCache) {
-			this.updateCache();
-			StatusBarColor.detectProjectColors(this.context);
-			this.detectWorkspaces();
-			this.initCache = false;
+		const list:WorkspacesTreeItems[] = [];
+		
+		if (!this.cache) {
+			this.states.workspaces.detectWorkspaces();
+			return list;
 		}
 		
 		const workspacePath:string = settings.getCurrentWorkspacePath();
-		const list:WorkspacesTreeItems[] = [];
 		const sortWorkspacesBy = this.sortWorkspacesBy;
 		
 		if (element) {
@@ -537,17 +383,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			else this.addNonCustomGroupItems(list, workspacePath);
 		}
 		
-		return Promise.resolve(list);
-		
-	}
-	
-	public getWorkspaceByPath (fsPath:string) {
-		
-		for (const workspace of this.cache) {
-			if (workspace.path === fsPath) return workspace;
-		}
-		
-		return null;
+		return list;
 		
 	}
 	
@@ -563,44 +399,10 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		const index:number = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.length : 0;
 		
-		vscode.workspace.updateWorkspaceFolders(index, null, { name: project.label, uri: vscode.Uri.file(project.path) });
-		
-	}
-	
-	public async createQuickPickItems () {
-		
-		if (this.initCache) {
-			await this.detectWorkspaces();
-			this.initCache = false;
-		}
-		
-		const items:WorkspaceQuickPickItem[] = [];
-		
-		this.workspaceGroups.forEach((workspaceGroup) => {
-			
-			const paths = workspaceGroup.paths;
-			const names = this.cache.filter((workspace) => paths.includes(workspace.path));
-			
-			items.push({
-				label: workspaceGroup.label,
-				description: names.map((favorite) => favorite.label).join(', '),
-				paths: workspaceGroup.paths,
-			});
-			
+		vscode.workspace.updateWorkspaceFolders(index, null, {
+			name: project.label,
+			uri: vscode.Uri.file(project.path),
 		});
-		
-		this.cache.forEach((project) => {
-			
-			items.push({
-				label: project.label,
-				description: project.path,
-				detail: project.deleted ? '$(alert) Path does not exist' : '',
-				paths: null,
-			});
-			
-		});
-		
-		return items;
 		
 	}
 	
@@ -608,52 +410,3 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 
 //	Functions __________________________________________________________________
 
-function createWorkspaceDetection (paths:string[], options:Options) {
-	
-	const promises:Promise<FileMap>[] = [];
-	
-	paths.forEach((path) => {
-			
-		if (fs.existsSync(path)) {
-			promises.push(new Promise((resolve, reject) => {
-				
-				walktree(path, options, (error, result) => {
-					
-					if (error) reject(error);
-					else resolve(result);
-					
-				});
-				
-			}));
-		}
-		
-	});
-	
-	return promises;
-	
-}
-
-function createSubfolderDetection (paths:string[], options:Options) {
-	
-	const promises:Promise<FileMap>[] = [];
-	
-	paths.forEach((path) => {
-			
-		if (fs.existsSync(path)) {
-			promises.push(new Promise((resolve, reject) => {
-				
-				subfolders(path, options, (error, result) => {
-					
-					if (error) reject(error);
-					else resolve(result);
-					
-				});
-				
-			}));
-		}
-		
-	});
-	
-	return promises;
-	
-}

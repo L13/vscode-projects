@@ -3,12 +3,11 @@
 import * as vscode from 'vscode';
 
 import * as settings from '../common/settings';
-import * as states from '../common/states';
 
 import { InitialState } from '../@types/common';
-import { Favorite, FavoriteGroup, FavoritesTreeItems } from '../@types/favorites';
+import { Favorite, FavoriteGroup, FavoritesStates, FavoritesTreeItems, RefreshFavoritesStates } from '../@types/favorites';
+import { HotkeySlotsState } from '../states/HotkeySlotsState';
 
-import { HotkeySlots } from '../states/HotkeySlots';
 import { CurrentFavoriteTreeItem } from './trees/CurrentFavoriteTreeItem';
 import { FavoriteGroupTreeItem } from './trees/FavoriteGroupTreeItem';
 import { FavoriteTreeItem } from './trees/FavoriteTreeItem';
@@ -28,24 +27,21 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 	private _onDidChangeTreeData:vscode.EventEmitter<FavoritesTreeItems|undefined> = new vscode.EventEmitter<FavoritesTreeItems|undefined>();
 	public readonly onDidChangeTreeData:vscode.Event<FavoritesTreeItems|undefined> = this._onDidChangeTreeData.event;
 	
-	public favorites:Favorite[] = [];
-	public favoriteGroups:FavoriteGroup[] = [];
-	
-	private slots:HotkeySlots = null;
+	private favorites:Favorite[] = [];
+	private favoriteGroups:FavoriteGroup[] = [];
 	
 	public static currentProvider:FavoritesProvider;
 	
-	public static createProvider (context:vscode.ExtensionContext) {
+	public static createProvider (states:FavoritesStates) {
 		
-		return FavoritesProvider.currentProvider || (FavoritesProvider.currentProvider = new FavoritesProvider(context));
+		return FavoritesProvider.currentProvider || (FavoritesProvider.currentProvider = new FavoritesProvider(states));
 		
 	}
 	
-	private constructor (private context:vscode.ExtensionContext) {
+	private constructor (private states:FavoritesStates) {
 		
-		this.favorites = states.getFavorites(context);
-		this.favoriteGroups = states.getFavoriteGroups(context);
-		this.slots = HotkeySlots.create(context);
+		this.favorites = states.favorites.getFavorites();
+		this.favoriteGroups = states.favoriteGroups.getFavoriteGroups();
 		
 		const initialState:InitialState = settings.get('initialFavoritesGroupState', 'Remember');
 		
@@ -55,10 +51,10 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 		
 	}
 	
-	public refresh () :void {
+	public refresh (refreshStates?:RefreshFavoritesStates) {
 		
-		this.favorites = states.getFavorites(this.context);
-		this.favoriteGroups = states.getFavoriteGroups(this.context);
+		if (refreshStates?.favorites) this.favorites = this.states.favorites.getFavorites();
+		if (refreshStates?.favoriteGroups) this.favoriteGroups = this.states.favoriteGroups.getFavoriteGroups();
 		
 		this._onDidChangeTreeData.fire();
 		
@@ -76,7 +72,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 		
 		if (!this.favorites.length && !this.favoriteGroups.length) return Promise.resolve(list);
 		
-		const slots = this.slots;
+		const slots = this.states.hotkeySlots;
 		let paths:string[] = [];
 		
 		if (element) {
@@ -102,7 +98,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 
 //	Functions __________________________________________________________________
 
-function addItems (list:FavoritesTreeItems[], favorites:Favorite[], paths:string[], slots:HotkeySlots, isSubProject:boolean) {
+function addItems (list:FavoritesTreeItems[], favorites:Favorite[], paths:string[], slots:HotkeySlotsState, isSubProject:boolean) {
 		
 	const workspacePath:string = settings.getCurrentWorkspacePath();
 	let hasCurrentProject = false;
