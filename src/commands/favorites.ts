@@ -88,8 +88,15 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	});
 	
-	favoritesState.onDidChangeFavorites(() => favoritesProvider.refresh({ favorites: true }));
-	favoriteGroupsState.onDidChangeFavoriteGroups(() => favoritesProvider.refresh({ favoriteGroups: true }));
+	favoritesState.onDidChangeFavorites((favorites) => favoritesProvider.refresh({ favorites }));
+	favoriteGroupsState.onDidChangeFavoriteGroups((favoriteGroups) => {
+		
+		favoritesProvider.refresh({
+			favorites: favoritesState.getFavorites(),
+			favoriteGroups
+		});
+		
+	});
 	
 	commands.register(context, {
 		'l13Projects.action.favorite.addToGroup': ({ project }:FavoriteTreeItems) => favoriteGroupsState.addFavoriteToGroup(project),

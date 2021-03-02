@@ -2,12 +2,10 @@
 
 import * as vscode from 'vscode';
 
-import { Favorite } from '../@types/favorites';
+import { Project } from '../@types/workspaces';
 
 import * as settings from '../common/settings';
 import * as states from '../common/states';
-
-import { ColorPickerTreeItem } from '../sidebar/trees/ColorPickerTreeItem';
 
 import { colors } from '../statusbar/colors';
 
@@ -21,17 +19,27 @@ import { colors } from '../statusbar/colors';
 
 //	Exports ____________________________________________________________________
 
-export class StatusBarColor {
+export class StatusBarColorState {
 	
-	private static _onDidUpdateColor:vscode.EventEmitter<Favorite> = new vscode.EventEmitter<Favorite>();
-	public static readonly onDidUpdateColor:vscode.Event<Favorite> = StatusBarColor._onDidUpdateColor.event;
+	private static currentStatusBarColorState:StatusBarColorState = null;
 	
-	private static _onDidChangeColor:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
-	public static readonly onDidChangeColor:vscode.Event<undefined> = StatusBarColor._onDidChangeColor.event;
-	
-	public static detectProjectColors (context:vscode.ExtensionContext) {
+	public static createProjectsState (context:vscode.ExtensionContext) {
 		
-		const projects = states.getProjects(context);
+		return StatusBarColorState.currentStatusBarColorState || (StatusBarColorState.currentStatusBarColorState = new StatusBarColorState(context));
+		
+	}
+	
+	public constructor (private readonly context:vscode.ExtensionContext) {}
+	
+	private _onDidUpdateColor:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
+	public readonly onDidUpdateColor:vscode.Event<Project> = this._onDidUpdateColor.event;
+	
+	private _onDidChangeColor:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
+	public readonly onDidChangeColor:vscode.Event<undefined> = this._onDidChangeColor.event;
+	
+	public detectProjectColors () {
+		
+		const projects = states.getProjects(this.context);
 		let hasChangedColor = false;
 		
 		projects.forEach((project) => {
@@ -46,7 +54,7 @@ export class StatusBarColor {
 					}
 					project.color = i;
 					hasChangedColor = true;
-					StatusBarColor._onDidUpdateColor.fire(project);
+					this._onDidUpdateColor.fire(project);
 					break colors;
 				}
 			}
@@ -54,27 +62,24 @@ export class StatusBarColor {
 		});
 		
 		if (hasChangedColor) {
-			states.updateProjects(context, projects);
-			StatusBarColor._onDidChangeColor.fire();
+			states.updateProjects(this.context, projects);
+			this._onDidChangeColor.fire();
 		}
 		
 	}
 	
-	public static assignColor (context:vscode.ExtensionContext, colorPicker:ColorPickerTreeItem, color:number) {
+	public assignColor (currentProject:Project, color:number) {
 		
-		const projects = states.getProjects(context);
-		const currentProject = colorPicker.project;
-		
-		colorPicker.project = null;
+		const projects = states.getProjects(this.context);
 		
 		for (const project of projects) {
 			if (currentProject.path === project.path) {
 				if (color) project.color = color;
 				else delete project.color;
-				states.updateProjects(context, projects);
+				states.updateProjects(this.context, projects);
 				settings.updateStatusBarColorSettings(project.path, colors[color]);
-				StatusBarColor._onDidUpdateColor.fire(project);
-				StatusBarColor._onDidChangeColor.fire();
+				this._onDidUpdateColor.fire(project);
+				this._onDidChangeColor.fire();
 				break;
 			}
 		}

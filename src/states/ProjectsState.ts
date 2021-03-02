@@ -187,8 +187,6 @@ export class ProjectsState {
 					return;
 				}
 			}
-			
-			vscode.window.showErrorMessage(`Project does not exist`);
 		}
 		
 	}

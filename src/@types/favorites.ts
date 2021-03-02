@@ -41,8 +41,8 @@ export type FavoritesTreeItems = FavoriteTreeItems|FavoriteGroupTreeItem;
 export type FavoriteTreeItems = CurrentFavoriteTreeItem|FavoriteTreeItem;
 
 export type RefreshFavoritesStates = {
-	favorites?:boolean,
-	favoriteGroups?:boolean,
+	favorites?:Favorite[],
+	favoriteGroups?:FavoriteGroup[],
 };
 
 //	Functions __________________________________________________________________

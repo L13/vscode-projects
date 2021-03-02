@@ -40,12 +40,24 @@ export class FavoriteGroupsState {
 	private _onDidDeleteFavoriteGroup:vscode.EventEmitter<FavoriteGroup> = new vscode.EventEmitter<FavoriteGroup>();
 	public readonly onDidDeleteFavoriteGroup:vscode.Event<FavoriteGroup> = this._onDidDeleteFavoriteGroup.event;
 	
-	private _onDidChangeFavoriteGroups:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
-	public readonly onDidChangeFavoriteGroups:vscode.Event<undefined> = this._onDidChangeFavoriteGroups.event;
+	private _onDidChangeFavoriteGroups:vscode.EventEmitter<FavoriteGroup[]> = new vscode.EventEmitter<FavoriteGroup[]>();
+	public readonly onDidChangeFavoriteGroups:vscode.Event<FavoriteGroup[]> = this._onDidChangeFavoriteGroups.event;
 	
 	public getFavoriteGroups () {
 		
 		return states.getFavoriteGroups(this.context);
+		
+	}
+	
+	public getFavoriteGroupById (groupId:number) {
+		
+		const favoriteGroups = states.getFavoriteGroups(this.context);
+		
+		for (const favoriteGroup of favoriteGroups) {
+			if (favoriteGroup.id === groupId) return favoriteGroup;
+		}
+		
+		return null;
 		
 	}
 	
@@ -66,7 +78,7 @@ export class FavoriteGroupsState {
 		favoriteGroups.push({ label, id: states.getNextGroupId(this.context), collapsed: false, paths: [] });
 		favoriteGroups.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
 		states.updateFavoriteGroups(this.context, favoriteGroups);
-		this._onDidChangeFavoriteGroups.fire();
+		this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 		
 	}
 	
@@ -83,7 +95,7 @@ export class FavoriteGroupsState {
 			favoriteGroup.paths.push(favorite.path);
 			favoriteGroup.paths.sort();
 			states.updateFavoriteGroups(this.context, favoriteGroups);
-			this._onDidChangeFavoriteGroups.fire();
+			this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 			if (previousFavoriteGroup) this._onDidUpdateFavoriteGroup.fire(previousFavoriteGroup);
 			this._onDidUpdateFavoriteGroup.fire(favoriteGroup);
 		}
@@ -123,7 +135,7 @@ export class FavoriteGroupsState {
 		addMissingFavorites(this.context, workspaces);
 		
 		states.updateFavoriteGroups(this.context, favoriteGroups);
-		this._onDidChangeFavoriteGroups.fire();
+		this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 		
 	}
 	
@@ -149,7 +161,7 @@ export class FavoriteGroupsState {
 				}
 				
 				states.updateFavoriteGroups(this.context, favoriteGroups);
-				this._onDidChangeFavoriteGroups.fire();
+				this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 				break;
 			}
 		}
@@ -163,7 +175,7 @@ export class FavoriteGroupsState {
 		
 		if (favoriteGroup) {
 			states.updateFavoriteGroups(this.context, favoriteGroups);
-			this._onDidChangeFavoriteGroups.fire();
+			this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 			this._onDidUpdateFavoriteGroup.fire(favoriteGroup);
 		}
 		
@@ -186,7 +198,7 @@ export class FavoriteGroupsState {
 				group.label = value;
 				favoriteGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				states.updateFavoriteGroups(this.context, favoriteGroups);
-				this._onDidChangeFavoriteGroups.fire();
+				this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 				this._onDidUpdateFavoriteGroup.fire(group);
 				break;
 			}
@@ -228,7 +240,7 @@ export class FavoriteGroupsState {
 			}
 			
 			states.updateFavoriteGroups(this.context, favoriteGroups);
-			this._onDidChangeFavoriteGroups.fire();
+			this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 		}
 		
 	}

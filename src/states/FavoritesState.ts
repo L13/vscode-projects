@@ -38,8 +38,8 @@ export class FavoritesState {
 	private _onDidDeleteFavorite:vscode.EventEmitter<Favorite> = new vscode.EventEmitter<Favorite>();
 	public readonly onDidDeleteFavorite:vscode.Event<Favorite> = this._onDidDeleteFavorite.event;
 	
-	private _onDidChangeFavorites:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
-	public readonly onDidChangeFavorites:vscode.Event<undefined> = this._onDidChangeFavorites.event;
+	private _onDidChangeFavorites:vscode.EventEmitter<Favorite[]> = new vscode.EventEmitter<Favorite[]>();
+	public readonly onDidChangeFavorites:vscode.Event<Favorite[]> = this._onDidChangeFavorites.event;
 	
 	public getFavorites () {
 		
@@ -100,7 +100,7 @@ export class FavoritesState {
 		favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 		
 		states.updateFavorites(this.context, favorites);
-		this._onDidChangeFavorites.fire();
+		this._onDidChangeFavorites.fire(favorites);
 		
 	}
 	
@@ -117,7 +117,7 @@ export class FavoritesState {
 					favorite.label = workspace.label;
 					favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				states.updateFavorites(this.context, favorites);
-				this._onDidChangeFavorites.fire();
+				this._onDidChangeFavorites.fire(favorites);
 				break;
 			}
 		}
@@ -148,7 +148,7 @@ export class FavoritesState {
 					favorites.splice(i, 1);
 					states.updateFavorites(this.context, favorites);
 					this._onDidDeleteFavorite.fire(favorite);
-					this._onDidChangeFavorites.fire();
+					this._onDidChangeFavorites.fire(favorites);
 					return;
 				}
 			}
@@ -161,7 +161,7 @@ export class FavoritesState {
 		if (await dialogs.confirm(`Delete all favorites and groups?'`, 'Delete')) {
 			states.updateFavorites(this.context, []);
 			states.updateFavoriteGroups(this.context, []);
-			this._onDidChangeFavorites.fire();
+			this._onDidChangeFavorites.fire([]);
 		}
 		
 	}

@@ -35,11 +35,11 @@ export class WorkspacesState {
 		
 	}
 	
-	// private _onDidUpdateCache:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
-	// public readonly onDidUpdateCache:vscode.Event<Project> = this._onDidUpdateCache.event;
+	// private _onDidUpdateCache:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
+	// public readonly onDidUpdateCache:vscode.Event<Project[]> = this._onDidUpdateCache.event;
 	
-	// private _onDidDeleteCache:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
-	// public readonly onDidDeleteCache:vscode.Event<Project> = this._onDidDeleteCache.event;
+	// private _onDidDeleteCache:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
+	// public readonly onDidDeleteCache:vscode.Event<Project[]> = this._onDidDeleteCache.event;
 	
 	private _onDidChangeCache:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
 	public readonly onDidChangeCache:vscode.Event<undefined> = this._onDidChangeCache.event;
@@ -151,7 +151,7 @@ export class WorkspacesState {
 		
 	}
 	
-	private refreshWorkspacesCache () {
+	public refreshWorkspacesCache () {
 		
 		this.projects = states.getProjects(this.context);
 		this.projects.forEach((project) => project.deleted = !fs.existsSync(project.path));

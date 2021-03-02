@@ -14,7 +14,11 @@ import * as terminal from '../common/terminal';
 import { FavoritesProvider } from '../sidebar/FavoritesProvider';
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
 
+import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
+import { FavoritesState } from '../states/FavoritesState';
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
+import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
+import { WorkspacesState } from '../states/WorkspacesState';
 
 //	Variables __________________________________________________________________
 
@@ -28,20 +32,28 @@ import { HotkeySlotsState } from '../states/HotkeySlotsState';
 
 export function activate (context:vscode.ExtensionContext) {
 	
+	const favoritesState = FavoritesState.createFavoritesState(context);
+	const favoriteGroupsState = FavoriteGroupsState.createFavoriteGroupsState(context);
+	
 	const hotkeySlots = HotkeySlotsState.createHotkeySlotsState(context);
+	
+	const workspacesState = WorkspacesState.createWorkspacesState(context);
+	const workspaceGroupsState = WorkspaceGroupsState.createWorkspaceGroupsState(context);
 	
 	context.subscriptions.push(vscode.window.onDidChangeWindowState(({ focused }) => {
 		
 		if (focused) { // Update data if changes in another workspace have been done
 			hotkeySlots.saveCurrentWorkspace();
 			hotkeySlots.refresh();
+			
 			FavoritesProvider.currentProvider?.refresh({
-				favorites: true,
-				favoriteGroups: true,
+				favorites: favoritesState.getFavorites(),
+				favoriteGroups: favoriteGroupsState.getFavoriteGroups(),
 			});
+			
 			WorkspacesProvider.currentWorkspacesProvider?.refresh({
-				workspaces: true,
-				workspaceGroups: true,
+				workspaces: workspacesState.getWorkspacesCache(),
+				workspaceGroups: workspaceGroupsState.getWorkspaceGroups(),
 			});
 		}
 		

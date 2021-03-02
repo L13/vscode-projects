@@ -38,7 +38,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 		
 	}
 	
-	private constructor (private states:FavoritesStates) {
+	private constructor (private readonly states:FavoritesStates) {
 		
 		this.favorites = states.favorites.getFavorites();
 		this.favoriteGroups = states.favoriteGroups.getFavoriteGroups();
@@ -53,8 +53,8 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 	
 	public refresh (refreshStates?:RefreshFavoritesStates) {
 		
-		if (refreshStates?.favorites) this.favorites = this.states.favorites.getFavorites();
-		if (refreshStates?.favoriteGroups) this.favoriteGroups = this.states.favoriteGroups.getFavoriteGroups();
+		if (refreshStates?.favorites) this.favorites = refreshStates.favorites;
+		if (refreshStates?.favoriteGroups) this.favoriteGroups = refreshStates.favoriteGroups;
 		
 		this._onDidChangeTreeData.fire();
 		

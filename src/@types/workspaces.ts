@@ -103,8 +103,8 @@ export type WorkspacesStates = {
 };
 
 export type RefreshWorkspacesStates = {
-	workspaces?:boolean,
-	workspaceGroups?:boolean,
+	workspaces?:Project[],
+	workspaceGroups?:WorkspaceGroup[],
 };
 
 //	Functions __________________________________________________________________

@@ -40,9 +40,9 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	public static currentWorkspacesProvider:WorkspacesProvider;
 	
-	public static createWorkspacesProvider (states:WorkspacesStates, colorPicker:ColorPickerTreeItem) {
+	public static createWorkspacesProvider (states:WorkspacesStates) {
 		
-		return WorkspacesProvider.currentWorkspacesProvider || (WorkspacesProvider.currentWorkspacesProvider = new WorkspacesProvider(states, colorPicker));
+		return WorkspacesProvider.currentWorkspacesProvider || (WorkspacesProvider.currentWorkspacesProvider = new WorkspacesProvider(states));
 		
 	}
 	
@@ -54,6 +54,10 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	public sortWorkspacesBy:WorkspaceSorting = settings.get('sortWorkspacesBy');
 	
 	public workspaceGroups:WorkspaceGroup[] = [];
+	
+	public readonly colorPickerTreeItem = new ColorPickerTreeItem();
+	
+	public colorPickerProject:Project = null;
 	
 	private cache:Project[] = null;
 	
@@ -73,7 +77,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		{ label: 'Subfolders', type: 'subfolder', projectTypes: ['subfolder'], collapsed: false },
 	];
 	
-	private constructor (private readonly states:WorkspacesStates, private colorPicker:ColorPickerTreeItem) {
+	private constructor (private readonly states:WorkspacesStates) {
 		
 		if (settings.get('useCacheForDetectedProjects', false)) {
 			this.cache = states.workspaces.getWorkspacesCache();
@@ -126,22 +130,22 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	public showColorPicker (project:Project) {
 		
-		this.colorPicker.project = project;
+		this.colorPickerProject = project;
 		this.refresh();
 		
 	}
 	
 	public hideColorPicker () {
 		
-		this.colorPicker.project = null;
+		this.colorPickerProject = null;
 		this.refresh();
 		
 	}
 	
 	public refresh (refreshStates?:RefreshWorkspacesStates) {
 		
-		if (refreshStates?.workspaces) this.cache = this.states.workspaces.getWorkspacesCache();
-		if (refreshStates?.workspaceGroups) this.workspaceGroups = this.states.workspaceGroups.getWorkspaceGroups();
+		if (refreshStates?.workspaces) this.cache = refreshStates.workspaces;
+		if (refreshStates?.workspaceGroups) this.workspaceGroups = refreshStates.workspaceGroups;
 		
 		this._onDidChangeTreeData.fire();
 		
@@ -169,7 +173,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		this.workspaceGroups.forEach((workspaceGroup) => paths = paths.concat(workspaceGroup.paths));
 		
-		const colorPickerProject = this.colorPicker.project;
+		const colorPickerProject = this.colorPickerProject;
 		const slots = this.states.hotkeySlots;
 		let hasCurrentWorkspace = false;
 		
@@ -185,7 +189,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			} else list.push(new ProjectTreeItem(workspace, slot));
 			
 			if (colorPickerProject?.path === workspace.path) {
-				list.push(this.colorPicker);
+				list.push(this.colorPickerTreeItem);
 			}
 			
 		});
@@ -196,7 +200,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	private addCustomGroupItems (list:WorkspacesTreeItems[], paths:string[], workspacePath:string) {
 		
-		const colorPickerProject = this.colorPicker.project;
+		const colorPickerProject = this.colorPickerProject;
 		const slots = this.states.hotkeySlots;
 		let hasCurrentWorkspace = false;
 		
@@ -212,7 +216,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			} else list.push(new ProjectTreeItem(workspace, slot, true));
 			
 			if (colorPickerProject && colorPickerProject.path === workspace.path) {
-				list.push(this.colorPicker);
+				list.push(this.colorPickerTreeItem);
 			}
 			
 		});
@@ -235,7 +239,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	private addSimpleGroupItems (list:WorkspacesTreeItems[], type:string, workspacePath:string) {
 		
-		const colorPickerProject = this.colorPicker.project;
+		const colorPickerProject = this.colorPickerProject;
 		const slots = this.states.hotkeySlots;
 		let hasCurrentWorkspace = false;
 		let paths:string[] = [];
@@ -272,7 +276,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 					list.push(new CurrentProjectTreeItem(workspace, slot));
 				} else list.push(new ProjectTreeItem(workspace, slot));
 				if (colorPickerProject && simpleType === 'project' && colorPickerProject.path === workspace.path) {
-					list.push(this.colorPicker);
+					list.push(this.colorPickerTreeItem);
 				}
 			}
 			
@@ -303,7 +307,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	private addTypeGroupItems (list:WorkspacesTreeItems[], type:string, workspacePath:string) {
 		
-		const colorPickerProject = this.colorPicker.project;
+		const colorPickerProject = this.colorPickerProject;
 		const workspaceFile = vscode.workspace.workspaceFile;
 		const slots = this.states.hotkeySlots;
 		let hasCurrentWorkspace = false;
@@ -324,7 +328,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 				} else list.push(new ProjectTreeItem(workspace, slot));
 				
 				if (colorPickerProject && (type === 'folder' || type === 'folders') && colorPickerProject.path === workspace.path) {
-					list.push(this.colorPicker);
+					list.push(this.colorPickerTreeItem);
 				}
 			}
 			
