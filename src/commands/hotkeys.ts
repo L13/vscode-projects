@@ -25,7 +25,7 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	hotkeySlots.onDidChangeSlots(() => {
 		
-		FavoritesProvider.currentProvider?.refresh();
+		FavoritesProvider.currentFavoritesProvider?.refresh();
 		WorkspacesProvider.currentWorkspacesProvider?.refresh();
 		
 	});

@@ -138,7 +138,7 @@ export class FavoritesState {
 		
 	}
 	
-	public async removeFavorite (favorite:Favorite, force:boolean = false) {
+	public async removeFavorite (favorite:Favorite, force?:boolean) {
 		
 		if (force || await dialogs.confirm(`Delete favorite "${favorite.label}"?`, 'Delete')) {
 			const favorites = states.getFavorites(this.context);

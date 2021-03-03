@@ -34,8 +34,8 @@ export function activate (context:vscode.ExtensionContext) {
 	const favoritesState = FavoritesState.createFavoritesState(context);
 	const favoriteGroupsState = FavoriteGroupsState.createFavoriteGroupsState(context);
 	const favoritesProvider = FavoritesProvider.createProvider({
-		favorites: favoritesState,
-		favoriteGroups: favoriteGroupsState,
+		favorites: favoritesState.getFavorites(),
+		favoriteGroups: favoriteGroupsState.getFavoriteGroups(),
 		hotkeySlots: hotkeySlotsState,
 	});
 	const treeView = vscode.window.createTreeView('l13ProjectsFavorites', {

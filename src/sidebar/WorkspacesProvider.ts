@@ -18,6 +18,8 @@ import {
 
 import * as settings from '../common/settings';
 
+import { HotkeySlotsState } from '../states/HotkeySlotsState';
+
 import { ColorPickerTreeItem } from './trees/ColorPickerTreeItem';
 import { CurrentProjectTreeItem } from './trees/CurrentProjectTreeItem';
 import { GroupCustomTreeItem } from './trees/GroupCustomTreeItem';
@@ -49,17 +51,21 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	private _onDidChangeTreeData:vscode.EventEmitter<WorkspacesTreeItems|undefined> = new vscode.EventEmitter<WorkspacesTreeItems|undefined>();
 	public readonly onDidChangeTreeData:vscode.Event<WorkspacesTreeItems|undefined> = this._onDidChangeTreeData.event;
 	
+	private _onWillInitCache:vscode.EventEmitter<WorkspacesTreeItems|undefined> = new vscode.EventEmitter<WorkspacesTreeItems|undefined>();
+	public readonly onWillInitCache:vscode.Event<WorkspacesTreeItems|undefined> = this._onWillInitCache.event;
+	
 	private disposables:vscode.Disposable[] = [];
 	
 	public sortWorkspacesBy:WorkspaceSorting = settings.get('sortWorkspacesBy');
 	
-	public workspaceGroups:WorkspaceGroup[] = [];
+	private cache:Project[] = null;
+	private workspaceGroups:WorkspaceGroup[] = [];
+	
+	private slots:HotkeySlotsState = null;
 	
 	public readonly colorPickerTreeItem = new ColorPickerTreeItem();
 	
 	public colorPickerProject:Project = null;
-	
-	private cache:Project[] = null;
 	
 	private groupTypes:GroupType[] = [
 		{ label: 'Projects', type: 'folder', collapsed: false },
@@ -77,16 +83,15 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		{ label: 'Subfolders', type: 'subfolder', projectTypes: ['subfolder'], collapsed: false },
 	];
 	
-	private constructor (private readonly states:WorkspacesStates) {
+	private constructor ({ hotkeySlots, workspaces, workspaceGroups, simpleGroups, typeGroups }:WorkspacesStates) {
 		
-		if (settings.get('useCacheForDetectedProjects', false)) {
-			this.cache = states.workspaces.getWorkspacesCache();
-		}
+		this.cache = workspaces;
+		this.workspaceGroups = workspaceGroups;
 		
-		this.workspaceGroups = states.workspaceGroups.getWorkspaceGroups();
+		this.slots = hotkeySlots;
 		
-		const groupSimpleStates = states.workspaceGroups.getSimpleGroups();
-		const groupTypeStates = states.workspaceGroups.getTypeGroups();
+		const groupSimpleStates = simpleGroups;
+		const groupTypeStates = typeGroups;
 		const initialState:InitialState = settings.get('initialWorkspacesGroupState', 'Remember');
 		
 		if (initialState === 'Remember') {
@@ -153,7 +158,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	private addCustomGroups (list:WorkspacesTreeItems[]) {
 		
-		const slots = this.states.hotkeySlots;
+		const slots = this.slots;
 		let paths:string[] = [];
 		
 		this.workspaceGroups.forEach((workspaceGroup) => {
@@ -174,7 +179,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		this.workspaceGroups.forEach((workspaceGroup) => paths = paths.concat(workspaceGroup.paths));
 		
 		const colorPickerProject = this.colorPickerProject;
-		const slots = this.states.hotkeySlots;
+		const slots = this.slots;
 		let hasCurrentWorkspace = false;
 		
 		this.cache.forEach((workspace) => {
@@ -201,7 +206,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	private addCustomGroupItems (list:WorkspacesTreeItems[], paths:string[], workspacePath:string) {
 		
 		const colorPickerProject = this.colorPickerProject;
-		const slots = this.states.hotkeySlots;
+		const slots = this.slots;
 		let hasCurrentWorkspace = false;
 		
 		this.cache.forEach((workspace) => {
@@ -240,7 +245,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	private addSimpleGroupItems (list:WorkspacesTreeItems[], type:string, workspacePath:string) {
 		
 		const colorPickerProject = this.colorPickerProject;
-		const slots = this.states.hotkeySlots;
+		const slots = this.slots;
 		let hasCurrentWorkspace = false;
 		let paths:string[] = [];
 		
@@ -309,7 +314,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		const colorPickerProject = this.colorPickerProject;
 		const workspaceFile = vscode.workspace.workspaceFile;
-		const slots = this.states.hotkeySlots;
+		const slots = this.slots;
 		let hasCurrentWorkspace = false;
 		let paths:string[] = [];
 		
@@ -368,7 +373,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		const list:WorkspacesTreeItems[] = [];
 		
 		if (!this.cache) {
-			this.states.workspaces.detectWorkspaces();
+			this._onWillInitCache.fire();
 			return list;
 		}
 		

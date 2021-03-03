@@ -11,8 +11,6 @@ import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
 import { UnknownProjectTreeItem } from '../sidebar/trees/UnknownProjectTreeItem';
 
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
-import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
-import { WorkspacesState } from '../states/WorkspacesState';
 
 //	Variables __________________________________________________________________
 
@@ -98,8 +96,10 @@ export type WorkspaceTypes = 'git'|'subfolder'|'vscode'|'workspace';
 
 export type WorkspacesStates = {
 	hotkeySlots:HotkeySlotsState,
-	workspaces:WorkspacesState,
-	workspaceGroups:WorkspaceGroupsState,
+	simpleGroups:GroupSimpleState[],
+	typeGroups:GroupTypeState[],
+	workspaces:Project[],
+	workspaceGroups:WorkspaceGroup[],
 };
 
 export type RefreshWorkspacesStates = {

@@ -6,8 +6,6 @@ import { CurrentFavoriteTreeItem } from '../sidebar/trees/CurrentFavoriteTreeIte
 import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
 import { FavoriteTreeItem } from '../sidebar/trees/FavoriteTreeItem';
 
-import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
-import { FavoritesState } from '../states/FavoritesState';
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
 
 //	Variables __________________________________________________________________
@@ -31,9 +29,9 @@ export type FavoriteGroup = {
 };
 
 export type FavoritesStates = {
+	favorites:Favorite[],
+	favoriteGroups:FavoriteGroup[],
 	hotkeySlots:HotkeySlotsState,
-	favorites:FavoritesState,
-	favoriteGroups:FavoriteGroupsState,
 };
 
 export type FavoritesTreeItems = FavoriteTreeItems|FavoriteGroupTreeItem;

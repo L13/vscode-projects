@@ -49,8 +49,10 @@ export function activate (context:vscode.ExtensionContext) {
 	const workspaceGroupsState = WorkspaceGroupsState.createWorkspaceGroupsState(context);
 	const workspacesProvider = WorkspacesProvider.createWorkspacesProvider({
 		hotkeySlots: hotkeySlotsState,
-		workspaces: workspacesState,
-		workspaceGroups: workspaceGroupsState,
+		workspaces: settings.get('useCacheForDetectedProjects') ? workspacesState.getWorkspacesCache() : null,
+		workspaceGroups: workspaceGroupsState.getWorkspaceGroups(),
+		simpleGroups: workspaceGroupsState.getSimpleGroups(),
+		typeGroups: workspaceGroupsState.getTypeGroups(),
 	});
 	const treeView = vscode.window.createTreeView('l13ProjectsWorkspaces', {
 		treeDataProvider: workspacesProvider,
@@ -80,6 +82,7 @@ export function activate (context:vscode.ExtensionContext) {
 	}));
 	
 	workspacesProvider.onDidChangeTreeData(() => StatusBar.current?.update());
+	workspacesProvider.onWillInitCache(() => workspacesState.detectWorkspaces());
 	
 	projectsState.onDidUpdateProject((project) => {
 		
@@ -137,13 +140,10 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	});
 	
-	workspaceGroupsState.onDidDeleteWorkspaceGroup(async (workspaceGroup) => {
+	workspaceGroupsState.onDidDeleteWorkspaceGroup((workspaceGroup) => {
 		
-		await favoriteGroupsState.removeFavoriteGroup(workspaceGroup);
-		
-		if (!favoriteGroupsState.getFavoriteGroupById(workspaceGroup.id)) {
-			hotkeySlotsState.removeGroup(workspaceGroup);
-		}
+		favoriteGroupsState.removeFavoriteGroup(workspaceGroup, true);
+		hotkeySlotsState.removeGroup(workspaceGroup);
 		
 	});
 	

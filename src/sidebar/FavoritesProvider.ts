@@ -29,19 +29,21 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 	
 	private favorites:Favorite[] = [];
 	private favoriteGroups:FavoriteGroup[] = [];
+	private slots:HotkeySlotsState = null;
 	
-	public static currentProvider:FavoritesProvider;
+	public static currentFavoritesProvider:FavoritesProvider;
 	
 	public static createProvider (states:FavoritesStates) {
 		
-		return FavoritesProvider.currentProvider || (FavoritesProvider.currentProvider = new FavoritesProvider(states));
+		return FavoritesProvider.currentFavoritesProvider || (FavoritesProvider.currentFavoritesProvider = new FavoritesProvider(states));
 		
 	}
 	
-	private constructor (private readonly states:FavoritesStates) {
+	private constructor ({ favorites, favoriteGroups, hotkeySlots }:FavoritesStates) {
 		
-		this.favorites = states.favorites.getFavorites();
-		this.favoriteGroups = states.favoriteGroups.getFavoriteGroups();
+		this.favorites = favorites;
+		this.favoriteGroups = favoriteGroups;
+		this.slots = hotkeySlots;
 		
 		const initialState:InitialState = settings.get('initialFavoritesGroupState', 'Remember');
 		
@@ -72,7 +74,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 		
 		if (!this.favorites.length && !this.favoriteGroups.length) return Promise.resolve(list);
 		
-		const slots = this.states.hotkeySlots;
+		const slots = this.slots;
 		let paths:string[] = [];
 		
 		if (element) {
