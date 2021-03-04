@@ -44,9 +44,8 @@ export class WorkspacesState {
 	private _onDidChangeCache:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
 	public readonly onDidChangeCache:vscode.Event<Project[]> = this._onDidChangeCache.event;
 	
-	private projects:Project[] = [];
+	public workspacesCache:Project[] = null;
 	
-	private cache:Project[] = [];
 	private gitCache:Project[] = [];
 	private vscodeCache:Project[] = [];
 	private workspaceCache:Project[] = [];
@@ -54,7 +53,8 @@ export class WorkspacesState {
 	
 	public constructor (private readonly context:vscode.ExtensionContext) {
 		
-		this.cache = states.getWorkspacesCache(context);
+		if (settings.get('useCacheForDetectedProjects', false)) this.getWorkspacesCache();
+		
 		this.gitCache = states.getGitCache(context);
 		this.vscodeCache = states.getVSCodeCache(context);
 		this.workspaceCache = states.getVSCodeWorkspaceCache(context);
@@ -64,19 +64,15 @@ export class WorkspacesState {
 	
 	public getWorkspacesCache () {
 		
-		return states.getWorkspacesCache(this.context);
+		return this.workspacesCache = states.getWorkspacesCache(this.context);
 		
 	}
 	
-	// public updateWorkspacesCache (cache:Project[]) {
-		
-	// 	return states.updateWorkspacesCache(this.context, cache);
-		
-	// }
-	
 	public getWorkspaceByPath (fsPath:string) {
 		
-		for (const workspace of this.cache) {
+		if (!this.workspaceCache) return null;
+		
+		for (const workspace of this.workspacesCache) {
 			if (workspace.path === fsPath) return workspace;
 		}
 		
@@ -101,9 +97,7 @@ export class WorkspacesState {
 	
 	private async createQuickPickItems () {
 		
-		if (!settings.get('useCacheForDetectedProjects', false)) {
-			await this.detectWorkspaces();
-		}
+		if (!this.workspacesCache) await this.detectWorkspaces();
 		
 		const items:WorkspaceQuickPickItem[] = [];
 		const workspaceGroups = states.getWorkspaceGroups(this.context);
@@ -111,7 +105,7 @@ export class WorkspacesState {
 		workspaceGroups.forEach((workspaceGroup) => {
 			
 			const paths = workspaceGroup.paths;
-			const names = this.cache.filter((workspace) => paths.includes(workspace.path));
+			const names = this.workspacesCache.filter((workspace) => paths.includes(workspace.path));
 			
 			items.push({
 				label: workspaceGroup.label,
@@ -121,7 +115,7 @@ export class WorkspacesState {
 			
 		});
 		
-		this.cache.forEach((project) => {
+		this.workspacesCache.forEach((project) => {
 			
 			items.push({
 				label: project.label,
@@ -139,7 +133,7 @@ export class WorkspacesState {
 	private cleanupUnknownPaths () {
 		
 		const workspaceGroups = states.getWorkspaceGroups(this.context);
-		const paths = this.cache.map((workspace) => workspace.path);
+		const paths = this.workspacesCache.map((workspace) => workspace.path);
 		
 		workspaceGroups.forEach((workspaceGroup) => {
 			
@@ -151,14 +145,15 @@ export class WorkspacesState {
 		
 	}
 	
-	public refreshWorkspacesCache () {
+	private rebuildWorkspacesCache () {
 		
-		this.projects = states.getProjects(this.context);
-		this.projects.forEach((project) => project.deleted = !fs.existsSync(project.path));
+		const projects = states.getProjects(this.context);
+		
+		projects.forEach((project) => project.deleted = !fs.existsSync(project.path));
 		
 		const once:{ [name:string]:Project } = {};
 		const all = [
-			...this.projects,
+			...projects,
 			...this.gitCache,
 			...this.vscodeCache,
 			...this.workspaceCache,
@@ -183,10 +178,18 @@ export class WorkspacesState {
 			
 		});
 		
-		this.cache = Object.values(once).sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+		this.workspacesCache = Object.values(once).sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 		
-		states.updateWorkspacesCache(this.context, this.cache);
-		this._onDidUpdateCache.fire(this.cache);
+		states.updateWorkspacesCache(this.context, this.workspacesCache);
+		
+	}
+	
+	public refreshWorkspacesCache () {
+		
+		this.rebuildWorkspacesCache();
+		this.cleanupUnknownPaths();
+		
+		this._onDidUpdateCache.fire(this.workspacesCache);
 		
 	}
 	
@@ -223,9 +226,13 @@ export class WorkspacesState {
 				ignore: settings.get('subfolder.ignore', []),
 			})
 		])
-		.then(() => this.refreshWorkspacesCache())
-		.then(() => this.cleanupUnknownPaths())
-		.then(() => this._onDidChangeCache.fire(this.cache));
+		.then(() => {
+			
+			this.rebuildWorkspacesCache();
+			this.cleanupUnknownPaths();
+			this._onDidChangeCache.fire(this.workspacesCache);
+			
+		});
 		
 	}
 	

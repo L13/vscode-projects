@@ -51,7 +51,7 @@ export function activate (context:vscode.ExtensionContext) {
 	const workspaceGroupsState = WorkspaceGroupsState.createWorkspaceGroupsState(context);
 	const workspacesProvider = WorkspacesProvider.createWorkspacesProvider({
 		hotkeySlots: hotkeySlotsState,
-		workspaces: settings.get('useCacheForDetectedProjects') ? workspacesState.getWorkspacesCache() : null,
+		workspaces: workspacesState.workspacesCache,
 		workspaceGroups: workspaceGroupsState.getWorkspaceGroups(),
 		simpleGroups: workspaceGroupsState.getSimpleGroups(),
 		typeGroups: workspaceGroupsState.getTypeGroups(),
@@ -120,7 +120,11 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	}));
 	
-	subscriptions.push(projectsState.onDidChangeProjects(() => workspacesState.refreshWorkspacesCache()));
+	subscriptions.push(projectsState.onDidChangeProjects(() => {
+		
+		workspacesState.refreshWorkspacesCache();
+		
+	}));
 	
 	subscriptions.push(workspacesState.onDidUpdateCache((workspaces) => {
 		

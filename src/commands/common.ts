@@ -51,10 +51,12 @@ export function activate (context:vscode.ExtensionContext) {
 				favoriteGroups: favoriteGroupsState.getFavoriteGroups(),
 			});
 			
-			WorkspacesProvider.currentWorkspacesProvider?.refresh({
-				workspaces: workspacesState.getWorkspacesCache(),
-				workspaceGroups: workspaceGroupsState.getWorkspaceGroups(),
-			});
+			if (workspacesState.workspacesCache) {
+				WorkspacesProvider.currentWorkspacesProvider?.refresh({
+					workspaces: workspacesState.getWorkspacesCache(),
+					workspaceGroups: workspaceGroupsState.getWorkspaceGroups(),
+				});
+			}
 		}
 		
 	}));
