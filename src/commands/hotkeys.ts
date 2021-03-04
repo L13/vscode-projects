@@ -23,12 +23,12 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	const hotkeySlots = HotkeySlotsState.createHotkeySlotsState(context);
 	
-	hotkeySlots.onDidChangeSlots(() => {
+	context.subscriptions.push(hotkeySlots.onDidChangeSlots(() => {
 		
 		FavoritesProvider.currentFavoritesProvider?.refresh();
 		WorkspacesProvider.currentWorkspacesProvider?.refresh();
 		
-	});
+	}));
 	
 	hotkeySlots.saveCurrentWorkspace();
 	

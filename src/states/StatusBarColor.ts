@@ -63,7 +63,7 @@ export class StatusBarColorState {
 		
 		if (hasChangedColor) {
 			states.updateProjects(this.context, projects);
-			this._onDidChangeColor.fire();
+			this._onDidChangeColor.fire(undefined);
 		}
 		
 	}
@@ -79,7 +79,7 @@ export class StatusBarColorState {
 				states.updateProjects(this.context, projects);
 				settings.updateStatusBarColorSettings(project.path, colors[color]);
 				this._onDidUpdateColor.fire(project);
-				this._onDidChangeColor.fire();
+				this._onDidChangeColor.fire(undefined);
 				break;
 			}
 		}

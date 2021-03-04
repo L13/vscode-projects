@@ -6,10 +6,9 @@ import { sortCaseInsensitive } from '../@l13/arrays';
 import { formatLabel } from '../@l13/formats';
 import { isMacOs } from '../@l13/platforms';
 
-import { Project, WorkspaceQuickPickItem } from '../@types/workspaces';
+import { Project } from '../@types/workspaces';
 
 import * as dialogs from '../common/dialogs';
-import * as files from '../common/files';
 import * as settings from '../common/settings';
 import * as states from '../common/states';
 
@@ -43,8 +42,8 @@ export class ProjectsState {
 	private _onDidDeleteProject:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
 	public readonly onDidDeleteProject:vscode.Event<Project> = this._onDidDeleteProject.event;
 	
-	private _onDidChangeWorkspaces:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
-	public readonly onDidChangeWorkspaces:vscode.Event<undefined> = this._onDidChangeWorkspaces.event;
+	private _onDidChangeProjects:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
+	public readonly onDidChangeProjects:vscode.Event<Project[]> = this._onDidChangeProjects.event;
 	
 	public async addProject () {
 		
@@ -69,7 +68,7 @@ export class ProjectsState {
 		
 		states.updateProjects(this.context, projects);
 		
-		this._onDidChangeWorkspaces.fire();
+		this._onDidChangeProjects.fire(projects);
 		
 	}
 	
@@ -96,7 +95,7 @@ export class ProjectsState {
 		
 		states.updateProjects(this.context, projects);
 		
-		this._onDidChangeWorkspaces.fire();
+		this._onDidChangeProjects.fire(projects);
 		
 	}
 	
@@ -118,12 +117,11 @@ export class ProjectsState {
 			
 			if (!value) return;
 			
-			const newProject:Project = addProject(projects, fsPath, value);
+			addProject(projects, fsPath, value);
 			
 			states.updateProjects(this.context, projects);
 			
-			this._onDidUpdateProject.fire(newProject);
-			this._onDidChangeWorkspaces.fire();
+			this._onDidChangeProjects.fire(projects);
 			
 		} else if (vscode.workspace.workspaceFile && vscode.workspace.workspaceFile.scheme === 'untitled') {
 			vscode.window.showWarningMessage(`Please save your current workspace first.`);
@@ -141,7 +139,7 @@ export class ProjectsState {
 				project.label = favorite.label;
 				projects.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				states.updateProjects(this.context, projects);
-				this._onDidChangeWorkspaces.fire();
+				this._onDidChangeProjects.fire(projects);
 				break;
 			}
 		}
@@ -172,20 +170,23 @@ export class ProjectsState {
 	
 	public async removeProject (project:Project) {
 		
-		if (await dialogs.confirm(`Delete project "${project.label}"?`, 'Delete')) {
-			
-			const projects = states.getProjects(this.context);
-			const fsPath = project.path;
-			
-			for (let i = 0; i < projects.length; i++) {
-				if (projects[i].path === fsPath) {
-					projects.splice(i, 1);
-					states.updateProjects(this.context, projects);
-					if (project.color) settings.updateStatusBarColorSettings(project.path, colors[0]);
-					this._onDidChangeWorkspaces.fire();
-					this._onDidDeleteProject.fire(project);
-					return;
-				}
+		if (settings.get('confirmDeleteProject', true)) {
+			const BUTTON_DELETE_DONT_SHOW_AGAIN = `Delete, don't show again`;
+			const value = await dialogs.confirm(`Delete project "${project.label}"?`, 'Delete', BUTTON_DELETE_DONT_SHOW_AGAIN);
+			if (!value) return;
+			if (value === BUTTON_DELETE_DONT_SHOW_AGAIN) settings.update('confirmDeleteProject', false);
+		}
+		
+		const projects = states.getProjects(this.context);
+		const fsPath = project.path;
+		
+		for (let i = 0; i < projects.length; i++) {
+			if (projects[i].path === fsPath) {
+				projects.splice(i, 1);
+				states.updateProjects(this.context, projects);
+				if (project.color) settings.updateStatusBarColorSettings(project.path, colors[0]);
+				this._onDidDeleteProject.fire(project);
+				return;
 			}
 		}
 		
@@ -195,7 +196,7 @@ export class ProjectsState {
 		
 		if (await dialogs.confirm(`Delete all projects?'`, 'Delete')) {
 			states.updateProjects(this.context, []);
-			this._onDidChangeWorkspaces.fire();
+			this._onDidChangeProjects.fire([]);
 		}
 		
 	}
@@ -204,7 +205,7 @@ export class ProjectsState {
 
 //	Functions __________________________________________________________________
 
-function addProject (projects:Project[], fsPath:string, value:string) :Project {
+function addProject (projects:Project[], fsPath:string, value:string) {
 	
 	const project:Project = {
 		label: value,
@@ -215,7 +216,5 @@ function addProject (projects:Project[], fsPath:string, value:string) :Project {
 	projects.push(project);
 	
 	projects.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-	
-	return project;
 	
 }

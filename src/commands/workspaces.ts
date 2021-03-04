@@ -37,6 +37,8 @@ import { StatusBar } from '../statusbar/StatusBar';
 
 export function activate (context:vscode.ExtensionContext) {
 	
+	const subscriptions = context.subscriptions;
+	
 	const favoritesState = FavoritesState.createFavoritesState(context);
 	const favoriteGroupsState = FavoriteGroupsState.createFavoriteGroupsState(context);
 	
@@ -60,8 +62,17 @@ export function activate (context:vscode.ExtensionContext) {
 	});
 	
 	
-	treeView.onDidCollapseElement(({ element }) => saveCollapseState(workspaceGroupsState, <GroupTreeItem>element, true));
-	treeView.onDidExpandElement(({ element }) => saveCollapseState(workspaceGroupsState, <GroupTreeItem>element, false));
+	subscriptions.push(treeView.onDidCollapseElement(({ element }) => {
+		
+		saveCollapseState(workspaceGroupsState, <GroupTreeItem>element, true);
+		
+	}));
+	
+	subscriptions.push(treeView.onDidExpandElement(({ element }) => {
+		
+		saveCollapseState(workspaceGroupsState, <GroupTreeItem>element, false);
+		
+	}));
 	
 	treeView.onDidChangeSelection((event) => {
 		
@@ -72,7 +83,7 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	});
 		
-	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration((event) => {
+	subscriptions.push(vscode.workspace.onDidChangeConfiguration((event) => {
 		
 		if (event.affectsConfiguration('l13Projects.sortWorkspacesBy')) {
 			workspacesProvider.sortWorkspacesBy = settings.get('sortWorkspacesBy');
@@ -81,17 +92,19 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	}));
 	
-	workspacesProvider.onDidChangeTreeData(() => StatusBar.current?.update());
-	workspacesProvider.onWillInitCache(() => workspacesState.detectWorkspaces());
+	subscriptions.push(workspacesProvider.onDidChangeTreeData(() => StatusBar.current?.update()));
+	subscriptions.push(workspacesProvider.onWillInitView(() => workspacesState.detectWorkspaces()));
 	
-	projectsState.onDidUpdateProject((project) => {
+	subscriptions.push(projectsState.onDidUpdateProject((project) => {
 		
 		favoritesState.updateFavorite(project);
 		hotkeySlotsState.update(project);
 		
-	});
+		workspacesState.refreshWorkspacesCache();
+		
+	}));
 	
-	projectsState.onDidDeleteProject((project) => {
+	subscriptions.push(projectsState.onDidDeleteProject((project) => {
 		
 		workspacesState.refreshWorkspacesCache();
 		
@@ -105,62 +118,57 @@ export function activate (context:vscode.ExtensionContext) {
 			hotkeySlotsState.remove(project);
 		}
 		
-	});
+	}));
 	
-	projectsState.onDidChangeWorkspaces(() => {
-		
-		workspacesState.refreshWorkspacesCache();
-		workspacesProvider.refresh({ workspaces: workspacesState.getWorkspacesCache() });
-		
-	});
+	subscriptions.push(projectsState.onDidChangeProjects(() => workspacesState.refreshWorkspacesCache()));
 	
-	workspacesState.onDidChangeCache(() => {
+	subscriptions.push(workspacesState.onDidUpdateCache((workspaces) => {
 		
 		workspacesProvider.refresh({
-			workspaces: workspacesState.getWorkspacesCache(),
-			workspaceGroups: workspaceGroupsState.getWorkspaceGroups(),
+			workspaces,
 		});
 		
-	});
+	}));
 	
-	workspaceGroupsState.onDidUpdateWorkspaceGroup((workspaceGroup) => {
+	subscriptions.push(workspacesState.onDidChangeCache((workspaces) => {
+		
+		workspacesProvider.refresh({
+			workspaces,
+		});
+		
+	}));
+	
+	subscriptions.push(workspaceGroupsState.onDidUpdateWorkspaceGroup((workspaceGroup) => {
 		
 		const workspaces = workspaceGroup.paths.map((path) => workspacesState.getWorkspaceByPath(path));
 		
 		favoriteGroupsState.updateFavoriteGroup(workspaceGroup, workspaces);
 		hotkeySlotsState.updateGroup(workspaceGroup);
 		
-	});
+	}));
 	
-	workspaceGroupsState.onDidChangeWorkspaceGroups(() => {
+	subscriptions.push(workspaceGroupsState.onDidChangeWorkspaceGroups(() => {
 		
 		workspacesProvider.refresh({
 			workspaceGroups: workspaceGroupsState.getWorkspaceGroups(),
 		});
 		
-	});
+	}));
 	
-	workspaceGroupsState.onDidDeleteWorkspaceGroup((workspaceGroup) => {
+	subscriptions.push(workspaceGroupsState.onDidDeleteWorkspaceGroup((workspaceGroup) => {
 		
 		favoriteGroupsState.removeFavoriteGroup(workspaceGroup, true);
 		hotkeySlotsState.removeGroup(workspaceGroup);
 		
-	});
+	}));
 	
-	statusBarColorState.onDidUpdateColor((project) => {
+	subscriptions.push(statusBarColorState.onDidUpdateColor((project) => {
 		
 		favoritesState.updateFavorite(project);
 		
-	});
+	}));
 	
-	statusBarColorState.onDidChangeColor(() => {
-		
-		workspacesState.refreshWorkspacesCache();
-		workspacesProvider.refresh({ workspaces: workspacesState.getWorkspacesCache() });
-		
-	});
-	
-	context.subscriptions.push(treeView);
+	subscriptions.push(treeView);
 	
 	commands.register(context, {
 		
@@ -177,7 +185,7 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspaces.addProjectWorkspace': () => projectsState.addProjectWorkspace(),
 		'l13Projects.action.workspaces.saveProject': () => projectsState.saveProject(),
 		'l13Projects.action.workspaces.saveDetectedProject': ({ project }:WorkspaceTreeItems) => projectsState.saveProject(project),
-		'l13Projects.action.workspaces.pickWorkspace': async () => workspacesState.pickWorkspace(),
+		'l13Projects.action.workspaces.pickWorkspace': () => workspacesState.pickWorkspace(),
 		'l13Projects.action.workspaces.refresh': () => {
 			
 			statusBarColorState.detectProjectColors();

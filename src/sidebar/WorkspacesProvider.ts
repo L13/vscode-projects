@@ -51,14 +51,14 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	private _onDidChangeTreeData:vscode.EventEmitter<WorkspacesTreeItems|undefined> = new vscode.EventEmitter<WorkspacesTreeItems|undefined>();
 	public readonly onDidChangeTreeData:vscode.Event<WorkspacesTreeItems|undefined> = this._onDidChangeTreeData.event;
 	
-	private _onWillInitCache:vscode.EventEmitter<WorkspacesTreeItems|undefined> = new vscode.EventEmitter<WorkspacesTreeItems|undefined>();
-	public readonly onWillInitCache:vscode.Event<WorkspacesTreeItems|undefined> = this._onWillInitCache.event;
+	private _onWillInitView:vscode.EventEmitter<WorkspacesTreeItems|undefined> = new vscode.EventEmitter<WorkspacesTreeItems|undefined>();
+	public readonly onWillInitView:vscode.Event<WorkspacesTreeItems|undefined> = this._onWillInitView.event;
 	
 	private disposables:vscode.Disposable[] = [];
 	
 	public sortWorkspacesBy:WorkspaceSorting = settings.get('sortWorkspacesBy');
 	
-	private cache:Project[] = null;
+	private workspaces:Project[] = null;
 	private workspaceGroups:WorkspaceGroup[] = [];
 	
 	private slots:HotkeySlotsState = null;
@@ -85,7 +85,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	private constructor ({ hotkeySlots, workspaces, workspaceGroups, simpleGroups, typeGroups }:WorkspacesStates) {
 		
-		this.cache = workspaces;
+		this.workspaces = workspaces;
 		this.workspaceGroups = workspaceGroups;
 		
 		this.slots = hotkeySlots;
@@ -147,12 +147,12 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	public refresh (refreshStates?:RefreshWorkspacesStates) {
+	public refresh (states?:RefreshWorkspacesStates) {
 		
-		if (refreshStates?.workspaces) this.cache = refreshStates.workspaces;
-		if (refreshStates?.workspaceGroups) this.workspaceGroups = refreshStates.workspaceGroups;
+		if (states?.workspaces) this.workspaces = states.workspaces;
+		if (states?.workspaceGroups) this.workspaceGroups = states.workspaceGroups;
 		
-		this._onDidChangeTreeData.fire();
+		this._onDidChangeTreeData.fire(undefined);
 		
 	}
 	
@@ -182,7 +182,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		const slots = this.slots;
 		let hasCurrentWorkspace = false;
 		
-		this.cache.forEach((workspace) => {
+		this.workspaces.forEach((workspace) => {
 			
 			if (paths.includes(workspace.path)) return;
 			
@@ -209,7 +209,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		const slots = this.slots;
 		let hasCurrentWorkspace = false;
 		
-		this.cache.forEach((workspace) => {
+		this.workspaces.forEach((workspace) => {
 			
 			if (!paths.includes(workspace.path)) return;
 					
@@ -234,7 +234,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		this.groupSimples.forEach((group) => {
 			
-			if (this.cache.some((workspace) => group.projectTypes.includes(workspace.type)) || group.type === 'project' && isUnknownWorkspace) {
+			if (this.workspaces.some((workspace) => group.projectTypes.includes(workspace.type)) || group.type === 'project' && isUnknownWorkspace) {
 				list.push(new GroupSimpleTreeItem(group));
 			}
 			
@@ -251,7 +251,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		this.workspaceGroups.forEach((workspaceGroup) => paths = paths.concat(workspaceGroup.paths));
 		
-		this.cache.forEach((workspace) => {
+		this.workspaces.forEach((workspace) => {
 			
 			if (paths.includes(workspace.path)) return;
 						
@@ -300,7 +300,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		this.groupTypes.forEach((group) => {
 			
-			if (this.cache.some((workspace) => workspace.type === group.type
+			if (this.workspaces.some((workspace) => workspace.type === group.type
 			|| group.type === 'folder' && isUnknownWorkspace && !isCodeWorkspace
 			|| group.type === 'folders' && isUnknownWorkspace && isCodeWorkspace)) {
 				list.push(new GroupTypeTreeItem(group));
@@ -320,7 +320,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		this.workspaceGroups.forEach((workspaceGroup) => paths = paths.concat(workspaceGroup.paths));
 		
-		this.cache.forEach((workspace) => {
+		this.workspaces.forEach((workspace) => {
 			
 			if (paths.includes(workspace.path)) return;
 					
@@ -368,12 +368,12 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	public async getChildren (element?:WorkspacesTreeItems) {
+	public getChildren (element?:WorkspacesTreeItems) {
 		
 		const list:WorkspacesTreeItems[] = [];
 		
-		if (!this.cache) {
-			this._onWillInitCache.fire();
+		if (!this.workspaces) {
+			this._onWillInitView.fire(undefined);
 			return list;
 		}
 		
@@ -400,7 +400,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		if (!workspacePath) return false;
 		
-		return !this.cache.some((project) => workspacePath === project.path);
+		return !this.workspaces.some((project) => workspacePath === project.path);
 		
 	}
 	

@@ -15,7 +15,7 @@ const findRegExpChars:RegExp = /([\\\[\]\.\*\^\$\|\+\-\{\}\(\)\?\!\=\:\,])/g;
 
 //	Exports ____________________________________________________________________
 
-export function walktree (cwd:string, options:Callback|Options, callback?:Callback) {
+export function walkTree (cwd:string, options:Callback|Options, callback?:Callback) {
 	
 	callback = typeof options === 'function' ? options : callback;
 	

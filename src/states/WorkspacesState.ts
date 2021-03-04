@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
 import { formatLabel } from '../@l13/formats';
-import { subfolders, walktree } from '../@l13/fse';
+import { subfolders, walkTree } from '../@l13/fse';
 
 import { FileMap, Options } from '../@types/files';
 import { Project, UpdateCacheCallback, WorkspaceQuickPickItem, WorkspaceTypes } from '../@types/workspaces';
@@ -35,14 +35,14 @@ export class WorkspacesState {
 		
 	}
 	
-	// private _onDidUpdateCache:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
-	// public readonly onDidUpdateCache:vscode.Event<Project[]> = this._onDidUpdateCache.event;
+	private _onDidUpdateCache:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
+	public readonly onDidUpdateCache:vscode.Event<Project[]> = this._onDidUpdateCache.event;
 	
 	// private _onDidDeleteCache:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
 	// public readonly onDidDeleteCache:vscode.Event<Project[]> = this._onDidDeleteCache.event;
 	
-	private _onDidChangeCache:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
-	public readonly onDidChangeCache:vscode.Event<undefined> = this._onDidChangeCache.event;
+	private _onDidChangeCache:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
+	public readonly onDidChangeCache:vscode.Event<Project[]> = this._onDidChangeCache.event;
 	
 	private projects:Project[] = [];
 	
@@ -156,14 +156,14 @@ export class WorkspacesState {
 		this.projects = states.getProjects(this.context);
 		this.projects.forEach((project) => project.deleted = !fs.existsSync(project.path));
 		
-		const all = (<Project[]>[]).concat(
-			this.projects,
-			this.gitCache,
-			this.vscodeCache,
-			this.workspaceCache,
-			this.subfolderCache,
-		);
 		const once:{ [name:string]:Project } = {};
+		const all = [
+			...this.projects,
+			...this.gitCache,
+			...this.vscodeCache,
+			...this.workspaceCache,
+			...this.subfolderCache,
+		];
 		
 		all.forEach((workspace) => {
 			
@@ -186,6 +186,7 @@ export class WorkspacesState {
 		this.cache = Object.values(once).sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 		
 		states.updateWorkspacesCache(this.context, this.cache);
+		this._onDidUpdateCache.fire(this.cache);
 		
 	}
 	
@@ -195,41 +196,45 @@ export class WorkspacesState {
 		const vscodeFolders = settings.get('vsCode.folders', []);
 		const workspaceFolders = settings.get('workspace.folders', []);
 		const subfolderFolders = settings.get('subfolder.folders', []);
-		const promises:Promise<any>[] = [];
 		
-		return Promise.all(promises.concat(this.detectWorkspacesFor(states.updateGitCache, this.gitCache = [], 'git', gitFolders, {
-			find: findGitFolder,
-			type: 'folder',
-			maxDepth: settings.get('git.maxDepthRecursion', 1),
-			ignore: settings.get('git.ignore', []),
-		}), this.detectWorkspacesFor(states.updateVSCodeCache, this.vscodeCache = [], 'vscode', vscodeFolders, {
-			find: findVSCodeFolder,
-			type: 'folder',
-			maxDepth: settings.get('vsCode.maxDepthRecursion', 1),
-			ignore: settings.get('vsCode.ignore', []),
-		}), this.detectWorkspacesFor(states.updateVSCodeWorkspaceCache, this.workspaceCache = [], 'workspace', workspaceFolders, {
-			find: settings.findExtWorkspace,
-			type: 'file',
-			maxDepth: settings.get('workspace.maxDepthRecursion', 1),
-			ignore: settings.get('workspace.ignore', []),
-		}), this.detectWorkspacesFor(states.updateSubfolderCache, this.subfolderCache = [], 'subfolder', subfolderFolders, {
-			find: null,
-			type: 'folder',
-			maxDepth: 1,
-			ignore: settings.get('subfolder.ignore', []),
-		})))
+		return Promise.all([
+			this.detectWorkspacesOfType('git', states.updateGitCache, this.gitCache = [], gitFolders, {
+				find: findGitFolder,
+				type: 'folder',
+				maxDepth: settings.get('git.maxDepthRecursion', 1),
+				ignore: settings.get('git.ignore', []),
+			}),
+			this.detectWorkspacesOfType('vscode', states.updateVSCodeCache, this.vscodeCache = [], vscodeFolders, {
+				find: findVSCodeFolder,
+				type: 'folder',
+				maxDepth: settings.get('vsCode.maxDepthRecursion', 1),
+				ignore: settings.get('vsCode.ignore', []),
+			}),
+			this.detectWorkspacesOfType('workspace', states.updateVSCodeWorkspaceCache, this.workspaceCache = [], workspaceFolders, {
+				find: settings.findExtWorkspace,
+				type: 'file',
+				maxDepth: settings.get('workspace.maxDepthRecursion', 1),
+				ignore: settings.get('workspace.ignore', []),
+			}),
+			this.detectWorkspacesOfType('subfolder', states.updateSubfolderCache, this.subfolderCache = [], subfolderFolders, {
+				find: null,
+				type: 'folder',
+				maxDepth: 1,
+				ignore: settings.get('subfolder.ignore', []),
+			})
+		])
 		.then(() => this.refreshWorkspacesCache())
 		.then(() => this.cleanupUnknownPaths())
-		.then(() => this._onDidChangeCache.fire());
+		.then(() => this._onDidChangeCache.fire(this.cache));
 		
 	}
 	
-	private detectWorkspacesFor (updateCacheCallback:UpdateCacheCallback, workspaces:Project[], type:WorkspaceTypes, paths:string[], options:Options) {
+	private detectWorkspacesOfType (type:WorkspaceTypes, updateCacheCallback:UpdateCacheCallback, workspaces:Project[], paths:string[], options:Options) {
 		
 		const promises:Promise<FileMap>[] = type === 'subfolder' ? createSubfolderDetection(paths, options) : createWorkspaceDetection(paths, options);
 		
 		if (promises.length) {
-			return [Promise.all(promises).then((results) => {
+			return Promise.all(promises).then((results) => {
 				
 				results.forEach((files) => {
 					
@@ -248,10 +253,12 @@ export class WorkspacesState {
 				
 				updateCacheCallback(this.context, workspaces);
 				
-			}, (error) => { vscode.window.showErrorMessage(error.message); })];
+			}, (error) => { vscode.window.showErrorMessage(error.message); });
 		}
 		
-		return [];
+		updateCacheCallback(this.context, workspaces);
+		
+		return Promise.resolve();
 		
 	}
 	
@@ -268,7 +275,7 @@ function createWorkspaceDetection (paths:string[], options:Options) {
 		if (fs.existsSync(path)) {
 			promises.push(new Promise((resolve, reject) => {
 				
-				walktree(path, options, (error, result) => {
+				walkTree(path, options, (error, result) => {
 					
 					if (error) reject(error);
 					else resolve(result);

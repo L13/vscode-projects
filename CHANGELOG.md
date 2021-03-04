@@ -5,10 +5,10 @@ All notable changes to the "Projects" extension will be documented in this file.
 
 ### Added
 - Added groups for favorites and workspaces.
-- Added `Group` to `l13Projects.sortWorkspacesBy`.
 
 ### Changed
 - Changed context group for `Open in current Window` and `Open in new Window`.
+- Refactored extension.
 
 ## [0.17.0] - 2021-01-31
 

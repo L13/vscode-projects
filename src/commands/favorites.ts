@@ -29,6 +29,8 @@ import { StatusBar } from '../statusbar/StatusBar';
 
 export function activate (context:vscode.ExtensionContext) {
 	
+	const subscriptions = context.subscriptions;
+	
 	const hotkeySlotsState = HotkeySlotsState.createHotkeySlotsState(context);
 	
 	const favoritesState = FavoritesState.createFavoritesState(context);
@@ -46,57 +48,62 @@ export function activate (context:vscode.ExtensionContext) {
 	const workspacesState = ProjectsState.createProjectsState(context);
 	const workspaceGroupState = WorkspaceGroupsState.createWorkspaceGroupsState(context);
 	
-	treeView.onDidCollapseElement(({ element }) => {
+	subscriptions.push(treeView.onDidCollapseElement(({ element }) => {
 		
 		favoriteGroupsState.saveFavoriteGroupState((<FavoriteGroupTreeItem>element), true);
 		
-	});
+	}));
 	
-	treeView.onDidExpandElement(({ element }) => {
+	subscriptions.push(treeView.onDidExpandElement(({ element }) => {
 		
 		favoriteGroupsState.saveFavoriteGroupState((<FavoriteGroupTreeItem>element), false);
 		
-	});
+	}));
 	
-	favoritesProvider.onDidChangeTreeData(() => StatusBar.current?.update());
+	subscriptions.push(favoritesProvider.onDidChangeTreeData(() => StatusBar.current?.update()));
 	
-	favoritesState.onDidUpdateFavorite((favorite) => {
+	subscriptions.push(favoritesState.onDidChangeFavorites((favorites) => {
+		
+		favoritesProvider.refresh({ favorites });
+		
+	}));
+	
+	subscriptions.push(favoritesState.onDidUpdateFavorite((favorite) => {
 		
 		workspacesState.updateProject(favorite);
 		hotkeySlotsState.update(favorite);
 		
-	});
+	}));
 	
-	favoritesState.onDidDeleteFavorite((favorite) => {
+	subscriptions.push(favoritesState.onDidDeleteFavorite((favorite) => {
 		
 		favoriteGroupsState.removeFromFavoriteGroup(favorite);
 		
-	});
+	}));
 	
-	favoriteGroupsState.onDidUpdateFavoriteGroup((favoriteGroup) => {
+	subscriptions.push(favoriteGroupsState.onDidUpdateFavoriteGroup((favoriteGroup) => {
 		
 		workspaceGroupState.updateWorkspaceGroup(favoriteGroup);
 		hotkeySlotsState.updateGroup(favoriteGroup);
 		
-	});
+	}));
 	
-	favoriteGroupsState.onDidDeleteFavoriteGroup((favoriteGroup) => {
+	subscriptions.push(favoriteGroupsState.onDidDeleteFavoriteGroup((favoriteGroup) => {
 		
 		if (!workspaceGroupState.getWorkspaceGroupById(favoriteGroup.id)) {
 			hotkeySlotsState.removeGroup(favoriteGroup);
 		}
 		
-	});
+	}));
 	
-	favoritesState.onDidChangeFavorites((favorites) => favoritesProvider.refresh({ favorites }));
-	favoriteGroupsState.onDidChangeFavoriteGroups((favoriteGroups) => {
+	subscriptions.push(favoriteGroupsState.onDidChangeFavoriteGroups((favoriteGroups) => {
 		
 		favoritesProvider.refresh({
 			favorites: favoritesState.getFavorites(),
 			favoriteGroups
 		});
 		
-	});
+	}));
 	
 	commands.register(context, {
 		'l13Projects.action.favorite.addToGroup': ({ project }:FavoriteTreeItems) => favoriteGroupsState.addFavoriteToGroup(project),

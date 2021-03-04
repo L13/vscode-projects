@@ -42,8 +42,8 @@ export class WorkspaceGroupsState {
 	private _onDidDeleteWorkspaceGroup:vscode.EventEmitter<WorkspaceGroup> = new vscode.EventEmitter<WorkspaceGroup>();
 	public readonly onDidDeleteWorkspaceGroup:vscode.Event<WorkspaceGroup> = this._onDidDeleteWorkspaceGroup.event;
 	
-	private _onDidChangeWorkspaceGroups:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
-	public readonly onDidChangeWorkspaceGroups:vscode.Event<undefined> = this._onDidChangeWorkspaceGroups.event;
+	private _onDidChangeWorkspaceGroups:vscode.EventEmitter<WorkspaceGroup[]> = new vscode.EventEmitter<WorkspaceGroup[]>();
+	public readonly onDidChangeWorkspaceGroups:vscode.Event<WorkspaceGroup[]> = this._onDidChangeWorkspaceGroups.event;
 	
 	public getWorkspaceGroups () {
 		
@@ -102,7 +102,7 @@ export class WorkspaceGroupsState {
 		workspaceGroups.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
 		
 		states.updateWorkspaceGroups(this.context, workspaceGroups);
-		this._onDidChangeWorkspaceGroups.fire();
+		this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 		
 	}
 	
@@ -119,7 +119,7 @@ export class WorkspaceGroupsState {
 			workspaceGroup.paths.push(workspace.path);
 			workspaceGroup.paths.sort();
 			states.updateWorkspaceGroups(this.context, workspaceGroups);
-			this._onDidChangeWorkspaceGroups.fire();
+			this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 			this._onDidUpdateWorkspaceGroup.fire(workspaceGroup);
 		}
 		
@@ -135,7 +135,7 @@ export class WorkspaceGroupsState {
 				workspaceGroup.paths = favoriteGroup.paths;
 				workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				states.updateWorkspaceGroups(this.context, workspaceGroups);
-				this._onDidChangeWorkspaceGroups.fire();
+				this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 				break;
 			}
 		}
@@ -149,7 +149,7 @@ export class WorkspaceGroupsState {
 		
 		if (workspaceGroup) {
 			states.updateWorkspaceGroups(this.context, workspaceGroups);
-			this._onDidChangeWorkspaceGroups.fire();
+			this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 			this._onDidUpdateWorkspaceGroup.fire(workspaceGroup);
 		}
 		
@@ -171,7 +171,7 @@ export class WorkspaceGroupsState {
 				group.label = value;
 				workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				states.updateWorkspaceGroups(this.context, workspaceGroups);
-				this._onDidChangeWorkspaceGroups.fire();
+				this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 				this._onDidUpdateWorkspaceGroup.fire(group);
 				break;
 			}
@@ -192,7 +192,7 @@ export class WorkspaceGroupsState {
 					workspaceGroups.splice(i, 1);
 					states.updateWorkspaceGroups(this.context, workspaceGroups);
 					this._onDidDeleteWorkspaceGroup.fire(workspaceGroup);
-					this._onDidChangeWorkspaceGroups.fire();
+					this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 					break;
 				}
 			}
@@ -204,7 +204,7 @@ export class WorkspaceGroupsState {
 		
 		if (await dialogs.confirm(`Delete all workspace groups?'`, 'Delete')) {
 			states.updateWorkspaceGroups(this.context, []);
-			this._onDidChangeWorkspaceGroups.fire();
+			this._onDidChangeWorkspaceGroups.fire([]);
 		}
 		
 	}

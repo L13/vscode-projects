@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 
 import * as dialogs from '../common/dialogs';
 import * as files from '../common/files';
+import * as settings from '../common/settings';
 import * as states from '../common/states';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
@@ -72,7 +73,9 @@ export class FavoritesState {
 				paths: null,
 			}));
 			
-			const item = await vscode.window.showQuickPick(groups.concat(items), { placeHolder: 'Select a project' });
+			const item = await vscode.window.showQuickPick([...groups, ...items], {
+				placeHolder: 'Select a project',
+			});
 				
 			if (item) {
 				if (item.paths) files.openAll(item.paths);
@@ -140,17 +143,25 @@ export class FavoritesState {
 	
 	public async removeFavorite (favorite:Favorite, force?:boolean) {
 		
-		if (force || await dialogs.confirm(`Delete favorite "${favorite.label}"?`, 'Delete')) {
-			const favorites = states.getFavorites(this.context);
-			
-			for (let i = 0; i < favorites.length; i++) {
-				if (favorites[i].path === favorite.path) {
-					favorites.splice(i, 1);
-					states.updateFavorites(this.context, favorites);
-					this._onDidDeleteFavorite.fire(favorite);
-					this._onDidChangeFavorites.fire(favorites);
-					return;
-				}
+		let value:boolean|string = force;
+		
+		if (!value && settings.get('confirmDeleteFavorite', true)) {
+			const BUTTON_DELETE_DONT_SHOW_AGAIN = `Delete, don't show again`;
+			value = await dialogs.confirm(`Delete favorite "${favorite.label}"?`, 'Delete', BUTTON_DELETE_DONT_SHOW_AGAIN);
+			if (!value) return;
+			if (value === BUTTON_DELETE_DONT_SHOW_AGAIN) settings.update('confirmDeleteFavorite', false);
+		}
+		
+		const favorites = states.getFavorites(this.context);
+		const fsPath = favorite.path;
+		
+		for (let i = 0; i < favorites.length; i++) {
+			if (favorites[i].path === fsPath) {
+				favorites.splice(i, 1);
+				states.updateFavorites(this.context, favorites);
+				this._onDidDeleteFavorite.fire(favorite);
+				this._onDidChangeFavorites.fire(favorites);
+				break;
 			}
 		}
 		

@@ -755,17 +755,17 @@
 				},
 				{
 					"command": "l13Projects.action.workspace.assignSlot",
-					"group": "navigation@7",
+					"group": "navigation@8",
 					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(current-)?(favorite|project|subfavorite|subproject)-(folders?|git|subfolder|vscode|workspace)$/"
 				},
 				{
 					"command": "l13Projects.action.workspaces.group.assignSlot",
-					"group": "navigation@7",
+					"group": "navigation@8",
 					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
 				},
 				{
 					"command": "l13Projects.action.project.selectColor",
-					"group": "navigation@8",
+					"group": "navigation@9",
 					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?(project|subproject)-folders?$/"
 				},
 				{
@@ -978,6 +978,16 @@
 						"Group all workspaces by simple type.",
 						"Group all workspaces by type."
 					]
+				},
+				"l13Diff.confirmDeleteFavorite": {
+					"type": "boolean",
+					"default": true,
+					"description": "Controls weather a favorite should ask for confirmation when deleting it."
+				},
+				"l13Diff.confirmDeleteProject": {
+					"type": "boolean",
+					"default": true,
+					"description": "Controls weather a project should ask for confirmation when deleting it."
 				}
 			}
 		}

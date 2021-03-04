@@ -58,7 +58,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 		if (refreshStates?.favorites) this.favorites = refreshStates.favorites;
 		if (refreshStates?.favoriteGroups) this.favoriteGroups = refreshStates.favoriteGroups;
 		
-		this._onDidChangeTreeData.fire();
+		this._onDidChangeTreeData.fire(undefined);
 		
 	}
 	
