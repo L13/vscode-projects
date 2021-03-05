@@ -22,7 +22,7 @@ import { ProjectsState } from '../states/ProjectsState';
 import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 import { WorkspacesState } from '../states/WorkspacesState';
 
-import { StatusBarColorState } from '../statusbar/StatusBarColor';
+import { StatusBarColor } from '../statusbar/StatusBarColor';
 import { StatusBarInfo } from '../statusbar/StatusBarInfo';
 
 //	Variables __________________________________________________________________
@@ -44,10 +44,11 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	const hotkeySlotsState = HotkeySlotsState.createHotkeySlotsState(context);
 	
-	const statusBarInfo = StatusBarInfo.createStatusBarInfo(context);
-	const statusBarColorState = StatusBarColorState.createProjectsState(context);
-	
 	const projectsState = ProjectsState.createProjectsState(context);
+	
+	const statusBarInfo = StatusBarInfo.createStatusBarInfo(context);
+	const statusBarColorState = StatusBarColor.createStatusBarColor(context);
+	
 	const workspacesState = WorkspacesState.createWorkspacesState(context);
 	const workspaceGroupsState = WorkspaceGroupsState.createWorkspaceGroupsState(context);
 	const workspacesProvider = WorkspacesProvider.createWorkspacesProvider({
@@ -57,11 +58,15 @@ export function activate (context:vscode.ExtensionContext) {
 		simpleGroups: workspaceGroupsState.getSimpleGroups(),
 		typeGroups: workspaceGroupsState.getTypeGroups(),
 	});
+	
 	const treeView = vscode.window.createTreeView('l13ProjectsWorkspaces', {
 		treeDataProvider: workspacesProvider,
 		showCollapseAll: true,
 	});
 	
+//	Tree View
+	
+	subscriptions.push(treeView);
 	
 	subscriptions.push(treeView.onDidCollapseElement(({ element }) => {
 		
@@ -83,6 +88,8 @@ export function activate (context:vscode.ExtensionContext) {
 		}
 		
 	}));
+	
+//	Workspaces Provider
 		
 	subscriptions.push(vscode.workspace.onDidChangeConfiguration((event) => {
 		
@@ -94,6 +101,8 @@ export function activate (context:vscode.ExtensionContext) {
 	}));
 	
 	subscriptions.push(workspacesProvider.onWillInitView(() => workspacesState.detectWorkspaces()));
+	
+//	Projects
 	
 	subscriptions.push(projectsState.onDidUpdateProject((project) => {
 		
@@ -130,6 +139,8 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	}));
 	
+//	Workspaces
+	
 	subscriptions.push(workspacesState.onDidChangeCache((workspaces) => {
 		
 		workspacesProvider.refresh({
@@ -138,12 +149,21 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	}));
 	
+//	Workspace Groups
+	
 	subscriptions.push(workspaceGroupsState.onDidUpdateWorkspaceGroup((workspaceGroup) => {
 		
 		const workspaces = workspaceGroup.paths.map((path) => workspacesState.getWorkspaceByPath(path));
 		
 		favoriteGroupsState.updateFavoriteGroup(workspaceGroup, workspaces);
 		hotkeySlotsState.updateGroup(workspaceGroup);
+		
+	}));
+	
+	subscriptions.push(workspaceGroupsState.onDidDeleteWorkspaceGroup((workspaceGroup) => {
+		
+		favoriteGroupsState.removeFavoriteGroup(workspaceGroup, true);
+		hotkeySlotsState.removeGroup(workspaceGroup);
 		
 	}));
 	
@@ -155,12 +175,7 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	}));
 	
-	subscriptions.push(workspaceGroupsState.onDidDeleteWorkspaceGroup((workspaceGroup) => {
-		
-		favoriteGroupsState.removeFavoriteGroup(workspaceGroup, true);
-		hotkeySlotsState.removeGroup(workspaceGroup);
-		
-	}));
+//	Status Bar
 	
 	subscriptions.push(statusBarColorState.onDidUpdateColor((project) => {
 		
@@ -168,7 +183,7 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	}));
 	
-	subscriptions.push(treeView);
+//	Commands
 	
 	commands.register(context, {
 		
@@ -239,9 +254,9 @@ function saveCollapseState (workspaceGroupState:WorkspaceGroupsState, item:Group
 	
 }
 
-function changeStatusBarColor (statusBarColorState:StatusBarColorState, workspacesProvider:WorkspacesProvider, color:number) {
+function changeStatusBarColor (statusBarColorState:StatusBarColor, workspacesProvider:WorkspacesProvider, color:number) {
 	
-	statusBarColorState.assignColor(workspacesProvider.colorPickerProject, color);
+	statusBarColorState.assignProjectColor(workspacesProvider.colorPickerProject, color);
 	workspacesProvider.colorPickerProject = null;
 	
 }

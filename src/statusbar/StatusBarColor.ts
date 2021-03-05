@@ -19,13 +19,13 @@ import { colors } from './colors';
 
 //	Exports ____________________________________________________________________
 
-export class StatusBarColorState {
+export class StatusBarColor {
 	
-	private static currentStatusBarColorState:StatusBarColorState = null;
+	private static currentStatusBarColor:StatusBarColor = null;
 	
-	public static createProjectsState (context:vscode.ExtensionContext) {
+	public static createStatusBarColor (context:vscode.ExtensionContext) {
 		
-		return StatusBarColorState.currentStatusBarColorState || (StatusBarColorState.currentStatusBarColorState = new StatusBarColorState(context));
+		return StatusBarColor.currentStatusBarColor || (StatusBarColor.currentStatusBarColor = new StatusBarColor(context));
 		
 	}
 	
@@ -61,7 +61,7 @@ export class StatusBarColorState {
 		
 	}
 	
-	public assignColor (currentProject:Project, color:number) {
+	public assignProjectColor (currentProject:Project, color:number) {
 		
 		const projects = states.getProjects(this.context);
 		
