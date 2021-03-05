@@ -7,7 +7,7 @@ All notable changes to the "Projects" extension will be documented in this file.
 - Added groups for favorites and workspaces.
 
 ### Changed
-- Changed context group for `Open in current Window` and `Open in new Window`.
+- Changed context group for `Open in Current Window` and `Open in New Window` in VS Code explorer view.
 - Refactored extension.
 
 ## [0.17.0] - 2021-01-31

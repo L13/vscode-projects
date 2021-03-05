@@ -7,7 +7,7 @@ Manage your workspaces and projects in Visual Studio Code.
 ## What's new in Projects 0.18.0
 
 - Added groups for favorites and workspaces.
-- Changed context group for `Open in current Window` and `Open in new Window`.
+- Changed context group for `Open in Current Window` and `Open in New Window` in VS Code explorer view.
 
 ## Index
 

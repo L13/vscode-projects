@@ -253,7 +253,7 @@
 				"title": "Assign to Slot"
 			},
 			{
-				"command": "l13Projects.action.workspace.removeSlot",
+				"command": "l13Projects.action.workspace.clearSlot",
 				"title": "Projects: Clear Slot"
 			},
 			{
@@ -917,7 +917,7 @@
 					"items": {
 						"type": "string"
 					},
-					"description": "Indicates the folders to search for subfolder"
+					"description": "Indicates the folders to search for subfolders"
 				},
 				"l13Projects.subfolder.ignore": {
 					"type": "array",

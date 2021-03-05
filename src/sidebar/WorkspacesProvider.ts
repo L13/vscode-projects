@@ -152,7 +152,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		if (states?.workspaces) this.workspaces = states.workspaces;
 		if (states?.workspaceGroups) this.workspaceGroups = states.workspaceGroups;
 		
-		this._onDidChangeTreeData.fire(undefined);
+		if (this.workspaces) this._onDidChangeTreeData.fire(undefined);
 		
 	}
 	

@@ -105,9 +105,10 @@ export class ProjectsState {
 		
 		if (fsPath) {
 			const projects = states.getProjects(this.context);
+			const existingProject = projects.find(({ path }) => path === fsPath);
 			
-			if (projects.some(({ path }) => path === fsPath)) {
-				return vscode.window.showErrorMessage(`Project exists!`);
+			if (existingProject) {
+				return vscode.window.showErrorMessage(`Project "${existingProject.label}" exists!`);
 			}
 			
 			const value = await vscode.window.showInputBox({

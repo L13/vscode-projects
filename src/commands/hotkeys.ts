@@ -35,7 +35,7 @@ export function activate (context:vscode.ExtensionContext) {
 	commands.register(context, {
 		'l13Projects.action.workspace.assignSlot': async ({ project }) => hotkeySlots.assign(project),
 		'l13Projects.action.workspaces.group.assignSlot': async ({ group }) => hotkeySlots.assignGroup(group),
-		'l13Projects.action.workspace.removeSlot': () => hotkeySlots.clearSlot(),
+		'l13Projects.action.workspace.clearSlot': () => hotkeySlots.clearSlot(),
 		
 		'l13Projects.action.hotkey.slot1': () => hotkeySlots.open(1),
 		'l13Projects.action.hotkey.slot2': () => hotkeySlots.open(2),
