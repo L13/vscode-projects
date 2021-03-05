@@ -7,8 +7,6 @@ import * as favorites from './commands/favorites';
 import * as hotkeys from './commands/hotkeys';
 import * as workspaces from './commands/workspaces';
 
-import { StatusBar } from './statusbar/StatusBar';
-
 //	Variables __________________________________________________________________
 
 
@@ -20,8 +18,6 @@ import { StatusBar } from './statusbar/StatusBar';
 //	Exports ____________________________________________________________________
 
 export function activate (context:vscode.ExtensionContext) {
-	
-	StatusBar.create(context);
 	
 	common.activate(context);
 	favorites.activate(context);

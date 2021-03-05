@@ -35,12 +35,6 @@ export class WorkspacesState {
 		
 	}
 	
-	private _onDidUpdateCache:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
-	public readonly onDidUpdateCache:vscode.Event<Project[]> = this._onDidUpdateCache.event;
-	
-	// private _onDidDeleteCache:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
-	// public readonly onDidDeleteCache:vscode.Event<Project[]> = this._onDidDeleteCache.event;
-	
 	private _onDidChangeCache:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
 	public readonly onDidChangeCache:vscode.Event<Project[]> = this._onDidChangeCache.event;
 	
@@ -189,7 +183,7 @@ export class WorkspacesState {
 		this.rebuildWorkspacesCache();
 		this.cleanupUnknownPaths();
 		
-		this._onDidUpdateCache.fire(this.workspacesCache);
+		this._onDidChangeCache.fire(this.workspacesCache);
 		
 	}
 	
@@ -226,13 +220,7 @@ export class WorkspacesState {
 				ignore: settings.get('subfolder.ignore', []),
 			})
 		])
-		.then(() => {
-			
-			this.rebuildWorkspacesCache();
-			this.cleanupUnknownPaths();
-			this._onDidChangeCache.fire(this.workspacesCache);
-			
-		});
+		.then(() => this.refreshWorkspacesCache());
 		
 	}
 	

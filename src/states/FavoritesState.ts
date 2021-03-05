@@ -114,11 +114,11 @@ export class FavoritesState {
 		
 		for (const favorite of favorites) {
 			if (favorite.path === fsPath) {
-					const type = favorite.type = workspace.type;
-					if (type === 'folder' || type === 'folders') favorite.color = workspace.color;
-					else delete favorite.color;
-					favorite.label = workspace.label;
-					favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+				const type = favorite.type = workspace.type;
+				if (type === 'folder' || type === 'folders') favorite.color = workspace.color;
+				else delete favorite.color;
+				favorite.label = workspace.label;
+				favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				states.updateFavorites(this.context, favorites);
 				this._onDidChangeFavorites.fire(favorites);
 				break;

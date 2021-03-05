@@ -7,7 +7,7 @@ import { Project } from '../@types/workspaces';
 import * as settings from '../common/settings';
 import * as states from '../common/states';
 
-import { colors } from '../statusbar/colors';
+import { colors } from './colors';
 
 //	Variables __________________________________________________________________
 
@@ -34,37 +34,30 @@ export class StatusBarColorState {
 	private _onDidUpdateColor:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
 	public readonly onDidUpdateColor:vscode.Event<Project> = this._onDidUpdateColor.event;
 	
-	private _onDidChangeColor:vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
-	public readonly onDidChangeColor:vscode.Event<undefined> = this._onDidChangeColor.event;
-	
 	public detectProjectColors () {
 		
 		const projects = states.getProjects(this.context);
 		let hasChangedColor = false;
 		
-		projects.forEach((project) => {
-			
+		for (const project of projects) {
 			const statusBarColors = settings.getStatusBarColorSettings(project.path);
-			
 			if (statusBarColors) {
-				colors:for (let i = 1; i < colors.length; i++) {
+				detect:for (let i = 1; i < colors.length; i++) {
 					const color:any = colors[i];
 					for (const name in color) {
-						if (color[name] !== statusBarColors[name]) continue colors;
+						if (color[name] !== statusBarColors[name]) continue detect;
 					}
-					project.color = i;
-					hasChangedColor = true;
-					this._onDidUpdateColor.fire(project);
-					break colors;
+					if (project.color !== i) {
+						project.color = i;
+						this._onDidUpdateColor.fire(project);
+						hasChangedColor = true;
+					}
+					break detect;
 				}
 			}
-			
-		});
-		
-		if (hasChangedColor) {
-			states.updateProjects(this.context, projects);
-			this._onDidChangeColor.fire(undefined);
 		}
+		
+		if (hasChangedColor) states.updateProjects(this.context, projects);
 		
 	}
 	
@@ -79,7 +72,6 @@ export class StatusBarColorState {
 				states.updateProjects(this.context, projects);
 				settings.updateStatusBarColorSettings(project.path, colors[color]);
 				this._onDidUpdateColor.fire(project);
-				this._onDidChangeColor.fire(undefined);
 				break;
 			}
 		}

@@ -15,8 +15,6 @@ import { HotkeySlotsState } from '../states/HotkeySlotsState';
 import { ProjectsState } from '../states/ProjectsState';
 import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 
-import { StatusBar } from '../statusbar/StatusBar';
-
 //	Variables __________________________________________________________________
 
 
@@ -45,7 +43,7 @@ export function activate (context:vscode.ExtensionContext) {
 		showCollapseAll: true,
 	});
 	
-	const workspacesState = ProjectsState.createProjectsState(context);
+	const projectsState = ProjectsState.createProjectsState(context);
 	const workspaceGroupState = WorkspaceGroupsState.createWorkspaceGroupsState(context);
 	
 	subscriptions.push(treeView.onDidCollapseElement(({ element }) => {
@@ -60,8 +58,6 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	}));
 	
-	subscriptions.push(favoritesProvider.onDidChangeTreeData(() => StatusBar.current?.update()));
-	
 	subscriptions.push(favoritesState.onDidChangeFavorites((favorites) => {
 		
 		favoritesProvider.refresh({ favorites });
@@ -70,8 +66,8 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	subscriptions.push(favoritesState.onDidUpdateFavorite((favorite) => {
 		
-		workspacesState.updateProject(favorite);
 		hotkeySlotsState.update(favorite);
+		projectsState.updateProject(favorite); // updates also status bar info
 		
 	}));
 	

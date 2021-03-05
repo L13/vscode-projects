@@ -13,17 +13,17 @@ import { GroupSimpleTreeItem } from '../sidebar/trees/GroupSimpleTreeItem';
 import { GroupTypeTreeItem } from '../sidebar/trees/GroupTypeTreeItem';
 import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
 
+import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
+
 import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
 import { FavoritesState } from '../states/FavoritesState';
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
 import { ProjectsState } from '../states/ProjectsState';
-import { StatusBarColorState } from '../states/StatusBarColor';
 import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 import { WorkspacesState } from '../states/WorkspacesState';
 
-import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
-
-import { StatusBar } from '../statusbar/StatusBar';
+import { StatusBarColorState } from '../statusbar/StatusBarColor';
+import { StatusBarInfo } from '../statusbar/StatusBarInfo';
 
 //	Variables __________________________________________________________________
 
@@ -44,6 +44,7 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	const hotkeySlotsState = HotkeySlotsState.createHotkeySlotsState(context);
 	
+	const statusBarInfo = StatusBarInfo.createStatusBarInfo(context);
 	const statusBarColorState = StatusBarColorState.createProjectsState(context);
 	
 	const projectsState = ProjectsState.createProjectsState(context);
@@ -74,14 +75,14 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	}));
 	
-	treeView.onDidChangeSelection((event) => {
+	subscriptions.push(treeView.onDidChangeSelection((event) => {
 		
 		if (workspacesProvider.colorPickerProject && event.selection[0] !== workspacesProvider.colorPickerTreeItem) {
 			workspacesProvider.colorPickerProject = null;
 			workspacesProvider.refresh();
 		}
 		
-	});
+	}));
 		
 	subscriptions.push(vscode.workspace.onDidChangeConfiguration((event) => {
 		
@@ -92,7 +93,6 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	}));
 	
-	subscriptions.push(workspacesProvider.onDidChangeTreeData(() => StatusBar.current?.update()));
 	subscriptions.push(workspacesProvider.onWillInitView(() => workspacesState.detectWorkspaces()));
 	
 	subscriptions.push(projectsState.onDidUpdateProject((project) => {
@@ -101,6 +101,7 @@ export function activate (context:vscode.ExtensionContext) {
 		hotkeySlotsState.update(project);
 		
 		workspacesState.refreshWorkspacesCache();
+		statusBarInfo.refresh();
 		
 	}));
 	
@@ -118,19 +119,14 @@ export function activate (context:vscode.ExtensionContext) {
 			hotkeySlotsState.remove(project);
 		}
 		
+		statusBarInfo.refresh();
+		
 	}));
 	
 	subscriptions.push(projectsState.onDidChangeProjects(() => {
 		
 		workspacesState.refreshWorkspacesCache();
-		
-	}));
-	
-	subscriptions.push(workspacesState.onDidUpdateCache((workspaces) => {
-		
-		workspacesProvider.refresh({
-			workspaces,
-		});
+		statusBarInfo.refresh();
 		
 	}));
 	
