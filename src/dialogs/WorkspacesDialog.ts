@@ -67,7 +67,7 @@ export class WorkspacesDialog {
 			
 		});
 		
-		this.workspacesState.cache.forEach((project) => {
+		workspacesCache.forEach((project) => {
 			
 			items.push({
 				label: project.label,
