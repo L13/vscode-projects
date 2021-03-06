@@ -74,56 +74,6 @@ export class WorkspacesState {
 		
 	}
 	
-	public async pickWorkspace () {
-		
-		const items = await this.createQuickPickItems();
-		
-		const item = await vscode.window.showQuickPick(items, {
-			placeHolder: 'Select a project',
-		})
-		
-		if (item) {
-			if (item.paths) files.openAll(item.paths);
-			else files.open(item.description);
-		}
-		
-	}
-	
-	private async createQuickPickItems () {
-		
-		if (!this.workspacesCache) await this.detectWorkspaces();
-		
-		const items:WorkspaceQuickPickItem[] = [];
-		const workspaceGroups = states.getWorkspaceGroups(this.context);
-		
-		workspaceGroups.forEach((workspaceGroup) => {
-			
-			const paths = workspaceGroup.paths;
-			const names = this.workspacesCache.filter((workspace) => paths.includes(workspace.path));
-			
-			items.push({
-				label: workspaceGroup.label,
-				description: names.map((favorite) => favorite.label).join(', '),
-				paths: workspaceGroup.paths,
-			});
-			
-		});
-		
-		this.workspacesCache.forEach((project) => {
-			
-			items.push({
-				label: project.label,
-				description: project.path,
-				detail: project.deleted ? '$(alert) Path does not exist' : '',
-				paths: null,
-			});
-			
-		});
-		
-		return items;
-		
-	}
-	
 	private cleanupUnknownPaths () {
 		
 		const workspaceGroups = states.getWorkspaceGroups(this.context);

@@ -4,11 +4,9 @@ import * as vscode from 'vscode';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
 import { formatLabel } from '../@l13/formats';
-import { isMacOs } from '../@l13/platforms';
 
 import { Project } from '../@types/workspaces';
 
-import * as dialogs from '../common/dialogs';
 import * as settings from '../common/settings';
 import * as states from '../common/states';
 
@@ -45,11 +43,7 @@ export class ProjectsState {
 	private _onDidChangeProjects:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
 	public readonly onDidChangeProjects:vscode.Event<Project[]> = this._onDidChangeProjects.event;
 	
-	public async addProject () {
-		
-		const uris = isMacOs ? await dialogs.open() : await dialogs.openFolder();
-		
-		if (!uris) return;
+	public async addProject (uris:vscode.Uri[]) {
 		
 		const projects = states.getProjects(this.context);
 		const length = projects.length;
@@ -72,62 +66,23 @@ export class ProjectsState {
 		
 	}
 	
-	public async addProjectWorkspace () {
-		
-		const uris = await dialogs.openFile();
-		
-		if (!uris) return;
+	public getProjectByPath (fsPath:string) {
 		
 		const projects = states.getProjects(this.context);
-		const length = projects.length;
 		
-		uris.forEach((uri) => {
-			
-			const fsPath = uri.fsPath;
-			
-			if (projects.some(({ path }) => path === fsPath)) return;
-			
-			addProject(projects, fsPath, formatLabel(fsPath));
-			
-		});
+		return projects.find(({ path }) => path === fsPath) || null;
 		
-		if (projects.length === length) return;
+	}
+	
+	public async saveProject (fsPath:string, value:string) {
+		
+		const projects = states.getProjects(this.context);
+			
+		addProject(projects, fsPath, value);
 		
 		states.updateProjects(this.context, projects);
 		
 		this._onDidChangeProjects.fire(projects);
-		
-	}
-	
-	public async saveProject (project?:Project) {
-		
-		const fsPath:string = project ? project.path : settings.getCurrentWorkspacePath();
-		
-		if (fsPath) {
-			const projects = states.getProjects(this.context);
-			const existingProject = projects.find(({ path }) => path === fsPath);
-			
-			if (existingProject) {
-				return vscode.window.showErrorMessage(`Project "${existingProject.label}" exists!`);
-			}
-			
-			const value = await vscode.window.showInputBox({
-				value: formatLabel(fsPath),
-				placeHolder: 'Please enter a name for the project',
-			});
-			
-			if (!value) return;
-			
-			addProject(projects, fsPath, value);
-			
-			states.updateProjects(this.context, projects);
-			
-			this._onDidChangeProjects.fire(projects);
-			
-		} else if (vscode.workspace.workspaceFile && vscode.workspace.workspaceFile.scheme === 'untitled') {
-			vscode.window.showWarningMessage(`Please save your current workspace first.`);
-			vscode.commands.executeCommand('workbench.action.saveWorkspaceAs');
-		} else vscode.window.showErrorMessage(`No folder or workspace available!`);
 		
 	}
 	
@@ -149,20 +104,6 @@ export class ProjectsState {
 	
 	public async renameProject (project:Project) {
 		
-		const value = await vscode.window.showInputBox({
-			value: project.label,
-			placeHolder: 'Please enter a new name for the project',
-		});
-		
-		if (project.label === value || value === undefined) return;
-		
-		if (!value) {
-			vscode.window.showErrorMessage(`Project with no name is not valid!`);
-			return;
-		}
-		
-		project.label = value;
-		
 		this.updateProject(project);
 		
 		this._onDidUpdateProject.fire(project);
@@ -170,13 +111,6 @@ export class ProjectsState {
 	}
 	
 	public async removeProject (project:Project) {
-		
-		if (settings.get('confirmDeleteProject', true)) {
-			const BUTTON_DELETE_DONT_SHOW_AGAIN = `Delete, don't show again`;
-			const value = await dialogs.confirm(`Delete project "${project.label}"?`, 'Delete', BUTTON_DELETE_DONT_SHOW_AGAIN);
-			if (!value) return;
-			if (value === BUTTON_DELETE_DONT_SHOW_AGAIN) settings.update('confirmDeleteProject', false);
-		}
 		
 		const projects = states.getProjects(this.context);
 		const fsPath = project.path;
@@ -195,10 +129,8 @@ export class ProjectsState {
 	
 	public async clearProjects () {
 		
-		if (await dialogs.confirm(`Delete all projects?'`, 'Delete')) {
-			states.updateProjects(this.context, []);
-			this._onDidChangeProjects.fire([]);
-		}
+		states.updateProjects(this.context, []);
+		this._onDidChangeProjects.fire([]);
 		
 	}
 	

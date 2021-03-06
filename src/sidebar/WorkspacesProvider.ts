@@ -404,17 +404,6 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	public static addToWorkspace (project:Project) {
-		
-		const index:number = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.length : 0;
-		
-		vscode.workspace.updateWorkspaceFolders(index, null, {
-			name: project.label,
-			uri: vscode.Uri.file(project.path),
-		});
-		
-	}
-	
 }
 
 //	Functions __________________________________________________________________

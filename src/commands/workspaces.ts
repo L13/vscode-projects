@@ -2,11 +2,13 @@
 
 import * as vscode from 'vscode';
 
-import { GroupTreeItem, WorkspaceTreeItems } from '../@types/workspaces';
+import { GroupTreeItem, Project, WorkspaceTreeItems } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';
 import * as settings from '../common/settings';
+import { ProjectsDialog } from '../dialogs/ProjectsDialog';
+import { WorkspacesDialog } from '../dialogs/WorkspacesDialog';
 
 import { GroupCustomTreeItem } from '../sidebar/trees/GroupCustomTreeItem';
 import { GroupSimpleTreeItem } from '../sidebar/trees/GroupSimpleTreeItem';
@@ -45,12 +47,14 @@ export function activate (context:vscode.ExtensionContext) {
 	const hotkeySlotsState = HotkeySlotsState.createHotkeySlotsState(context);
 	
 	const projectsState = ProjectsState.createProjectsState(context);
+	const projectsDialog = ProjectsDialog.createProjectsDialog(projectsState);
 	
 	const statusBarInfo = StatusBarInfo.createStatusBarInfo(context);
 	const statusBarColorState = StatusBarColor.createStatusBarColor(context);
 	
 	const workspacesState = WorkspacesState.createWorkspacesState(context);
 	const workspaceGroupsState = WorkspaceGroupsState.createWorkspaceGroupsState(context);
+	const workspacesDialog = WorkspacesDialog.createWorkspacesDialog(workspacesState, workspaceGroupsState);
 	const workspacesProvider = WorkspacesProvider.createWorkspacesProvider({
 		hotkeySlots: hotkeySlotsState,
 		workspaces: workspacesState.workspacesCache,
@@ -191,16 +195,17 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspace.openInCurrentWindow': ({ project }:WorkspaceTreeItems) => files.open(project.path, false),
 		'l13Projects.action.workspace.openInNewWindow': ({ project }:WorkspaceTreeItems) => files.open(project.path, true),
 		
-		'l13Projects.action.workspace.addToWorkspace': ({ project }:WorkspaceTreeItems) => WorkspacesProvider.addToWorkspace(project),
+		'l13Projects.action.workspace.addToWorkspace': ({ project }:WorkspaceTreeItems) => addToWorkspace(project),
 		'l13Projects.action.workspace.addToFavorites': ({ project }:ProjectTreeItem) => favoritesState.addToFavorites(project),
 		'l13Projects.action.workspace.addToGroup': ({ project }:WorkspaceTreeItems) => workspaceGroupsState.addWorkspaceToGroup(project),
 		'l13Projects.action.workspace.removeFromGroup': ({ project }:WorkspaceTreeItems) => workspaceGroupsState.removeFromWorkspaceGroup(project),
 		
-		'l13Projects.action.workspaces.addProject': () => projectsState.addProject(),
-		'l13Projects.action.workspaces.addProjectWorkspace': () => projectsState.addProjectWorkspace(),
-		'l13Projects.action.workspaces.saveProject': () => projectsState.saveProject(),
-		'l13Projects.action.workspaces.saveDetectedProject': ({ project }:WorkspaceTreeItems) => projectsState.saveProject(project),
-		'l13Projects.action.workspaces.pickWorkspace': () => workspacesState.pickWorkspace(),
+		'l13Projects.action.workspaces.addProject': () => projectsDialog.addProject(),
+		'l13Projects.action.workspaces.addProjectWorkspace': () => projectsDialog.addProjectWorkspace(),
+		'l13Projects.action.workspaces.saveProject': () => projectsDialog.saveProject(),
+		'l13Projects.action.workspaces.saveDetectedProject': ({ project }:WorkspaceTreeItems) => projectsDialog.saveProject(project),
+		
+		'l13Projects.action.workspaces.pickWorkspace': () => workspacesDialog.pickWorkspace(),
 		'l13Projects.action.workspaces.refresh': () => {
 			
 			statusBarColorState.detectProjectColors();
@@ -220,8 +225,8 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspaces.group.remove': ({ group }:GroupCustomTreeItem) => workspaceGroupsState.removeWorkspaceGroup(group),
 		'l13Projects.action.workspaces.groups.clear': () => workspaceGroupsState.clearWorkspaceGroups(),
 		
-		'l13Projects.action.project.rename': ({ project }:ProjectTreeItem) => projectsState.renameProject(project),
-		'l13Projects.action.project.remove': ({ project }:ProjectTreeItem) => projectsState.removeProject(project),
+		'l13Projects.action.project.rename': ({ project }:ProjectTreeItem) => projectsDialog.renameProject(project),
+		'l13Projects.action.project.remove': ({ project }:ProjectTreeItem) => projectsDialog.deleteProject(project),
 		
 		'l13Projects.action.project.selectColor': ({ project }:ProjectTreeItem) => {
 			
@@ -239,7 +244,7 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.project.removeColor': () => changeStatusBarColor(statusBarColorState, workspacesProvider, 0),
 		'l13Projects.action.project.hideColorPicker': () => workspacesProvider.hideColorPicker(),
 		
-		'l13Projects.action.projects.clear': () => projectsState.clearProjects(),
+		'l13Projects.action.projects.clear': () => projectsDialog.clearProjects(),
 	});
 	
 }
@@ -258,5 +263,16 @@ function changeStatusBarColor (statusBarColorState:StatusBarColor, workspacesPro
 	
 	statusBarColorState.assignProjectColor(workspacesProvider.colorPickerProject, color);
 	workspacesProvider.colorPickerProject = null;
+	
+}
+
+function addToWorkspace (project:Project) {
+		
+	const index:number = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.length : 0;
+	
+	vscode.workspace.updateWorkspaceFolders(index, null, {
+		name: project.label,
+		uri: vscode.Uri.file(project.path),
+	});
 	
 }
