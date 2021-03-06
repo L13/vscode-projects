@@ -17,6 +17,7 @@ import {
 } from '../@types/workspaces';
 
 import * as settings from '../common/settings';
+import * as workspaces from '../common/workspaces';
 
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
 
@@ -296,7 +297,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	private addTypeGroups (list:WorkspacesTreeItems[], workspacePath:string) {
 		
 		const isUnknownWorkspace = this.isUnknownWorkspace(workspacePath);
-		const isCodeWorkspace = settings.isCodeWorkspace(workspacePath);
+		const isCodeWorkspace = workspaces.isCodeWorkspace(workspacePath);
 		
 		this.groupTypes.forEach((group) => {
 			
@@ -351,7 +352,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		list.unshift(new UnknownProjectTreeItem({
 			label: formatLabel(workspacePath),
 			path: workspacePath,
-			type: settings.isCodeWorkspace(workspacePath) ? 'folders' : 'folder',
+			type: workspaces.isCodeWorkspace(workspacePath) ? 'folders' : 'folder',
 		}));
 		
 	}
@@ -377,7 +378,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			return list;
 		}
 		
-		const workspacePath:string = settings.getCurrentWorkspacePath();
+		const workspacePath:string = workspaces.getCurrentWorkspacePath();
 		const sortWorkspacesBy = this.sortWorkspacesBy;
 		
 		if (element) {

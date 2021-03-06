@@ -5,11 +5,11 @@ import * as jsoncParser from 'jsonc-parser';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
+import { isCodeWorkspace } from './workspaces';
+
 import { StatusBarColors } from '../@types/workspaces';
 
 //	Variables __________________________________________________________________
-
-export const findExtWorkspace = /\.code-workspace$/;
 
 const COLOR_CUSTOMIZATIONS = 'workbench.colorCustomizations';
 
@@ -28,23 +28,6 @@ export function get (key:string, value?:any) {
 export function update (key:string, value:any, global:boolean = true) {
 	
 	return vscode.workspace.getConfiguration('l13Projects').update(key, value, global);
-	
-}
-
-export function isCodeWorkspace (workspacePath:string) {
-		
-	return findExtWorkspace.test(workspacePath);
-	
-}
-	
-export function getCurrentWorkspacePath () {
-	
-	const workspace = vscode.workspace;
-	let uri:undefined|vscode.Uri = workspace.workspaceFile;
-	
-	if (!uri && workspace.workspaceFolders) uri = workspace.workspaceFolders[0].uri;
-	
-	return uri && uri.scheme !== 'untitled' ? uri.fsPath : '';
 	
 }
 

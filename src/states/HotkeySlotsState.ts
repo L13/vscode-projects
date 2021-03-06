@@ -8,6 +8,7 @@ import { Project, WorkspaceGroup } from '../@types/workspaces';
 
 import * as files from '../common/files';
 import * as states from '../common/states';
+import { getCurrentWorkspacePath } from '../common/workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -211,9 +212,10 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public previousWorkspace (workspacePath:string) {
+	public previousWorkspace () {
 		
 		const workspacesPaths = states.getCurrentWorkspace(this.context);
+		const workspacePath = getCurrentWorkspacePath();
 		
 		if (workspacesPaths[1] && workspacesPaths[1] !== workspacePath) files.open(workspacesPaths[1]);
 	//	Fixes async saveCurrentWorkspace if keyboard shortcut was pressed multiple times really fast
@@ -221,9 +223,10 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public saveCurrentWorkspace (workspacePath:string) {
+	public saveCurrentWorkspace () {
 	
 		const workspacePaths = states.getCurrentWorkspace(this.context);
+		const workspacePath = getCurrentWorkspacePath();
 		
 		if (workspacePath && workspacePaths[0] !== workspacePath) {
 			workspacePaths.unshift(workspacePath);

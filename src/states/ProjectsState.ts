@@ -7,8 +7,8 @@ import { formatLabel } from '../@l13/formats';
 
 import { Project } from '../@types/workspaces';
 
-import * as settings from '../common/settings';
 import * as states from '../common/states';
+import { isCodeWorkspace } from '../common/workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -164,7 +164,7 @@ function addProject (projects:Project[], fsPath:string, value:string) {
 	const project:Project = {
 		label: value,
 		path: fsPath,
-		type: settings.isCodeWorkspace(fsPath) ? 'folders' : 'folder',
+		type: isCodeWorkspace(fsPath) ? 'folders' : 'folder',
 	};
 	
 	projects.push(project);

@@ -9,6 +9,7 @@ import { Project } from '../@types/workspaces';
 
 import * as dialogs from '../common/dialogs';
 import * as settings from '../common/settings';
+import { getCurrentWorkspacePath } from '../common/workspaces';
 
 import { ProjectsState } from '../states/ProjectsState';
 
@@ -56,7 +57,7 @@ export class ProjectsDialog {
 	
 	public async save (project?:Project) {
 		
-		const fsPath:string = project ? project.path : settings.getCurrentWorkspacePath();
+		const fsPath:string = project ? project.path : getCurrentWorkspacePath();
 		
 		if (fsPath) {
 			

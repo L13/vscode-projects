@@ -9,6 +9,7 @@ import { remove } from '../@l13/arrays';
 import { isMacOs, isWindows } from '../@l13/platforms';
 
 import * as settings from './settings';
+import { getCurrentWorkspacePath } from './workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -32,7 +33,7 @@ export function openAll (pathnames:string[], openInNewWindow?:boolean) {
 	
 	const newWindow = openInNewWindow ?? settings.get('openInNewWindow', false);
 	const sortedPaths = pathnames.slice().sort();
-	let currentWorkspacePath = settings.getCurrentWorkspacePath();
+	let currentWorkspacePath = getCurrentWorkspacePath();
 	
 	if (!newWindow) {
 		if (sortedPaths.includes(currentWorkspacePath)) remove(sortedPaths, currentWorkspacePath);

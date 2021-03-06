@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 
 import * as settings from '../common/settings';
+import { getCurrentWorkspacePath } from '../common/workspaces';
 
 import { InitialState } from '../@types/common';
 import { Favorite, FavoriteGroup, FavoritesStates, FavoritesTreeItems, RefreshFavoritesStates } from '../@types/favorites';
@@ -102,7 +103,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 
 function addItems (list:FavoritesTreeItems[], favorites:Favorite[], paths:string[], slots:HotkeySlotsState, isSubProject:boolean) {
 		
-	const workspacePath:string = settings.getCurrentWorkspacePath();
+	const workspacePath:string = getCurrentWorkspacePath();
 	let hasCurrentProject = false;
 	
 	favorites.forEach((favorite) => {

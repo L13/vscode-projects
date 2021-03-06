@@ -12,6 +12,7 @@ import { Project, UpdateCacheCallback, WorkspaceTypes } from '../@types/workspac
 
 import * as settings from '../common/settings';
 import * as states from '../common/states';
+import { findExtWorkspace } from '../common/workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -157,7 +158,7 @@ export class WorkspacesState {
 				ignore: settings.get('vsCode.ignore', []),
 			}),
 			this.detectWorkspacesOfType('workspace', states.updateVSCodeWorkspaceCache, this.workspaceCache = [], workspaceFolders, {
-				find: settings.findExtWorkspace,
+				find: findExtWorkspace,
 				type: 'file',
 				maxDepth: settings.get('workspace.maxDepthRecursion', 1),
 				ignore: settings.get('workspace.ignore', []),

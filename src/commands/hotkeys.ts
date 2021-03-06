@@ -3,7 +3,6 @@
 import * as vscode from 'vscode';
 
 import * as commands from '../common/commands';
-import * as settings from '../common/settings';
 
 import { HotkeySlotsDialog } from '../dialogs/HotkeySlotsDialog';
 
@@ -34,7 +33,7 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	}));
 	
-	hotkeySlotsState.saveCurrentWorkspace(settings.getCurrentWorkspacePath());
+	hotkeySlotsState.saveCurrentWorkspace();
 	
 	commands.register(context, {
 		'l13Projects.action.workspace.assignSlot': async ({ project }) => hotkeySlotsDialog.assignWorkspace(project),
@@ -51,7 +50,7 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.hotkey.slot8': () => hotkeySlotsState.open(8),
 		'l13Projects.action.hotkey.slot9': () => hotkeySlotsState.open(9),
 		
-		'l13Projects.action.hotkey.previousWorkspace': () => hotkeySlotsState.previousWorkspace(settings.getCurrentWorkspacePath()),
+		'l13Projects.action.hotkey.previousWorkspace': () => hotkeySlotsState.previousWorkspace(),
 		
 		'l13Projects.action.hotkeys.clearAllSlots': () => hotkeySlotsDialog.clear(),
 	});

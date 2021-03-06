@@ -5,8 +5,8 @@ import * as vscode from 'vscode';
 import { formatLabel } from '../@l13/formats';
 import { isMacOs, isWindows } from '../@l13/platforms';
 
-import * as settings from '../common/settings';
 import * as states from '../common/states';
+import { getCurrentWorkspacePath, isCodeWorkspace } from '../common/workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -46,10 +46,10 @@ export class StatusBarInfo implements vscode.Disposable {
 	
 	public refresh () :void {
 		
-		const workspacePath = settings.getCurrentWorkspacePath();
+		const workspacePath = getCurrentWorkspacePath();
 		
 		if (workspacePath) {
-			const icon = settings.isCodeWorkspace(workspacePath) ? 'submodule' : 'directory';
+			const icon = isCodeWorkspace(workspacePath) ? 'submodule' : 'directory';
 			const name = this.getWorkspaceName(workspacePath);
 			
 			this.statusBarItem.text = `$(file-${icon}) ${name || formatLabel(workspacePath)}`;
