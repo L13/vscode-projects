@@ -32,7 +32,7 @@ export class WorkspacesDialog {
 	public constructor (private readonly workspacesState:WorkspacesState,
 		private readonly workspaceGroupsState:WorkspaceGroupsState) {}
 	
-	public async pickWorkspace () {
+	public async pick () {
 		
 		const items = await this.createQuickPickItems();
 		

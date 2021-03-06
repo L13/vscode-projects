@@ -51,7 +51,7 @@ export class ProjectsState {
 		
 	}
 	
-	public async addProject (fsPath:string, value:string) {
+	public async add (fsPath:string, value:string) {
 		
 		const projects = states.getProjects(this.context);
 			
@@ -63,7 +63,7 @@ export class ProjectsState {
 		
 	}
 	
-	public async addProjects (uris:vscode.Uri[]) {
+	public async addAll (uris:vscode.Uri[]) {
 		
 		const projects = states.getProjects(this.context);
 		const length = projects.length;
@@ -86,12 +86,13 @@ export class ProjectsState {
 		
 	}
 	
-	public updateProject (favorite:Project) {
+	public update (favorite:Project) {
 		
 		const projects = states.getProjects(this.context);
+		const fsPath = favorite.path;
 		
 		for (const project of projects) {
-			if (project.path === favorite.path && project.label !== favorite.label) {
+			if (project.path === fsPath) {
 				project.label = favorite.label;
 				projects.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				states.updateProjects(this.context, projects);
@@ -102,15 +103,26 @@ export class ProjectsState {
 		
 	}
 	
-	public async renameProject (project:Project) {
+	public async rename (project:Project, label:string) {
 		
-		this.updateProject(project);
+		const projects = states.getProjects(this.context);
+		const fsPath = project.path;
 		
-		this._onDidUpdateProject.fire(project);
+		for (const pro of projects) {
+			if (pro.path === fsPath) {
+				pro.label = label;
+				projects.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+				states.updateProjects(this.context, projects);
+				this._onDidUpdateProject.fire(pro);
+				this._onDidChangeProjects.fire(projects);
+				break;
+			}
+		}
+		
 		
 	}
 	
-	public async removeProject (project:Project) {
+	public async remove (project:Project) {
 		
 		const projects = states.getProjects(this.context);
 		const fsPath = project.path;
@@ -127,7 +139,7 @@ export class ProjectsState {
 		
 	}
 	
-	public async removeAllProjects () {
+	public async clear () {
 		
 		states.updateProjects(this.context, []);
 		this._onDidChangeProjects.fire([]);

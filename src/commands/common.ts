@@ -47,7 +47,7 @@ export function activate (context:vscode.ExtensionContext) {
 			hotkeySlots.refresh();
 			
 			FavoritesProvider.currentFavoritesProvider?.refresh({
-				favorites: favoritesState.getFavorites(),
+				favorites: favoritesState.getAll(),
 				favoriteGroups: favoriteGroupsState.getFavoriteGroups(),
 			});
 			

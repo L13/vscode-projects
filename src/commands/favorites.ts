@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 import { FavoriteTreeItems } from '../@types/favorites';
 
 import * as commands from '../common/commands';
+import { FavoritesDialog } from '../dialogs/FavoritesDialog';
 
 import { FavoritesProvider } from '../sidebar/FavoritesProvider';
 import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
@@ -33,8 +34,9 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	const favoritesState = FavoritesState.createFavoritesState(context);
 	const favoriteGroupsState = FavoriteGroupsState.createFavoriteGroupsState(context);
+	const favoritesDialog = FavoritesDialog.createFavoritesDialog(favoritesState, favoriteGroupsState);
 	const favoritesProvider = FavoritesProvider.createProvider({
-		favorites: favoritesState.getFavorites(),
+		favorites: favoritesState.getAll(),
 		favoriteGroups: favoriteGroupsState.getFavoriteGroups(),
 		hotkeySlots: hotkeySlotsState,
 	});
@@ -68,8 +70,8 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	subscriptions.push(favoritesState.onDidUpdateFavorite((favorite) => {
 		
-		hotkeySlotsState.update(favorite);
-		projectsState.updateProject(favorite); // updates also status bar info
+		hotkeySlotsState.updateWorkspace(favorite);
+		projectsState.update(favorite); // updates also status bar info
 		
 	}));
 	
@@ -89,8 +91,8 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	subscriptions.push(favoriteGroupsState.onDidUpdateFavoriteGroup((favoriteGroup) => {
 		
-		workspaceGroupState.updateWorkspaceGroup(favoriteGroup);
 		hotkeySlotsState.updateGroup(favoriteGroup);
+		workspaceGroupState.updateWorkspaceGroup(favoriteGroup);
 		
 	}));
 	
@@ -105,7 +107,7 @@ export function activate (context:vscode.ExtensionContext) {
 	subscriptions.push(favoriteGroupsState.onDidChangeFavoriteGroups((favoriteGroups) => {
 		
 		favoritesProvider.refresh({
-			favorites: favoritesState.getFavorites(),
+			favorites: favoritesState.getAll(),
 			favoriteGroups
 		});
 		
@@ -116,15 +118,15 @@ export function activate (context:vscode.ExtensionContext) {
 	commands.register(context, {
 		'l13Projects.action.favorite.addToGroup': ({ project }:FavoriteTreeItems) => favoriteGroupsState.addFavoriteToGroup(project),
 		'l13Projects.action.favorite.removeFromGroup': ({ project }:FavoriteTreeItems) => favoriteGroupsState.removeFromFavoriteGroup(project),
-		'l13Projects.action.favorite.rename': ({ project }:FavoriteTreeItems) => favoritesState.renameFavorite(project),
-		'l13Projects.action.favorite.remove': ({ project }:FavoriteTreeItems) => favoritesState.removeFavorite(project),
+		'l13Projects.action.favorite.rename': ({ project }:FavoriteTreeItems) => favoritesDialog.rename(project),
+		'l13Projects.action.favorite.remove': ({ project }:FavoriteTreeItems) => favoritesDialog.remove(project),
 		
-		'l13Projects.action.favorites.group.add': () => favoriteGroupsState.addFavoriteGroup(),
-		'l13Projects.action.favorites.group.rename': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsState.renameFavoriteGroup(group),
-		'l13Projects.action.favorites.group.remove': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsState.removeFavoriteGroup(group),
+		'l13Projects.action.favoriteGroups.add': () => favoriteGroupsState.addFavoriteGroup(),
+		'l13Projects.action.favoriteGroups.rename': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsState.renameFavoriteGroup(group),
+		'l13Projects.action.favoriteGroups.remove': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsState.removeFavoriteGroup(group),
 		
-		'l13Projects.action.favorites.pickFavorite': () => favoritesState.pickFavorite(),
-		'l13Projects.action.favorites.clear': () => favoritesState.clearFavorites(),
+		'l13Projects.action.favorites.pickFavorite': () => favoritesDialog.pick(),
+		'l13Projects.action.favorites.clear': () => favoritesDialog.clear(),
 	});
 	
 }

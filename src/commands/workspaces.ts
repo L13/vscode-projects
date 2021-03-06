@@ -111,8 +111,8 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	subscriptions.push(projectsState.onDidUpdateProject((project) => {
 		
-		favoritesState.updateFavorite(project);
-		hotkeySlotsState.update(project);
+		favoritesState.update(project);
+		hotkeySlotsState.updateWorkspace(project);
 		
 		workspacesState.refreshWorkspacesCache();
 		statusBarInfo.refresh();
@@ -126,11 +126,11 @@ export function activate (context:vscode.ExtensionContext) {
 		const workspace = workspacesState.getWorkspaceByPath(project.path);
 		
 		if (workspace) {
-			favoritesState.updateFavorite(workspace);
-			hotkeySlotsState.update(workspace);
+			favoritesState.update(workspace);
+			hotkeySlotsState.updateWorkspace(workspace);
 		} else {
-			favoritesState.removeFavorite(project, true);
-			hotkeySlotsState.remove(project);
+			favoritesState.remove(project);
+			hotkeySlotsState.removeWorkspace(project);
 		}
 		
 		statusBarInfo.refresh();
@@ -184,7 +184,7 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	subscriptions.push(statusBarColorState.onDidUpdateColor((project) => {
 		
-		favoritesState.updateFavorite(project);
+		favoritesState.update(project);
 		
 	}));
 	
@@ -197,16 +197,16 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspace.openInNewWindow': ({ project }:WorkspaceTreeItems) => files.open(project.path, true),
 		
 		'l13Projects.action.workspace.addToWorkspace': ({ project }:WorkspaceTreeItems) => addToWorkspace(project),
-		'l13Projects.action.workspace.addToFavorites': ({ project }:ProjectTreeItem) => favoritesState.addToFavorites(project),
+		'l13Projects.action.workspace.addToFavorites': ({ project }:ProjectTreeItem) => favoritesState.add(project),
 		'l13Projects.action.workspace.addToGroup': ({ project }:WorkspaceTreeItems) => workspaceGroupsState.addWorkspaceToGroup(project),
 		'l13Projects.action.workspace.removeFromGroup': ({ project }:WorkspaceTreeItems) => workspaceGroupsState.removeFromWorkspaceGroup(project),
 		
-		'l13Projects.action.workspaces.addProject': () => projectsDialog.addProject(),
-		'l13Projects.action.workspaces.addProjectWorkspace': () => projectsDialog.addProjectWorkspace(),
-		'l13Projects.action.workspaces.saveProject': () => projectsDialog.saveProject(),
-		'l13Projects.action.workspaces.saveDetectedProject': ({ project }:WorkspaceTreeItems) => projectsDialog.saveProject(project),
+		'l13Projects.action.workspaces.addProject': () => projectsDialog.addDirectory(),
+		'l13Projects.action.workspaces.addProjectWorkspace': () => projectsDialog.addVSCodeWorkspace(),
+		'l13Projects.action.workspaces.saveProject': () => projectsDialog.save(),
+		'l13Projects.action.workspaces.saveDetectedProject': ({ project }:WorkspaceTreeItems) => projectsDialog.save(project),
 		
-		'l13Projects.action.workspaces.pickWorkspace': () => workspacesDialog.pickWorkspace(),
+		'l13Projects.action.workspaces.pickWorkspace': () => workspacesDialog.pick(),
 		'l13Projects.action.workspaces.refresh': () => {
 			
 			statusBarColorState.detectProjectColors();
@@ -226,8 +226,8 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspaceGroups.remove': ({ group }:GroupCustomTreeItem) => workspaceGroupsState.removeWorkspaceGroup(group),
 		'l13Projects.action.workspaceGroups.clear': () => workspaceGroupsState.clearWorkspaceGroups(),
 		
-		'l13Projects.action.project.rename': ({ project }:ProjectTreeItem) => projectsDialog.renameProject(project),
-		'l13Projects.action.project.remove': ({ project }:ProjectTreeItem) => projectsDialog.deleteProject(project),
+		'l13Projects.action.project.rename': ({ project }:ProjectTreeItem) => projectsDialog.rename(project),
+		'l13Projects.action.project.remove': ({ project }:ProjectTreeItem) => projectsDialog.remove(project),
 		
 		'l13Projects.action.project.selectColor': ({ project }:ProjectTreeItem) => {
 			
@@ -245,7 +245,7 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.project.removeColor': () => changeStatusBarColor(statusBarColorState, workspacesProvider, 0),
 		'l13Projects.action.project.hideColorPicker': () => workspacesProvider.hideColorPicker(),
 		
-		'l13Projects.action.projects.clear': () => projectsDialog.clearAllProjects(),
+		'l13Projects.action.projects.clear': () => projectsDialog.clear(),
 	});
 	
 }

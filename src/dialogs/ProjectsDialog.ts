@@ -34,27 +34,27 @@ export class ProjectsDialog {
 	
 	public constructor (private readonly states:ProjectsState) {}
 	
-	public async addProject () {
+	public async addDirectory () {
 		
 		const uris = isMacOs ? await dialogs.open() : await dialogs.openFolder();
 		
 		if (!uris) return;
 		
-		this.states.addProjects(uris);
+		this.states.addAll(uris);
 		
 	}
 	
-	public async addProjectWorkspace () {
+	public async addVSCodeWorkspace () {
 		
 		const uris = await dialogs.openFile();
 		
 		if (!uris) return;
 		
-		this.states.addProjects(uris);
+		this.states.addAll(uris);
 		
 	}
 	
-	public async saveProject (project?:Project) {
+	public async save (project?:Project) {
 		
 		const fsPath:string = project ? project.path : settings.getCurrentWorkspacePath();
 		
@@ -73,7 +73,7 @@ export class ProjectsDialog {
 			
 			if (!value) return;
 			
-			this.states.addProject(fsPath, value);
+			this.states.add(fsPath, value);
 			
 		} else if (vscode.workspace.workspaceFile && vscode.workspace.workspaceFile.scheme === 'untitled') {
 			vscode.window.showWarningMessage(`Please save your current workspace first.`);
@@ -82,7 +82,7 @@ export class ProjectsDialog {
 		
 	}
 	
-	public async renameProject (project:Project) {
+	public async rename (project:Project) {
 		
 		const value = await vscode.window.showInputBox({
 			value: project.label,
@@ -98,11 +98,11 @@ export class ProjectsDialog {
 		
 		project.label = value;
 		
-		this.states.updateProject(project);
+		this.states.update(project);
 		
 	}
 	
-	public async deleteProject (project:Project) {
+	public async remove (project:Project) {
 		
 		if (settings.get('confirmDeleteProject', true)) {
 			const BUTTON_DELETE_DONT_SHOW_AGAIN = `Delete, don't show again`;
@@ -111,14 +111,14 @@ export class ProjectsDialog {
 			if (value === BUTTON_DELETE_DONT_SHOW_AGAIN) settings.update('confirmDeleteProject', false);
 		}
 		
-		this.states.removeProject(project);
+		this.states.remove(project);
 		
 	}
 	
-	public async clearAllProjects () {
+	public async clear () {
 		
 		if (await dialogs.confirm(`Delete all projects?'`, 'Delete')) {
-			this.states.removeAllProjects();
+			this.states.clear();
 		}
 		
 	}

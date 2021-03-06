@@ -104,30 +104,13 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public update (project:Project) {
+	public updateWorkspace (project:Project) {
 		
 		const slots = this.slots;
 		
 		for (const slot of slots) {
 			if (slot && slot.path === project.path) {
 				slot.label = project.label;
-				break;
-			}
-		}
-		
-		states.updateSlots(this.context, slots);
-		this._onDidChangeSlots.fire(slots);
-		
-	}
-	
-	public remove (project:Project) {
-		
-		const slots = this.slots;
-		
-		for (let i = 0; i < slots.length; i++) {
-			const slot = slots[i];
-			if (slot && slot.path === project.path) {
-				delete slots[i];
 				break;
 			}
 		}
@@ -154,6 +137,23 @@ export class HotkeySlotsState {
 		
 	}
 	
+	public removeWorkspace (project:Project) {
+		
+		const slots = this.slots;
+		
+		for (let i = 0; i < slots.length; i++) {
+			const slot = slots[i];
+			if (slot && slot.path === project.path) {
+				delete slots[i];
+				break;
+			}
+		}
+		
+		states.updateSlots(this.context, slots);
+		this._onDidChangeSlots.fire(slots);
+		
+	}
+	
 	public removeGroup (group:FavoriteGroup|WorkspaceGroup) {
 		
 		const slots = this.slots;
@@ -171,7 +171,7 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public async removeSlot (index:number) {
+	public async remove (index:number) {
 		
 		const slots = this.slots;
 		
@@ -181,7 +181,7 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public get (workspace:Project) {
+	public getByWorkspace (workspace:Project) {
 		
 		const slots = this.slots;
 		
@@ -193,7 +193,7 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public getGroup (group:FavoriteGroup|WorkspaceGroup) {
+	public getByGroup (group:FavoriteGroup|WorkspaceGroup) {
 		
 		const slots = this.slots;
 		
@@ -205,7 +205,7 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public deleteAllSlots () {
+	public clear () {
 		
 		states.updateSlots(this.context, this.slots = []);
 		this._onDidChangeSlots.fire([]);

@@ -31,7 +31,7 @@ export class HotkeySlotsDialog {
 	
 	private constructor (private readonly hotkeySlotsState:HotkeySlotsState) {}
 	
-	public async assign (project:Project) {
+	public async assignWorkspace (project:Project) {
 		
 		const item = await this.createQuickPickDialog();
 		
@@ -66,7 +66,7 @@ export class HotkeySlotsDialog {
 		
 	}
 	
-	public async clearSlot () {
+	public async remove () {
 		
 		const slots = this.hotkeySlotsState.getSlots();
 		const items:Item[] = [];
@@ -85,14 +85,14 @@ export class HotkeySlotsDialog {
 			placeHolder: 'Please select the slot which should be cleared.',
 		});
 		
-		if (item) this.hotkeySlotsState.removeSlot(item.index);
+		if (item) this.hotkeySlotsState.remove(item.index);
 		
 	}
 	
-	public async clearAllSlots () {
+	public async clear () {
 		
 		if (await dialogs.confirm('Delete all hotkey slots?', 'Delete')) {
-			this.hotkeySlotsState.deleteAllSlots();
+			this.hotkeySlotsState.clear();
 		}
 		
 	}

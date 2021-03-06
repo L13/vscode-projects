@@ -83,7 +83,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 		} else {
 			this.favoriteGroups.forEach((favoriteGroup) => {
 				
-				const slot = slots.getGroup(favoriteGroup);
+				const slot = slots.getByGroup(favoriteGroup);
 				
 				paths = paths.concat(favoriteGroup.paths);
 				list.push(new FavoriteGroupTreeItem(favoriteGroup, slot));
@@ -110,7 +110,7 @@ function addItems (list:FavoritesTreeItems[], favorites:Favorite[], paths:string
 		if (isSubProject && !paths.includes(favorite.path)) return;
 		else if (!isSubProject && paths.includes(favorite.path)) return;
 		
-		const slot = slots.get(favorite);
+		const slot = slots.getByWorkspace(favorite);
 		
 		if (!hasCurrentProject && workspacePath && workspacePath === favorite.path) {
 			hasCurrentProject = true;

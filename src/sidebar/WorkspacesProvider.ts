@@ -163,7 +163,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		this.workspaceGroups.forEach((workspaceGroup) => {
 			
-			const slot = slots.getGroup(workspaceGroup);;
+			const slot = slots.getByGroup(workspaceGroup);;
 			
 			paths = paths.concat(workspaceGroup.paths);
 			list.push(new GroupCustomTreeItem(workspaceGroup, slot));
@@ -186,7 +186,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			
 			if (paths.includes(workspace.path)) return;
 			
-			const slot = slots.get(workspace);
+			const slot = slots.getByWorkspace(workspace);
 			
 			if (!hasCurrentWorkspace && workspacePath && workspacePath === workspace.path) {
 				hasCurrentWorkspace = true;
@@ -213,7 +213,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			
 			if (!paths.includes(workspace.path)) return;
 					
-			const slot = slots.get(workspace);
+			const slot = slots.getByWorkspace(workspace);
 			
 			if (!hasCurrentWorkspace && workspacePath && workspacePath === workspace.path) {
 				hasCurrentWorkspace = true;
@@ -275,7 +275,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			}
 		
 			if (type === simpleType) {
-				const slot = slots.get(workspace);
+				const slot = slots.getByWorkspace(workspace);
 				if (!hasCurrentWorkspace && workspacePath && workspacePath === workspace.path) {
 					hasCurrentWorkspace = true;
 					list.push(new CurrentProjectTreeItem(workspace, slot));
@@ -325,7 +325,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			if (paths.includes(workspace.path)) return;
 					
 			if (type === workspace.type) {
-				const slot = slots.get(workspace);
+				const slot = slots.getByWorkspace(workspace);
 				
 				if (!hasCurrentWorkspace && workspacePath && workspacePath === workspace.path) {
 					hasCurrentWorkspace = true;

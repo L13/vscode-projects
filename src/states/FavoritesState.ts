@@ -2,14 +2,12 @@
 
 import * as vscode from 'vscode';
 
-import * as dialogs from '../common/dialogs';
-import * as files from '../common/files';
-import * as settings from '../common/settings';
-import * as states from '../common/states';
-
 import { sortCaseInsensitive } from '../@l13/arrays';
+
 import { Favorite } from '../@types/favorites';
 import { Project } from '../@types/workspaces';
+
+import * as states from '../common/states';
 
 //	Variables __________________________________________________________________
 
@@ -42,50 +40,13 @@ export class FavoritesState {
 	private _onDidChangeFavorites:vscode.EventEmitter<Favorite[]> = new vscode.EventEmitter<Favorite[]>();
 	public readonly onDidChangeFavorites:vscode.Event<Favorite[]> = this._onDidChangeFavorites.event;
 	
-	public getFavorites () {
+	public getAll () {
 		
 		return states.getFavorites(this.context, true);
 		
 	}
 	
-	public async pickFavorite () {
-		
-		const favorites = states.getFavorites(this.context, true);
-		const favoriteGroups = states.getFavoriteGroups(this.context);
-		
-		if (favorites.length || favoriteGroups.length) {
-			const groups = favoriteGroups.map((favoriteGroup) => {
-				
-				const paths = favoriteGroup.paths;
-				const names = favorites.filter((favorite) => paths.includes(favorite.path));
-				
-				return {
-					label: favoriteGroup.label,
-					description: names.map((favorite) => favorite.label).join(', '),
-					paths: favoriteGroup.paths,
-				};
-				
-			});
-			const items = favorites.map((favorite) => ({
-				label: favorite.label,
-				description: favorite.path,
-				detail: favorite.deleted ? '$(alert) Path does not exist' : '',
-				paths: null,
-			}));
-			
-			const item = await vscode.window.showQuickPick([...groups, ...items], {
-				placeHolder: 'Select a project',
-			});
-				
-			if (item) {
-				if (item.paths) files.openAll(item.paths);
-				else files.open(item.description);
-			}
-		}
-		
-	}
-	
-	public addToFavorites (workspace:Project) {
+	public add (workspace:Project) {
 		
 		const favorites = states.getFavorites(this.context);
 		
@@ -107,7 +68,7 @@ export class FavoritesState {
 		
 	}
 	
-	public updateFavorite (workspace:Project) {
+	public update (workspace:Project) {
 		
 		const favorites = states.getFavorites(this.context);
 		const fsPath = workspace.path;
@@ -127,30 +88,25 @@ export class FavoritesState {
 		
 	}
 	
-	public async renameFavorite (favorite:Favorite) {
+	public async rename (favorite:Favorite, label:string) {
 		
-		const value = await vscode.window.showInputBox({ value: favorite.label });
+		const favorites = states.getFavorites(this.context);
+		const fsPath = favorite.path;
 		
-		if (favorite.label === value || value === undefined) return;
-		
-		if (!value) return vscode.window.showErrorMessage(`Favorite with no name is not valid!`);
-		
-		favorite.label = value;
-		this.updateFavorite(favorite);
-		this._onDidUpdateFavorite.fire(favorite);
+		for (const fav of favorites) {
+			if (fav.path === fsPath) {
+				fav.label = label;
+				favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+				states.updateFavorites(this.context, favorites);
+				this._onDidUpdateFavorite.fire(fav);
+				this._onDidChangeFavorites.fire(favorites);
+				break;
+			}
+		}
 		
 	}
 	
-	public async removeFavorite (favorite:Favorite, force?:boolean) {
-		
-		let value:boolean|string = force;
-		
-		if (!value && settings.get('confirmDeleteFavorite', true)) {
-			const BUTTON_DELETE_DONT_SHOW_AGAIN = `Delete, don't show again`;
-			value = await dialogs.confirm(`Delete favorite "${favorite.label}"?`, 'Delete', BUTTON_DELETE_DONT_SHOW_AGAIN);
-			if (!value) return;
-			if (value === BUTTON_DELETE_DONT_SHOW_AGAIN) settings.update('confirmDeleteFavorite', false);
-		}
+	public async remove (favorite:Favorite) {
 		
 		const favorites = states.getFavorites(this.context);
 		const fsPath = favorite.path;
@@ -167,13 +123,11 @@ export class FavoritesState {
 		
 	}
 	
-	public async clearFavorites () {
+	public async clear () {
 		
-		if (await dialogs.confirm(`Delete all favorites and groups?'`, 'Delete')) {
-			states.updateFavorites(this.context, []);
-			states.updateFavoriteGroups(this.context, []);
-			this._onDidChangeFavorites.fire([]);
-		}
+		states.updateFavorites(this.context, []);
+		states.updateFavoriteGroups(this.context, []);
+		this._onDidChangeFavorites.fire([]);
 		
 	}
 	

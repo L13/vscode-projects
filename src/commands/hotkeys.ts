@@ -36,9 +36,9 @@ export function activate (context:vscode.ExtensionContext) {
 	hotkeySlotsState.saveCurrentWorkspace();
 	
 	commands.register(context, {
-		'l13Projects.action.workspace.assignSlot': async ({ project }) => hotkeySlotsDialog.assign(project),
+		'l13Projects.action.workspace.assignSlot': async ({ project }) => hotkeySlotsDialog.assignWorkspace(project),
 		'l13Projects.action.workspaceGroups.assignSlot': async ({ group }) => hotkeySlotsDialog.assignGroup(group),
-		'l13Projects.action.workspace.clearSlot': () => hotkeySlotsDialog.clearSlot(),
+		'l13Projects.action.workspace.clearSlot': () => hotkeySlotsDialog.remove(),
 		
 		'l13Projects.action.hotkey.slot1': () => hotkeySlotsState.open(1),
 		'l13Projects.action.hotkey.slot2': () => hotkeySlotsState.open(2),
@@ -52,7 +52,7 @@ export function activate (context:vscode.ExtensionContext) {
 		
 		'l13Projects.action.hotkey.previousWorkspace': () => hotkeySlotsState.previousWorkspace(),
 		
-		'l13Projects.action.hotkeys.clearAllSlots': () => hotkeySlotsDialog.clearAllSlots(),
+		'l13Projects.action.hotkeys.clearAllSlots': () => hotkeySlotsDialog.clear(),
 	});
 	
 }
