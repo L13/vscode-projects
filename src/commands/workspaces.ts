@@ -7,8 +7,8 @@ import { GroupTreeItem, Project, WorkspaceTreeItems } from '../@types/workspaces
 import * as commands from '../common/commands';
 import * as files from '../common/files';
 import * as settings from '../common/settings';
-import { FavoriteGroupsDialog } from '../dialogs/FavoriteGroupsDialog';
 
+import { FavoriteGroupsDialog } from '../dialogs/FavoriteGroupsDialog';
 import { ProjectsDialog } from '../dialogs/ProjectsDialog';
 import { WorkspaceGroupsDialog } from '../dialogs/WorkspaceGroupsDialog';
 import { WorkspacesDialog } from '../dialogs/WorkspacesDialog';

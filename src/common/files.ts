@@ -4,8 +4,8 @@ import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { remove } from '../@l13/arrays';
 
+import { remove } from '../@l13/arrays';
 import { isMacOs, isWindows } from '../@l13/platforms';
 
 import * as settings from './settings';
