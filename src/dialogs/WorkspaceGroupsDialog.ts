@@ -5,8 +5,8 @@ import * as vscode from 'vscode';
 import { Project, WorkspaceGroup } from '../@types/workspaces';
 
 import * as dialogs from '../common/dialogs';
-import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
 
+import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
 import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 
 //	Variables __________________________________________________________________
@@ -39,6 +39,11 @@ export class WorkspaceGroupsDialog {
 		
 		if (!label) return;
 		
+		if (this.workspaceGroupsState.getByName(label)) {
+			vscode.window.showInformationMessage(`Workspace group with the name "${label} exists!"`);
+			return;
+		}
+		
 		this.workspaceGroupsState.add(label);
 		
 	}
@@ -46,10 +51,19 @@ export class WorkspaceGroupsDialog {
 	public async addWorkspaceToGroup (workspace:Project) {
 		
 		const workspaceGroups = this.workspaceGroupsState.get();
+		let workspaceGroup:WorkspaceGroup = null;
 		
-		if (!workspaceGroups.length) await this.add();
+		if (!workspaceGroups.length) {
+			await this.add();
+			workspaceGroup = this.workspaceGroupsState.get()[0];
+			if (!workspaceGroup) return;
+		} else {
+			workspaceGroup = await vscode.window.showQuickPick(workspaceGroups, {
+				placeHolder: 'Select a favorite group',
+			});
+		}
 		
-		const workspaceGroup = workspaceGroups.length > 1 ? await vscode.window.showQuickPick(workspaceGroups) : workspaceGroups[0];
+		if (workspaceGroup.paths.includes(workspace.path)) return;
 		
 		this.workspaceGroupsState.addWorkspace(workspace, workspaceGroup);
 		

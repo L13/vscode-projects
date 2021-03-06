@@ -39,6 +39,11 @@ export class FavoriteGroupsDialog {
 		
 		if (!label) return;
 		
+		if (this.favoriteGroupsState.getByName(label)) {
+			vscode.window.showInformationMessage(`Favorite group with the name "${label} exists!"`);
+			return;
+		}
+		
 		this.favoriteGroupsState.add(label);
 		
 	}
@@ -52,10 +57,17 @@ export class FavoriteGroupsDialog {
 	public async addFavoriteToGroup (favorite:Project) {
 		
 		const favoriteGroups = this.favoriteGroupsState.get();
+		let favoriteGroup:FavoriteGroup = null;
 		
-		const favoriteGroup = await vscode.window.showQuickPick(favoriteGroups, {
-			placeHolder: 'Select a favorite group',
-		})
+		if (!favoriteGroups.length) {
+			await this.add();
+			favoriteGroup = this.favoriteGroupsState.get()[0];
+			if (!favoriteGroup) return;
+		} else {
+			favoriteGroup = await vscode.window.showQuickPick(favoriteGroups, {
+				placeHolder: 'Select a favorite group',
+			});
+		}
 		
 		if (favoriteGroup.paths.includes(favorite.path)) return;
 		
@@ -84,7 +96,7 @@ export class FavoriteGroupsDialog {
 		
 		if (!label || favoriteGroup.label === label) return;
 		
-		if (this.favoriteGroupsState.getByName(favoriteGroup.label)) {
+		if (this.favoriteGroupsState.getByName(label)) {
 			vscode.window.showErrorMessage(`Favorite group with name "${label}" exists!`);
 		} else this.favoriteGroupsState.rename(favoriteGroup, label);
 		
