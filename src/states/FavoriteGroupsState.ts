@@ -7,7 +7,6 @@ import { remove, sortCaseInsensitive } from '../@l13/arrays';
 import { Favorite, FavoriteGroup } from '../@types/favorites';
 import { Project, WorkspaceGroup } from '../@types/workspaces';
 
-import * as dialogs from '../common/dialogs';
 import * as states from '../common/states';
 
 import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
@@ -61,13 +60,7 @@ export class FavoriteGroupsState {
 		
 	}
 	
-	public async addFavoriteGroup () {
-		
-		const label = await vscode.window.showInputBox({
-			placeHolder: 'Please enter a name for the group.',
-		});
-		
-		if (!label) return;
+	public async addFavoriteGroup (label:string) {
 		
 		const favoriteGroups = states.getFavoriteGroups(this.context);
 		
@@ -86,7 +79,7 @@ export class FavoriteGroupsState {
 		
 		const favoriteGroups = states.getFavoriteGroups(this.context);
 		
-		if (!favoriteGroups.length) await this.addFavoriteGroup();
+		// if (!favoriteGroups.length) await this.addFavoriteGroup();
 		
 		const favoriteGroup = favoriteGroups.length > 1 ? await vscode.window.showQuickPick(favoriteGroups) : favoriteGroups[0];
 		
@@ -181,70 +174,54 @@ export class FavoriteGroupsState {
 		
 	}
 	
-	public async renameFavoriteGroup (favoriteGroup:FavoriteGroup) {
-		
-		const value = await vscode.window.showInputBox({
-			placeHolder: 'Please enter a new name for the group.',
-			value: favoriteGroup.label,
-		});
-		
-		if (!value || favoriteGroup.label === value) return;
+	public async rename (favoriteGroup:FavoriteGroup, label:string) {
 		
 		const favoriteGroups = states.getFavoriteGroups(this.context);
 		const groupId = favoriteGroup.id;
 		
 		for (const group of favoriteGroups) {
 			if (group.id === groupId) {
-				group.label = value;
+				group.label = label;
 				favoriteGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 				states.updateFavoriteGroups(this.context, favoriteGroups);
-				this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 				this._onDidUpdateFavoriteGroup.fire(group);
+				this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 				break;
 			}
 		}
 		
 	}
 	
-	public async removeFavoriteGroup (favoriteGroup:FavoriteGroup, force?:boolean) {
+	public async remove (favoriteGroup:FavoriteGroup, removeAll:boolean) {
 		
-		const BUTTON_DELETE_GROUP_AND_FAVORITES = 'Delete Group and Favorites';
-		const buttons = ['Delete'];
+		const favoriteGroups = states.getFavoriteGroups(this.context);
+		const groupId = favoriteGroup.id;
 		
-		if (favoriteGroup.paths.length) buttons.push(BUTTON_DELETE_GROUP_AND_FAVORITES);
-		
-		const value = force || await dialogs.confirm(`Delete favorite group "${favoriteGroup.label}"?`, ...buttons);
-		
-		if (value) {
-			const favoriteGroups = states.getFavoriteGroups(this.context);
-			const groupId = favoriteGroup.id;
-			
-			for (let i = 0; i < favoriteGroups.length; i++) {
-				if (favoriteGroups[i].id === groupId) {
-					favoriteGroups.splice(i, 1);
-					this._onDidDeleteFavoriteGroup.fire(favoriteGroup);
-					break;
-				}
+		for (let i = 0; i < favoriteGroups.length; i++) {
+			if (favoriteGroups[i].id === groupId) {
+				favoriteGroups.splice(i, 1);
+				this._onDidDeleteFavoriteGroup.fire(favoriteGroup);
+				break;
 			}
-			
-			if (value === true || value === BUTTON_DELETE_GROUP_AND_FAVORITES) {
-				const favorites = states.getFavorites(this.context);
-				const paths = favoriteGroup.paths;
-				
-				for (let i = 0; i < favorites.length; i++) {
-					if (paths.includes(favorites[i].path)) favorites.splice(i, 1);
-				}
-				
-				states.updateFavorites(this.context, favorites);
-			}
-			
-			states.updateFavoriteGroups(this.context, favoriteGroups);
-			this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 		}
+		
+		if (removeAll) {
+			const favorites = states.getFavorites(this.context);
+			const paths = favoriteGroup.paths;
+			
+			for (let i = 0; i < favorites.length; i++) {
+				if (paths.includes(favorites[i].path)) favorites.splice(i, 1);
+			}
+			
+			states.updateFavorites(this.context, favorites);
+		}
+		
+		states.updateFavoriteGroups(this.context, favoriteGroups);
+		this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 		
 	}
 	
-	public saveFavoriteGroupState (item:FavoriteGroupTreeItem, collapsed:boolean) {
+	public saveCollapsedState (item:FavoriteGroupTreeItem, collapsed:boolean) {
 		
 		const favoriteGroups = states.getFavoriteGroups(this.context);
 		const groupId = item.group.id;

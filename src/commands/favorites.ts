@@ -5,6 +5,8 @@ import * as vscode from 'vscode';
 import { FavoriteTreeItems } from '../@types/favorites';
 
 import * as commands from '../common/commands';
+
+import { FavoriteGroupsDialog } from '../dialogs/FavoriteGroupsDialog';
 import { FavoritesDialog } from '../dialogs/FavoritesDialog';
 
 import { FavoritesProvider } from '../sidebar/FavoritesProvider';
@@ -35,6 +37,7 @@ export function activate (context:vscode.ExtensionContext) {
 	const favoritesState = FavoritesState.createFavoritesState(context);
 	const favoriteGroupsState = FavoriteGroupsState.createFavoriteGroupsState(context);
 	const favoritesDialog = FavoritesDialog.createFavoritesDialog(favoritesState, favoriteGroupsState);
+	const favoriteGroupsDialog = FavoriteGroupsDialog.createFavoriteGroupsDialog(favoriteGroupsState);
 	const favoritesProvider = FavoritesProvider.createProvider({
 		favorites: favoritesState.getAll(),
 		favoriteGroups: favoriteGroupsState.getFavoriteGroups(),
@@ -56,13 +59,13 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	subscriptions.push(treeView.onDidCollapseElement(({ element }) => {
 		
-		favoriteGroupsState.saveFavoriteGroupState((<FavoriteGroupTreeItem>element), true);
+		favoriteGroupsState.saveCollapsedState((<FavoriteGroupTreeItem>element), true);
 		
 	}));
 	
 	subscriptions.push(treeView.onDidExpandElement(({ element }) => {
 		
-		favoriteGroupsState.saveFavoriteGroupState((<FavoriteGroupTreeItem>element), false);
+		favoriteGroupsState.saveCollapsedState((<FavoriteGroupTreeItem>element), false);
 		
 	}));
 	
@@ -121,9 +124,9 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.favorite.rename': ({ project }:FavoriteTreeItems) => favoritesDialog.rename(project),
 		'l13Projects.action.favorite.remove': ({ project }:FavoriteTreeItems) => favoritesDialog.remove(project),
 		
-		'l13Projects.action.favoriteGroups.add': () => favoriteGroupsState.addFavoriteGroup(),
-		'l13Projects.action.favoriteGroups.rename': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsState.renameFavoriteGroup(group),
-		'l13Projects.action.favoriteGroups.remove': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsState.removeFavoriteGroup(group),
+		'l13Projects.action.favoriteGroups.add': () => favoriteGroupsDialog.add(),
+		'l13Projects.action.favoriteGroups.rename': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsDialog.rename(group),
+		'l13Projects.action.favoriteGroups.remove': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsDialog.remove(group),
 		
 		'l13Projects.action.favorites.pickFavorite': () => favoritesDialog.pick(),
 		'l13Projects.action.favorites.clear': () => favoritesDialog.clear(),

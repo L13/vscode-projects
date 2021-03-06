@@ -15,7 +15,6 @@ import { GroupCustomTreeItem } from '../sidebar/trees/GroupCustomTreeItem';
 import { GroupSimpleTreeItem } from '../sidebar/trees/GroupSimpleTreeItem';
 import { GroupTypeTreeItem } from '../sidebar/trees/GroupTypeTreeItem';
 import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
-
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
 
 import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
@@ -167,7 +166,7 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	subscriptions.push(workspaceGroupsState.onDidDeleteWorkspaceGroup((workspaceGroup) => {
 		
-		favoriteGroupsState.removeFavoriteGroup(workspaceGroup, true);
+		favoriteGroupsState.remove(workspaceGroup, true);
 		hotkeySlotsState.removeGroup(workspaceGroup);
 		
 	}));
