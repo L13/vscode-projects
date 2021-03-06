@@ -157,7 +157,7 @@
 				}
 			},
 			{
-				"command": "l13Projects.action.workspaces.group.add",
+				"command": "l13Projects.action.workspaceGroups.add",
 				"title": "New Group",
 				"icon": {
 					"light": "images/workspaces/group-new-light.svg",
@@ -173,27 +173,27 @@
 				"title": "Remove from Group"
 			},
 			{
-				"command": "l13Projects.action.workspaces.group.openAllInCurrentWindows",
+				"command": "l13Projects.action.workspaceGroups.openAllInCurrentWindows",
 				"title": "Open All"
 			},
 			{
-				"command": "l13Projects.action.workspaces.group.openAllInNewWindows",
+				"command": "l13Projects.action.workspaceGroups.openAllInNewWindows",
 				"title": "Open All in New Windows"
 			},
 			{
-				"command": "l13Projects.action.workspaces.group.addToFavorites",
+				"command": "l13Projects.action.workspaceGroups.addToFavorites",
 				"title": "Add to Favorites"
 			},
 			{
-				"command": "l13Projects.action.workspaces.group.rename",
+				"command": "l13Projects.action.workspaceGroups.rename",
 				"title": "Rename"
 			},
 			{
-				"command": "l13Projects.action.workspaces.group.remove",
+				"command": "l13Projects.action.workspaceGroups.remove",
 				"title": "Delete"
 			},
 			{
-				"command": "l13Projects.action.workspaces.groups.clear",
+				"command": "l13Projects.action.workspaceGroups.clear",
 				"title": "Projects: Delete All Workspace Groups"
 			},
 			{
@@ -249,7 +249,7 @@
 				"title": "Assign to Slot"
 			},
 			{
-				"command": "l13Projects.action.workspaces.group.assignSlot",
+				"command": "l13Projects.action.workspaceGroups.assignSlot",
 				"title": "Assign to Slot"
 			},
 			{
@@ -490,7 +490,7 @@
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaces.group.assignSlot",
+					"command": "l13Projects.action.workspaceGroups.assignSlot",
 					"when": "false"
 				},
 				{
@@ -570,23 +570,23 @@
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaces.group.openAllInCurrentWindows",
+					"command": "l13Projects.action.workspaceGroups.openAllInCurrentWindows",
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaces.group.openAllInNewWindows",
+					"command": "l13Projects.action.workspaceGroups.openAllInNewWindows",
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaces.group.addToFavorites",
+					"command": "l13Projects.action.workspaceGroups.addToFavorites",
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaces.group.rename",
+					"command": "l13Projects.action.workspaceGroups.rename",
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaces.group.remove",
+					"command": "l13Projects.action.workspaceGroups.remove",
 					"when": "false"
 				}
 			],
@@ -617,7 +617,7 @@
 					"group": "navigation@2"
 				},
 				{
-					"command": "l13Projects.action.workspaces.group.add",
+					"command": "l13Projects.action.workspaceGroups.add",
 					"when": "view == l13ProjectsWorkspaces",
 					"group": "navigation@3"
 				},
@@ -654,27 +654,27 @@
 					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?(favorite|subfavorite)-(folders?|git|subfolder|vscode|workspace)$/"
 				},
 				{
-					"command": "l13Projects.action.workspaces.group.openAllInCurrentWindows",
+					"command": "l13Projects.action.workspaceGroups.openAllInCurrentWindows",
 					"group": "navigation@1",
 					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
 				},
 				{
-					"command": "l13Projects.action.workspaces.group.openAllInNewWindows",
+					"command": "l13Projects.action.workspaceGroups.openAllInNewWindows",
 					"group": "navigation@2",
 					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
 				},
 				{
-					"command": "l13Projects.action.workspaces.group.addToFavorites",
+					"command": "l13Projects.action.workspaceGroups.addToFavorites",
 					"group": "navigation@3",
 					"when": "view == l13ProjectsWorkspaces && viewItem == workspaceGroup"
 				},
 				{
-					"command": "l13Projects.action.workspaces.group.rename",
+					"command": "l13Projects.action.workspaceGroups.rename",
 					"group": "7_modification@1",
 					"when": "view == l13ProjectsWorkspaces && viewItem == workspaceGroup"
 				},
 				{
-					"command": "l13Projects.action.workspaces.group.remove",
+					"command": "l13Projects.action.workspaceGroups.remove",
 					"group": "7_modification@2",
 					"when": "view == l13ProjectsWorkspaces && viewItem == workspaceGroup"
 				},
@@ -759,7 +759,7 @@
 					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(current-)?(favorite|project|subfavorite|subproject)-(folders?|git|subfolder|vscode|workspace)$/"
 				},
 				{
-					"command": "l13Projects.action.workspaces.group.assignSlot",
+					"command": "l13Projects.action.workspaceGroups.assignSlot",
 					"group": "navigation@8",
 					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
 				},

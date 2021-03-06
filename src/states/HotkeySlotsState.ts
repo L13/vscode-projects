@@ -2,13 +2,13 @@
 
 import * as vscode from 'vscode';
 
+import { FavoriteGroup } from '../@types/favorites';
+import { Slot } from '../@types/hotkeys';
+import { Project, WorkspaceGroup } from '../@types/workspaces';
+
 import * as files from '../common/files';
 import * as settings from '../common/settings';
 import * as states from '../common/states';
-
-import { FavoriteGroup } from '../@types/favorites';
-import { Item, Slot } from '../@types/hotkeys';
-import { Project, WorkspaceGroup } from '../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -47,68 +47,48 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public async assign (project:Project) {
+	public getSlots () {
 		
-		const slots = this.slots;
-		const items:Item[] = [];
-		
-		for (let i = 1; i < 10; i++) {
-			items.push({
-				label: `Slot ${i}`,
-				index: i,
-				description: slots[i]?.label || '',
-			});
-		}
-		
-		const item = await vscode.window.showQuickPick(items, {
-			placeHolder: 'Please select a slot for the workspace.',
-		});
-		
-		if (item) {
-			for (const slot of slots) {
-				if (slot && slot.path === project.path) delete slots[slot.index];
-			}
-			slots[item.index] = {
-				label: project.label,
-				index: item.index,
-				path: project.path,
-			};
-			states.updateSlots(this.context, slots);
-			this._onDidChangeSlots.fire(slots);
-		}
+		return this.slots;
 		
 	}
 	
-	public async assignGroup (group:FavoriteGroup|WorkspaceGroup) {
+	public async assign (project:Project, index:number) {
 		
 		const slots = this.slots;
-		const items:Item[] = [];
 		
-		for (let i = 1; i < 10; i++) {
-			items.push({
-				label: `Slot ${i}`,
-				index: i,
-				description: slots[i]?.label || '',
-			});
+		for (const slot of slots) {
+			if (slot && slot.path === project.path) delete slots[slot.index];
 		}
 		
-		const item = await vscode.window.showQuickPick(items, {
-			placeHolder: 'Please select a slot for the workspace.',
-		});
+		slots[index] = {
+			label: project.label,
+			index,
+			path: project.path,
+		};
 		
-		if (item) {
-			for (const slot of slots) {
-				if (slot && slot.groupId === group.id) delete slots[slot.index];
-			}
-			slots[item.index] = {
-				label: group.label,
-				index: item.index,
-				groupId: group.id,
-				paths: group.paths,
-			};
-			states.updateSlots(this.context, slots);
-			this._onDidChangeSlots.fire(slots);
+		states.updateSlots(this.context, slots);
+		this._onDidChangeSlots.fire(slots);
+		
+	}
+	
+	public async assignGroup (group:FavoriteGroup|WorkspaceGroup, index:number) {
+		
+		const slots = this.slots;
+		
+		for (const slot of slots) {
+			if (slot && slot.groupId === group.id) delete slots[slot.index];
 		}
+		
+		slots[index] = {
+			label: group.label,
+			index,
+			groupId: group.id,
+			paths: group.paths,
+		};
+		
+		states.updateSlots(this.context, slots);
+		this._onDidChangeSlots.fire(slots);
 		
 	}
 	
@@ -191,30 +171,13 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public async clearSlot () {
+	public async removeSlot (index:number) {
 		
 		const slots = this.slots;
-		const items:Item[] = [];
 		
-		for (const slot of slots) {
-			if (slot) {
-				items.push({
-					label: `Slot ${slot.index}`,
-					index: slot.index,
-					description: slot.label || '',
-				});
-			}
-		}
-		
-		const item = await vscode.window.showQuickPick(items, {
-			placeHolder: 'Please select the slot which should be cleared.',
-		});
-		
-		if (item) {
-			delete slots[item.index];
-			states.updateSlots(this.context, slots);
-			this._onDidChangeSlots.fire(slots);
-		}
+		delete slots[index];
+		states.updateSlots(this.context, slots);
+		this._onDidChangeSlots.fire(slots);
 		
 	}
 	
@@ -242,7 +205,7 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public clear () {
+	public deleteAllSlots () {
 		
 		states.updateSlots(this.context, this.slots = []);
 		this._onDidChangeSlots.fire([]);

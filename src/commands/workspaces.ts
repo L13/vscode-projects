@@ -7,6 +7,7 @@ import { GroupTreeItem, Project, WorkspaceTreeItems } from '../@types/workspaces
 import * as commands from '../common/commands';
 import * as files from '../common/files';
 import * as settings from '../common/settings';
+
 import { ProjectsDialog } from '../dialogs/ProjectsDialog';
 import { WorkspacesDialog } from '../dialogs/WorkspacesDialog';
 
@@ -213,17 +214,17 @@ export function activate (context:vscode.ExtensionContext) {
 			
 		},
 		
-		'l13Projects.action.workspaces.group.add': () => workspaceGroupsState.addWorkspaceGroup(),
-		'l13Projects.action.workspaces.group.addToFavorites': ({ group }:GroupCustomTreeItem) => {
+		'l13Projects.action.workspaceGroups.add': () => workspaceGroupsState.addWorkspaceGroup(),
+		'l13Projects.action.workspaceGroups.addToFavorites': ({ group }:GroupCustomTreeItem) => {
 			
 			const workspaces = group.paths.map((path) => workspacesState.getWorkspaceByPath(path));
 			
 			favoriteGroupsState.addWorkspaceGroupToFavorites(group, workspaces.filter((workspace) => !!workspace));
 			
 		},
-		'l13Projects.action.workspaces.group.rename': ({ group }:GroupCustomTreeItem) => workspaceGroupsState.renameWorkspaceGroup(group),
-		'l13Projects.action.workspaces.group.remove': ({ group }:GroupCustomTreeItem) => workspaceGroupsState.removeWorkspaceGroup(group),
-		'l13Projects.action.workspaces.groups.clear': () => workspaceGroupsState.clearWorkspaceGroups(),
+		'l13Projects.action.workspaceGroups.rename': ({ group }:GroupCustomTreeItem) => workspaceGroupsState.renameWorkspaceGroup(group),
+		'l13Projects.action.workspaceGroups.remove': ({ group }:GroupCustomTreeItem) => workspaceGroupsState.removeWorkspaceGroup(group),
+		'l13Projects.action.workspaceGroups.clear': () => workspaceGroupsState.clearWorkspaceGroups(),
 		
 		'l13Projects.action.project.rename': ({ project }:ProjectTreeItem) => projectsDialog.renameProject(project),
 		'l13Projects.action.project.remove': ({ project }:ProjectTreeItem) => projectsDialog.deleteProject(project),

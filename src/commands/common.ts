@@ -71,8 +71,8 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspace.openInTerminal': ({ project }:CommonTreeItems) => terminal.open(getFolderPath(project)),
 		'l13Projects.action.workspace.copyPath': ({ project }:CommonTreeItems) => vscode.env.clipboard.writeText(project.path),
 		
-		'l13Projects.action.workspaces.group.openAllInCurrentWindows': ({ group }:CommonGroupTreeItems) => files.openAll(group.paths, false),
-		'l13Projects.action.workspaces.group.openAllInNewWindows': ({ group }:CommonGroupTreeItems) => files.openAll(group.paths, true),
+		'l13Projects.action.workspaceGroups.openAllInCurrentWindows': ({ group }:CommonGroupTreeItems) => files.openAll(group.paths, false),
+		'l13Projects.action.workspaceGroups.openAllInNewWindows': ({ group }:CommonGroupTreeItems) => files.openAll(group.paths, true),
 	});
 
 }
