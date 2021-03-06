@@ -56,14 +56,13 @@ export class WorkspaceGroupsDialog {
 		if (!workspaceGroups.length) {
 			await this.add();
 			workspaceGroup = this.workspaceGroupsState.get()[0];
-			if (!workspaceGroup) return;
 		} else {
 			workspaceGroup = await vscode.window.showQuickPick(workspaceGroups, {
-				placeHolder: 'Select a favorite group',
+				placeHolder: 'Select a workspace group',
 			});
 		}
 		
-		if (workspaceGroup.paths.includes(workspace.path)) return;
+		if (!workspaceGroup || workspaceGroup.paths.includes(workspace.path)) return;
 		
 		this.workspaceGroupsState.addWorkspace(workspace, workspaceGroup);
 		

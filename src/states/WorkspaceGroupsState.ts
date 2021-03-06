@@ -89,10 +89,7 @@ export class WorkspaceGroupsState {
 		const workspaceGroups = this.get();
 		
 		for (const workspaceGroup of workspaceGroups) {
-			if (workspaceGroup.label === label) {
-				vscode.window.showErrorMessage(`Workspace group "${label}" exists!`);
-				return;
-			}
+			if (workspaceGroup.label === label) return;
 		}
 		
 		workspaceGroups.push({
@@ -103,7 +100,7 @@ export class WorkspaceGroupsState {
 			type: 'custom'
 		});
 		
-		workspaceGroups.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
+		sortWorkspaceGroups(workspaceGroups);
 		
 		this.save(workspaceGroups);
 		this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
@@ -133,7 +130,7 @@ export class WorkspaceGroupsState {
 			if (workspaceGroup.id === favoriteGroup.id) {
 				workspaceGroup.label = favoriteGroup.label;
 				workspaceGroup.paths = favoriteGroup.paths;
-				workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+				sortWorkspaceGroups(workspaceGroups);
 				this.save(workspaceGroups);
 				this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 				break;
@@ -149,10 +146,10 @@ export class WorkspaceGroupsState {
 		for (const group of workspaceGroups) {
 			if (group.id === workspaceGroup.id) {
 				group.label = label;
-				workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+				sortWorkspaceGroups(workspaceGroups);
 				this.save(workspaceGroups);
-				this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 				this._onDidUpdateWorkspaceGroup.fire(group);
+				this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 				break;
 			}
 		}
@@ -166,8 +163,8 @@ export class WorkspaceGroupsState {
 		
 		if (workspaceGroup) {
 			this.save(workspaceGroups);
-			this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 			this._onDidUpdateWorkspaceGroup.fire(workspaceGroup);
+			this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 		}
 		
 	}
@@ -242,5 +239,11 @@ function saveCollapseState (groupStates:(GroupSimpleState|GroupTypeState)[], ite
 	else groupStates.push({ type, collapsed });
 	
 	item.group.collapsed = collapsed;
+	
+}
+
+function sortWorkspaceGroups (workspaceGroups:WorkspaceGroup[]) {
+	
+	workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 	
 }
