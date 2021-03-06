@@ -46,7 +46,7 @@ export class FavoritesState {
 		
 	}
 	
-	public save (favorites:Favorite[]) {
+	private save (favorites:Favorite[]) {
 		
 		states.updateFavorites(this.context, favorites);
 		

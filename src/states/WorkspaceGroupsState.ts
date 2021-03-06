@@ -50,7 +50,7 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public save (workspaceGroups:WorkspaceGroup[]) {
+	private save (workspaceGroups:WorkspaceGroup[]) {
 		
 		states.updateWorkspaceGroups(this.context, workspaceGroups);
 		

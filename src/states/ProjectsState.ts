@@ -47,7 +47,7 @@ export class ProjectsState {
 		
 	}
 	
-	public save (projects:Project[]) {
+	private save (projects:Project[]) {
 		
 		states.updateProjects(this.context, projects);
 		
