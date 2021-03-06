@@ -40,7 +40,7 @@ export class ProjectsDialog {
 		
 		if (!uris) return;
 		
-		this.states.addProject(uris);
+		this.states.addProjects(uris);
 		
 	}
 	
@@ -50,7 +50,7 @@ export class ProjectsDialog {
 		
 		if (!uris) return;
 		
-		this.states.addProject(uris);
+		this.states.addProjects(uris);
 		
 	}
 	
@@ -73,7 +73,7 @@ export class ProjectsDialog {
 			
 			if (!value) return;
 			
-			this.states.saveProject(fsPath, value);
+			this.states.addProject(fsPath, value);
 			
 		} else if (vscode.workspace.workspaceFile && vscode.workspace.workspaceFile.scheme === 'untitled') {
 			vscode.window.showWarningMessage(`Please save your current workspace first.`);
@@ -115,10 +115,10 @@ export class ProjectsDialog {
 		
 	}
 	
-	public async clearProjects () {
+	public async clearAllProjects () {
 		
 		if (await dialogs.confirm(`Delete all projects?'`, 'Delete')) {
-			this.states.clearProjects();
+			this.states.removeAllProjects();
 		}
 		
 	}

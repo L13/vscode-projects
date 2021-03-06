@@ -244,7 +244,7 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.project.removeColor': () => changeStatusBarColor(statusBarColorState, workspacesProvider, 0),
 		'l13Projects.action.project.hideColorPicker': () => workspacesProvider.hideColorPicker(),
 		
-		'l13Projects.action.projects.clear': () => projectsDialog.clearProjects(),
+		'l13Projects.action.projects.clear': () => projectsDialog.clearAllProjects(),
 	});
 	
 }

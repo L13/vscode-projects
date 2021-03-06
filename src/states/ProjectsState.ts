@@ -43,7 +43,27 @@ export class ProjectsState {
 	private _onDidChangeProjects:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
 	public readonly onDidChangeProjects:vscode.Event<Project[]> = this._onDidChangeProjects.event;
 	
-	public async addProject (uris:vscode.Uri[]) {
+	public getProjectByPath (fsPath:string) {
+		
+		const projects = states.getProjects(this.context);
+		
+		return projects.find(({ path }) => path === fsPath) || null;
+		
+	}
+	
+	public async addProject (fsPath:string, value:string) {
+		
+		const projects = states.getProjects(this.context);
+			
+		addProject(projects, fsPath, value);
+		
+		states.updateProjects(this.context, projects);
+		
+		this._onDidChangeProjects.fire(projects);
+		
+	}
+	
+	public async addProjects (uris:vscode.Uri[]) {
 		
 		const projects = states.getProjects(this.context);
 		const length = projects.length;
@@ -59,26 +79,6 @@ export class ProjectsState {
 		});
 		
 		if (projects.length === length) return;
-		
-		states.updateProjects(this.context, projects);
-		
-		this._onDidChangeProjects.fire(projects);
-		
-	}
-	
-	public getProjectByPath (fsPath:string) {
-		
-		const projects = states.getProjects(this.context);
-		
-		return projects.find(({ path }) => path === fsPath) || null;
-		
-	}
-	
-	public async saveProject (fsPath:string, value:string) {
-		
-		const projects = states.getProjects(this.context);
-			
-		addProject(projects, fsPath, value);
 		
 		states.updateProjects(this.context, projects);
 		
@@ -127,7 +127,7 @@ export class ProjectsState {
 		
 	}
 	
-	public async clearProjects () {
+	public async removeAllProjects () {
 		
 		states.updateProjects(this.context, []);
 		this._onDidChangeProjects.fire([]);
