@@ -56,6 +56,8 @@ export class WorkspaceGroupsDialog {
 		if (!workspaceGroups.length) {
 			await this.add();
 			workspaceGroup = this.workspaceGroupsState.get()[0];
+		} else if (workspaceGroups.length === 1) {
+			workspaceGroup = workspaceGroups[0];
 		} else {
 			workspaceGroup = await vscode.window.showQuickPick(workspaceGroups, {
 				placeHolder: 'Select a workspace group',
