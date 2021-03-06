@@ -34,6 +34,9 @@ export class StatusBarColor {
 	private _onDidUpdateColor:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
 	public readonly onDidUpdateColor:vscode.Event<Project> = this._onDidUpdateColor.event;
 	
+	private _onDidChangeColor:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
+	public readonly onDidChangeColor:vscode.Event<Project> = this._onDidChangeColor.event;
+	
 	public detectProjectColors () {
 		
 		const projects = states.getProjects(this.context);
@@ -71,7 +74,7 @@ export class StatusBarColor {
 				else delete project.color;
 				states.updateProjects(this.context, projects);
 				settings.updateStatusBarColorSettings(project.path, colors[color]);
-				this._onDidUpdateColor.fire(project);
+				this._onDidChangeColor.fire(project);
 				break;
 			}
 		}

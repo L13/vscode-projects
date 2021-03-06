@@ -194,6 +194,13 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	}));
 	
+	subscriptions.push(statusBarColorState.onDidChangeColor((project) => {
+		
+		favoritesState.update(project);
+		workspacesState.refresh();
+		
+	}));
+	
 //	Commands
 	
 	commands.register(context, {
