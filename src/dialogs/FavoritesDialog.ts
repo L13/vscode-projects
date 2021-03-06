@@ -23,11 +23,11 @@ import { FavoritesState } from '../states/FavoritesState';
 
 export class FavoritesDialog {
 	
-	private static currentFavoritesDialog:FavoritesDialog = null;
+	private static current:FavoritesDialog = null;
 	
-	public static createFavoritesDialog (favoritesStates:FavoritesState, favoriteGroupsState:FavoriteGroupsState) {
+	public static create (favoritesStates:FavoritesState, favoriteGroupsState:FavoriteGroupsState) {
 		
-		return FavoritesDialog.currentFavoritesDialog || (FavoritesDialog.currentFavoritesDialog = new FavoritesDialog(favoritesStates, favoriteGroupsState));
+		return FavoritesDialog.current || (FavoritesDialog.current = new FavoritesDialog(favoritesStates, favoriteGroupsState));
 		
 	}
 	
@@ -35,38 +35,47 @@ export class FavoritesDialog {
 	
 	public async pick () {
 		
-		const favorites = this.favoritesStates.getAll();
-		const favoriteGroups = this.favoriteGroupsState.getFavoriteGroups();
+		const items = this.createQuickPickItems();
 		
-		if (favorites.length || favoriteGroups.length) {
-			const groups = favoriteGroups.map((favoriteGroup) => {
-				
-				const paths = favoriteGroup.paths;
-				const names = favorites.filter((favorite) => paths.includes(favorite.path));
-				
-				return {
-					label: favoriteGroup.label,
-					description: names.map((favorite) => favorite.label).join(', '),
-					paths: favoriteGroup.paths,
-				};
-				
-			});
-			const items = favorites.map((favorite) => ({
-				label: favorite.label,
-				description: favorite.path,
-				detail: favorite.deleted ? '$(alert) Path does not exist' : '',
-				paths: null,
-			}));
+		if (!items.length) return;
+		
+		const item = await vscode.window.showQuickPick(items, {
+			placeHolder: 'Select a project',
+		});
 			
-			const item = await vscode.window.showQuickPick([...groups, ...items], {
-				placeHolder: 'Select a project',
-			});
-				
-			if (item) {
-				if (item.paths) files.openAll(item.paths);
-				else files.open(item.description);
-			}
+		if (item) {
+			if (item.paths) files.openAll(item.paths);
+			else files.open(item.description);
 		}
+		
+	}
+	
+	private createQuickPickItems () {
+		
+		const favoriteGroups = this.favoriteGroupsState.get();
+		const favorites = this.favoritesStates.get();
+		
+		const groups = favoriteGroups.map((favoriteGroup) => {
+				
+			const paths = favoriteGroup.paths;
+			const names = favorites.filter((favorite) => paths.includes(favorite.path));
+			
+			return {
+				label: favoriteGroup.label,
+				description: names.map((favorite) => favorite.label).join(', '),
+				paths: favoriteGroup.paths,
+			};
+			
+		});
+		
+		const items = favorites.map((favorite) => ({
+			label: favorite.label,
+			description: favorite.path,
+			detail: favorite.deleted ? '$(alert) Path does not exist' : '',
+			paths: null,
+		}));
+		
+		return [...groups, ...items];
 		
 	}
 	

@@ -21,11 +21,11 @@ import * as states from '../common/states';
 
 export class FavoritesState {
 	
-	private static currentFavoritesState:FavoritesState = null;
+	private static current:FavoritesState = null;
 	
-	public static createFavoritesState (context:vscode.ExtensionContext) {
+	public static create (context:vscode.ExtensionContext) {
 		
-		return FavoritesState.currentFavoritesState || (FavoritesState.currentFavoritesState = new FavoritesState(context));
+		return FavoritesState.current || (FavoritesState.current = new FavoritesState(context));
 		
 	}
 	
@@ -40,15 +40,21 @@ export class FavoritesState {
 	private _onDidChangeFavorites:vscode.EventEmitter<Favorite[]> = new vscode.EventEmitter<Favorite[]>();
 	public readonly onDidChangeFavorites:vscode.Event<Favorite[]> = this._onDidChangeFavorites.event;
 	
-	public getAll () {
+	public get () {
 		
 		return states.getFavorites(this.context, true);
 		
 	}
 	
+	public save (favorites:Favorite[]) {
+		
+		states.updateFavorites(this.context, favorites);
+		
+	}
+	
 	public add (workspace:Project) {
 		
-		const favorites = states.getFavorites(this.context);
+		const favorites = this.get();
 		
 		if (favorites.some(({ path }) => path === workspace.path)) {
 			return vscode.window.showErrorMessage(`Project "${workspace.label}" exists in favorites!`);
@@ -63,14 +69,14 @@ export class FavoritesState {
 		
 		favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 		
-		states.updateFavorites(this.context, favorites);
+		this.save(favorites);
 		this._onDidChangeFavorites.fire(favorites);
 		
 	}
 	
 	public update (workspace:Project) {
 		
-		const favorites = states.getFavorites(this.context);
+		const favorites = this.get();
 		const fsPath = workspace.path;
 		
 		for (const favorite of favorites) {
@@ -80,7 +86,7 @@ export class FavoritesState {
 				else delete favorite.color;
 				favorite.label = workspace.label;
 				favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				states.updateFavorites(this.context, favorites);
+				this.save(favorites);
 				this._onDidChangeFavorites.fire(favorites);
 				break;
 			}
@@ -88,16 +94,16 @@ export class FavoritesState {
 		
 	}
 	
-	public async rename (favorite:Favorite, label:string) {
+	public rename (favorite:Favorite, label:string) {
 		
-		const favorites = states.getFavorites(this.context);
+		const favorites = this.get();
 		const fsPath = favorite.path;
 		
 		for (const fav of favorites) {
 			if (fav.path === fsPath) {
 				fav.label = label;
 				favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				states.updateFavorites(this.context, favorites);
+				this.save(favorites);
 				this._onDidUpdateFavorite.fire(fav);
 				this._onDidChangeFavorites.fire(favorites);
 				break;
@@ -106,15 +112,15 @@ export class FavoritesState {
 		
 	}
 	
-	public async remove (favorite:Favorite) {
+	public remove (favorite:Favorite) {
 		
-		const favorites = states.getFavorites(this.context);
+		const favorites = this.get();
 		const fsPath = favorite.path;
 		
 		for (let i = 0; i < favorites.length; i++) {
 			if (favorites[i].path === fsPath) {
 				favorites.splice(i, 1);
-				states.updateFavorites(this.context, favorites);
+				this.save(favorites);
 				this._onDidDeleteFavorite.fire(favorite);
 				this._onDidChangeFavorites.fire(favorites);
 				break;
@@ -123,9 +129,9 @@ export class FavoritesState {
 		
 	}
 	
-	public async clear () {
+	public clear () {
 		
-		states.updateFavorites(this.context, []);
+		this.save([]);
 		states.updateFavoriteGroups(this.context, []);
 		this._onDidChangeFavorites.fire([]);
 		

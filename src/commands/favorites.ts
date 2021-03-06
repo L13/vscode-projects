@@ -32,21 +32,21 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	const subscriptions = context.subscriptions;
 	
-	const hotkeySlotsState = HotkeySlotsState.createHotkeySlotsState(context);
+	const hotkeySlotsState = HotkeySlotsState.create(context);
 	
-	const favoritesState = FavoritesState.createFavoritesState(context);
-	const favoriteGroupsState = FavoriteGroupsState.createFavoriteGroupsState(context);
-	const favoritesDialog = FavoritesDialog.createFavoritesDialog(favoritesState, favoriteGroupsState);
-	const favoriteGroupsDialog = FavoriteGroupsDialog.createFavoriteGroupsDialog(favoriteGroupsState);
-	const favoritesProvider = FavoritesProvider.createProvider({
-		favorites: favoritesState.getAll(),
-		favoriteGroups: favoriteGroupsState.getFavoriteGroups(),
+	const favoritesState = FavoritesState.create(context);
+	const favoriteGroupsState = FavoriteGroupsState.create(context);
+	const favoritesDialog = FavoritesDialog.create(favoritesState, favoriteGroupsState);
+	const favoriteGroupsDialog = FavoriteGroupsDialog.create(favoriteGroupsState);
+	const favoritesProvider = FavoritesProvider.create({
+		favorites: favoritesState.get(),
+		favoriteGroups: favoriteGroupsState.get(),
 		hotkeySlots: hotkeySlotsState,
 	});
 	
-	const projectsState = ProjectsState.createProjectsState(context);
+	const projectsState = ProjectsState.create(context);
 	
-	const workspaceGroupState = WorkspaceGroupsState.createWorkspaceGroupsState(context);
+	const workspaceGroupState = WorkspaceGroupsState.create(context);
 	
 	const treeView = vscode.window.createTreeView('l13ProjectsFavorites', {
 		treeDataProvider: favoritesProvider,
@@ -80,7 +80,7 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	subscriptions.push(favoritesState.onDidDeleteFavorite((favorite) => {
 		
-		favoriteGroupsState.removeFromFavoriteGroup(favorite);
+		favoriteGroupsState.removeFavorite(favorite);
 		
 	}));
 	
@@ -95,13 +95,13 @@ export function activate (context:vscode.ExtensionContext) {
 	subscriptions.push(favoriteGroupsState.onDidUpdateFavoriteGroup((favoriteGroup) => {
 		
 		hotkeySlotsState.updateGroup(favoriteGroup);
-		workspaceGroupState.updateWorkspaceGroup(favoriteGroup);
+		workspaceGroupState.update(favoriteGroup);
 		
 	}));
 	
 	subscriptions.push(favoriteGroupsState.onDidDeleteFavoriteGroup((favoriteGroup) => {
 		
-		if (!workspaceGroupState.getWorkspaceGroupById(favoriteGroup.id)) {
+		if (!workspaceGroupState.getById(favoriteGroup.id)) {
 			hotkeySlotsState.removeGroup(favoriteGroup);
 		}
 		
@@ -110,7 +110,7 @@ export function activate (context:vscode.ExtensionContext) {
 	subscriptions.push(favoriteGroupsState.onDidChangeFavoriteGroups((favoriteGroups) => {
 		
 		favoritesProvider.refresh({
-			favorites: favoritesState.getAll(),
+			favorites: favoritesState.get(),
 			favoriteGroups
 		});
 		
@@ -119,8 +119,8 @@ export function activate (context:vscode.ExtensionContext) {
 //	Commands
 	
 	commands.register(context, {
-		'l13Projects.action.favorite.addToGroup': ({ project }:FavoriteTreeItems) => favoriteGroupsState.addFavoriteToGroup(project),
-		'l13Projects.action.favorite.removeFromGroup': ({ project }:FavoriteTreeItems) => favoriteGroupsState.removeFromFavoriteGroup(project),
+		'l13Projects.action.favorite.addToGroup': ({ project }:FavoriteTreeItems) => favoriteGroupsDialog.addFavoriteToGroup(project),
+		'l13Projects.action.favorite.removeFromGroup': ({ project }:FavoriteTreeItems) => favoriteGroupsState.removeFavorite(project),
 		'l13Projects.action.favorite.rename': ({ project }:FavoriteTreeItems) => favoritesDialog.rename(project),
 		'l13Projects.action.favorite.remove': ({ project }:FavoriteTreeItems) => favoritesDialog.remove(project),
 		

@@ -59,7 +59,7 @@ export type GroupTypeState = {
 	collapsed:boolean,
 };
 
-export type StatusbarColors = {
+export type StatusBarColors = {
 	'statusBar.background':string,
 	'statusBar.foreground':string,
 	'statusBarItem.hoverBackground':string,

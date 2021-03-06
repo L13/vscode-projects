@@ -7,7 +7,6 @@ import { remove, sortCaseInsensitive } from '../@l13/arrays';
 import { FavoriteGroup } from '../@types/favorites';
 import { GroupSimpleState, GroupTypeState, Project, WorkspaceGroup } from '../@types/workspaces';
 
-import * as dialogs from '../common/dialogs';
 import * as states from '../common/states';
 
 import { GroupCustomTreeItem } from '../sidebar/trees/GroupCustomTreeItem';
@@ -26,11 +25,11 @@ import { GroupTypeTreeItem } from '../sidebar/trees/GroupTypeTreeItem';
 
 export class WorkspaceGroupsState {
 	
-	private static currentWorkspaceGroupsState:WorkspaceGroupsState = null;
+	private static current:WorkspaceGroupsState = null;
 	
-	public static createWorkspaceGroupsState (context:vscode.ExtensionContext) {
+	public static create (context:vscode.ExtensionContext) {
 		
-		return WorkspaceGroupsState.currentWorkspaceGroupsState || (WorkspaceGroupsState.currentWorkspaceGroupsState = new WorkspaceGroupsState(context));
+		return WorkspaceGroupsState.current || (WorkspaceGroupsState.current = new WorkspaceGroupsState(context));
 		
 	}
 	
@@ -45,9 +44,15 @@ export class WorkspaceGroupsState {
 	private _onDidChangeWorkspaceGroups:vscode.EventEmitter<WorkspaceGroup[]> = new vscode.EventEmitter<WorkspaceGroup[]>();
 	public readonly onDidChangeWorkspaceGroups:vscode.Event<WorkspaceGroup[]> = this._onDidChangeWorkspaceGroups.event;
 	
-	public getWorkspaceGroups () {
+	public get () {
 		
 		return states.getWorkspaceGroups(this.context);
+		
+	}
+	
+	public save (workspaceGroups:WorkspaceGroup[]) {
+		
+		states.updateWorkspaceGroups(this.context, workspaceGroups);
 		
 	}
 	
@@ -63,31 +68,30 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public getWorkspaceGroupById (groupId:number) {
+	public getById (groupId:number) {
 		
-		const workspaceGroups = states.getWorkspaceGroups(this.context);
+		const workspaceGroups = this.get();
 		
-		for (const workspaceGroup of workspaceGroups) {
-			if (workspaceGroup.id === groupId) return workspaceGroup;
-		}
-		
-		return null;
+		return workspaceGroups.find(({ id }) => id === groupId) || null;
 		
 	}
 	
-	public async addWorkspaceGroup () {
+	public getByName (groupId:string) {
 		
-		const label = await vscode.window.showInputBox({
-			placeHolder: 'Please enter a name for the group.',
-		});
+		const workspaceGroups = this.get();
 		
-		if (!label) return;
+		return workspaceGroups.find(({ label }) => label === groupId) || null;
 		
-		const workspaceGroups = states.getWorkspaceGroups(this.context);
+	}
+	
+	public add (label:string) {
+		
+		const workspaceGroups = this.get();
 		
 		for (const workspaceGroup of workspaceGroups) {
 			if (workspaceGroup.label === label) {
-				return vscode.window.showErrorMessage(`Workspace group "${label}" exists!`);
+				vscode.window.showErrorMessage(`Workspace group "${label}" exists!`);
+				return;
 			}
 		}
 		
@@ -101,40 +105,36 @@ export class WorkspaceGroupsState {
 		
 		workspaceGroups.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
 		
-		states.updateWorkspaceGroups(this.context, workspaceGroups);
+		this.save(workspaceGroups);
 		this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 		
 	}
 	
-	public async addWorkspaceToGroup (workspace:Project) {
+	public addWorkspace (workspace:Project, workspaceGroup:WorkspaceGroup) {
 		
-		const workspaceGroups = states.getWorkspaceGroups(this.context);
-		
-		if (!workspaceGroups.length) await this.addWorkspaceGroup();
-		
-		const workspaceGroup = workspaceGroups.length > 1 ? await vscode.window.showQuickPick(workspaceGroups) : workspaceGroups[0];
+		const workspaceGroups = this.get();
 		
 		if (workspaceGroup && !workspaceGroup.paths.includes(workspace.path)) {
 			workspaceGroups.some((group) => remove(group.paths, workspace.path));
 			workspaceGroup.paths.push(workspace.path);
 			workspaceGroup.paths.sort();
-			states.updateWorkspaceGroups(this.context, workspaceGroups);
+			this.save(workspaceGroups);
 			this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 			this._onDidUpdateWorkspaceGroup.fire(workspaceGroup);
 		}
 		
 	}
 	
-	public async updateWorkspaceGroup (favoriteGroup:FavoriteGroup) {
+	public update (favoriteGroup:FavoriteGroup) {
 		
-		const workspaceGroups = states.getWorkspaceGroups(this.context);
+		const workspaceGroups = this.get();
 		
 		for (const workspaceGroup of workspaceGroups) {
 			if (workspaceGroup.id === favoriteGroup.id) {
 				workspaceGroup.label = favoriteGroup.label;
 				workspaceGroup.paths = favoriteGroup.paths;
 				workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				states.updateWorkspaceGroups(this.context, workspaceGroups);
+				this.save(workspaceGroups);
 				this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 				break;
 			}
@@ -142,35 +142,15 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public removeFromWorkspaceGroup (workspace:Project) {
+	public rename (workspaceGroup:WorkspaceGroup, label:string) {
 		
-		const workspaceGroups = states.getWorkspaceGroups(this.context);
-		const workspaceGroup = workspaceGroups.find((group) => remove(group.paths, workspace.path));
-		
-		if (workspaceGroup) {
-			states.updateWorkspaceGroups(this.context, workspaceGroups);
-			this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
-			this._onDidUpdateWorkspaceGroup.fire(workspaceGroup);
-		}
-		
-	}
-	
-	public async renameWorkspaceGroup (workspaceGroup:WorkspaceGroup) {
-		
-		const value = await vscode.window.showInputBox({
-			placeHolder: 'Please enter a new name for the group.',
-			value: workspaceGroup.label,
-		});
-		
-		if (!value || workspaceGroup.label === value) return;
-		
-		const workspaceGroups = states.getWorkspaceGroups(this.context);
+		const workspaceGroups = this.get();
 		
 		for (const group of workspaceGroups) {
 			if (group.id === workspaceGroup.id) {
-				group.label = value;
+				group.label = label;
 				workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				states.updateWorkspaceGroups(this.context, workspaceGroups);
+				this.save(workspaceGroups);
 				this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 				this._onDidUpdateWorkspaceGroup.fire(group);
 				break;
@@ -179,65 +159,72 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public async removeWorkspaceGroup (workspaceGroup:WorkspaceGroup) {
+	public removeWorkspace (workspace:Project) {
 		
-		const value = await dialogs.confirm(`Delete workspace group "${workspaceGroup.label}"?`, 'Delete');
+		const workspaceGroups = this.get();
+		const workspaceGroup = workspaceGroups.find((group) => remove(group.paths, workspace.path));
 		
-		if (value) {
-			const workspaceGroups = states.getWorkspaceGroups(this.context);
-			const groupId = workspaceGroup.id;
-			
-			for (let i = 0; i < workspaceGroups.length; i++) {
-				if (workspaceGroups[i].id === groupId) {
-					workspaceGroups.splice(i, 1);
-					states.updateWorkspaceGroups(this.context, workspaceGroups);
-					this._onDidDeleteWorkspaceGroup.fire(workspaceGroup);
-					this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
-					break;
-				}
-			}
+		if (workspaceGroup) {
+			this.save(workspaceGroups);
+			this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
+			this._onDidUpdateWorkspaceGroup.fire(workspaceGroup);
 		}
 		
 	}
 	
-	public async clearWorkspaceGroups () {
+	public remove (workspaceGroup:WorkspaceGroup) {
 		
-		if (await dialogs.confirm(`Delete all workspace groups?'`, 'Delete')) {
-			states.updateWorkspaceGroups(this.context, []);
-			this._onDidChangeWorkspaceGroups.fire([]);
-		}
+		const workspaceGroups = this.get();
+		const groupId = workspaceGroup.id;
 		
-	}
-	
-	public saveWorkspaceGroupState (item:GroupCustomTreeItem, collapsed:boolean) {
-		
-		const workspaceGroups = states.getWorkspaceGroups(this.context);
-		const groupId = item.group.id;
-		
-		for (const workspaceGroup of workspaceGroups) {
-			if (workspaceGroup.id === groupId) {
-				workspaceGroup.collapsed = collapsed;
-				states.updateWorkspaceGroups(this.context, workspaceGroups);
+		for (let i = 0; i < workspaceGroups.length; i++) {
+			if (workspaceGroups[i].id === groupId) {
+				workspaceGroups.splice(i, 1);
+				this.save(workspaceGroups);
+				this._onDidDeleteWorkspaceGroup.fire(workspaceGroup);
+				this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 				break;
 			}
 		}
 		
 	}
 	
-	public saveGroupSimpleState (item:GroupSimpleTreeItem, collapsed:boolean) {
+	public clear () {
+		
+		this.save([]);
+		this._onDidChangeWorkspaceGroups.fire([]);
+		
+	}
+	
+	public saveWorkspaceGroupState (item:GroupCustomTreeItem, collapsed:boolean) {
+		
+		const workspaceGroups = this.get();
+		const groupId = item.group.id;
+		
+		for (const workspaceGroup of workspaceGroups) {
+			if (workspaceGroup.id === groupId) {
+				workspaceGroup.collapsed = collapsed;
+				this.save(workspaceGroups);
+				break;
+			}
+		}
+		
+	}
+	
+	public saveSimpleGroupState (item:GroupSimpleTreeItem, collapsed:boolean) {
 		
 		const groupStates = states.getGroupSimpleStates(this.context);
 		
-		addCollapseState(groupStates, item, collapsed);
+		saveCollapseState(groupStates, item, collapsed);
 		states.updateGroupSimpleStates(this.context, groupStates);
 		
 	}
 	
-	public saveGroupTypeState (item:GroupTypeTreeItem, collapsed:boolean) {
+	public saveTypeGroupState (item:GroupTypeTreeItem, collapsed:boolean) {
 		
 		const groupStates = states.getGroupSimpleStates(this.context);
 		
-		addCollapseState(groupStates, item, collapsed);
+		saveCollapseState(groupStates, item, collapsed);
 		states.updateGroupSimpleStates(this.context, groupStates);
 		
 	}
@@ -246,7 +233,7 @@ export class WorkspaceGroupsState {
 
 //	Functions __________________________________________________________________
 
-function addCollapseState (groupStates:(GroupSimpleState|GroupTypeState)[], item:GroupSimpleTreeItem|GroupTypeTreeItem, collapsed:boolean) {
+function saveCollapseState (groupStates:(GroupSimpleState|GroupTypeState)[], item:GroupSimpleTreeItem|GroupTypeTreeItem, collapsed:boolean) {
 	
 	const type = item.group.type;
 	const groupState = groupStates.find((state) => state.type === type);

@@ -5,7 +5,7 @@ import * as jsoncParser from 'jsonc-parser';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import { StatusbarColors } from '../@types/workspaces';
+import { StatusBarColors } from '../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -48,7 +48,7 @@ export function getCurrentWorkspacePath () {
 	
 }
 
-export function updateStatusBarColorSettings (workspacePath:string, statusbarColors:StatusbarColors) {
+export function updateStatusBarColorSettings (workspacePath:string, statusbarColors:StatusBarColors) {
 	
 	const useCodeWorkspace = isCodeWorkspace(workspacePath);
 	const workspaceSettingsPath = useCodeWorkspace ? workspacePath : getSettingsPath(workspacePath);
@@ -81,7 +81,7 @@ function getSettingsPath (workspacePath:string) {
 	
 }
 
-function updateSettingsFile (workspaceSettingsPath:string, statusbarColors:StatusbarColors, useCodeWorkspace:boolean) {
+function updateSettingsFile (workspaceSettingsPath:string, statusbarColors:StatusBarColors, useCodeWorkspace:boolean) {
 	
 	const workspaceSettings:string = fs.readFileSync(workspaceSettingsPath, 'utf-8');
 	const jsonpath = useCodeWorkspace ? ['settings', COLOR_CUSTOMIZATIONS] : [COLOR_CUSTOMIZATIONS];
@@ -116,7 +116,7 @@ function updateSettingsFile (workspaceSettingsPath:string, statusbarColors:Statu
 	
 }
 
-function createSettingsFile (workspaceSettingsPath:string, statusbarColors:StatusbarColors) {
+function createSettingsFile (workspaceSettingsPath:string, statusbarColors:StatusBarColors) {
 	
 	const colorCustomizations:any = {};
 	

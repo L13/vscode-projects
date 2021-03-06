@@ -7,7 +7,6 @@ import { Slot } from '../@types/hotkeys';
 import { Project, WorkspaceGroup } from '../@types/workspaces';
 
 import * as files from '../common/files';
-import * as settings from '../common/settings';
 import * as states from '../common/states';
 
 //	Variables __________________________________________________________________
@@ -22,11 +21,11 @@ import * as states from '../common/states';
 
 export class HotkeySlotsState {
 	
-	private static currentHotkeySlotsState:HotkeySlotsState;
+	private static current:HotkeySlotsState;
 	
-	public static createHotkeySlotsState (context:vscode.ExtensionContext) {
+	public static create (context:vscode.ExtensionContext) {
 		
-		return HotkeySlotsState.currentHotkeySlotsState || (HotkeySlotsState.currentHotkeySlotsState = new HotkeySlotsState(context));
+		return HotkeySlotsState.current || (HotkeySlotsState.current = new HotkeySlotsState(context));
 		
 	}
 	
@@ -47,13 +46,37 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public getSlots () {
+	public get () {
 		
 		return this.slots;
 		
 	}
 	
-	public async assign (project:Project, index:number) {
+	public getByWorkspace (workspace:Project) {
+		
+		const slots = this.slots;
+		
+		for (const slot of slots) {
+			if (slot && slot.path === workspace.path) return slot;
+		}
+		
+		return null;
+		
+	}
+	
+	public getByGroup (group:FavoriteGroup|WorkspaceGroup) {
+		
+		const slots = this.slots;
+		
+		for (const slot of slots) {
+			if (slot && slot.groupId === group.id) return slot;
+		}
+		
+		return null;
+		
+	}
+	
+	public assign (project:Project, index:number) {
 		
 		const slots = this.slots;
 		
@@ -72,7 +95,7 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public async assignGroup (group:FavoriteGroup|WorkspaceGroup, index:number) {
+	public assignGroup (group:FavoriteGroup|WorkspaceGroup, index:number) {
 		
 		const slots = this.slots;
 		
@@ -171,37 +194,13 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public async remove (index:number) {
+	public remove (index:number) {
 		
 		const slots = this.slots;
 		
 		delete slots[index];
 		states.updateSlots(this.context, slots);
 		this._onDidChangeSlots.fire(slots);
-		
-	}
-	
-	public getByWorkspace (workspace:Project) {
-		
-		const slots = this.slots;
-		
-		for (const slot of slots) {
-			if (slot && slot.path === workspace.path) return slot;
-		}
-		
-		return null;
-		
-	}
-	
-	public getByGroup (group:FavoriteGroup|WorkspaceGroup) {
-		
-		const slots = this.slots;
-		
-		for (const slot of slots) {
-			if (slot && slot.groupId === group.id) return slot;
-		}
-		
-		return null;
 		
 	}
 	
@@ -212,10 +211,9 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public previousWorkspace () {
+	public previousWorkspace (workspacePath:string) {
 		
 		const workspacesPaths = states.getCurrentWorkspace(this.context);
-		const workspacePath = settings.getCurrentWorkspacePath();
 		
 		if (workspacesPaths[1] && workspacesPaths[1] !== workspacePath) files.open(workspacesPaths[1]);
 	//	Fixes async saveCurrentWorkspace if keyboard shortcut was pressed multiple times really fast
@@ -223,10 +221,9 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public saveCurrentWorkspace () {
+	public saveCurrentWorkspace (workspacePath:string) {
 	
 		const workspacePaths = states.getCurrentWorkspace(this.context);
-		const workspacePath = settings.getCurrentWorkspacePath();
 		
 		if (workspacePath && workspacePaths[0] !== workspacePath) {
 			workspacePaths.unshift(workspacePath);

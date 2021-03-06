@@ -21,16 +21,15 @@ import { WorkspacesState } from '../states/WorkspacesState';
 
 export class WorkspacesDialog {
 	
-	private static currentWorkspacesDialog:WorkspacesDialog = null;
+	private static current:WorkspacesDialog = null;
 	
-	public static createWorkspacesDialog (workspacesState:WorkspacesState, workspaceGroupsState:WorkspaceGroupsState) {
+	public static create (workspacesState:WorkspacesState, workspaceGroupsState:WorkspaceGroupsState) {
 		
-		return WorkspacesDialog.currentWorkspacesDialog || (WorkspacesDialog.currentWorkspacesDialog = new WorkspacesDialog(workspacesState, workspaceGroupsState));
+		return WorkspacesDialog.current || (WorkspacesDialog.current = new WorkspacesDialog(workspacesState, workspaceGroupsState));
 		
 	}
 	
-	public constructor (private readonly workspacesState:WorkspacesState,
-		private readonly workspaceGroupsState:WorkspaceGroupsState) {}
+	public constructor (private readonly workspacesState:WorkspacesState, private readonly workspaceGroupsState:WorkspaceGroupsState) {}
 	
 	public async pick () {
 		
@@ -49,11 +48,11 @@ export class WorkspacesDialog {
 	
 	private async createQuickPickItems () {
 		
-		if (!this.workspacesState.workspacesCache) await this.workspacesState.detectWorkspaces();
+		if (!this.workspacesState.cache) await this.workspacesState.detect();
 		
 		const items:WorkspaceQuickPickItem[] = [];
-		const workspacesCache = this.workspacesState.workspacesCache;
-		const workspaceGroups = this.workspaceGroupsState.getWorkspaceGroups();
+		const workspacesCache = this.workspacesState.cache;
+		const workspaceGroups = this.workspaceGroupsState.get();
 		
 		workspaceGroups.forEach((workspaceGroup) => {
 			
@@ -68,7 +67,7 @@ export class WorkspacesDialog {
 			
 		});
 		
-		this.workspacesState.workspacesCache.forEach((project) => {
+		this.workspacesState.cache.forEach((project) => {
 			
 			items.push({
 				label: project.label,

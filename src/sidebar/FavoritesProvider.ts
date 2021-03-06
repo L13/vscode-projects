@@ -31,11 +31,11 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 	private favoriteGroups:FavoriteGroup[] = [];
 	private slots:HotkeySlotsState = null;
 	
-	public static currentFavoritesProvider:FavoritesProvider;
+	public static current:FavoritesProvider;
 	
-	public static createProvider (states:FavoritesStates) {
+	public static create (states:FavoritesStates) {
 		
-		return FavoritesProvider.currentFavoritesProvider || (FavoritesProvider.currentFavoritesProvider = new FavoritesProvider(states));
+		return FavoritesProvider.current || (FavoritesProvider.current = new FavoritesProvider(states));
 		
 	}
 	

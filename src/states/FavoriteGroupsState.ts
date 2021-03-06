@@ -25,7 +25,7 @@ export class FavoriteGroupsState {
 	
 	private static currentFavoriteGroupsState:FavoriteGroupsState = null;
 	
-	public static createFavoriteGroupsState (context:vscode.ExtensionContext) {
+	public static create (context:vscode.ExtensionContext) {
 		
 		return FavoriteGroupsState.currentFavoriteGroupsState || (FavoriteGroupsState.currentFavoriteGroupsState = new FavoriteGroupsState(context));
 		
@@ -42,118 +42,110 @@ export class FavoriteGroupsState {
 	private _onDidChangeFavoriteGroups:vscode.EventEmitter<FavoriteGroup[]> = new vscode.EventEmitter<FavoriteGroup[]>();
 	public readonly onDidChangeFavoriteGroups:vscode.Event<FavoriteGroup[]> = this._onDidChangeFavoriteGroups.event;
 	
-	public getFavoriteGroups () {
+	public get () {
 		
 		return states.getFavoriteGroups(this.context);
 		
 	}
 	
-	public getFavoriteGroupById (groupId:number) {
+	private save (favoriteGroups:FavoriteGroup[]) {
 		
-		const favoriteGroups = states.getFavoriteGroups(this.context);
-		
-		for (const favoriteGroup of favoriteGroups) {
-			if (favoriteGroup.id === groupId) return favoriteGroup;
-		}
-		
-		return null;
+		states.updateFavoriteGroups(this.context, favoriteGroups);
 		
 	}
 	
-	public async addFavoriteGroup (label:string) {
+	public getById (groupId:number) {
 		
-		const favoriteGroups = states.getFavoriteGroups(this.context);
+		const favoriteGroups = this.get();
+		
+		return favoriteGroups.find(({ id }) => id === groupId) || null;
+		
+	}
+	
+	public getByName (groupLabel:string) {
+		
+		const favoriteGroups = this.get();
+		
+		return favoriteGroups.find(({ label }) => label === groupLabel) || null;
+		
+	}
+	
+	public add (label:string) {
+		
+		const favoriteGroups = this.get();
 		
 		for (const favoriteGroup of favoriteGroups) {
 			if (favoriteGroup.label === label) return vscode.window.showErrorMessage(`Favorite group "${label}" exists!`);
 		}
 		
 		favoriteGroups.push({ label, id: states.getNextGroupId(this.context), collapsed: false, paths: [] });
-		favoriteGroups.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
-		states.updateFavoriteGroups(this.context, favoriteGroups);
+		sortFavoriteGroups(favoriteGroups);
+		this.save(favoriteGroups);
 		this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 		
 	}
 	
-	public async addFavoriteToGroup (favorite:Favorite) {
+	public addFavorite (favorite:Favorite, favoriteGroup:FavoriteGroup) {
 		
-		const favoriteGroups = states.getFavoriteGroups(this.context);
+		const favoriteGroups = this.get();
+		const previousFavoriteGroup = favoriteGroups.find((group) => remove(group.paths, favorite.path));
 		
-		// if (!favoriteGroups.length) await this.addFavoriteGroup();
+		favoriteGroup.paths.push(favorite.path);
+		favoriteGroup.paths.sort();
 		
-		const favoriteGroup = favoriteGroups.length > 1 ? await vscode.window.showQuickPick(favoriteGroups) : favoriteGroups[0];
-		
-		if (favoriteGroup && !favoriteGroup.paths.includes(favorite.path)) {
-			const previousFavoriteGroup = favoriteGroups.find((group) => remove(group.paths, favorite.path));
-			favoriteGroup.paths.push(favorite.path);
-			favoriteGroup.paths.sort();
-			states.updateFavoriteGroups(this.context, favoriteGroups);
-			this._onDidChangeFavoriteGroups.fire(favoriteGroups);
-			if (previousFavoriteGroup) this._onDidUpdateFavoriteGroup.fire(previousFavoriteGroup);
-			this._onDidUpdateFavoriteGroup.fire(favoriteGroup);
-		}
+		this.save(favoriteGroups);
+		if (previousFavoriteGroup) this._onDidUpdateFavoriteGroup.fire(previousFavoriteGroup);
+		this._onDidUpdateFavoriteGroup.fire(favoriteGroup);
+		this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 		
 	}
 	
-	public async addWorkspaceGroupToFavorites (workspaceGroup:WorkspaceGroup, workspaces:Project[]) {
+	public addWorkspaceGroup (workspaceGroup:WorkspaceGroup, workspaces:Project[], replaceFavoriteGroup?:FavoriteGroup) {
 		
-		const favoriteGroups = states.getFavoriteGroups(this.context);
+		const favoriteGroups = this.get();
+		const paths = workspaceGroup.paths;
 		
-		for (const favoriteGroup of favoriteGroups) {
-			if (favoriteGroup.id === workspaceGroup.id) return;
-		}
-		
-		const label = workspaceGroup.label;
-		
-		for (const favoriteGroup of favoriteGroups) {
-			if (favoriteGroup.label === label) {
-				if (!await replaceFavoriteGroup(favoriteGroups, favoriteGroup)) return;
-				break;
+		if (replaceFavoriteGroup) {
+			const groupId = replaceFavoriteGroup.id;
+			for (let i = 0; i < favoriteGroups.length; i++) {
+				if (favoriteGroups[i].id === groupId) {
+					favoriteGroups.splice(i, 1);
+					break;
+				}
 			}
 		}
-		
-		const paths = workspaceGroup.paths;
 		
 		removePathsInFavoriteGroups(favoriteGroups, paths);
 		
 		favoriteGroups.push({
-			label,
+			label: workspaceGroup.label,
 			id: workspaceGroup.id,
 			collapsed: false,
 			paths,
 		});
 		
-		favoriteGroups.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
+		sortFavoriteGroups(favoriteGroups);
 		
 		addMissingFavorites(this.context, workspaces);
 		
-		states.updateFavoriteGroups(this.context, favoriteGroups);
+		this.save(favoriteGroups);
 		this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 		
 	}
 	
-	public async updateFavoriteGroup (workspaceGroup:FavoriteGroup, workspaces:Project[]) {
+	public update (workspaceGroup:FavoriteGroup, workspaces:Project[]) {
 		
-		const favoriteGroups = states.getFavoriteGroups(this.context);
+		const favoriteGroups = this.get();
 		
 		for (const favoriteGroup of favoriteGroups) {
 			if (favoriteGroup.id === workspaceGroup.id) {
-				const group = getFavoriteGroupByName(favoriteGroups, workspaceGroup.label);
-				
-				if (group && group.id !== workspaceGroup.id) {
-					if (!await replaceFavoriteGroup(favoriteGroups, group)) {
-						favoriteGroup.id = states.getNextGroupId(this.context);
-					}
-				} else {
-					const paths = workspaceGroup.paths;
-					removePathsInFavoriteGroups(favoriteGroups, paths);
-					addMissingFavorites(this.context, workspaces);
-					favoriteGroup.label = workspaceGroup.label;
-					favoriteGroup.paths = paths;
-					favoriteGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				}
-				
-				states.updateFavoriteGroups(this.context, favoriteGroups);
+				const paths = workspaceGroup.paths;
+				removePathsInFavoriteGroups(favoriteGroups, paths);
+				addMissingFavorites(this.context, workspaces);
+				favoriteGroup.label = workspaceGroup.label;
+				favoriteGroup.paths = paths;
+				sortFavoriteGroups(favoriteGroups);
+				this.save(favoriteGroups);
 				this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 				break;
 			}
@@ -161,29 +153,16 @@ export class FavoriteGroupsState {
 		
 	}
 	
-	public removeFromFavoriteGroup (favorite:Favorite) {
+	public rename (favoriteGroup:FavoriteGroup, label:string) {
 		
-		const favoriteGroups = states.getFavoriteGroups(this.context);
-		const favoriteGroup = favoriteGroups.find((group) => remove(group.paths, favorite.path));
-		
-		if (favoriteGroup) {
-			states.updateFavoriteGroups(this.context, favoriteGroups);
-			this._onDidChangeFavoriteGroups.fire(favoriteGroups);
-			this._onDidUpdateFavoriteGroup.fire(favoriteGroup);
-		}
-		
-	}
-	
-	public async rename (favoriteGroup:FavoriteGroup, label:string) {
-		
-		const favoriteGroups = states.getFavoriteGroups(this.context);
+		const favoriteGroups = this.get();
 		const groupId = favoriteGroup.id;
 		
 		for (const group of favoriteGroups) {
 			if (group.id === groupId) {
 				group.label = label;
-				favoriteGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				states.updateFavoriteGroups(this.context, favoriteGroups);
+				sortFavoriteGroups(favoriteGroups);
+				this.save(favoriteGroups);
 				this._onDidUpdateFavoriteGroup.fire(group);
 				this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 				break;
@@ -192,9 +171,22 @@ export class FavoriteGroupsState {
 		
 	}
 	
-	public async remove (favoriteGroup:FavoriteGroup, removeAll:boolean) {
+	public removeFavorite (favorite:Favorite) {
 		
-		const favoriteGroups = states.getFavoriteGroups(this.context);
+		const favoriteGroups = this.get();
+		const favoriteGroup = favoriteGroups.find((group) => remove(group.paths, favorite.path));
+		
+		if (favoriteGroup) {
+			this.save(favoriteGroups);
+			this._onDidChangeFavoriteGroups.fire(favoriteGroups);
+			this._onDidUpdateFavoriteGroup.fire(favoriteGroup);
+		}
+		
+	}
+	
+	public remove (favoriteGroup:FavoriteGroup, removeAll:boolean) {
+		
+		const favoriteGroups = this.get();
 		const groupId = favoriteGroup.id;
 		
 		for (let i = 0; i < favoriteGroups.length; i++) {
@@ -216,20 +208,20 @@ export class FavoriteGroupsState {
 			states.updateFavorites(this.context, favorites);
 		}
 		
-		states.updateFavoriteGroups(this.context, favoriteGroups);
+		this.save(favoriteGroups);
 		this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 		
 	}
 	
 	public saveCollapsedState (item:FavoriteGroupTreeItem, collapsed:boolean) {
 		
-		const favoriteGroups = states.getFavoriteGroups(this.context);
+		const favoriteGroups = this.get();
 		const groupId = item.group.id;
 		
 		for (const favoriteGroup of favoriteGroups) {
 			if (favoriteGroup.id === groupId) {
 				favoriteGroup.collapsed = collapsed;
-				states.updateFavoriteGroups(this.context, favoriteGroups);
+				this.save(favoriteGroups);
 				break;
 			}
 		}
@@ -245,27 +237,6 @@ function removePathsInFavoriteGroups (favoriteGroups:FavoriteGroup[], paths:stri
 	for (const favoriteGroup of favoriteGroups) {
 		for (const path of paths) remove(favoriteGroup.paths, path);
 	}
-	
-}
-
-function getFavoriteGroupByName (favoriteGroups:FavoriteGroup[], label:string) {
-	
-	for (const favoriteGroup of favoriteGroups) {
-		if (favoriteGroup.label === label) return favoriteGroup;
-	}
-	
-	return null;
-	
-}
-
-async function replaceFavoriteGroup (favoriteGroups:FavoriteGroup[], favoriteGroup:FavoriteGroup) {
-	
-	const BUTTON_REPLACE = 'Replace';
-	const value = await vscode.window.showInformationMessage(`Replace favorite group "${favoriteGroup.label}"?`, 'Cancel', BUTTON_REPLACE);
-	
-	if (value !== BUTTON_REPLACE) return false;
-	
-	return remove(favoriteGroups, favoriteGroup);
 	
 }
 
@@ -288,5 +259,11 @@ function addMissingFavorites (context:vscode.ExtensionContext, workspaces:Projec
 	favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 	
 	states.updateFavorites(context, favorites);
+	
+}
+
+function sortFavoriteGroups (favoriteGroups:FavoriteGroup[]) {
+	
+	favoriteGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 	
 }

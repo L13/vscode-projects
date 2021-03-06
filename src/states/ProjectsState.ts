@@ -10,8 +10,6 @@ import { Project } from '../@types/workspaces';
 import * as settings from '../common/settings';
 import * as states from '../common/states';
 
-import { colors } from '../statusbar/colors';
-
 //	Variables __________________________________________________________________
 
 
@@ -24,11 +22,11 @@ import { colors } from '../statusbar/colors';
 
 export class ProjectsState {
 	
-	private static currentProjectsState:ProjectsState = null;
+	private static current:ProjectsState = null;
 	
-	public static createProjectsState (context:vscode.ExtensionContext) {
+	public static create (context:vscode.ExtensionContext) {
 		
-		return ProjectsState.currentProjectsState || (ProjectsState.currentProjectsState = new ProjectsState(context));
+		return ProjectsState.current || (ProjectsState.current = new ProjectsState(context));
 		
 	}
 	
@@ -43,29 +41,41 @@ export class ProjectsState {
 	private _onDidChangeProjects:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
 	public readonly onDidChangeProjects:vscode.Event<Project[]> = this._onDidChangeProjects.event;
 	
-	public getProjectByPath (fsPath:string) {
+	public get () {
 		
-		const projects = states.getProjects(this.context);
+		return states.getProjects(this.context);
+		
+	}
+	
+	public save (projects:Project[]) {
+		
+		states.updateProjects(this.context, projects);
+		
+	}
+	
+	public getByPath (fsPath:string) {
+		
+		const projects = this.get();
 		
 		return projects.find(({ path }) => path === fsPath) || null;
 		
 	}
 	
-	public async add (fsPath:string, value:string) {
+	public add (fsPath:string, value:string) {
 		
-		const projects = states.getProjects(this.context);
+		const projects = this.get();
 			
 		addProject(projects, fsPath, value);
 		
-		states.updateProjects(this.context, projects);
+		this.save(projects);
 		
 		this._onDidChangeProjects.fire(projects);
 		
 	}
 	
-	public async addAll (uris:vscode.Uri[]) {
+	public addAll (uris:vscode.Uri[]) {
 		
-		const projects = states.getProjects(this.context);
+		const projects = this.get();
 		const length = projects.length;
 		
 		uris.forEach((uri) => {
@@ -80,7 +90,7 @@ export class ProjectsState {
 		
 		if (projects.length === length) return;
 		
-		states.updateProjects(this.context, projects);
+		this.save(projects);
 		
 		this._onDidChangeProjects.fire(projects);
 		
@@ -88,14 +98,14 @@ export class ProjectsState {
 	
 	public update (favorite:Project) {
 		
-		const projects = states.getProjects(this.context);
+		const projects = this.get();
 		const fsPath = favorite.path;
 		
 		for (const project of projects) {
 			if (project.path === fsPath) {
 				project.label = favorite.label;
 				projects.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				states.updateProjects(this.context, projects);
+				this.save(projects);
 				this._onDidChangeProjects.fire(projects);
 				break;
 			}
@@ -103,16 +113,16 @@ export class ProjectsState {
 		
 	}
 	
-	public async rename (project:Project, label:string) {
+	public rename (project:Project, label:string) {
 		
-		const projects = states.getProjects(this.context);
+		const projects = this.get();
 		const fsPath = project.path;
 		
 		for (const pro of projects) {
 			if (pro.path === fsPath) {
 				pro.label = label;
 				projects.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
-				states.updateProjects(this.context, projects);
+				this.save(projects);
 				this._onDidUpdateProject.fire(pro);
 				this._onDidChangeProjects.fire(projects);
 				break;
@@ -122,16 +132,15 @@ export class ProjectsState {
 		
 	}
 	
-	public async remove (project:Project) {
+	public remove (project:Project) {
 		
-		const projects = states.getProjects(this.context);
+		const projects = this.get();
 		const fsPath = project.path;
 		
 		for (let i = 0; i < projects.length; i++) {
 			if (projects[i].path === fsPath) {
 				projects.splice(i, 1);
-				states.updateProjects(this.context, projects);
-				if (project.color) settings.updateStatusBarColorSettings(project.path, colors[0]);
+				this.save(projects);
 				this._onDidDeleteProject.fire(project);
 				return;
 			}
@@ -139,9 +148,9 @@ export class ProjectsState {
 		
 	}
 	
-	public async clear () {
+	public clear () {
 		
-		states.updateProjects(this.context, []);
+		this.save([]);
 		this._onDidChangeProjects.fire([]);
 		
 	}

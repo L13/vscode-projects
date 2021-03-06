@@ -23,11 +23,11 @@ export class StatusBarInfo implements vscode.Disposable {
 	
 	private readonly statusBarItem:vscode.StatusBarItem;
 	
-	private static currentStatusBarInfo:StatusBarInfo;
+	private static current:StatusBarInfo;
 	
-	public static createStatusBarInfo (context:vscode.ExtensionContext) {
+	public static create (context:vscode.ExtensionContext) {
 		
-		return StatusBarInfo.currentStatusBarInfo || (StatusBarInfo.currentStatusBarInfo = new StatusBarInfo(context));
+		return StatusBarInfo.current || (StatusBarInfo.current = new StatusBarInfo(context));
 		
 	}
 	
@@ -73,7 +73,7 @@ export class StatusBarInfo implements vscode.Disposable {
 	public dispose () :void {
 		
 		this.statusBarItem.dispose();
-		StatusBarInfo.currentStatusBarInfo = undefined;
+		StatusBarInfo.current = undefined;
 		
 	}
 	

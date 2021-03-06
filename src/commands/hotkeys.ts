@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 
 import * as commands from '../common/commands';
+import * as settings from '../common/settings';
 
 import { HotkeySlotsDialog } from '../dialogs/HotkeySlotsDialog';
 
@@ -23,17 +24,17 @@ import { HotkeySlotsState } from '../states/HotkeySlotsState';
 
 export function activate (context:vscode.ExtensionContext) {
 	
-	const hotkeySlotsState = HotkeySlotsState.createHotkeySlotsState(context);
-	const hotkeySlotsDialog = HotkeySlotsDialog.createHotkeySlotsDialog(hotkeySlotsState);
+	const hotkeySlotsState = HotkeySlotsState.create(context);
+	const hotkeySlotsDialog = HotkeySlotsDialog.create(hotkeySlotsState);
 	
 	context.subscriptions.push(hotkeySlotsState.onDidChangeSlots(() => {
 		
-		FavoritesProvider.currentFavoritesProvider?.refresh();
-		WorkspacesProvider.currentWorkspacesProvider?.refresh();
+		FavoritesProvider.current?.refresh();
+		WorkspacesProvider.current?.refresh();
 		
 	}));
 	
-	hotkeySlotsState.saveCurrentWorkspace();
+	hotkeySlotsState.saveCurrentWorkspace(settings.getCurrentWorkspacePath());
 	
 	commands.register(context, {
 		'l13Projects.action.workspace.assignSlot': async ({ project }) => hotkeySlotsDialog.assignWorkspace(project),
@@ -50,7 +51,7 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.hotkey.slot8': () => hotkeySlotsState.open(8),
 		'l13Projects.action.hotkey.slot9': () => hotkeySlotsState.open(9),
 		
-		'l13Projects.action.hotkey.previousWorkspace': () => hotkeySlotsState.previousWorkspace(),
+		'l13Projects.action.hotkey.previousWorkspace': () => hotkeySlotsState.previousWorkspace(settings.getCurrentWorkspacePath()),
 		
 		'l13Projects.action.hotkeys.clearAllSlots': () => hotkeySlotsDialog.clear(),
 	});

@@ -7,8 +7,10 @@ import { GroupTreeItem, Project, WorkspaceTreeItems } from '../@types/workspaces
 import * as commands from '../common/commands';
 import * as files from '../common/files';
 import * as settings from '../common/settings';
+import { FavoriteGroupsDialog } from '../dialogs/FavoriteGroupsDialog';
 
 import { ProjectsDialog } from '../dialogs/ProjectsDialog';
+import { WorkspaceGroupsDialog } from '../dialogs/WorkspaceGroupsDialog';
 import { WorkspacesDialog } from '../dialogs/WorkspacesDialog';
 
 import { GroupCustomTreeItem } from '../sidebar/trees/GroupCustomTreeItem';
@@ -24,6 +26,7 @@ import { ProjectsState } from '../states/ProjectsState';
 import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 import { WorkspacesState } from '../states/WorkspacesState';
 
+import { colors } from '../statusbar/colors';
 import { StatusBarColor } from '../statusbar/StatusBarColor';
 import { StatusBarInfo } from '../statusbar/StatusBarInfo';
 
@@ -41,24 +44,26 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	const subscriptions = context.subscriptions;
 	
-	const favoritesState = FavoritesState.createFavoritesState(context);
-	const favoriteGroupsState = FavoriteGroupsState.createFavoriteGroupsState(context);
+	const favoritesState = FavoritesState.create(context);
+	const favoriteGroupsState = FavoriteGroupsState.create(context);
+	const favoriteGroupsDialog = FavoriteGroupsDialog.create(favoriteGroupsState);
 	
-	const hotkeySlotsState = HotkeySlotsState.createHotkeySlotsState(context);
+	const hotkeySlotsState = HotkeySlotsState.create(context);
 	
-	const projectsState = ProjectsState.createProjectsState(context);
-	const projectsDialog = ProjectsDialog.createProjectsDialog(projectsState);
+	const projectsState = ProjectsState.create(context);
+	const projectsDialog = ProjectsDialog.create(projectsState);
 	
-	const statusBarInfo = StatusBarInfo.createStatusBarInfo(context);
-	const statusBarColorState = StatusBarColor.createStatusBarColor(context);
+	const statusBarInfo = StatusBarInfo.create(context);
+	const statusBarColorState = StatusBarColor.create(context);
 	
-	const workspacesState = WorkspacesState.createWorkspacesState(context);
-	const workspaceGroupsState = WorkspaceGroupsState.createWorkspaceGroupsState(context);
-	const workspacesDialog = WorkspacesDialog.createWorkspacesDialog(workspacesState, workspaceGroupsState);
-	const workspacesProvider = WorkspacesProvider.createWorkspacesProvider({
+	const workspacesState = WorkspacesState.create(context);
+	const workspaceGroupsState = WorkspaceGroupsState.create(context);
+	const workspacesDialog = WorkspacesDialog.create(workspacesState, workspaceGroupsState);
+	const workspaceGroupsDialog = WorkspaceGroupsDialog.create(workspaceGroupsState, favoriteGroupsState);
+	const workspacesProvider = WorkspacesProvider.create({
 		hotkeySlots: hotkeySlotsState,
-		workspaces: workspacesState.workspacesCache,
-		workspaceGroups: workspaceGroupsState.getWorkspaceGroups(),
+		workspaces: workspacesState.cache,
+		workspaceGroups: workspaceGroupsState.get(),
 		simpleGroups: workspaceGroupsState.getSimpleGroups(),
 		typeGroups: workspaceGroupsState.getTypeGroups(),
 	});
@@ -104,7 +109,7 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	}));
 	
-	subscriptions.push(workspacesProvider.onWillInitView(() => workspacesState.detectWorkspaces()));
+	subscriptions.push(workspacesProvider.onWillInitView(() => workspacesState.detect()));
 	
 //	Projects
 	
@@ -113,16 +118,18 @@ export function activate (context:vscode.ExtensionContext) {
 		favoritesState.update(project);
 		hotkeySlotsState.updateWorkspace(project);
 		
-		workspacesState.refreshWorkspacesCache();
+		workspacesState.refresh();
 		statusBarInfo.refresh();
 		
 	}));
 	
 	subscriptions.push(projectsState.onDidDeleteProject((project) => {
 		
-		workspacesState.refreshWorkspacesCache();
+		if (project.color) settings.updateStatusBarColorSettings(project.path, colors[0]);
 		
-		const workspace = workspacesState.getWorkspaceByPath(project.path);
+		workspacesState.refresh();
+		
+		const workspace = workspacesState.getByPath(project.path);
 		
 		if (workspace) {
 			favoritesState.update(workspace);
@@ -138,7 +145,7 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	subscriptions.push(projectsState.onDidChangeProjects(() => {
 		
-		workspacesState.refreshWorkspacesCache();
+		workspacesState.refresh();
 		statusBarInfo.refresh();
 		
 	}));
@@ -157,9 +164,9 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	subscriptions.push(workspaceGroupsState.onDidUpdateWorkspaceGroup((workspaceGroup) => {
 		
-		const workspaces = workspaceGroup.paths.map((path) => workspacesState.getWorkspaceByPath(path));
+		const workspaces = workspaceGroup.paths.map((path) => workspacesState.getByPath(path));
 		
-		favoriteGroupsState.updateFavoriteGroup(workspaceGroup, workspaces);
+		favoriteGroupsState.update(workspaceGroup, workspaces);
 		hotkeySlotsState.updateGroup(workspaceGroup);
 		
 	}));
@@ -174,7 +181,7 @@ export function activate (context:vscode.ExtensionContext) {
 	subscriptions.push(workspaceGroupsState.onDidChangeWorkspaceGroups(() => {
 		
 		workspacesProvider.refresh({
-			workspaceGroups: workspaceGroupsState.getWorkspaceGroups(),
+			workspaceGroups: workspaceGroupsState.get(),
 		});
 		
 	}));
@@ -197,8 +204,8 @@ export function activate (context:vscode.ExtensionContext) {
 		
 		'l13Projects.action.workspace.addToWorkspace': ({ project }:WorkspaceTreeItems) => addToWorkspace(project),
 		'l13Projects.action.workspace.addToFavorites': ({ project }:ProjectTreeItem) => favoritesState.add(project),
-		'l13Projects.action.workspace.addToGroup': ({ project }:WorkspaceTreeItems) => workspaceGroupsState.addWorkspaceToGroup(project),
-		'l13Projects.action.workspace.removeFromGroup': ({ project }:WorkspaceTreeItems) => workspaceGroupsState.removeFromWorkspaceGroup(project),
+		'l13Projects.action.workspace.addToGroup': ({ project }:WorkspaceTreeItems) => workspaceGroupsDialog.addWorkspaceToGroup(project),
+		'l13Projects.action.workspace.removeFromGroup': ({ project }:WorkspaceTreeItems) => workspaceGroupsState.removeWorkspace(project),
 		
 		'l13Projects.action.workspaces.addProject': () => projectsDialog.addDirectory(),
 		'l13Projects.action.workspaces.addProjectWorkspace': () => projectsDialog.addVSCodeWorkspace(),
@@ -209,21 +216,21 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspaces.refresh': () => {
 			
 			statusBarColorState.detectProjectColors();
-			workspacesState.detectWorkspaces();
+			workspacesState.detect();
 			
 		},
 		
-		'l13Projects.action.workspaceGroups.add': () => workspaceGroupsState.addWorkspaceGroup(),
+		'l13Projects.action.workspaceGroups.add': () => workspaceGroupsDialog.add(),
 		'l13Projects.action.workspaceGroups.addToFavorites': ({ group }:GroupCustomTreeItem) => {
 			
-			const workspaces = group.paths.map((path) => workspacesState.getWorkspaceByPath(path));
+			const workspaces = group.paths.map((path) => workspacesState.getByPath(path));
 			
-			favoriteGroupsState.addWorkspaceGroupToFavorites(group, workspaces.filter((workspace) => !!workspace));
+			favoriteGroupsDialog.addWorkspaceGroup(group, workspaces.filter((workspace) => !!workspace));
 			
 		},
-		'l13Projects.action.workspaceGroups.rename': ({ group }:GroupCustomTreeItem) => workspaceGroupsState.renameWorkspaceGroup(group),
-		'l13Projects.action.workspaceGroups.remove': ({ group }:GroupCustomTreeItem) => workspaceGroupsState.removeWorkspaceGroup(group),
-		'l13Projects.action.workspaceGroups.clear': () => workspaceGroupsState.clearWorkspaceGroups(),
+		'l13Projects.action.workspaceGroups.rename': ({ group }:GroupCustomTreeItem) => workspaceGroupsDialog.rename(group),
+		'l13Projects.action.workspaceGroups.remove': ({ group }:GroupCustomTreeItem) => workspaceGroupsDialog.remove(group),
+		'l13Projects.action.workspaceGroups.clear': () => workspaceGroupsDialog.clear(),
 		
 		'l13Projects.action.project.rename': ({ project }:ProjectTreeItem) => projectsDialog.rename(project),
 		'l13Projects.action.project.remove': ({ project }:ProjectTreeItem) => projectsDialog.remove(project),
@@ -254,8 +261,8 @@ export function activate (context:vscode.ExtensionContext) {
 function saveCollapseState (workspaceGroupState:WorkspaceGroupsState, item:GroupTreeItem, collapsed:boolean) {
 		
 	if (item instanceof GroupCustomTreeItem) workspaceGroupState.saveWorkspaceGroupState(item, collapsed);
-	else if (item instanceof GroupSimpleTreeItem) workspaceGroupState.saveGroupSimpleState(item, collapsed);
-	else if (item instanceof GroupTypeTreeItem) workspaceGroupState.saveGroupTypeState(item, collapsed);
+	else if (item instanceof GroupSimpleTreeItem) workspaceGroupState.saveSimpleGroupState(item, collapsed);
+	else if (item instanceof GroupTypeTreeItem) workspaceGroupState.saveTypeGroupState(item, collapsed);
 	
 }
 

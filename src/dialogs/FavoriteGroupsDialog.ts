@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 
 import { FavoriteGroup } from '../@types/favorites';
+import { Project, WorkspaceGroup } from '../@types/workspaces';
 
 import * as dialogs from '../common/dialogs';
 
@@ -22,7 +23,7 @@ export class FavoriteGroupsDialog {
 	
 	private static currentFavoriteGroupsDialog:FavoriteGroupsDialog = null;
 	
-	public static createFavoriteGroupsDialog (favoriteGroupsState:FavoriteGroupsState) {
+	public static create (favoriteGroupsState:FavoriteGroupsState) {
 		
 		return FavoriteGroupsDialog.currentFavoriteGroupsDialog || (FavoriteGroupsDialog.currentFavoriteGroupsDialog = new FavoriteGroupsDialog(favoriteGroupsState));
 		
@@ -38,20 +39,54 @@ export class FavoriteGroupsDialog {
 		
 		if (!label) return;
 		
-		this.favoriteGroupsState.addFavoriteGroup(label);
+		this.favoriteGroupsState.add(label);
+		
+	}
+	
+	private async replace (favoriteGroup:FavoriteGroup) {
+		
+		return !!await dialogs.confirm(`Replace favorite group "${favoriteGroup.label}"?`, 'Replace');
+		
+	}
+	
+	public async addFavoriteToGroup (favorite:Project) {
+		
+		const favoriteGroups = this.favoriteGroupsState.get();
+		
+		const favoriteGroup = await vscode.window.showQuickPick(favoriteGroups, {
+			placeHolder: 'Select a favorite group',
+		})
+		
+		if (favoriteGroup.paths.includes(favorite.path)) return;
+		
+		this.favoriteGroupsState.addFavorite(favorite, favoriteGroup);
+		
+	}
+	
+	public async addWorkspaceGroup (workspaceGroup:WorkspaceGroup, workspaces:Project[]) {
+		
+		if (this.favoriteGroupsState.getById(workspaceGroup.id)) return;
+		
+		const favoriteGroup = this.favoriteGroupsState.getByName(workspaceGroup.label);
+		
+		if (favoriteGroup && !await this.replace(favoriteGroup)) return;
+		
+		this.favoriteGroupsState.addWorkspaceGroup(workspaceGroup, workspaces, favoriteGroup);
 		
 	}
 	
 	public async rename (favoriteGroup:FavoriteGroup) {
 		
-		const value = await vscode.window.showInputBox({
+		const label = await vscode.window.showInputBox({
 			placeHolder: 'Please enter a new name for the group.',
 			value: favoriteGroup.label,
 		});
 		
-		if (!value || favoriteGroup.label === value) return;
+		if (!label || favoriteGroup.label === label) return;
 		
-		this.favoriteGroupsState.rename(favoriteGroup, value);
+		if (this.favoriteGroupsState.getByName(favoriteGroup.label)) {
+			vscode.window.showErrorMessage(`Favorite group with name "${label}" exists!`);
+		} else this.favoriteGroupsState.rename(favoriteGroup, label);
 		
 	}
 	

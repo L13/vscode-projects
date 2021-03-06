@@ -40,11 +40,11 @@ import { UnknownProjectTreeItem } from './trees/UnknownProjectTreeItem';
 
 export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTreeItems> {
 	
-	public static currentWorkspacesProvider:WorkspacesProvider;
+	public static current:WorkspacesProvider;
 	
-	public static createWorkspacesProvider (states:WorkspacesStates) {
+	public static create (states:WorkspacesStates) {
 		
-		return WorkspacesProvider.currentWorkspacesProvider || (WorkspacesProvider.currentWorkspacesProvider = new WorkspacesProvider(states));
+		return WorkspacesProvider.current || (WorkspacesProvider.current = new WorkspacesProvider(states));
 		
 	}
 	

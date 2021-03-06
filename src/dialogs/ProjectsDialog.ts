@@ -24,15 +24,15 @@ import { ProjectsState } from '../states/ProjectsState';
 
 export class ProjectsDialog {
 	
-	private static currentProjectsDialog:ProjectsDialog = null;
+	private static current:ProjectsDialog = null;
 	
-	public static createProjectsDialog (states:ProjectsState) {
+	public static create (projectsState:ProjectsState) {
 		
-		return ProjectsDialog.currentProjectsDialog || (ProjectsDialog.currentProjectsDialog = new ProjectsDialog(states));
+		return ProjectsDialog.current || (ProjectsDialog.current = new ProjectsDialog(projectsState));
 		
 	}
 	
-	public constructor (private readonly states:ProjectsState) {}
+	public constructor (private readonly projectsState:ProjectsState) {}
 	
 	public async addDirectory () {
 		
@@ -40,7 +40,7 @@ export class ProjectsDialog {
 		
 		if (!uris) return;
 		
-		this.states.addAll(uris);
+		this.projectsState.addAll(uris);
 		
 	}
 	
@@ -50,7 +50,7 @@ export class ProjectsDialog {
 		
 		if (!uris) return;
 		
-		this.states.addAll(uris);
+		this.projectsState.addAll(uris);
 		
 	}
 	
@@ -60,10 +60,11 @@ export class ProjectsDialog {
 		
 		if (fsPath) {
 			
-			const existingProject = this.states.getProjectByPath(fsPath);
+			const existingProject = this.projectsState.getByPath(fsPath);
 			
 			if (existingProject) {
-				return vscode.window.showErrorMessage(`Project "${existingProject.label}" exists!`);
+				vscode.window.showInformationMessage(`Project "${existingProject.label}" exists!`);
+				return;
 			}
 			
 			const value = await vscode.window.showInputBox({
@@ -73,7 +74,7 @@ export class ProjectsDialog {
 			
 			if (!value) return;
 			
-			this.states.add(fsPath, value);
+			this.projectsState.add(fsPath, value);
 			
 		} else if (vscode.workspace.workspaceFile && vscode.workspace.workspaceFile.scheme === 'untitled') {
 			vscode.window.showWarningMessage(`Please save your current workspace first.`);
@@ -98,7 +99,7 @@ export class ProjectsDialog {
 		
 		project.label = value;
 		
-		this.states.update(project);
+		this.projectsState.update(project);
 		
 	}
 	
@@ -111,14 +112,14 @@ export class ProjectsDialog {
 			if (value === BUTTON_DELETE_DONT_SHOW_AGAIN) settings.update('confirmDeleteProject', false);
 		}
 		
-		this.states.remove(project);
+		this.projectsState.remove(project);
 		
 	}
 	
 	public async clear () {
 		
 		if (await dialogs.confirm(`Delete all projects?'`, 'Delete')) {
-			this.states.clear();
+			this.projectsState.clear();
 		}
 		
 	}

@@ -8,9 +8,8 @@ import { formatLabel } from '../@l13/formats';
 import { subfolders, walkTree } from '../@l13/fse';
 
 import { FileMap, Options } from '../@types/files';
-import { Project, UpdateCacheCallback, WorkspaceQuickPickItem, WorkspaceTypes } from '../@types/workspaces';
+import { Project, UpdateCacheCallback, WorkspaceTypes } from '../@types/workspaces';
 
-import * as files from '../common/files';
 import * as settings from '../common/settings';
 import * as states from '../common/states';
 
@@ -27,18 +26,18 @@ const findVSCodeFolder:RegExp = /^\.vscode$/;
 
 export class WorkspacesState {
 	
-	private static currentWorkspacesState:WorkspacesState = null;
+	private static current:WorkspacesState = null;
 	
-	public static createWorkspacesState (context:vscode.ExtensionContext) {
+	public static create (context:vscode.ExtensionContext) {
 		
-		return WorkspacesState.currentWorkspacesState || (WorkspacesState.currentWorkspacesState = new WorkspacesState(context));
+		return WorkspacesState.current || (WorkspacesState.current = new WorkspacesState(context));
 		
 	}
 	
 	private _onDidChangeCache:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
 	public readonly onDidChangeCache:vscode.Event<Project[]> = this._onDidChangeCache.event;
 	
-	public workspacesCache:Project[] = null;
+	public cache:Project[] = null;
 	
 	private gitCache:Project[] = [];
 	private vscodeCache:Project[] = [];
@@ -47,7 +46,7 @@ export class WorkspacesState {
 	
 	public constructor (private readonly context:vscode.ExtensionContext) {
 		
-		if (settings.get('useCacheForDetectedProjects', false)) this.getWorkspacesCache();
+		if (settings.get('useCacheForDetectedProjects', false)) this.get();
 		
 		this.gitCache = states.getGitCache(context);
 		this.vscodeCache = states.getVSCodeCache(context);
@@ -56,17 +55,17 @@ export class WorkspacesState {
 		
 	}
 	
-	public getWorkspacesCache () {
+	public get () {
 		
-		return this.workspacesCache = states.getWorkspacesCache(this.context);
+		return this.cache = states.getWorkspacesCache(this.context);
 		
 	}
 	
-	public getWorkspaceByPath (fsPath:string) {
+	public getByPath (fsPath:string) {
 		
 		if (!this.workspaceCache) return null;
 		
-		for (const workspace of this.workspacesCache) {
+		for (const workspace of this.cache) {
 			if (workspace.path === fsPath) return workspace;
 		}
 		
@@ -77,7 +76,7 @@ export class WorkspacesState {
 	private cleanupUnknownPaths () {
 		
 		const workspaceGroups = states.getWorkspaceGroups(this.context);
-		const paths = this.workspacesCache.map((workspace) => workspace.path);
+		const paths = this.cache.map((workspace) => workspace.path);
 		
 		workspaceGroups.forEach((workspaceGroup) => {
 			
@@ -89,7 +88,7 @@ export class WorkspacesState {
 		
 	}
 	
-	private rebuildWorkspacesCache () {
+	private rebuild () {
 		
 		const projects = states.getProjects(this.context);
 		
@@ -122,22 +121,22 @@ export class WorkspacesState {
 			
 		});
 		
-		this.workspacesCache = Object.values(once).sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+		this.cache = Object.values(once).sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
 		
-		states.updateWorkspacesCache(this.context, this.workspacesCache);
+		states.updateWorkspacesCache(this.context, this.cache);
 		
 	}
 	
-	public refreshWorkspacesCache () {
+	public refresh () {
 		
-		this.rebuildWorkspacesCache();
+		this.rebuild();
 		this.cleanupUnknownPaths();
 		
-		this._onDidChangeCache.fire(this.workspacesCache);
+		this._onDidChangeCache.fire(this.cache);
 		
 	}
 	
-	public detectWorkspaces () {
+	public detect () {
 		
 		const gitFolders = settings.get('git.folders', []);
 		const vscodeFolders = settings.get('vsCode.folders', []);
@@ -170,7 +169,7 @@ export class WorkspacesState {
 				ignore: settings.get('subfolder.ignore', []),
 			})
 		])
-		.then(() => this.refreshWorkspacesCache());
+		.then(() => this.refresh());
 		
 	}
 	

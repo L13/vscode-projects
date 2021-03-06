@@ -21,11 +21,11 @@ import { HotkeySlotsState } from '../states/HotkeySlotsState';
 
 export class HotkeySlotsDialog {
 	
-	private static currentHotkeySlotsDialog:HotkeySlotsDialog;
+	private static current:HotkeySlotsDialog;
 	
-	public static createHotkeySlotsDialog (hotkeySlotsState:HotkeySlotsState) {
+	public static create (hotkeySlotsState:HotkeySlotsState) {
 		
-		return HotkeySlotsDialog.currentHotkeySlotsDialog || (HotkeySlotsDialog.currentHotkeySlotsDialog = new HotkeySlotsDialog(hotkeySlotsState));
+		return HotkeySlotsDialog.current || (HotkeySlotsDialog.current = new HotkeySlotsDialog(hotkeySlotsState));
 		
 	}
 	
@@ -49,7 +49,7 @@ export class HotkeySlotsDialog {
 	
 	public async createQuickPickDialog () {
 		
-		const slots = this.hotkeySlotsState.getSlots();
+		const slots = this.hotkeySlotsState.get();
 		const items:Item[] = [];
 		
 		for (let i = 1; i < 10; i++) {
@@ -68,7 +68,7 @@ export class HotkeySlotsDialog {
 	
 	public async remove () {
 		
-		const slots = this.hotkeySlotsState.getSlots();
+		const slots = this.hotkeySlotsState.get();
 		const items:Item[] = [];
 		
 		for (const slot of slots) {

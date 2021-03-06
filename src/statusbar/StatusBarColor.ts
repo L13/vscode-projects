@@ -21,11 +21,11 @@ import { colors } from './colors';
 
 export class StatusBarColor {
 	
-	private static currentStatusBarColor:StatusBarColor = null;
+	private static current:StatusBarColor = null;
 	
-	public static createStatusBarColor (context:vscode.ExtensionContext) {
+	public static create (context:vscode.ExtensionContext) {
 		
-		return StatusBarColor.currentStatusBarColor || (StatusBarColor.currentStatusBarColor = new StatusBarColor(context));
+		return StatusBarColor.current || (StatusBarColor.current = new StatusBarColor(context));
 		
 	}
 	
