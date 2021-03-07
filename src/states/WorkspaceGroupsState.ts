@@ -231,7 +231,7 @@ export class WorkspaceGroupsState {
 //	Functions __________________________________________________________________
 
 function saveCollapseState (groupStates:(SimpleGroupState|TypeGroupState)[], item:SimpleGroupTreeItem|TypeGroupTreeItem, collapsed:boolean) {
-	console.log(groupStates);
+	
 	const type = item.group.type;
 	const groupState = groupStates.find((state) => state.type === type);
 	
