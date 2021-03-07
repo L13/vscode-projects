@@ -81,8 +81,8 @@ export function activate (context:vscode.ExtensionContext) {
 			
 			states.updateCurrentWorkspace(context, undefined);
 			
-			states.updateGroupSimpleStates(context, undefined);
-			states.updateGroupTypeStates(context, undefined);
+			states.updateSimpleGroups(context, undefined);
+			states.updateTypeGroups(context, undefined);
 			
 			states.updateWorkspacesCache(context, undefined);
 			states.updateGitCache(context, undefined);

@@ -3,11 +3,11 @@
 import { join } from 'path';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 
-import { GroupType } from '../../@types/workspaces';
+import { SimpleGroup } from '../../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
-const basePath = join(__dirname, '..', 'images', 'types');
+const basePath = join(__dirname, '..', 'images', 'groups');
 
 //	Initialize _________________________________________________________________
 
@@ -15,16 +15,16 @@ const basePath = join(__dirname, '..', 'images', 'types');
 
 //	Exports ____________________________________________________________________
 
-export class GroupTypeTreeItem extends TreeItem {
+export class SimpleGroupTreeItem extends TreeItem {
 	
-	public constructor (public readonly group:GroupType) {
+	public constructor (public readonly group:SimpleGroup) {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
-		const name = `project-${group.type}`;
+		const name = `group-simple-${group.type}`;
 		
-		this.contextValue = `group-${name}`;
-		this.id = `group-${name}`;
+		this.contextValue = name;
+		this.id = name;
 		
 		this.iconPath = {
 			light: join(basePath, `${name}-light.svg`),

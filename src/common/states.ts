@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 
 import { Favorite, FavoriteGroup } from '../@types/favorites';
 import { Slot } from '../@types/hotkeys';
-import { GroupSimpleState, GroupTypeState, Project, WorkspaceGroup } from '../@types/workspaces';
+import { Project, SimpleGroupState, TypeGroupState, WorkspaceGroup } from '../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -18,8 +18,8 @@ const FAVORITE_GROUPS = 'favoriteGroups';
 const PROJECTS = 'projects';
 const WORKSPACE_GROUPS = 'workspaceGroups';
 
-const GROUP_STATES_BY_TYPE = 'groupStatesByType';
-const GROUP_STATES_BY_SIMPLE = 'groupStatesBySimple';
+const SIMPLE_GROUPS = 'groupStatesBySimple';
+const TYPE_GROUPS = 'groupStatesByType';
 
 const WORKSPACES_CACHE = 'cache';
 const GIT_CACHE = 'cacheGitProjects';
@@ -109,27 +109,27 @@ export function updateWorkspaceGroups (context:vscode.ExtensionContext, workspac
 	
 }
 	
-export function getGroupSimpleStates (context:vscode.ExtensionContext) :GroupSimpleState[] {
+export function getSimpleGroups (context:vscode.ExtensionContext) :SimpleGroupState[] {
 	
-	return context.globalState.get(GROUP_STATES_BY_SIMPLE, []);
-	
-}
-	
-export function updateGroupSimpleStates (context:vscode.ExtensionContext, groupStates:GroupSimpleState[]) {
-	
-	context.globalState.get(GROUP_STATES_BY_SIMPLE, groupStates);
+	return context.globalState.get(SIMPLE_GROUPS, []);
 	
 }
-
-export function getGroupTypeStates (context:vscode.ExtensionContext) :GroupTypeState[] {
 	
-	return context.globalState.get(GROUP_STATES_BY_TYPE, []);
+export function updateSimpleGroups (context:vscode.ExtensionContext, simpleGroups:SimpleGroupState[]) {
+	
+	context.globalState.get(SIMPLE_GROUPS, simpleGroups);
 	
 }
 
-export function updateGroupTypeStates (context:vscode.ExtensionContext, groupStates:GroupTypeState[]) {
+export function getTypeGroups (context:vscode.ExtensionContext) :TypeGroupState[] {
 	
-	context.globalState.get(GROUP_STATES_BY_TYPE, groupStates);
+	return context.globalState.get(TYPE_GROUPS, []);
+	
+}
+
+export function updateTypeGroups (context:vscode.ExtensionContext, typeGroups:TypeGroupState[]) {
+	
+	context.globalState.get(TYPE_GROUPS, typeGroups);
 	
 }
 

@@ -3,16 +3,11 @@
 import { join } from 'path';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 
-import { Slot } from '../../@types/hotkeys';
-import { WorkspaceGroup } from '../../@types/workspaces';
+import { TypeGroup } from '../../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
-const basePath = join(__dirname, '..', 'images', 'groups');
-const iconPath = {
-	light: join(basePath, `group-custom-light.svg`),
-	dark: join(basePath, `group-custom-dark.svg`),
-};
+const basePath = join(__dirname, '..', 'images', 'types');
 
 //	Initialize _________________________________________________________________
 
@@ -20,18 +15,21 @@ const iconPath = {
 
 //	Exports ____________________________________________________________________
 
-export class GroupCustomTreeItem extends TreeItem {
+export class TypeGroupTreeItem extends TreeItem {
 	
-	public contextValue = 'workspaceGroup';
-	
-	public iconPath = iconPath;
-	
-	public constructor (public readonly group:WorkspaceGroup, slot:Slot|null) {
+	public constructor (public readonly group:TypeGroup) {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
-		this.id = `workspace-group-${group.id}`;
-		this.description = slot ? `[${slot.index}]` : '';
+		const name = `project-${group.type}`;
+		
+		this.contextValue = `group-${name}`;
+		this.id = `group-${name}`;
+		
+		this.iconPath = {
+			light: join(basePath, `${name}-light.svg`),
+			dark: join(basePath, `${name}-dark.svg`),
+		};
 		
 	}
 	

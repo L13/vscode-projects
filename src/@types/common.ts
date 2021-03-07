@@ -4,7 +4,7 @@ import { FavoriteTreeItems } from '../@types/favorites';
 import { WorkspaceTreeItems } from '../@types/workspaces';
 
 import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
-import { GroupCustomTreeItem } from '../sidebar/trees/GroupCustomTreeItem';
+import { WorkspaceGroupTreeItem } from '../sidebar/trees/WorkspaceGroupTreeItem';
 
 //	Variables __________________________________________________________________
 
@@ -18,7 +18,7 @@ import { GroupCustomTreeItem } from '../sidebar/trees/GroupCustomTreeItem';
 
 export type CommonTreeItems = FavoriteTreeItems|WorkspaceTreeItems;
 
-export type CommonGroupTreeItems = FavoriteGroupTreeItem|GroupCustomTreeItem;
+export type CommonGroupTreeItems = FavoriteGroupTreeItem|WorkspaceGroupTreeItem;
 
 export type InitialState = 'Collapsed'|'Expanded'|'Remember';
 

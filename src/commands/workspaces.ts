@@ -13,10 +13,10 @@ import { ProjectsDialog } from '../dialogs/ProjectsDialog';
 import { WorkspaceGroupsDialog } from '../dialogs/WorkspaceGroupsDialog';
 import { WorkspacesDialog } from '../dialogs/WorkspacesDialog';
 
-import { GroupCustomTreeItem } from '../sidebar/trees/GroupCustomTreeItem';
-import { GroupSimpleTreeItem } from '../sidebar/trees/GroupSimpleTreeItem';
-import { GroupTypeTreeItem } from '../sidebar/trees/GroupTypeTreeItem';
 import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
+import { SimpleGroupTreeItem } from '../sidebar/trees/SimpleGroupTreeItem';
+import { TypeGroupTreeItem } from '../sidebar/trees/TypeGroupTreeItem';
+import { WorkspaceGroupTreeItem } from '../sidebar/trees/WorkspaceGroupTreeItem';
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
 
 import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
@@ -228,15 +228,15 @@ export function activate (context:vscode.ExtensionContext) {
 		},
 		
 		'l13Projects.action.workspaceGroups.add': () => workspaceGroupsDialog.add(),
-		'l13Projects.action.workspaceGroups.addToFavorites': ({ group }:GroupCustomTreeItem) => {
+		'l13Projects.action.workspaceGroups.addToFavorites': ({ group }:WorkspaceGroupTreeItem) => {
 			
 			const workspaces = group.paths.map((path) => workspacesState.getByPath(path));
 			
 			favoriteGroupsDialog.addWorkspaceGroup(group, workspaces.filter((workspace) => !!workspace));
 			
 		},
-		'l13Projects.action.workspaceGroups.rename': ({ group }:GroupCustomTreeItem) => workspaceGroupsDialog.rename(group),
-		'l13Projects.action.workspaceGroups.remove': ({ group }:GroupCustomTreeItem) => workspaceGroupsDialog.remove(group),
+		'l13Projects.action.workspaceGroups.rename': ({ group }:WorkspaceGroupTreeItem) => workspaceGroupsDialog.rename(group),
+		'l13Projects.action.workspaceGroups.remove': ({ group }:WorkspaceGroupTreeItem) => workspaceGroupsDialog.remove(group),
 		'l13Projects.action.workspaceGroups.clear': () => workspaceGroupsDialog.clear(),
 		
 		'l13Projects.action.project.rename': ({ project }:ProjectTreeItem) => projectsDialog.rename(project),
@@ -266,10 +266,10 @@ export function activate (context:vscode.ExtensionContext) {
 //	Functions __________________________________________________________________
 
 function saveCollapseState (workspaceGroupState:WorkspaceGroupsState, item:GroupTreeItem, collapsed:boolean) {
-		
-	if (item instanceof GroupCustomTreeItem) workspaceGroupState.saveWorkspaceGroupState(item, collapsed);
-	else if (item instanceof GroupSimpleTreeItem) workspaceGroupState.saveSimpleGroupState(item, collapsed);
-	else if (item instanceof GroupTypeTreeItem) workspaceGroupState.saveTypeGroupState(item, collapsed);
+	
+	if (item instanceof WorkspaceGroupTreeItem) workspaceGroupState.saveWorkspaceGroupState(item, collapsed);
+	else if (item instanceof SimpleGroupTreeItem) workspaceGroupState.saveSimpleGroupState(item, collapsed);
+	else if (item instanceof TypeGroupTreeItem) workspaceGroupState.saveTypeGroupState(item, collapsed);
 	
 }
 

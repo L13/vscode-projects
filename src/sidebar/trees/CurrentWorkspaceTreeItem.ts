@@ -16,7 +16,7 @@ const basePath = join(__dirname, '..', 'images', 'current');
 
 //	Exports ____________________________________________________________________
 
-export class CurrentProjectTreeItem extends TreeItem {
+export class CurrentWorkspaceTreeItem extends TreeItem {
 	
 	public constructor (public readonly project:Project, public readonly slot:Slot|null, isSubProject:boolean = false) {
 		

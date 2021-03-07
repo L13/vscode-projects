@@ -5,13 +5,13 @@ import * as vscode from 'vscode';
 import { remove, sortCaseInsensitive } from '../@l13/arrays';
 
 import { FavoriteGroup } from '../@types/favorites';
-import { GroupSimpleState, GroupTypeState, Project, WorkspaceGroup } from '../@types/workspaces';
+import { Project, SimpleGroupState, TypeGroupState, WorkspaceGroup } from '../@types/workspaces';
 
 import * as states from '../common/states';
 
-import { GroupCustomTreeItem } from '../sidebar/trees/GroupCustomTreeItem';
-import { GroupSimpleTreeItem } from '../sidebar/trees/GroupSimpleTreeItem';
-import { GroupTypeTreeItem } from '../sidebar/trees/GroupTypeTreeItem';
+import { SimpleGroupTreeItem } from '../sidebar/trees/SimpleGroupTreeItem';
+import { TypeGroupTreeItem } from '../sidebar/trees/TypeGroupTreeItem';
+import { WorkspaceGroupTreeItem } from '../sidebar/trees/WorkspaceGroupTreeItem';
 
 //	Variables __________________________________________________________________
 
@@ -58,13 +58,13 @@ export class WorkspaceGroupsState {
 	
 	public getSimpleGroups () {
 		
-		return states.getGroupSimpleStates(this.context);
+		return states.getSimpleGroups(this.context);
 		
 	}
 	
 	public getTypeGroups () {
 		
-		return states.getGroupTypeStates(this.context);
+		return states.getTypeGroups(this.context);
 		
 	}
 	
@@ -193,7 +193,7 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public saveWorkspaceGroupState (item:GroupCustomTreeItem, collapsed:boolean) {
+	public saveWorkspaceGroupState (item:WorkspaceGroupTreeItem, collapsed:boolean) {
 		
 		const workspaceGroups = this.get();
 		const groupId = item.group.id;
@@ -208,21 +208,21 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public saveSimpleGroupState (item:GroupSimpleTreeItem, collapsed:boolean) {
+	public saveSimpleGroupState (item:SimpleGroupTreeItem, collapsed:boolean) {
 		
-		const groupStates = states.getGroupSimpleStates(this.context);
+		const groupStates = states.getSimpleGroups(this.context);
 		
 		saveCollapseState(groupStates, item, collapsed);
-		states.updateGroupSimpleStates(this.context, groupStates);
+		states.updateSimpleGroups(this.context, groupStates);
 		
 	}
 	
-	public saveTypeGroupState (item:GroupTypeTreeItem, collapsed:boolean) {
+	public saveTypeGroupState (item:TypeGroupTreeItem, collapsed:boolean) {
 		
-		const groupStates = states.getGroupSimpleStates(this.context);
+		const groupStates = states.getTypeGroups(this.context);
 		
 		saveCollapseState(groupStates, item, collapsed);
-		states.updateGroupSimpleStates(this.context, groupStates);
+		states.updateTypeGroups(this.context, groupStates);
 		
 	}
 	
@@ -230,8 +230,8 @@ export class WorkspaceGroupsState {
 
 //	Functions __________________________________________________________________
 
-function saveCollapseState (groupStates:(GroupSimpleState|GroupTypeState)[], item:GroupSimpleTreeItem|GroupTypeTreeItem, collapsed:boolean) {
-	
+function saveCollapseState (groupStates:(SimpleGroupState|TypeGroupState)[], item:SimpleGroupTreeItem|TypeGroupTreeItem, collapsed:boolean) {
+	console.log(groupStates);
 	const type = item.group.type;
 	const groupState = groupStates.find((state) => state.type === type);
 	
