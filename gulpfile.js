@@ -12,7 +12,7 @@ const typescript = require('rollup-plugin-typescript');
 
 const findPattern = /width="100%" height="100%" viewBox="0 0 (\d+) (\d+)"/;
 
-let devmode = false;
+let developerMode = false;
 
 //	Initialize _________________________________________________________________
 
@@ -57,7 +57,7 @@ gulp.task('icons:fix', (done) => {
 gulp.task('script', () => {
 	
 	return rollup.rollup({
-		input: `src/extension${devmode ? '.dev' : ''}.ts`,
+		input: `src/extension${developerMode ? '.dev' : ''}.ts`,
 		external: [
 			'child_process',
 			'fs',
@@ -96,9 +96,9 @@ gulp.task('script', () => {
 
 gulp.task('build', gulp.series('clean', 'icons:fix', 'script'));
 
-gulp.task('devmode', gulp.series((done) => {
+gulp.task('developer mode', gulp.series(function init (done) {
 	
-	devmode = true;
+	developerMode = true;
 	done();
 	
 }, 'build'));
@@ -114,7 +114,7 @@ gulp.task('watch', () => {
 	
 });
 
-gulp.task('build & watch', gulp.series('devmode', 'watch'));
+gulp.task('build & watch (developer mode)', gulp.series('developer mode', 'watch'));
 
 //	Functions __________________________________________________________________
 
