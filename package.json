@@ -354,6 +354,22 @@
 				"command": "l13Projects.action.project.pickColor7",
 				"title": "Grey",
 				"icon": "images/picker/color-7.svg"
+			},
+			{
+				"command": "l13Projects.action.developer.backup",
+				"title": "Developer: Backup Projects Data"
+			},
+			{
+				"command": "l13Projects.action.developer.remove",
+				"title": "Developer: Delete Projects Backup"
+			},
+			{
+				"command": "l13Projects.action.developer.restore",
+				"title": "Developer: Restore Projects Data"
+			},
+			{
+				"command": "l13Projects.action.developer.clear",
+				"title": "Developer: Clear Projects Data"
 			}
 		],
 		"keybindings": [
@@ -588,6 +604,22 @@
 				{
 					"command": "l13Projects.action.workspaceGroups.remove",
 					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.developer.backup",
+					"when": "isDevelopment"
+				},
+				{
+					"command": "l13Projects.action.developer.remove",
+					"when": "isDevelopment"
+				},
+				{
+					"command": "l13Projects.action.developer.restore",
+					"when": "isDevelopment"
+				},
+				{
+					"command": "l13Projects.action.developer.clear",
+					"when": "isDevelopment"
 				}
 			],
 			"explorer/context": [

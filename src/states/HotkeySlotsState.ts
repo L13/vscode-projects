@@ -230,7 +230,7 @@ export class HotkeySlotsState {
 		
 		if (workspacePath && workspacePaths[0] !== workspacePath) {
 			workspacePaths.unshift(workspacePath);
-			states.updateCurrentWorkspace(this.context, workspacePaths);
+			states.updateCurrentWorkspace(this.context, workspacePaths.slice(0, 2));
 		}
 		
 	}

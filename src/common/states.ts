@@ -53,13 +53,13 @@ export function getCurrentWorkspace (context:vscode.ExtensionContext) {
 
 export function updateCurrentWorkspace (context:vscode.ExtensionContext, workspacePaths:string[]) {
 	
-	context.globalState.update(CURRENT_WORKSPACE, workspacePaths.slice(0, 2));
+	context.globalState.update(CURRENT_WORKSPACE, workspacePaths);
 	
 }
 
 export function getFavorites (context:vscode.ExtensionContext, checkDeleted:boolean = false) {
 	
-	const favorites:Favorite[] = context.globalState.get(FAVORITES) || [];
+	const favorites:Favorite[] = context.globalState.get(FAVORITES, []);
 	
 	if (checkDeleted) favorites.forEach((favorite) => favorite.deleted = !fs.existsSync(favorite.path));
 	
