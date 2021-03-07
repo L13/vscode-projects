@@ -1011,12 +1011,12 @@
 						"Group all workspaces by type."
 					]
 				},
-				"l13Diff.confirmDeleteFavorite": {
+				"l13Projects.confirmDeleteFavorite": {
 					"type": "boolean",
 					"default": true,
 					"description": "Controls weather a favorite should ask for confirmation when deleting it."
 				},
-				"l13Diff.confirmDeleteProject": {
+				"l13Projects.confirmDeleteProject": {
 					"type": "boolean",
 					"default": true,
 					"description": "Controls weather a project should ask for confirmation when deleting it."
