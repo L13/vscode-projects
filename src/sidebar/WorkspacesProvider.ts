@@ -232,10 +232,15 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	private addSimpleGroups (list:WorkspacesTreeItems[], workspacePath:string) {
 		
 		const isUnknownWorkspace = this.isUnknownWorkspace(workspacePath);
+		let paths:string[] = [];
+		
+		this.workspaceGroups.forEach((workspaceGroup) => paths = paths.concat(workspaceGroup.paths));
+		
+		const noGroupWorkspaces = this.workspaces.filter((workspace) => !paths.includes(workspace.path));
 		
 		this.groupSimples.forEach((group) => {
 			
-			if (this.workspaces.some((workspace) => group.projectTypes.includes(workspace.type)) || group.type === 'project' && isUnknownWorkspace) {
+			if (noGroupWorkspaces.some((workspace) => group.projectTypes.includes(workspace.type)) || group.type === 'project' && isUnknownWorkspace) {
 				list.push(new GroupSimpleTreeItem(group));
 			}
 			
@@ -298,10 +303,15 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		const isUnknownWorkspace = this.isUnknownWorkspace(workspacePath);
 		const isCodeWorkspace = workspaces.isCodeWorkspace(workspacePath);
+		let paths:string[] = [];
+		
+		this.workspaceGroups.forEach((workspaceGroup) => paths = paths.concat(workspaceGroup.paths));
+		
+		const noGroupWorkspaces = this.workspaces.filter((workspace) => !paths.includes(workspace.path));
 		
 		this.groupTypes.forEach((group) => {
 			
-			if (this.workspaces.some((workspace) => workspace.type === group.type
+			if (noGroupWorkspaces.some((workspace) => workspace.type === group.type
 			|| group.type === 'folder' && isUnknownWorkspace && !isCodeWorkspace
 			|| group.type === 'folders' && isUnknownWorkspace && isCodeWorkspace)) {
 				list.push(new GroupTypeTreeItem(group));
