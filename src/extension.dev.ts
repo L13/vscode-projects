@@ -2,10 +2,9 @@
 
 import * as vscode from 'vscode';
 
-import * as common from './commands/common';
-import * as favorites from './commands/favorites';
-import * as hotkeys from './commands/hotkeys';
-import * as workspaces from './commands/workspaces';
+import * as developer from './commands/developer';
+
+import * as main from './extension';
 
 //	Variables __________________________________________________________________
 
@@ -19,10 +18,9 @@ import * as workspaces from './commands/workspaces';
 
 export function activate (context:vscode.ExtensionContext) {
 	
-	common.activate(context);
-	favorites.activate(context);
-	hotkeys.activate(context);
-	workspaces.activate(context);
+	main.activate(context);
+	
+	developer.activate(context);
 	
 }
 
