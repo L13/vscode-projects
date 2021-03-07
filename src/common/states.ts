@@ -57,13 +57,9 @@ export function updateCurrentWorkspace (context:vscode.ExtensionContext, workspa
 	
 }
 
-export function getFavorites (context:vscode.ExtensionContext, checkDeleted:boolean = false) {
+export function getFavorites (context:vscode.ExtensionContext) :Favorite[] {
 	
-	const favorites:Favorite[] = context.globalState.get(FAVORITES, []);
-	
-	if (checkDeleted) favorites.forEach((favorite) => favorite.deleted = !fs.existsSync(favorite.path));
-	
-	return favorites;
+	return context.globalState.get(FAVORITES, []);
 	
 }
 
@@ -117,7 +113,7 @@ export function getSimpleGroups (context:vscode.ExtensionContext) :SimpleGroupSt
 	
 export function updateSimpleGroups (context:vscode.ExtensionContext, simpleGroups:SimpleGroupState[]) {
 	
-	context.globalState.get(SIMPLE_GROUPS, simpleGroups);
+	context.globalState.update(SIMPLE_GROUPS, simpleGroups);
 	
 }
 
@@ -129,7 +125,7 @@ export function getTypeGroups (context:vscode.ExtensionContext) :TypeGroupState[
 
 export function updateTypeGroups (context:vscode.ExtensionContext, typeGroups:TypeGroupState[]) {
 	
-	context.globalState.get(TYPE_GROUPS, typeGroups);
+	context.globalState.update(TYPE_GROUPS, typeGroups);
 	
 }
 

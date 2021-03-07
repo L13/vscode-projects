@@ -93,8 +93,6 @@ export class WorkspacesState {
 		
 		const projects = states.getProjects(this.context);
 		
-		projects.forEach((project) => project.deleted = !fs.existsSync(project.path));
-		
 		const once:{ [name:string]:Project } = {};
 		const all = [
 			...projects,
@@ -137,12 +135,24 @@ export class WorkspacesState {
 		
 	}
 	
+	private updateProjectExists () {
+		
+		const projects = states.getProjects(this.context);
+		
+		projects.forEach((project) => project.deleted = !fs.existsSync(project.path));
+		
+		states.updateProjects(this.context, projects);
+		
+	}
+	
 	public detect () {
 		
 		const gitFolders = settings.get('git.folders', []);
 		const vscodeFolders = settings.get('vsCode.folders', []);
 		const workspaceFolders = settings.get('workspace.folders', []);
 		const subfolderFolders = settings.get('subfolder.folders', []);
+		
+		this.updateProjectExists();
 		
 		return Promise.all([
 			this.detectWorkspacesOfType('git', states.updateGitCache, this.gitCache = [], gitFolders, {

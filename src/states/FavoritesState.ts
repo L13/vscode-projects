@@ -1,5 +1,6 @@
 //	Imports ____________________________________________________________________
 
+import * as fs from 'fs';
 import * as vscode from 'vscode';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
@@ -42,13 +43,24 @@ export class FavoritesState {
 	
 	public get () {
 		
-		return states.getFavorites(this.context, true);
+		return states.getFavorites(this.context);
 		
 	}
 	
 	private save (favorites:Favorite[]) {
 		
 		states.updateFavorites(this.context, favorites);
+		
+	}
+	
+	public updateFavoriteExists () {
+		
+		const favorites = this.get();
+		
+		favorites.forEach((favorite) => favorite.deleted = !fs.existsSync(favorite.path));
+		
+		this.save(favorites);
+		this._onDidChangeFavorites.fire(favorites);
 		
 	}
 	
