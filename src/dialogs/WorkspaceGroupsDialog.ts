@@ -44,6 +44,11 @@ export class WorkspaceGroupsDialog {
 			return;
 		}
 		
+		if (this.favoriteGroupsState.getByName(label)) {
+			vscode.window.showInformationMessage(`Favorite group with the name "${label} exists!"`);
+			return;
+		}
+		
 		this.workspaceGroupsState.add(label);
 		
 	}

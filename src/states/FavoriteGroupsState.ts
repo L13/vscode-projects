@@ -76,11 +76,18 @@ export class FavoriteGroupsState {
 		const favoriteGroups = this.get();
 		
 		for (const favoriteGroup of favoriteGroups) {
-			if (favoriteGroup.label === label) return vscode.window.showErrorMessage(`Favorite group "${label}" exists!`);
+			if (favoriteGroup.label === label) return;
 		}
 		
-		favoriteGroups.push({ label, id: getNextGroupId(this.context), collapsed: false, paths: [] });
+		favoriteGroups.push({
+			label,
+			id: getNextGroupId(this.context),
+			collapsed: false,
+			paths: [],
+		});
+		
 		sortFavoriteGroups(favoriteGroups);
+		
 		this.save(favoriteGroups);
 		this._onDidChangeFavoriteGroups.fire(favoriteGroups);
 		
@@ -89,32 +96,25 @@ export class FavoriteGroupsState {
 	public addFavorite (favorite:Favorite, favoriteGroup:FavoriteGroup) {
 		
 		const favoriteGroups = this.get();
-		const previousFavoriteGroup = favoriteGroups.find((group) => remove(group.paths, favorite.path));
 		
-		favoriteGroup.paths.push(favorite.path);
-		favoriteGroup.paths.sort();
-		
-		this.save(favoriteGroups);
-		if (previousFavoriteGroup) this._onDidUpdateFavoriteGroup.fire(previousFavoriteGroup);
-		this._onDidUpdateFavoriteGroup.fire(favoriteGroup);
-		this._onDidChangeFavoriteGroups.fire(favoriteGroups);
+		if (!favoriteGroup.paths.includes(favorite.path)) {
+			const previousFavoriteGroup = favoriteGroups.find((group) => remove(group.paths, favorite.path));
+			
+			favoriteGroup.paths.push(favorite.path);
+			favoriteGroup.paths.sort();
+			
+			this.save(favoriteGroups);
+			if (previousFavoriteGroup) this._onDidUpdateFavoriteGroup.fire(previousFavoriteGroup);
+			this._onDidUpdateFavoriteGroup.fire(favoriteGroup);
+			this._onDidChangeFavoriteGroups.fire(favoriteGroups);
+		}
 		
 	}
 	
-	public addWorkspaceGroup (workspaceGroup:WorkspaceGroup, workspaces:Project[], replaceFavoriteGroup?:FavoriteGroup) {
+	public addWorkspaceGroup (workspaceGroup:WorkspaceGroup, workspaces:Project[]) {
 		
 		const favoriteGroups = this.get();
 		const paths = workspaceGroup.paths;
-		
-		if (replaceFavoriteGroup) {
-			const groupId = replaceFavoriteGroup.id;
-			for (let i = 0; i < favoriteGroups.length; i++) {
-				if (favoriteGroups[i].id === groupId) {
-					favoriteGroups.splice(i, 1);
-					break;
-				}
-			}
-		}
 		
 		removePathsInFavoriteGroups(favoriteGroups, paths);
 		

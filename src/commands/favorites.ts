@@ -32,21 +32,20 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	const subscriptions = context.subscriptions;
 	
-	const hotkeySlotsState = HotkeySlotsState.create(context);
-	
-	const favoritesState = FavoritesState.create(context);
 	const favoriteGroupsState = FavoriteGroupsState.create(context);
+	const favoritesState = FavoritesState.create(context);
+	const hotkeySlotsState = HotkeySlotsState.create(context);
+	const projectsState = ProjectsState.create(context);
+	const workspaceGroupState = WorkspaceGroupsState.create(context);
+	
+	const favoriteGroupsDialog = FavoriteGroupsDialog.create(favoriteGroupsState, workspaceGroupState);
 	const favoritesDialog = FavoritesDialog.create(favoritesState, favoriteGroupsState);
-	const favoriteGroupsDialog = FavoriteGroupsDialog.create(favoriteGroupsState);
+	
 	const favoritesProvider = FavoritesProvider.create({
 		favorites: favoritesState.get(),
 		favoriteGroups: favoriteGroupsState.get(),
 		hotkeySlots: hotkeySlotsState,
 	});
-	
-	const projectsState = ProjectsState.create(context);
-	
-	const workspaceGroupState = WorkspaceGroupsState.create(context);
 	
 	const treeView = vscode.window.createTreeView('l13ProjectsFavorites', {
 		treeDataProvider: favoritesProvider,

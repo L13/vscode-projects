@@ -112,13 +112,14 @@ export class WorkspaceGroupsState {
 		
 		const workspaceGroups = this.get();
 		
-		if (workspaceGroup && !workspaceGroup.paths.includes(workspace.path)) {
-			workspaceGroups.some((group) => remove(group.paths, workspace.path));
+		if (!workspaceGroup.paths.includes(workspace.path)) {
+			const previousWorkspaceGroup = workspaceGroups.find((group) => remove(group.paths, workspace.path));
 			workspaceGroup.paths.push(workspace.path);
 			workspaceGroup.paths.sort();
 			this.save(workspaceGroups);
-			this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
+			if (previousWorkspaceGroup) this._onDidUpdateWorkspaceGroup.fire(previousWorkspaceGroup);
 			this._onDidUpdateWorkspaceGroup.fire(workspaceGroup);
+			this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 		}
 		
 	}
@@ -129,8 +130,10 @@ export class WorkspaceGroupsState {
 		
 		for (const workspaceGroup of workspaceGroups) {
 			if (workspaceGroup.id === favoriteGroup.id) {
+				const paths = favoriteGroup.paths;
+				removePathsInWorkspaceGroups(workspaceGroups, paths);
 				workspaceGroup.label = favoriteGroup.label;
-				workspaceGroup.paths = favoriteGroup.paths;
+				workspaceGroup.paths = paths;
 				sortWorkspaceGroups(workspaceGroups);
 				this.save(workspaceGroups);
 				this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
@@ -246,5 +249,13 @@ function saveCollapseState (groupStates:(SimpleGroupState|TypeGroupState)[], ite
 function sortWorkspaceGroups (workspaceGroups:WorkspaceGroup[]) {
 	
 	workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+	
+}
+
+function removePathsInWorkspaceGroups (workspaceGroups:WorkspaceGroup[], paths:string[]) {
+		
+	for (const workspaceGroup of workspaceGroups) {
+		for (const path of paths) remove(workspaceGroup.paths, path);
+	}
 	
 }

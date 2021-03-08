@@ -44,22 +44,21 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	const subscriptions = context.subscriptions;
 	
-	const favoritesState = FavoritesState.create(context);
-	const favoriteGroupsState = FavoriteGroupsState.create(context);
-	const favoriteGroupsDialog = FavoriteGroupsDialog.create(favoriteGroupsState);
-	
-	const hotkeySlotsState = HotkeySlotsState.create(context);
-	
-	const projectsState = ProjectsState.create(context);
-	const projectsDialog = ProjectsDialog.create(projectsState);
-	
 	const statusBarInfo = StatusBarInfo.create(context);
-	const statusBarColorState = StatusBarColor.create(context);
 	
-	const workspacesState = WorkspacesState.create(context);
+	const favoriteGroupsState = FavoriteGroupsState.create(context);
+	const favoritesState = FavoritesState.create(context);
+	const hotkeySlotsState = HotkeySlotsState.create(context);
+	const projectsState = ProjectsState.create(context);
+	const statusBarColorState = StatusBarColor.create(context);
 	const workspaceGroupsState = WorkspaceGroupsState.create(context);
-	const workspacesDialog = WorkspacesDialog.create(workspacesState, workspaceGroupsState);
+	const workspacesState = WorkspacesState.create(context);
+	
+	const projectsDialog = ProjectsDialog.create(projectsState);
+	const favoriteGroupsDialog = FavoriteGroupsDialog.create(favoriteGroupsState, workspaceGroupsState);
 	const workspaceGroupsDialog = WorkspaceGroupsDialog.create(workspaceGroupsState, favoriteGroupsState);
+	const workspacesDialog = WorkspacesDialog.create(workspacesState, workspaceGroupsState);
+	
 	const workspacesProvider = WorkspacesProvider.create({
 		hotkeySlots: hotkeySlotsState,
 		workspaces: workspacesState.cache,

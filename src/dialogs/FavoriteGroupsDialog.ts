@@ -8,6 +8,7 @@ import { Project, WorkspaceGroup } from '../@types/workspaces';
 import * as dialogs from '../common/dialogs';
 
 import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
+import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 
 //	Variables __________________________________________________________________
 
@@ -21,15 +22,15 @@ import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
 
 export class FavoriteGroupsDialog {
 	
-	private static currentFavoriteGroupsDialog:FavoriteGroupsDialog = null;
+	private static current:FavoriteGroupsDialog = null;
 	
-	public static create (favoriteGroupsState:FavoriteGroupsState) {
+	public static create (favoriteGroupsState:FavoriteGroupsState, workspaceGroupsState:WorkspaceGroupsState) {
 		
-		return FavoriteGroupsDialog.currentFavoriteGroupsDialog || (FavoriteGroupsDialog.currentFavoriteGroupsDialog = new FavoriteGroupsDialog(favoriteGroupsState));
+		return FavoriteGroupsDialog.current || (FavoriteGroupsDialog.current = new FavoriteGroupsDialog(favoriteGroupsState, workspaceGroupsState));
 		
 	}
 	
-	public constructor (private readonly favoriteGroupsState:FavoriteGroupsState) {}
+	public constructor (private readonly favoriteGroupsState:FavoriteGroupsState, private readonly workspaceGroupsState:WorkspaceGroupsState) {}
 	
 	public async add () {
 		
@@ -39,18 +40,12 @@ export class FavoriteGroupsDialog {
 		
 		if (!label) return;
 		
-		if (this.favoriteGroupsState.getByName(label)) {
-			vscode.window.showInformationMessage(`Favorite group with the name "${label} exists!"`);
+		if (this.workspaceGroupsState.getByName(label)) {
+			vscode.window.showInformationMessage(`Workspace group with the name "${label} exists!"`);
 			return;
 		}
 		
 		this.favoriteGroupsState.add(label);
-		
-	}
-	
-	private async replace (favoriteGroup:FavoriteGroup) {
-		
-		return !!await dialogs.confirm(`Replace favorite group "${favoriteGroup.label}"?`, 'Replace');
 		
 	}
 	
@@ -80,11 +75,7 @@ export class FavoriteGroupsDialog {
 		
 		if (this.favoriteGroupsState.getById(workspaceGroup.id)) return;
 		
-		const favoriteGroup = this.favoriteGroupsState.getByName(workspaceGroup.label);
-		
-		if (favoriteGroup && !await this.replace(favoriteGroup)) return;
-		
-		this.favoriteGroupsState.addWorkspaceGroup(workspaceGroup, workspaces, favoriteGroup);
+		this.favoriteGroupsState.addWorkspaceGroup(workspaceGroup, workspaces);
 		
 	}
 	

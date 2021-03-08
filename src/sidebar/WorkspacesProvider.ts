@@ -137,7 +137,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	private addCustomGroups (list:WorkspacesTreeItems[]) {
+	private addWorkspaceGroups (list:WorkspacesTreeItems[]) {
 		
 		const slots = this.slots;
 		let paths:string[] = [];
@@ -153,7 +153,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	private addNonCustomGroupItems (list:WorkspacesTreeItems[], workspacePath:string) {
+	private addNonWorkspaceGroupItems (list:WorkspacesTreeItems[], workspacePath:string) {
 		
 		let paths:string[] = [];
 		
@@ -184,8 +184,9 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	private addCustomGroupItems (list:WorkspacesTreeItems[], paths:string[], workspacePath:string) {
+	private addWorkspaceGroupItems (list:WorkspacesTreeItems[], element:WorkspaceGroupTreeItem, workspacePath:string) {
 		
+		const paths = element.group.paths;
 		const colorPickerProject = this.colorPickerProject;
 		const slots = this.slots;
 		let hasCurrentWorkspace = false;
@@ -228,8 +229,9 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	private addSimpleGroupItems (list:WorkspacesTreeItems[], type:string, workspacePath:string) {
+	private addSimpleGroupItems (list:WorkspacesTreeItems[], element:SimpleGroupTreeItem, workspacePath:string) {
 		
+		const type = element.group.type;
 		const colorPickerProject = this.colorPickerProject;
 		const slots = this.slots;
 		let hasCurrentWorkspace = false;
@@ -301,8 +303,9 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	private addTypeGroupItems (list:WorkspacesTreeItems[], type:string, workspacePath:string) {
+	private addTypeGroupItems (list:WorkspacesTreeItems[], element:TypeGroupTreeItem, workspacePath:string) {
 		
+		const type = element.group.type;
 		const colorPickerProject = this.colorPickerProject;
 		const workspaceFile = vscode.workspace.workspaceFile;
 		const slots = this.slots;
@@ -372,15 +375,14 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		const sortWorkspacesBy = this.sortWorkspacesBy;
 		
 		if (element) {
-			const type = (<GroupTreeItem>element).group.type;
-			if (type === 'custom') this.addCustomGroupItems(list, (<WorkspaceGroupTreeItem>element).group.paths, workspacePath);
-			else if (sortWorkspacesBy === 'Simple') this.addSimpleGroupItems(list, type, workspacePath);
-			else this.addTypeGroupItems(list, type, workspacePath);
+			if (element instanceof WorkspaceGroupTreeItem) this.addWorkspaceGroupItems(list, element, workspacePath);
+			else if (element instanceof SimpleGroupTreeItem) this.addSimpleGroupItems(list, element, workspacePath);
+			else if (element instanceof TypeGroupTreeItem) this.addTypeGroupItems(list, element, workspacePath);
 		} else {
-			this.addCustomGroups(list);
+			this.addWorkspaceGroups(list);
 			if (sortWorkspacesBy === 'Simple') this.addSimpleGroups(list, workspacePath);
 			else if (sortWorkspacesBy === 'Type') this.addTypeGroups(list, workspacePath);
-			else this.addNonCustomGroupItems(list, workspacePath);
+			else this.addNonWorkspaceGroupItems(list, workspacePath);
 		}
 		
 		return list;

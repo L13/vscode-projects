@@ -141,7 +141,7 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 
 #### All Platforms
 
-* `New Group` - Add a new favorite group.
+* `New Favorite Group` - Add a new favorite group.
 * `Collapse All` - Collapse all groups.
 
 ### Favorites Context menu
@@ -188,8 +188,8 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 
 #### All Platforms
 
-* `New Group` - Add a new workspace group.
-* `Refresh` - Refresh workspace list.
+* `New Workspace Group` - Add a new workspace group.
+* `Refresh` - Refresh workspace and favorite list.
 * `Collapse All` - Collapse all groups.
 
 #### macOS

@@ -102,7 +102,7 @@
 			},
 			{
 				"command": "l13Projects.action.favoriteGroups.add",
-				"title": "New Group",
+				"title": "New Favorite Group",
 				"icon": {
 					"light": "images/workspaces/group-new-light.svg",
 					"dark": "images/workspaces/group-new-dark.svg"
@@ -158,7 +158,7 @@
 			},
 			{
 				"command": "l13Projects.action.workspaceGroups.add",
-				"title": "New Group",
+				"title": "New Workspace Group",
 				"icon": {
 					"light": "images/workspaces/group-new-light.svg",
 					"dark": "images/workspaces/group-new-dark.svg"
