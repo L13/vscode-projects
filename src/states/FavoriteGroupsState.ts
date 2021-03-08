@@ -24,11 +24,11 @@ import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
 
 export class FavoriteGroupsState {
 	
-	private static currentFavoriteGroupsState:FavoriteGroupsState = null;
+	private static current:FavoriteGroupsState = null;
 	
 	public static create (context:vscode.ExtensionContext) {
 		
-		return FavoriteGroupsState.currentFavoriteGroupsState || (FavoriteGroupsState.currentFavoriteGroupsState = new FavoriteGroupsState(context));
+		return FavoriteGroupsState.current || (FavoriteGroupsState.current = new FavoriteGroupsState(context));
 		
 	}
 	

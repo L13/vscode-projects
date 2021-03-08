@@ -40,8 +40,13 @@ export class FavoriteGroupsDialog {
 		
 		if (!label) return;
 		
+		if (this.favoriteGroupsState.getByName(label)) {
+			vscode.window.showInformationMessage(`Favorite group with the name "${label}" exists!`);
+			return;
+		}
+		
 		if (this.workspaceGroupsState.getByName(label)) {
-			vscode.window.showInformationMessage(`Workspace group with the name "${label} exists!"`);
+			vscode.window.showInformationMessage(`Workspace group with the name "${label}" exists!`);
 			return;
 		}
 		
@@ -88,9 +93,17 @@ export class FavoriteGroupsDialog {
 		
 		if (!label || favoriteGroup.label === label) return;
 		
+		if (this.workspaceGroupsState.getByName(label)) {
+			vscode.window.showErrorMessage(`Workspace group with name "${label}" exists!`);
+			return;
+		}
+		
 		if (this.favoriteGroupsState.getByName(label)) {
 			vscode.window.showErrorMessage(`Favorite group with name "${label}" exists!`);
-		} else this.favoriteGroupsState.rename(favoriteGroup, label);
+			return;
+		}
+		
+		this.favoriteGroupsState.rename(favoriteGroup, label);
 		
 	}
 	

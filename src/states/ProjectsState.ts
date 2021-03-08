@@ -59,6 +59,16 @@ export class ProjectsState {
 		
 	}
 	
+	public refreshProjectExists () {
+		
+		const projects = states.getProjects(this.context);
+		
+		projects.forEach((project) => project.deleted = !fs.existsSync(project.path));
+		
+		states.updateProjects(this.context, projects);
+		
+	}
+	
 	public getByPath (fsPath:string) {
 		
 		const projects = this.get();
@@ -99,16 +109,6 @@ export class ProjectsState {
 		this.save(projects);
 		
 		this._onDidChangeProjects.fire(projects);
-		
-	}
-	
-	public refreshProjectExists () {
-		
-		const projects = states.getProjects(this.context);
-		
-		projects.forEach((project) => project.deleted = !fs.existsSync(project.path));
-		
-		states.updateProjects(this.context, projects);
 		
 	}
 	
