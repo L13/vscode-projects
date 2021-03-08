@@ -1,6 +1,5 @@
 //	Imports ____________________________________________________________________
 
-import * as fs from 'fs';
 import * as vscode from 'vscode';
 
 import { Favorite, FavoriteGroup } from '../@types/favorites';
@@ -186,30 +185,6 @@ export function getSubfolderCache (context:vscode.ExtensionContext) :Project[] {
 export function updateSubfolderCache (context:vscode.ExtensionContext, cache:Project[]) {
 	
 	context.globalState.update(SUBFOLDER_CACHE, cache);
-	
-}
-
-export function getNextGroupId (context:vscode.ExtensionContext) :number {
-	
-	const favoriteGroups = getFavoriteGroups(context);
-	const workspaceGroups = getWorkspaceGroups(context);
-	
-	if (!favoriteGroups.length && !workspaceGroups.length) return 0;
-	
-	const groupIds:number[] = [];
-	
-	favoriteGroups.forEach((favoriteGroup) => groupIds.push(favoriteGroup.id));
-	workspaceGroups.forEach((workspaceGroup) => groupIds.push(workspaceGroup.id));
-	
-	const maxGroupId = Math.max.apply(null, groupIds);
-	let i = 0;
-	
-	while (i <= maxGroupId) {
-		if (!groupIds.includes(i)) return i;
-		i++;
-	}
-	
-	return i;
 	
 }
 

@@ -7,6 +7,7 @@ import { remove, sortCaseInsensitive } from '../@l13/arrays';
 import { Favorite, FavoriteGroup } from '../@types/favorites';
 import { Project, WorkspaceGroup } from '../@types/workspaces';
 
+import { getNextGroupId } from '../common/groups';
 import * as states from '../common/states';
 
 import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
@@ -78,7 +79,7 @@ export class FavoriteGroupsState {
 			if (favoriteGroup.label === label) return vscode.window.showErrorMessage(`Favorite group "${label}" exists!`);
 		}
 		
-		favoriteGroups.push({ label, id: states.getNextGroupId(this.context), collapsed: false, paths: [] });
+		favoriteGroups.push({ label, id: getNextGroupId(this.context), collapsed: false, paths: [] });
 		sortFavoriteGroups(favoriteGroups);
 		this.save(favoriteGroups);
 		this._onDidChangeFavoriteGroups.fire(favoriteGroups);
