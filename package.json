@@ -360,6 +360,10 @@
 				"title": "Developer: Backup Projects Data"
 			},
 			{
+				"command": "l13Projects.action.developer.reveal",
+				"title": "Developer: Reveal Projects Backups"
+			},
+			{
 				"command": "l13Projects.action.developer.remove",
 				"title": "Developer: Delete Projects Backup"
 			},
@@ -607,6 +611,10 @@
 				},
 				{
 					"command": "l13Projects.action.developer.backup",
+					"when": "isDevelopment"
+				},
+				{
+					"command": "l13Projects.action.developer.reveal",
 					"when": "isDevelopment"
 				},
 				{
