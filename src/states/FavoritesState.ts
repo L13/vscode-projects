@@ -8,6 +8,7 @@ import { sortCaseInsensitive } from '../@l13/arrays';
 import { Favorite } from '../@types/favorites';
 import { Project } from '../@types/workspaces';
 
+import * as settings from '../common/settings';
 import * as states from '../common/states';
 
 //	Variables __________________________________________________________________
@@ -30,7 +31,11 @@ export class FavoritesState {
 		
 	}
 	
-	public constructor (private readonly context:vscode.ExtensionContext) {}
+	public constructor (private readonly context:vscode.ExtensionContext) {
+		
+		if (!settings.get('useCacheForDetectedProjects', false)) this.refreshFavoriteExists();
+		
+	}
 	
 	private _onDidUpdateFavorite:vscode.EventEmitter<Favorite> = new vscode.EventEmitter<Favorite>();
 	public readonly onDidUpdateFavorite:vscode.Event<Favorite> = this._onDidUpdateFavorite.event;
@@ -53,7 +58,7 @@ export class FavoritesState {
 		
 	}
 	
-	public updateFavoriteExists () {
+	public refreshFavoriteExists () {
 		
 		const favorites = this.get();
 		

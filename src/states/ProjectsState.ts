@@ -1,5 +1,6 @@
 //	Imports ____________________________________________________________________
 
+import * as fs from 'fs';
 import * as vscode from 'vscode';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
@@ -7,6 +8,7 @@ import { formatLabel } from '../@l13/formats';
 
 import { Project } from '../@types/workspaces';
 
+import * as settings from '../common/settings';
 import * as states from '../common/states';
 import { isCodeWorkspace } from '../common/workspaces';
 
@@ -30,7 +32,11 @@ export class ProjectsState {
 		
 	}
 	
-	public constructor (private readonly context:vscode.ExtensionContext) {}
+	public constructor (private readonly context:vscode.ExtensionContext) {
+		
+		if (!settings.get('useCacheForDetectedProjects', false)) this.refreshProjectExists();
+		
+	}
 	
 	private _onDidUpdateProject:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
 	public readonly onDidUpdateProject:vscode.Event<Project> = this._onDidUpdateProject.event;
@@ -93,6 +99,16 @@ export class ProjectsState {
 		this.save(projects);
 		
 		this._onDidChangeProjects.fire(projects);
+		
+	}
+	
+	public refreshProjectExists () {
+		
+		const projects = states.getProjects(this.context);
+		
+		projects.forEach((project) => project.deleted = !fs.existsSync(project.path));
+		
+		states.updateProjects(this.context, projects);
 		
 	}
 	

@@ -223,7 +223,8 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspaces.refresh': () => {
 			
 			statusBarColorState.detectProjectColors();
-			favoritesState.updateFavoriteExists();
+			favoritesState.refreshFavoriteExists();
+			projectsState.refreshProjectExists();
 			workspacesState.detect();
 			
 		},
