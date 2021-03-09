@@ -61,15 +61,15 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	const workspacesProvider = WorkspacesProvider.create({
 		hotkeySlots: hotkeySlotsState,
-		workspaces: workspacesState.cache,
-		workspaceGroups: workspaceGroupsState.get(),
 		simpleGroups: workspaceGroupsState.getSimpleGroups(),
 		typeGroups: workspaceGroupsState.getTypeGroups(),
+		workspaces: workspacesState.cache,
+		workspaceGroups: workspaceGroupsState.get(),
 	});
 	
 	const treeView = vscode.window.createTreeView('l13ProjectsWorkspaces', {
-		treeDataProvider: workspacesProvider,
 		showCollapseAll: true,
+		treeDataProvider: workspacesProvider,
 	});
 	
 //	Tree View
@@ -109,6 +109,10 @@ export function activate (context:vscode.ExtensionContext) {
 	}));
 	
 	subscriptions.push(workspacesProvider.onWillInitView(async () => {
+		
+		statusBarColorState.detectProjectColors();
+		favoritesState.refreshFavoriteExists();
+		projectsState.detectProjectExists();
 		
 		workspacesProvider.refresh({
 			workspaces: await workspacesState.detect(),
@@ -193,12 +197,6 @@ export function activate (context:vscode.ExtensionContext) {
 	
 //	Status Bar
 	
-	subscriptions.push(statusBarColorState.onDidUpdateColor((project) => {
-		
-		favoritesState.update(project);
-		
-	}));
-	
 	subscriptions.push(statusBarColorState.onDidChangeColor((project) => {
 		
 		favoritesState.update(project);
@@ -233,7 +231,7 @@ export function activate (context:vscode.ExtensionContext) {
 					
 					statusBarColorState.detectProjectColors();
 					favoritesState.refreshFavoriteExists();
-					projectsState.refreshProjectExists();
+					projectsState.detectProjectExists();
 					
 					return workspacesState.detect();
 					

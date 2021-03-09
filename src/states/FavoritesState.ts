@@ -31,11 +31,7 @@ export class FavoritesState {
 		
 	}
 	
-	public constructor (private readonly context:vscode.ExtensionContext) {
-		
-		if (!settings.get('useCacheForDetectedProjects', false)) this.refreshFavoriteExists();
-		
-	}
+	public constructor (private readonly context:vscode.ExtensionContext) {}
 	
 	private _onDidUpdateFavorite:vscode.EventEmitter<Favorite> = new vscode.EventEmitter<Favorite>();
 	public readonly onDidUpdateFavorite:vscode.Event<Favorite> = this._onDidUpdateFavorite.event;

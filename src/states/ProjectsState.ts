@@ -32,11 +32,7 @@ export class ProjectsState {
 		
 	}
 	
-	public constructor (private readonly context:vscode.ExtensionContext) {
-		
-		if (!settings.get('useCacheForDetectedProjects', false)) this.refreshProjectExists();
-		
-	}
+	public constructor (private readonly context:vscode.ExtensionContext) {}
 	
 	private _onDidUpdateProject:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
 	public readonly onDidUpdateProject:vscode.Event<Project> = this._onDidUpdateProject.event;
@@ -59,7 +55,7 @@ export class ProjectsState {
 		
 	}
 	
-	public refreshProjectExists () {
+	public detectProjectExists () {
 		
 		const projects = states.getProjects(this.context);
 		
