@@ -64,7 +64,7 @@
 			},
 			{
 				"view": "l13ProjectsWorkspaces",
-				"contents": "No workspaces found.\n[Add a Project](command:l13Projects.action.workspaces.addProject)\nYou can scan folders to automatically detect Git repositories, VS Code projects, or VS Code workspaces. Open the [Settings](command:workbench.action.openSettings) and define folders in which the extension should search for."
+				"contents": "No workspaces found.\n[Add a Project](command:l13Projects.action.workspaces.addProject)\nYou can scan folders to detect Git repositories, VS Code folders or VS Code workspaces. Open the [Settings](command:workbench.action.openSettings) and define folders in which the extension should search."
 			}
 		],
 		"commands": [
