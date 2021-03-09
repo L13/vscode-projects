@@ -69,7 +69,7 @@ export class FavoritesState {
 		const favorites = this.get();
 		
 		for (const favorite of favorites) {
-			if (favorite.label === workspace.path) return;
+			if (favorite.path === workspace.path) return;
 		}
 		
 		favorites.push({
