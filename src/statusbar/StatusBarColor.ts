@@ -29,7 +29,11 @@ export class StatusBarColor {
 		
 	}
 	
-	public constructor (private readonly context:vscode.ExtensionContext) {}
+	public constructor (private readonly context:vscode.ExtensionContext) {
+		
+		if (!settings.get('useCacheForDetectedProjects', false)) this.detectProjectColors();
+		
+	}
 	
 	private _onDidUpdateColor:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
 	public readonly onDidUpdateColor:vscode.Event<Project> = this._onDidUpdateColor.event;
