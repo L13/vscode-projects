@@ -10,7 +10,7 @@ import { Project, WorkspaceGroup } from '../@types/workspaces';
 import { getNextGroupId } from '../common/groups';
 import * as states from '../common/states';
 
-import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
+import { FavoriteGroupTreeItem } from '../sidebar/trees/groups/FavoriteGroupTreeItem';
 
 //	Variables __________________________________________________________________
 

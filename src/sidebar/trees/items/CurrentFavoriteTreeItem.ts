@@ -3,12 +3,12 @@
 import { join } from 'path';
 import { TreeItem } from 'vscode';
 
-import { Favorite } from '../../@types/favorites';
-import { Slot } from '../../@types/hotkeys';
+import { Favorite } from '../../../@types/favorites';
+import { Slot } from '../../../@types/hotkeys';
 
 //	Variables __________________________________________________________________
 
-const basePath = join(__dirname, '..', 'images', 'types');
+const basePath = join(__dirname, '..', 'images', 'current');
 
 //	Initialize _________________________________________________________________
 
@@ -16,34 +16,24 @@ const basePath = join(__dirname, '..', 'images', 'types');
 
 //	Exports ____________________________________________________________________
 
-export class FavoriteTreeItem extends TreeItem {
-	
-	public command = {
-		arguments: [this],
-		command: 'l13Projects.action.workspace.open',
-		title: 'Open Project',
-	};
+export class CurrentFavoriteTreeItem extends TreeItem {
 	
 	public constructor (public readonly project:Favorite, public readonly slot:Slot|null, isSubProject:boolean = false) {
 		
 		super(project.label);
 		
 		const type = project.type;
-		const info:string[] = [];
 		let icon = `${type}`;
-		
-		if (slot) info.push(`[${slot.index}]`);
-		if (project.deleted) info.push('Path does not exist');
 		
 		if (type === 'folder' || type === 'folders') icon += `-color-${project.color || 0}`;
 		
-		this.contextValue = `${isSubProject ? 'sub' : ''}favorite-${type}`;
+		this.contextValue = `current-${isSubProject ? 'sub' : ''}favorite-${type}`;
 		this.tooltip = project.path;
-		this.description = info.join(' ');
+		this.description = `${slot ? `[${slot.index}] ` : ''}Current workspace`;
 		
 		this.iconPath = {
-			light: join(basePath, `project-${icon}-light.svg`),
-			dark: join(basePath, `project-${icon}-dark.svg`),
+			light: join(basePath, `current-project-${icon}-light.svg`),
+			dark: join(basePath, `current-project-${icon}-dark.svg`),
 		};
 		
 	}

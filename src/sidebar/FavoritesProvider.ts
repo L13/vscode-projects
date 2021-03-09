@@ -9,9 +9,9 @@ import { InitialState } from '../@types/common';
 import { Favorite, FavoriteGroup, FavoritesStates, FavoritesTreeItems, RefreshFavoritesStates } from '../@types/favorites';
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
 
-import { CurrentFavoriteTreeItem } from './trees/CurrentFavoriteTreeItem';
-import { FavoriteGroupTreeItem } from './trees/FavoriteGroupTreeItem';
-import { FavoriteTreeItem } from './trees/FavoriteTreeItem';
+import { FavoriteGroupTreeItem } from './trees/groups/FavoriteGroupTreeItem';
+import { CurrentFavoriteTreeItem } from './trees/items/CurrentFavoriteTreeItem';
+import { FavoriteTreeItem } from './trees/items/FavoriteTreeItem';
 
 //	Variables __________________________________________________________________
 

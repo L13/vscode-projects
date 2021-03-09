@@ -2,13 +2,14 @@
 
 import * as vscode from 'vscode';
 
-import { ColorPickerTreeItem } from '../sidebar/trees/ColorPickerTreeItem';
-import { CurrentWorkspaceTreeItem } from '../sidebar/trees/CurrentWorkspaceTreeItem';
-import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
-import { SimpleGroupTreeItem } from '../sidebar/trees/SimpleGroupTreeItem';
-import { TypeGroupTreeItem } from '../sidebar/trees/TypeGroupTreeItem';
-import { UnknownProjectTreeItem } from '../sidebar/trees/UnknownProjectTreeItem';
-import { WorkspaceGroupTreeItem } from '../sidebar/trees/WorkspaceGroupTreeItem';
+import { ColorPickerTreeItem } from '../sidebar/trees/items/ColorPickerTreeItem';
+import { CurrentWorkspaceTreeItem } from '../sidebar/trees/items/CurrentWorkspaceTreeItem';
+import { ProjectTreeItem } from '../sidebar/trees/items/ProjectTreeItem';
+import { UnknownProjectTreeItem } from '../sidebar/trees/items/UnknownProjectTreeItem';
+
+import { SimpleGroupTreeItem } from '../sidebar/trees/groups/SimpleGroupTreeItem';
+import { TypeGroupTreeItem } from '../sidebar/trees/groups/TypeGroupTreeItem';
+import { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGroupTreeItem';
 
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
 

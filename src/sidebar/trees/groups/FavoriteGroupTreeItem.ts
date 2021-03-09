@@ -3,8 +3,8 @@
 import { join } from 'path';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 
-import { Slot } from '../../@types/hotkeys';
-import { WorkspaceGroup } from '../../@types/workspaces';
+import { FavoriteGroup } from '../../../@types/favorites';
+import { Slot } from '../../../@types/hotkeys';
 
 //	Variables __________________________________________________________________
 
@@ -20,17 +20,17 @@ const iconPath = {
 
 //	Exports ____________________________________________________________________
 
-export class WorkspaceGroupTreeItem extends TreeItem {
+export class FavoriteGroupTreeItem extends TreeItem {
 	
-	public contextValue = 'workspaceGroup';
-	
+	public contextValue = 'favoriteGroup';
+		
 	public iconPath = iconPath;
 	
-	public constructor (public readonly group:WorkspaceGroup, slot:Slot|null) {
+	public constructor (public readonly group:FavoriteGroup, slot:Slot|null) {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
-		this.id = `workspace-group-${group.id}`;
+		this.id = `favorite-group-${group.id}`;
 		this.description = slot ? `[${slot.index}]` : '';
 		
 	}

@@ -3,8 +3,8 @@
 import { FavoriteTreeItems } from '../@types/favorites';
 import { WorkspaceTreeItems } from '../@types/workspaces';
 
-import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
-import { WorkspaceGroupTreeItem } from '../sidebar/trees/WorkspaceGroupTreeItem';
+import { FavoriteGroupTreeItem } from '../sidebar/trees/groups/FavoriteGroupTreeItem';
+import { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGroupTreeItem';
 
 //	Variables __________________________________________________________________
 

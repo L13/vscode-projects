@@ -13,10 +13,10 @@ import { ProjectsDialog } from '../dialogs/ProjectsDialog';
 import { WorkspaceGroupsDialog } from '../dialogs/WorkspaceGroupsDialog';
 import { WorkspacesDialog } from '../dialogs/WorkspacesDialog';
 
-import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
-import { SimpleGroupTreeItem } from '../sidebar/trees/SimpleGroupTreeItem';
-import { TypeGroupTreeItem } from '../sidebar/trees/TypeGroupTreeItem';
-import { WorkspaceGroupTreeItem } from '../sidebar/trees/WorkspaceGroupTreeItem';
+import { SimpleGroupTreeItem } from '../sidebar/trees/groups/SimpleGroupTreeItem';
+import { TypeGroupTreeItem } from '../sidebar/trees/groups/TypeGroupTreeItem';
+import { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGroupTreeItem';
+import { ProjectTreeItem } from '../sidebar/trees/items/ProjectTreeItem';
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
 
 import { FavoriteGroupsState } from '../states/FavoriteGroupsState';

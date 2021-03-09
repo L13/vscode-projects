@@ -10,7 +10,7 @@ import { FavoriteGroupsDialog } from '../dialogs/FavoriteGroupsDialog';
 import { FavoritesDialog } from '../dialogs/FavoritesDialog';
 
 import { FavoritesProvider } from '../sidebar/FavoritesProvider';
-import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
+import { FavoriteGroupTreeItem } from '../sidebar/trees/groups/FavoriteGroupTreeItem';
 
 import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
 import { FavoritesState } from '../states/FavoritesState';

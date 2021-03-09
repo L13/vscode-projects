@@ -3,16 +3,11 @@
 import { join } from 'path';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 
-import { FavoriteGroup } from '../../@types/favorites';
-import { Slot } from '../../@types/hotkeys';
+import { SimpleGroup } from '../../../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
 const basePath = join(__dirname, '..', 'images', 'groups');
-const iconPath = {
-	light: join(basePath, `group-custom-light.svg`),
-	dark: join(basePath, `group-custom-dark.svg`),
-};
 
 //	Initialize _________________________________________________________________
 
@@ -20,18 +15,21 @@ const iconPath = {
 
 //	Exports ____________________________________________________________________
 
-export class FavoriteGroupTreeItem extends TreeItem {
+export class SimpleGroupTreeItem extends TreeItem {
 	
-	public contextValue = 'favoriteGroup';
-		
-	public iconPath = iconPath;
-	
-	public constructor (public readonly group:FavoriteGroup, slot:Slot|null) {
+	public constructor (public readonly group:SimpleGroup) {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
-		this.id = `favorite-group-${group.id}`;
-		this.description = slot ? `[${slot.index}]` : '';
+		const name = `group-simple-${group.type}`;
+		
+		this.contextValue = name;
+		this.id = name;
+		
+		this.iconPath = {
+			light: join(basePath, `${name}-light.svg`),
+			dark: join(basePath, `${name}-dark.svg`),
+		};
 		
 	}
 	

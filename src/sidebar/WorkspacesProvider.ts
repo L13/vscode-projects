@@ -22,13 +22,13 @@ import * as workspaces from '../common/workspaces';
 
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
 
-import { ColorPickerTreeItem } from './trees/ColorPickerTreeItem';
-import { CurrentWorkspaceTreeItem } from './trees/CurrentWorkspaceTreeItem';
-import { ProjectTreeItem } from './trees/ProjectTreeItem';
-import { SimpleGroupTreeItem } from './trees/SimpleGroupTreeItem';
-import { TypeGroupTreeItem } from './trees/TypeGroupTreeItem';
-import { UnknownProjectTreeItem } from './trees/UnknownProjectTreeItem';
-import { WorkspaceGroupTreeItem } from './trees/WorkspaceGroupTreeItem';
+import { SimpleGroupTreeItem } from './trees/groups/SimpleGroupTreeItem';
+import { TypeGroupTreeItem } from './trees/groups/TypeGroupTreeItem';
+import { WorkspaceGroupTreeItem } from './trees/groups/WorkspaceGroupTreeItem';
+import { ColorPickerTreeItem } from './trees/items/ColorPickerTreeItem';
+import { CurrentWorkspaceTreeItem } from './trees/items/CurrentWorkspaceTreeItem';
+import { ProjectTreeItem } from './trees/items/ProjectTreeItem';
+import { UnknownProjectTreeItem } from './trees/items/UnknownProjectTreeItem';
 
 //	Variables __________________________________________________________________
 

@@ -8,7 +8,6 @@ import { formatLabel } from '../@l13/formats';
 
 import { Project } from '../@types/workspaces';
 
-import * as settings from '../common/settings';
 import * as states from '../common/states';
 import { isCodeWorkspace } from '../common/workspaces';
 

@@ -2,9 +2,9 @@
 
 import { Project } from './workspaces';
 
-import { CurrentFavoriteTreeItem } from '../sidebar/trees/CurrentFavoriteTreeItem';
-import { FavoriteGroupTreeItem } from '../sidebar/trees/FavoriteGroupTreeItem';
-import { FavoriteTreeItem } from '../sidebar/trees/FavoriteTreeItem';
+import { FavoriteGroupTreeItem } from '../sidebar/trees/groups/FavoriteGroupTreeItem';
+import { CurrentFavoriteTreeItem } from '../sidebar/trees/items/CurrentFavoriteTreeItem';
+import { FavoriteTreeItem } from '../sidebar/trees/items/FavoriteTreeItem';
 
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
 

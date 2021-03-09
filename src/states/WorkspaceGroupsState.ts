@@ -10,9 +10,9 @@ import { Project, SimpleGroupState, TypeGroupState, WorkspaceGroup } from '../@t
 import { getNextGroupId } from '../common/groups';
 import * as states from '../common/states';
 
-import { SimpleGroupTreeItem } from '../sidebar/trees/SimpleGroupTreeItem';
-import { TypeGroupTreeItem } from '../sidebar/trees/TypeGroupTreeItem';
-import { WorkspaceGroupTreeItem } from '../sidebar/trees/WorkspaceGroupTreeItem';
+import { SimpleGroupTreeItem } from '../sidebar/trees/groups/SimpleGroupTreeItem';
+import { TypeGroupTreeItem } from '../sidebar/trees/groups/TypeGroupTreeItem';
+import { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGroupTreeItem';
 
 //	Variables __________________________________________________________________
 
