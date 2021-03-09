@@ -98,9 +98,7 @@ export class ProjectsDialog {
 			return;
 		}
 		
-		project.label = value;
-		
-		this.projectsState.update(project);
+		this.projectsState.rename(project, value);
 		
 	}
 	

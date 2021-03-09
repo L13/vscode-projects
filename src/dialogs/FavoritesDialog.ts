@@ -85,7 +85,10 @@ export class FavoritesDialog {
 		
 		if (favorite.label === value || value === undefined) return;
 		
-		if (!value) return vscode.window.showErrorMessage(`Favorite with no name is not valid!`);
+		if (!value) {
+			vscode.window.showErrorMessage(`Favorite with no name is not valid!`);
+			return;
+		}
 		
 		this.favoritesStates.rename(favorite, value);
 		

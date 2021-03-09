@@ -8,7 +8,6 @@ import { sortCaseInsensitive } from '../@l13/arrays';
 import { Favorite } from '../@types/favorites';
 import { Project } from '../@types/workspaces';
 
-import * as settings from '../common/settings';
 import * as states from '../common/states';
 
 //	Variables __________________________________________________________________
@@ -69,8 +68,8 @@ export class FavoritesState {
 		
 		const favorites = this.get();
 		
-		if (favorites.some(({ path }) => path === workspace.path)) {
-			return vscode.window.showErrorMessage(`Project "${workspace.label}" exists in favorites!`);
+		for (const favorite of favorites) {
+			if (favorite.label === workspace.path) return;
 		}
 		
 		favorites.push({
