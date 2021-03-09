@@ -154,7 +154,7 @@ export class ProjectsState {
 				projects.splice(i, 1);
 				this.save(projects);
 				this._onDidDeleteProject.fire(project);
-				return;
+				break;
 			}
 		}
 		

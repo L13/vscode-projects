@@ -199,12 +199,10 @@ export class FavoriteGroupsState {
 		}
 		
 		if (removeAll) {
-			const favorites = states.getFavorites(this.context);
+			let favorites = states.getFavorites(this.context);
 			const paths = favoriteGroup.paths;
 			
-			for (let i = 0; i < favorites.length; i++) {
-				if (paths.includes(favorites[i].path)) favorites.splice(i, 1);
-			}
+			favorites = favorites.filter((favorite) => !paths.includes(favorite.path));
 			
 			states.updateFavorites(this.context, favorites);
 		}
