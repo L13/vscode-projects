@@ -93,6 +93,7 @@ export type WorkspacesStates = {
 };
 
 export type RefreshWorkspacesStates = {
+	task?:() => Promise<Project[]>,
 	workspaces?:Project[],
 	workspaceGroups?:WorkspaceGroup[],
 };

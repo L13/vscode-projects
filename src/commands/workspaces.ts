@@ -108,7 +108,13 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	}));
 	
-	subscriptions.push(workspacesProvider.onWillInitView(() => workspacesState.detect()));
+	subscriptions.push(workspacesProvider.onWillInitView(async () => {
+		
+		workspacesProvider.refresh({
+			workspaces: await workspacesState.detect(),
+		});
+		
+	}));
 	
 //	Projects
 	
@@ -219,12 +225,20 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspaces.saveDetectedProject': ({ project }:WorkspaceTreeItems) => projectsDialog.save(project),
 		
 		'l13Projects.action.workspaces.pickWorkspace': () => workspacesDialog.pick(),
+		
 		'l13Projects.action.workspaces.refresh': () => {
 			
-			statusBarColorState.detectProjectColors();
-			favoritesState.refreshFavoriteExists();
-			projectsState.refreshProjectExists();
-			workspacesState.detect();
+			workspacesProvider.refresh({
+				task: async () => {
+					
+					statusBarColorState.detectProjectColors();
+					favoritesState.refreshFavoriteExists();
+					projectsState.refreshProjectExists();
+					
+					return workspacesState.detect();
+					
+				}
+			});
 			
 		},
 		

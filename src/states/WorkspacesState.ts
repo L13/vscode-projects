@@ -168,7 +168,14 @@ export class WorkspacesState {
 				ignore: settings.get('subfolder.ignore', []),
 			})
 		])
-		.then(() => this.refresh());
+		.then(() => {
+			
+			this.rebuild();
+			this.cleanupUnknownPaths();
+			
+			return this.cache;
+			
+		});
 		
 	}
 	

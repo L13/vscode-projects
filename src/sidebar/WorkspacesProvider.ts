@@ -6,7 +6,6 @@ import { formatLabel } from '../@l13/formats';
 
 import { InitialState, WorkspaceSorting } from '../@types/common';
 import {
-	GroupTreeItem,
 	Project,
 	RefreshWorkspacesStates,
 	SimpleGroup,
@@ -65,6 +64,8 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	private workspaceGroups:WorkspaceGroup[] = [];
 	
 	private slots:HotkeySlotsState = null;
+	
+	private refreshTask:() => Promise<Project[]> = null;
 	
 	public readonly colorPickerTreeItem = new ColorPickerTreeItem();
 	
@@ -130,6 +131,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	public refresh (states?:RefreshWorkspacesStates) {
 		
+		if (states?.task) this.refreshTask = states.task;
 		if (states?.workspaces) this.workspaces = states.workspaces;
 		if (states?.workspaceGroups) this.workspaceGroups = states.workspaceGroups;
 		
@@ -362,11 +364,14 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	public getChildren (element?:WorkspacesTreeItems) {
+	public async getChildren (element?:WorkspacesTreeItems) {
 		
 		const list:WorkspacesTreeItems[] = [];
 		
-		if (!this.workspaces) {
+		if (this.refreshTask) {
+			this.workspaces = await this.refreshTask();
+			this.refreshTask = null;
+		} else if (!this.workspaces) {
 			this._onWillInitView.fire(undefined);
 			return list;
 		}
