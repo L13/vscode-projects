@@ -1,12 +1,12 @@
 //	Imports ____________________________________________________________________
 
 const del = require('del');
-
 const fs = require('fs');
 const glob = require('glob');
 const gulp = require('gulp');
 const rollup = require('rollup');
-const typescript = require('rollup-plugin-typescript');
+
+const typescript = require('@rollup/plugin-typescript');
 
 //	Variables __________________________________________________________________
 
@@ -58,6 +58,7 @@ gulp.task('script', () => {
 	
 	return rollup.rollup({
 		input: `src/extension${developerMode ? '.dev' : ''}.ts`,
+		onwarn,
 		external: [
 			'child_process',
 			'fs',
@@ -67,13 +68,9 @@ gulp.task('script', () => {
 		],
 		plugins: [
 			typescript({
-				target: 'es6',
-				lib: [
-					'es6',
-					'dom',
+				include: [
+					'src/**/*.ts',
 				],
-				strict: true,
-				removeComments: true,
 			}),
 		]
 	}).then(bundle => {
@@ -90,7 +87,7 @@ gulp.task('script', () => {
 			},
 		});
 		
-	});
+	}, onerror);
 	
 });
 
@@ -118,3 +115,16 @@ gulp.task('build & watch (developer mode)', gulp.series('developer mode', 'watch
 
 //	Functions __________________________________________________________________
 
+function onwarn (warning) {
+	
+	console.warn(warning.toString());
+	
+}
+
+function onerror (error) {
+	
+	console.error(`Error:${error.pluginCode ? ' ' + error.pluginCode : ''} ${error.message} ${error.loc.file}:${error.loc.line}:${error.loc.column}`);
+	
+	throw error;
+	
+}
