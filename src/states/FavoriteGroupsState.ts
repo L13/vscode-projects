@@ -190,6 +190,8 @@ export class FavoriteGroupsState {
 		const favoriteGroups = this.get();
 		const groupId = favoriteGroup.id;
 		
+		if (!favoriteGroups.some(({ id }) =>  id === groupId )) return;
+		
 		for (let i = 0; i < favoriteGroups.length; i++) {
 			if (favoriteGroups[i].id === groupId) {
 				favoriteGroups.splice(i, 1);
