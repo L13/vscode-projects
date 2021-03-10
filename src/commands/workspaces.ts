@@ -220,7 +220,7 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspaces.addProject': () => projectsDialog.addDirectory(),
 		'l13Projects.action.workspaces.addProjectWorkspace': () => projectsDialog.addVSCodeWorkspace(),
 		'l13Projects.action.workspaces.saveProject': () => projectsDialog.save(),
-		'l13Projects.action.workspaces.saveDetectedProject': ({ project }:WorkspaceTreeItems) => projectsDialog.save(project),
+		'l13Projects.action.workspace.saveDetectedProject': ({ project }:WorkspaceTreeItems) => projectsDialog.save(project),
 		
 		'l13Projects.action.workspaces.pickWorkspace': () => workspacesDialog.pick(),
 		
