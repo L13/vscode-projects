@@ -5,9 +5,14 @@ import * as path from 'path';
 
 import { Callback, FileMap, Options, WalkTreeJob } from '../@types/files';
 
+import { isWindows } from './platforms';
+
 //	Variables __________________________________________________________________
 
 const findRegExpChars:RegExp = /([\\\[\]\.\*\^\$\|\+\-\{\}\(\)\?\!\=\:\,])/g;
+
+const findIllegalAndControlChars = /[\x00-\x1f"\*<>\?\|\x80-\x9f]/g;
+const findColon = /:/g;
 
 //	Initialize _________________________________________________________________
 
@@ -75,6 +80,16 @@ export function subfolders (cwd:string, options:Callback|Options, callback:Callb
 export function createFindGlob (ignore:string[]) {
 	
 	return new RegExp(`^(${ignore.map((value) => escapeForRegExp(value)).join('|')})$`);
+	
+}
+
+export function sanatize (pathname:string) {
+	
+	let name = `${pathname}`.replace(findIllegalAndControlChars, '');
+	
+	if (!isWindows) name = name.replace(findColon, '');
+	
+	return name;
 	
 }
 
