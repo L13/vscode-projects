@@ -83,7 +83,7 @@ export function createFindGlob (ignore:string[]) {
 	
 }
 
-export function sanatize (pathname:string) {
+export function sanitize (pathname:string) {
 	
 	let name = `${pathname}`.replace(findIllegalAndControlChars, '');
 	

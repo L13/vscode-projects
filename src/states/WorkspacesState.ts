@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
 import { formatLabel } from '../@l13/formats';
-import { sanatize, subfolders, walkTree } from '../@l13/fse';
+import { sanitize, subfolders, walkTree } from '../@l13/fse';
 
 import { FileMap, Options } from '../@types/files';
 import { Project, UpdateCacheCallback, WorkspaceTypes } from '../@types/workspaces';
@@ -222,7 +222,7 @@ function createWorkspaceDetection (paths:string[], options:Options) {
 	
 	paths.forEach((path) => {
 		
-		path = sanatize(path);
+		path = sanitize(path);
 			
 		if (fs.existsSync(path)) {
 			promises.push(new Promise((resolve, reject) => {
@@ -249,7 +249,7 @@ function createSubfolderDetection (paths:string[], options:Options) {
 	
 	paths.forEach((path) => {
 		
-		path = sanatize(path);
+		path = sanitize(path);
 			
 		if (fs.existsSync(path)) {
 			promises.push(new Promise((resolve, reject) => {
