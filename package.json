@@ -685,7 +685,7 @@
 				},
 				{
 					"command": "l13Projects.action.favorite.addToGroup",
-					"group": "navigation@4",
+					"group": "navigation@9",
 					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?(favorite|subfavorite)-(folders?|git|subfolder|vscode|workspace)$/"
 				},
 				{

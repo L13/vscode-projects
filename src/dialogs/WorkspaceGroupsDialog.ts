@@ -51,6 +51,8 @@ export class WorkspaceGroupsDialog {
 		
 		this.workspaceGroupsState.add(label);
 		
+		return this.workspaceGroupsState.getByName(label);
+		
 	}
 	
 	public async addWorkspaceToGroup (workspace:Project) {
@@ -58,16 +60,19 @@ export class WorkspaceGroupsDialog {
 		const workspaceGroups = this.workspaceGroupsState.get();
 		let workspaceGroup:WorkspaceGroup = null;
 		
-		if (!workspaceGroups.length) {
-			await this.add();
-			workspaceGroup = this.workspaceGroupsState.get()[0];
-		} else if (workspaceGroups.length === 1) {
-			workspaceGroup = workspaceGroups[0];
-		} else {
-			workspaceGroup = await vscode.window.showQuickPick(workspaceGroups, {
+		if (workspaceGroups.length) {
+			const newWorkspaceGroupItem = { label: 'New Workspace Group ...' };
+			const items = [
+				newWorkspaceGroupItem,
+				...workspaceGroups
+			];
+			const selectedItem = await vscode.window.showQuickPick(items, {
 				placeHolder: 'Select a workspace group',
 			});
-		}
+			if (selectedItem === newWorkspaceGroupItem) {
+				workspaceGroup = await this.add();
+			} else workspaceGroup = <WorkspaceGroup>selectedItem;
+		} else workspaceGroup = await this.add();
 		
 		if (!workspaceGroup || workspaceGroup.paths.includes(workspace.path)) return;
 		
