@@ -56,6 +56,15 @@ export function getStatusBarColorSettings (workspacePath:string) {
 	
 }
 
+export function getWorkspaceFolders (workspacePath:string) :{ path:string }[] {
+	
+	const workspaceSettings = fs.readFileSync(workspacePath, 'utf-8');
+	const json = jsoncParser.parse(workspaceSettings);
+	
+	return json?.folders || [];
+	
+}
+
 //	Functions __________________________________________________________________
 
 function getSettingsPath (workspacePath:string) {
@@ -64,9 +73,9 @@ function getSettingsPath (workspacePath:string) {
 	
 }
 
-function updateSettingsFile (workspaceSettingsPath:string, statusbarColors:StatusBarColors, useCodeWorkspace:boolean) {
+function updateSettingsFile (workspacePath:string, statusbarColors:StatusBarColors, useCodeWorkspace:boolean) {
 	
-	const workspaceSettings:string = fs.readFileSync(workspaceSettingsPath, 'utf-8');
+	const workspaceSettings:string = fs.readFileSync(workspacePath, 'utf-8');
 	const jsonpath = useCodeWorkspace ? ['settings', COLOR_CUSTOMIZATIONS] : [COLOR_CUSTOMIZATIONS];
 	const json = jsoncParser.parse(workspaceSettings);
 	let colorCustomizations:any = (useCodeWorkspace ? json.settings?.[COLOR_CUSTOMIZATIONS] : json[COLOR_CUSTOMIZATIONS]) || {};
@@ -90,10 +99,10 @@ function updateSettingsFile (workspaceSettingsPath:string, statusbarColors:Statu
 	const modifiedJson = jsoncParser.parse(modifiedWorkspaceSettings);
 	
 	if (useCodeWorkspace || Object.keys(modifiedJson).length)  {
-		fs.writeFileSync(workspaceSettingsPath, modifiedWorkspaceSettings, 'utf-8');
+		fs.writeFileSync(workspacePath, modifiedWorkspaceSettings, 'utf-8');
 	} else { // Clean up if config or folder is empty
-		fs.unlinkSync(workspaceSettingsPath);
-		const dirname = path.dirname(workspaceSettingsPath);
+		fs.unlinkSync(workspacePath);
+		const dirname = path.dirname(workspacePath);
 		if (!fs.readdirSync(dirname).length) fs.rmdirSync(dirname);
 	}
 	

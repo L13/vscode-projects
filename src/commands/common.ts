@@ -4,12 +4,13 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 import { CommonGroupTreeItems, CommonTreeItems } from '../@types/common';
-import { Project, WorkspaceGroup } from '../@types/workspaces';
+import { Project } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';
+import { getWorkspaceFolders } from '../common/settings';
 import * as terminal from '../common/terminal';
-import { getCurrentWorkspacePath } from '../common/workspaces';
+import { getCurrentWorkspacePath, isCodeWorkspace } from '../common/workspaces';
 
 import { FavoriteGroupTreeItem } from '../sidebar/trees/groups/FavoriteGroupTreeItem';
 import { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGroupTreeItem';
@@ -23,7 +24,6 @@ import { HotkeySlotsState } from '../states/HotkeySlotsState';
 import { ProjectsState } from '../states/ProjectsState';
 import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 import { WorkspacesState } from '../states/WorkspacesState';
-import { FavoriteGroup } from '../@types/favorites';
 
 //	Variables __________________________________________________________________
 
@@ -83,7 +83,7 @@ export function activate (context:vscode.ExtensionContext) {
 		
 		'l13Projects.action.workspaceGroup.addFoldersToWorkspace': ({ group }:FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
 			
-			const paths = group.paths.filter((path) => {
+			const paths = getFolders(group.paths).filter((path) => {
 				
 				return !vscode.workspace.workspaceFolders?.find((workspace) => workspace.uri.fsPath === path);
 				
@@ -100,7 +100,8 @@ export function activate (context:vscode.ExtensionContext) {
 		
 		'l13Projects.action.workspaceGroup.openAsWorkspace': ({ group }:FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
 			
-			const uris = getWorkspaceUris(group.paths, projectsState);
+			const paths = getFolders(group.paths);
+			const uris = getWorkspaceUris(paths, projectsState);
 			
 			if (uris.length) {
 				const remove = vscode.workspace.workspaceFolders?.length || 0;
@@ -117,6 +118,24 @@ export function activate (context:vscode.ExtensionContext) {
 function getFolderPath (project:Project) {
 	
 	return project.type === 'folders' || project.type === 'workspace' ? path.dirname(project.path) : project.path;
+	
+}
+
+function getFolders (paths:string[]) {
+	
+	const values:string[] = [];
+	
+	paths.forEach((path) => {
+		
+		const folders = isCodeWorkspace(path) ? getWorkspaceFolders(path).map((workspace) => workspace.path) : [path];
+		
+		for (const folder of folders) {
+			if (!values.includes(folder)) values.push(folder);
+		}
+		
+	});
+	
+	return values;
 	
 }
 
