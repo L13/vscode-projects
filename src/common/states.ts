@@ -4,9 +4,12 @@ import * as vscode from 'vscode';
 
 import { Favorite, FavoriteGroup } from '../@types/favorites';
 import { Slot } from '../@types/hotkeys';
+import { NextSession } from '../@types/sessions';
 import { Project, SimpleGroupState, TypeGroupState, WorkspaceGroup } from '../@types/workspaces';
 
 //	Variables __________________________________________________________________
+
+const NEXT_SESSION = 'nextSession';
 
 const SLOTS = 'slots';
 const CURRENT_WORKSPACE = 'workspace';
@@ -32,7 +35,19 @@ const SUBFOLDER_CACHE = 'cacheSubfolderProjects';
 
 //	Exports ____________________________________________________________________
 
-export function getSlots (context:vscode.ExtensionContext) {
+export function getNextSession (context:vscode.ExtensionContext) :NextSession {
+	
+	return context.globalState.get(NEXT_SESSION, null);
+	
+}
+
+export function updateNextSession (context:vscode.ExtensionContext, session:NextSession) {
+	
+	context.globalState.update(NEXT_SESSION, session);
+	
+}
+
+export function getSlots (context:vscode.ExtensionContext) :Slot[] {
 	
 	return context.globalState.get(SLOTS, []);
 	
@@ -44,7 +59,7 @@ export function updateSlots (context:vscode.ExtensionContext, slots:Slot[]) {
 	
 }
 
-export function getCurrentWorkspace (context:vscode.ExtensionContext) {
+export function getCurrentWorkspace (context:vscode.ExtensionContext) :string[] {
 	
 	return context.globalState.get(CURRENT_WORKSPACE, []);
 	

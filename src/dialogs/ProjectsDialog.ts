@@ -77,7 +77,7 @@ export class ProjectsDialog {
 			
 			this.projectsState.add(fsPath, value);
 			
-		} else if (vscode.workspace.workspaceFile && vscode.workspace.workspaceFile.scheme === 'untitled') {
+		} else if (vscode.workspace.workspaceFile?.scheme === 'untitled') {
 			vscode.window.showWarningMessage(`Please save your current workspace first.`);
 			vscode.commands.executeCommand('workbench.action.saveWorkspaceAs');
 		} else vscode.window.showErrorMessage(`No folder or workspace available!`);

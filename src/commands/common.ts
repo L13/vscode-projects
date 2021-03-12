@@ -22,6 +22,7 @@ import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
 import { FavoritesState } from '../states/FavoritesState';
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
 import { ProjectsState } from '../states/ProjectsState';
+import { SessionsState } from '../states/SessionsState';
 import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 import { WorkspacesState } from '../states/WorkspacesState';
 
@@ -37,12 +38,19 @@ import { WorkspacesState } from '../states/WorkspacesState';
 
 export function activate (context:vscode.ExtensionContext) {
 	
+	const projectsState = ProjectsState.create(context);
+	const sessionsState = SessionsState.create(context);
+	const session = sessionsState.current();
+	
+	if (session) {
+		sessionsState.clear();
+		openPathsAsWorkspace(session.paths, projectsState);
+	}
+	
 	const favoritesState = FavoritesState.create(context);
 	const favoriteGroupsState = FavoriteGroupsState.create(context);
 	
 	const hotkeySlots = HotkeySlotsState.create(context);
-	
-	const projectsState = ProjectsState.create(context);
 	
 	const workspacesState = WorkspacesState.create(context);
 	const workspaceGroupsState = WorkspaceGroupsState.create(context);
@@ -98,15 +106,14 @@ export function activate (context:vscode.ExtensionContext) {
 			
 		},
 		
-		'l13Projects.action.workspaceGroup.openAsWorkspace': ({ group }:FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
+		'l13Projects.action.workspaceGroup.openAsWorkspace': async ({ group }:FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
 			
 			const paths = getFolders(group.paths);
-			const uris = getWorkspaceUris(paths, projectsState);
 			
-			if (uris.length) {
-				const remove = vscode.workspace.workspaceFolders?.length || 0;
-				vscode.workspace.updateWorkspaceFolders(0, remove, ...uris);
-			}
+			if (vscode.workspace.workspaceFile) {
+				sessionsState.next({ paths });
+				vscode.commands.executeCommand('workbench.action.closeFolder');
+			} else openPathsAsWorkspace(paths, projectsState);
 			
 		},
 	});
@@ -151,5 +158,16 @@ function getWorkspaceUris (paths:string[], projectsState:ProjectsState) {
 		};
 		
 	});
+	
+}
+
+function openPathsAsWorkspace (paths:string[], projectsState:ProjectsState) {
+	
+	const uris = getWorkspaceUris(paths, projectsState);
+	
+	if (uris.length) {
+		const remove = vscode.workspace.workspaceFolders?.length || 0;
+		vscode.workspace.updateWorkspaceFolders(0, remove, ...uris);
+	}
 	
 }
