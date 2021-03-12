@@ -181,6 +181,10 @@
 				"title": "Open All in New Windows"
 			},
 			{
+				"command": "l13Projects.action.workspaceGroup.openAsWorkspace",
+				"title": "Open as Workspace"
+			},
+			{
 				"command": "l13Projects.action.workspaceGroup.addToFavorites",
 				"title": "Add to Favorites"
 			},
@@ -253,7 +257,7 @@
 				"title": "Assign to Slot"
 			},
 			{
-				"command": "l13Projects.action.workspaceGroups.assignSlot",
+				"command": "l13Projects.action.workspaceGroup.assignSlot",
 				"title": "Assign to Slot"
 			},
 			{
@@ -514,7 +518,7 @@
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroups.assignSlot",
+					"command": "l13Projects.action.workspaceGroup.assignSlot",
 					"when": "false"
 				},
 				{
@@ -599,6 +603,10 @@
 				},
 				{
 					"command": "l13Projects.action.workspaceGroup.openAllInNewWindows",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.workspaceGroup.openAsWorkspace",
 					"when": "false"
 				},
 				{
@@ -717,18 +725,23 @@
 					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroup.addToFavorites",
+					"command": "l13Projects.action.workspaceGroup.openAsWorkspace",
 					"group": "navigation@3",
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
+				},
+				{
+					"command": "l13Projects.action.workspaceGroup.addToFavorites",
+					"group": "navigation@4",
 					"when": "view == l13ProjectsWorkspaces && viewItem == workspaceGroup"
+				},
+				{
+					"command": "l13Projects.action.workspaceGroup.assignSlot",
+					"group": "navigation@5",
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
 				},
 				{
 					"command": "l13Projects.action.workspaceGroup.addFoldersToWorkspace",
 					"group": "2_workspace@1",
-					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
-				},
-				{
-					"command": "l13Projects.action.workspaceGroups.assignSlot",
-					"group": "navigation@4",
 					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
 				},
 				{

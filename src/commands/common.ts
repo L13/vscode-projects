@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 import { CommonGroupTreeItems, CommonTreeItems } from '../@types/common';
-import { Project } from '../@types/workspaces';
+import { Project, WorkspaceGroup } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';
@@ -23,6 +23,7 @@ import { HotkeySlotsState } from '../states/HotkeySlotsState';
 import { ProjectsState } from '../states/ProjectsState';
 import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 import { WorkspacesState } from '../states/WorkspacesState';
+import { FavoriteGroup } from '../@types/favorites';
 
 //	Variables __________________________________________________________________
 
@@ -82,24 +83,28 @@ export function activate (context:vscode.ExtensionContext) {
 		
 		'l13Projects.action.workspaceGroup.addFoldersToWorkspace': ({ group }:FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
 			
-			const uris = group.paths.filter((path) => {
+			const paths = group.paths.filter((path) => {
 				
 				return !vscode.workspace.workspaceFolders?.find((workspace) => workspace.uri.fsPath === path);
 				
-			}).map((path) => {
-				
-				const name = projectsState.getByPath(path)?.label;
-				
-				return {
-					name,
-					uri: vscode.Uri.file(path),
-				};
-				
 			});
+			
+			const uris = getWorkspaceUris(paths, projectsState);
 			
 			if (uris.length) {
 				const start = vscode.workspace.workspaceFolders?.length || 0;
 				vscode.workspace.updateWorkspaceFolders(start, 0, ...uris);
+			}
+			
+		},
+		
+		'l13Projects.action.workspaceGroup.openAsWorkspace': ({ group }:FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
+			
+			const uris = getWorkspaceUris(group.paths, projectsState);
+			
+			if (uris.length) {
+				const remove = vscode.workspace.workspaceFolders?.length || 0;
+				vscode.workspace.updateWorkspaceFolders(0, remove, ...uris);
 			}
 			
 		},
@@ -112,5 +117,20 @@ export function activate (context:vscode.ExtensionContext) {
 function getFolderPath (project:Project) {
 	
 	return project.type === 'folders' || project.type === 'workspace' ? path.dirname(project.path) : project.path;
+	
+}
+
+function getWorkspaceUris (paths:string[], projectsState:ProjectsState) {
+	
+	return paths.map((path) => {
+		
+		const name = projectsState.getByPath(path)?.label;
+		
+		return {
+			name,
+			uri: vscode.Uri.file(path),
+		};
+		
+	});
 	
 }
