@@ -174,11 +174,13 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 
 ### Favorite Groups Context Menu
 
-* `Open All` - Open all favorites at once in the current and new windows. Ignores `l13Projects.openInNewWindow`.
-* `Open All in New Windows` - Open all favorites at once in new windows. Ignores `l13Projects.openInNewWindow`.
+* `Open All` - Open all favorites in a group at once in the current and new windows. Ignores `l13Projects.openInNewWindow`.
+* `Open All in New Windows` - Open all favorites in a group at once in new windows. Ignores `l13Projects.openInNewWindow`.
+* `Open as Workspace` - Open all favorites in a group as a single workspace.
 * `Assign to Slot` - Assign the workspace group to a slot 1 - 9 to open all with a keyboard shortcut.
-* `Rename` - Rename a workspace group.
-* `Delete` - Delete a workspace group and favorites in the group.
+* `Add Folders to Workspace` - Add all favorites in a group to the current workspace.
+* `Rename` - Rename a favorite group.
+* `Delete` - Delete a favorite group and all favorites in a group.
 
 ### Workspaces
 
@@ -234,10 +236,12 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 
 ### Workspace Groups Context Menu
 
-* `Open All` - Open all workspaces at once in the current and new windows. Ignores `l13Projects.openInNewWindow`.
-* `Open All in New Windows` - Open all workspaces at once in new windows. Ignores `l13Projects.openInNewWindow`.
+* `Open All` - Open all workspaces in a group at once in the current and new windows. Ignores `l13Projects.openInNewWindow`.
+* `Open All in New Windows` - Open all workspaces in a group at once in new windows. Ignores `l13Projects.openInNewWindow`.
+* `Open as Workspace` - Open all workspaces in a group as a single workspace.
 * `Add to Favorites` - Add the workspace group and all its workspaces to favorites.
 * `Assign to Slot` - Assign the workspace group to a slot 1 - 9 to open all with a keyboard shortcut.
+* `Add Folders to Workspace` - Add all workspaces in a group to the current workspace.
 * `Rename` - Rename a workspace group.
 * `Delete` - Delete a workspace group.
 
