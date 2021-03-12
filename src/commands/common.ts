@@ -8,7 +8,7 @@ import { Project } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';
-import { getWorkspaceFolders } from '../common/settings';
+import * as settings from '../common/settings';
 import * as terminal from '../common/terminal';
 import { getCurrentWorkspacePath, isCodeWorkspace } from '../common/workspaces';
 
@@ -44,7 +44,7 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	if (session) {
 		sessionsState.clear();
-		openPathsAsWorkspace(session.paths, projectsState);
+		openSession(session.paths, projectsState);
 	}
 	
 	const favoritesState = FavoritesState.create(context);
@@ -110,10 +110,11 @@ export function activate (context:vscode.ExtensionContext) {
 			
 			const paths = getFolders(group.paths);
 			
-			if (vscode.workspace.workspaceFile) {
-				sessionsState.next({ paths });
-				vscode.commands.executeCommand('workbench.action.closeFolder');
-			} else openPathsAsWorkspace(paths, projectsState);
+			sessionsState.next({ paths });
+			
+			if (settings.get('openInNewWindow', false)) {
+				vscode.commands.executeCommand('workbench.action.newWindow');
+			} else vscode.commands.executeCommand('workbench.action.closeFolder');
 			
 		},
 	});
@@ -134,7 +135,7 @@ function getFolders (paths:string[]) {
 	
 	paths.forEach((path) => {
 		
-		const folders = isCodeWorkspace(path) ? getWorkspaceFolders(path).map((workspace) => workspace.path) : [path];
+		const folders = isCodeWorkspace(path) ? settings.getWorkspaceFolders(path).map((workspace) => workspace.path) : [path];
 		
 		for (const folder of folders) {
 			if (!values.includes(folder)) values.push(folder);
@@ -161,7 +162,7 @@ function getWorkspaceUris (paths:string[], projectsState:ProjectsState) {
 	
 }
 
-function openPathsAsWorkspace (paths:string[], projectsState:ProjectsState) {
+function openSession (paths:string[], projectsState:ProjectsState) {
 	
 	const uris = getWorkspaceUris(paths, projectsState);
 	
