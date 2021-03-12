@@ -241,15 +241,15 @@ export function activate (context:vscode.ExtensionContext) {
 		},
 		
 		'l13Projects.action.workspaceGroups.add': () => workspaceGroupsDialog.add(),
-		'l13Projects.action.workspaceGroups.addToFavorites': ({ group }:WorkspaceGroupTreeItem) => {
+		'l13Projects.action.workspaceGroup.addToFavorites': ({ group }:WorkspaceGroupTreeItem) => {
 			
 			const workspaces = group.paths.map((path) => workspacesState.getByPath(path));
 			
 			favoriteGroupsDialog.addWorkspaceGroup(group, workspaces.filter((workspace) => !!workspace));
 			
 		},
-		'l13Projects.action.workspaceGroups.rename': ({ group }:WorkspaceGroupTreeItem) => workspaceGroupsDialog.rename(group),
-		'l13Projects.action.workspaceGroups.remove': ({ group }:WorkspaceGroupTreeItem) => workspaceGroupsDialog.remove(group),
+		'l13Projects.action.workspaceGroup.rename': ({ group }:WorkspaceGroupTreeItem) => workspaceGroupsDialog.rename(group),
+		'l13Projects.action.workspaceGroup.remove': ({ group }:WorkspaceGroupTreeItem) => workspaceGroupsDialog.remove(group),
 		'l13Projects.action.workspaceGroups.clear': () => workspaceGroupsDialog.clear(),
 		
 		'l13Projects.action.project.rename': ({ project }:ProjectTreeItem) => projectsDialog.rename(project),

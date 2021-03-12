@@ -173,23 +173,27 @@
 				"title": "Remove from Group"
 			},
 			{
-				"command": "l13Projects.action.workspaceGroups.openAllInCurrentWindows",
+				"command": "l13Projects.action.workspaceGroup.openAllInCurrentWindows",
 				"title": "Open All"
 			},
 			{
-				"command": "l13Projects.action.workspaceGroups.openAllInNewWindows",
+				"command": "l13Projects.action.workspaceGroup.openAllInNewWindows",
 				"title": "Open All in New Windows"
 			},
 			{
-				"command": "l13Projects.action.workspaceGroups.addToFavorites",
+				"command": "l13Projects.action.workspaceGroup.addToFavorites",
 				"title": "Add to Favorites"
 			},
 			{
-				"command": "l13Projects.action.workspaceGroups.rename",
+				"command": "l13Projects.action.workspaceGroup.addFoldersToWorkspace",
+				"title": "Add Folders to Workspace"
+			},
+			{
+				"command": "l13Projects.action.workspaceGroup.rename",
 				"title": "Rename"
 			},
 			{
-				"command": "l13Projects.action.workspaceGroups.remove",
+				"command": "l13Projects.action.workspaceGroup.remove",
 				"title": "Delete"
 			},
 			{
@@ -590,23 +594,27 @@
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroups.openAllInCurrentWindows",
+					"command": "l13Projects.action.workspaceGroup.openAllInCurrentWindows",
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroups.openAllInNewWindows",
+					"command": "l13Projects.action.workspaceGroup.openAllInNewWindows",
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroups.addToFavorites",
+					"command": "l13Projects.action.workspaceGroup.addToFavorites",
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroups.rename",
+					"command": "l13Projects.action.workspaceGroup.addFoldersToWorkspace",
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroups.remove",
+					"command": "l13Projects.action.workspaceGroup.rename",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.workspaceGroup.remove",
 					"when": "false"
 				},
 				{
@@ -699,19 +707,24 @@
 					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?(favorite|subfavorite)-(folders?|git|subfolder|vscode|workspace)$/"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroups.openAllInCurrentWindows",
+					"command": "l13Projects.action.workspaceGroup.openAllInCurrentWindows",
 					"group": "navigation@1",
 					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroups.openAllInNewWindows",
+					"command": "l13Projects.action.workspaceGroup.openAllInNewWindows",
 					"group": "navigation@2",
 					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroups.addToFavorites",
+					"command": "l13Projects.action.workspaceGroup.addToFavorites",
 					"group": "navigation@3",
 					"when": "view == l13ProjectsWorkspaces && viewItem == workspaceGroup"
+				},
+				{
+					"command": "l13Projects.action.workspaceGroup.addFoldersToWorkspace",
+					"group": "2_workspace@1",
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
 				},
 				{
 					"command": "l13Projects.action.workspaceGroups.assignSlot",
@@ -719,12 +732,12 @@
 					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroups.rename",
+					"command": "l13Projects.action.workspaceGroup.rename",
 					"group": "7_modification@1",
 					"when": "view == l13ProjectsWorkspaces && viewItem == workspaceGroup"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroups.remove",
+					"command": "l13Projects.action.workspaceGroup.remove",
 					"group": "7_modification@2",
 					"when": "view == l13ProjectsWorkspaces && viewItem == workspaceGroup"
 				},

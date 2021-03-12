@@ -11,12 +11,16 @@ import * as files from '../common/files';
 import * as terminal from '../common/terminal';
 import { getCurrentWorkspacePath } from '../common/workspaces';
 
+import { FavoriteGroupTreeItem } from '../sidebar/trees/groups/FavoriteGroupTreeItem';
+import { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGroupTreeItem';
+
 import { FavoritesProvider } from '../sidebar/FavoritesProvider';
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
 
 import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
 import { FavoritesState } from '../states/FavoritesState';
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
+import { ProjectsState } from '../states/ProjectsState';
 import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 import { WorkspacesState } from '../states/WorkspacesState';
 
@@ -36,6 +40,8 @@ export function activate (context:vscode.ExtensionContext) {
 	const favoriteGroupsState = FavoriteGroupsState.create(context);
 	
 	const hotkeySlots = HotkeySlotsState.create(context);
+	
+	const projectsState = ProjectsState.create(context);
 	
 	const workspacesState = WorkspacesState.create(context);
 	const workspaceGroupsState = WorkspaceGroupsState.create(context);
@@ -71,8 +77,32 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspace.openInTerminal': ({ project }:CommonTreeItems) => terminal.open(getFolderPath(project)),
 		'l13Projects.action.workspace.copyPath': ({ project }:CommonTreeItems) => vscode.env.clipboard.writeText(project.path),
 		
-		'l13Projects.action.workspaceGroups.openAllInCurrentWindows': ({ group }:CommonGroupTreeItems) => files.openAll(group.paths, false),
-		'l13Projects.action.workspaceGroups.openAllInNewWindows': ({ group }:CommonGroupTreeItems) => files.openAll(group.paths, true),
+		'l13Projects.action.workspaceGroup.openAllInCurrentWindows': ({ group }:CommonGroupTreeItems) => files.openAll(group.paths, false),
+		'l13Projects.action.workspaceGroup.openAllInNewWindows': ({ group }:CommonGroupTreeItems) => files.openAll(group.paths, true),
+		
+		'l13Projects.action.workspaceGroup.addFoldersToWorkspace': ({ group }:FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
+			
+			const uris = group.paths.filter((path) => {
+				
+				return !vscode.workspace.workspaceFolders?.find((workspace) => workspace.uri.fsPath === path);
+				
+			}).map((path) => {
+				
+				const name = projectsState.getByPath(path)?.label;
+				
+				return {
+					name,
+					uri: vscode.Uri.file(path),
+				};
+				
+			});
+			
+			if (uris.length) {
+				const start = vscode.workspace.workspaceFolders?.length || 0;
+				vscode.workspace.updateWorkspaceFolders(start, 0, ...uris);
+			}
+			
+		},
 	});
 
 }
