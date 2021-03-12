@@ -61,7 +61,7 @@ export class WorkspaceGroupsDialog {
 		let workspaceGroup:WorkspaceGroup = null;
 		
 		if (workspaceGroups.length) {
-			const newWorkspaceGroupItem = { label: 'New Workspace Group ...' };
+			const newWorkspaceGroupItem = { label: '$(add) New Workspace Group...' };
 			const items = [
 				newWorkspaceGroupItem,
 				...workspaceGroups
