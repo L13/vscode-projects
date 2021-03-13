@@ -110,11 +110,24 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspaceGroup.openAsWorkspace': async ({ group }:FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
 			
 			const paths = getFolders(group.paths);
+			const workspaceFolders = vscode.workspace.workspaceFolders;
+			
+			if (workspaceFolders?.length === paths.length) {
+				const hasSamePaths = paths.every((path) => {
+					
+					return workspaceFolders.some((folder) => folder.uri.fsPath === path);
+					
+				});
+				if (hasSamePaths) {
+					vscode.commands.executeCommand('workbench.view.explorer');
+					return;
+				}
+			}
 			
 			if (settings.get('openInNewWindow', false)) {
 				sessionsState.next({ paths });
 				vscode.commands.executeCommand('workbench.action.newWindow');
-			} else if (vscode.workspace.workspaceFolders) {
+			} else if (workspaceFolders) {
 				sessionsState.next({ paths });
 				vscode.commands.executeCommand('workbench.action.closeFolder');
 			} else {
