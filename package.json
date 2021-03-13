@@ -1080,6 +1080,6 @@
 		"vscode-test": "^1.0.2"
 	},
 	"dependencies": {
-		"jsonc-parser": "^2.3.0"
+		"jsonc-parser": "^2.3.1"
 	}
 }
