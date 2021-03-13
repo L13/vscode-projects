@@ -45,6 +45,7 @@ export function activate (context:vscode.ExtensionContext) {
 	if (session) {
 		sessionsState.clear();
 		openSession(session.paths, projectsState);
+		vscode.commands.executeCommand('workbench.view.explorer');
 	}
 	
 	const favoritesState = FavoritesState.create(context);
@@ -115,7 +116,6 @@ export function activate (context:vscode.ExtensionContext) {
 				vscode.commands.executeCommand('workbench.action.newWindow');
 			} else if (vscode.workspace.workspaceFolders) {
 				sessionsState.next({ paths });
-				await vscode.commands.executeCommand('workbench.view.explorer');
 				vscode.commands.executeCommand('workbench.action.closeFolder');
 			} else {
 				await vscode.commands.executeCommand('workbench.view.explorer');
