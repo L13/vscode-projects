@@ -110,11 +110,17 @@ export function activate (context:vscode.ExtensionContext) {
 			
 			const paths = getFolders(group.paths);
 			
-			sessionsState.next({ paths });
-			
 			if (settings.get('openInNewWindow', false)) {
+				sessionsState.next({ paths });
 				vscode.commands.executeCommand('workbench.action.newWindow');
-			} else vscode.commands.executeCommand('workbench.action.closeFolder');
+			} else if (vscode.workspace.workspaceFolders) {
+				sessionsState.next({ paths });
+				await vscode.commands.executeCommand('workbench.view.explorer');
+				vscode.commands.executeCommand('workbench.action.closeFolder');
+			} else {
+				await vscode.commands.executeCommand('workbench.view.explorer');
+				openSession(paths, projectsState);
+			}
 			
 		},
 	});
