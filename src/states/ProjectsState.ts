@@ -72,11 +72,15 @@ export class ProjectsState {
 		
 	}
 	
-	public add (fsPath:string, value:string) {
+	public add (fsPath:string, label:string) {
 		
 		const projects = this.get();
+		
+		for (const project of projects) {
+			if (project.path === fsPath) return;
+		}
 			
-		addProject(projects, fsPath, value);
+		addProject(projects, fsPath, label);
 		
 		this.save(projects);
 		
@@ -170,12 +174,12 @@ export class ProjectsState {
 
 //	Functions __________________________________________________________________
 
-function addProject (projects:Project[], fsPath:string, value:string) {
+function addProject (projects:Project[], path:string, label:string) {
 	
 	const project:Project = {
-		label: value,
-		path: fsPath,
-		type: isCodeWorkspace(fsPath) ? 'folders' : 'folder',
+		label,
+		path,
+		type: isCodeWorkspace(path) ? 'folders' : 'folder',
 	};
 	
 	projects.push(project);
