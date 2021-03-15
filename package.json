@@ -1038,10 +1038,10 @@
 						"Simple",
 						"Type"
 					],
-					"description": "Indicates how the workspaces should be sorted.",
+					"description": "Indicates how the workspaces should be sorted. Custom groups are always at the top of the tree view. If a project, folder or workspace is part of a custom group, it does not appear in the auto sorted groups anymore.",
 					"enumDescriptions": [
 						"Sort all workspaces by name.",
-						"Group all workspaces by simple type.",
+						"Group all workspaces by category.",
 						"Group all workspaces by type."
 					]
 				},

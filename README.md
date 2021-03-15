@@ -33,9 +33,9 @@ Manage your workspaces and projects in Visual Studio Code.
 * Delete or rename a favorite or project.
 * Status bar shows current workspace name and opens the current folder or workspace in the Finder/Explorer.
 * Cache detected folders and workspaces between sessions.
-* Sort workspaces by name, type or simple group.
+* Sort workspaces by name, category or type.
 * Add custom groups to organize your workspaces.
-* Assign a workspace to a slot to open it with a keyboard shortcut.
+* Assign a workspace or a group to a slot to open it with a keyboard shortcut.
 * Select a color for a project which also changes the status bar color for the workspace.
 
 ### Workspaces
@@ -104,9 +104,9 @@ Widnows and Linux
 * `l13Projects.workspace.ignore` - The folders which should be ignored.
 * `l13Projects.subfolder.folders` - The folders to search for subfolders.
 * `l13Projects.subfolder.ignore` - The folders which should be ignored.
-* `l13Projects.sortWorkspacesBy` - Sort workspaces by name, simple or type.
+* `l13Projects.sortWorkspacesBy` - Sort workspaces by name, category or type. Custom groups are always at the top of the tree view. If a project, folder or workspace is part of a custom group, it does not appear in the auto sorted groups anymore.
 	* `Name` - (default) Sort all workspaces by name.
-	* `Simple` - Group all workspaces by simple type.
+	* `Simple` - Group all workspaces by category.
 	* `Type` - Group all workspaces by type.
 * `l13Projects.initialFavoriteGroupsState` - Set the initial state of a favorite group.
 	* `Remember` - (default) Remember the collpased and expanded state of each group.
