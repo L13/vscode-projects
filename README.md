@@ -7,6 +7,7 @@ Manage your workspaces and projects in Visual Studio Code.
 ## What's new in Projects 0.18.0
 
 - Added groups for favorites and workspaces.
+- Added `l13Projects.initialFavoriteGroupsState` to set the initial state of the favorite groups.
 - Changed context group for `Open in Current Window` and `Open in New Window` in VS Code explorer view.
 
 ## Index
@@ -33,6 +34,7 @@ Manage your workspaces and projects in Visual Studio Code.
 * Status bar shows current workspace name and opens the current folder or workspace in the Finder/Explorer.
 * Cache detected folders and workspaces between sessions.
 * Sort workspaces by name, type or simple group.
+* Add custom groups to organize your workspaces.
 * Assign a workspace to a slot to open it with a keyboard shortcut.
 * Select a color for a project which also changes the status bar color for the workspace.
 
@@ -102,11 +104,15 @@ Widnows and Linux
 * `l13Projects.workspace.ignore` - The folders which should be ignored.
 * `l13Projects.subfolder.folders` - The folders to search for subfolders.
 * `l13Projects.subfolder.ignore` - The folders which should be ignored.
-* `l13Projects.sortWorkspacesBy` - Sort workspaces by name, simple or type. 
+* `l13Projects.sortWorkspacesBy` - Sort workspaces by name, simple or type.
 	* `Name` - (default) Sort all workspaces by name.
-	* `Simple` - Group all workspaces by simple type. 
-	* `Type` - Group all workspaces by type. 
-* `l13Projects.initialWorkspacesGroupState` - Set the initial state of a group.
+	* `Simple` - Group all workspaces by simple type.
+	* `Type` - Group all workspaces by type.
+* `l13Projects.initialFavoriteGroupsState` - Set the initial state of a favorite group.
+	* `Remember` - (default) Remember the collpased and expanded state of each group.
+	* `Collapsed` - Show all groups collapsed at start.
+	* `Expanded` - Show all groups expanded at start.
+* `l13Projects.initialWorkspaceGroupsState` - Set the initial state of a workspace group.
 	* `Remember` - (default) Remember the collpased and expanded state of each group.
 	* `Collapsed` - Show all groups collapsed at start.
 	* `Expanded` - Show all groups expanded at start.
@@ -150,7 +156,7 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Open in new Window` - Open the favorite project in a new window. Ignores `l13Projects.openInNewWindow`.
 * `Add to Group` - Add a project, repository or workspace to a favorite group.
 * `Open in Terminal` - Opens the favorite project in the VS Code terminal.
-* `Assign to Slot` - Assign the folder, workspace or project to a slot 1 - 9 to open it with a keyboard shortcut.
+* `Assign to Slot` - Assign the folder, workspace or project to slot 1 - 9 to open it with a keyboard shortcut.
 * `Select for Compare` - Select a folder, workspace or project for a comparison. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Compare with Selected` - Compare the folder, workspace or project with the current selection. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Compare with Workspace` - Compares the favorite project with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
@@ -177,10 +183,10 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Open All` - Open all favorites in a group at once in the current and new windows. Ignores `l13Projects.openInNewWindow`.
 * `Open All in New Windows` - Open all favorites in a group at once in new windows. Ignores `l13Projects.openInNewWindow`.
 * `Open as Workspace` - Open all favorites in a group as a single workspace.
-* `Assign to Slot` - Assign the workspace group to a slot 1 - 9 to open all with a keyboard shortcut.
+* `Assign to Slot` - Assign the workspace group to slot 1 - 9 to open all with a keyboard shortcut.
 * `Add Folders to Workspace` - Add all favorites in a group to the current workspace.
 * `Rename` - Rename a favorite group.
-* `Delete` - Delete a favorite group and all favorites in a group.
+* `Delete` - Delete a favorite group or a favorite group and all favorites in a group.
 
 ### Workspaces
 
@@ -211,7 +217,7 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Add to Favorites` - Add the folder, workspace or project to favorites.
 * `Open in Integrated Terminal` - Open the folder, workspace or project in the terminal.
 * `Add to Group` - Add a project, repository or workspace to a workspace group.
-* `Assign to Slot` - Assign the folder, workspace or project to a slot 1 - 9 to open it with a keyboard shortcut.
+* `Assign to Slot` - Assign the folder, workspace or project to slot 1 - 9 to open it with a keyboard shortcut.
 * `Select Status Bar Color` - Select a color for a project. The color also appears in the status bar.
 * `Select for Compare` - Select a folder, workspace or project for a comparison. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Compare with Selected` - Compare the folder, workspace or project with the current selection. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
@@ -240,7 +246,7 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Open All in New Windows` - Open all workspaces in a group at once in new windows. Ignores `l13Projects.openInNewWindow`.
 * `Open as Workspace` - Open all workspaces in a group as a single workspace.
 * `Add to Favorites` - Add the workspace group and all its workspaces to favorites.
-* `Assign to Slot` - Assign the workspace group to a slot 1 - 9 to open all with a keyboard shortcut.
+* `Assign to Slot` - Assign the workspace group to slot 1 - 9 to open all with a keyboard shortcut.
 * `Add Folders to Workspace` - Add all workspaces in a group to the current workspace.
 * `Rename` - Rename a workspace group.
 * `Delete` - Delete a workspace group.

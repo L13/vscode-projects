@@ -1000,7 +1000,7 @@
 					},
 					"description": "Indicates folders to be ignored, like \".hg\", \".git\", \".svn\", \"CVS\", \"node_modules\", etc."
 				},
-				"l13Projects.initialFavoritesGroupState": {
+				"l13Projects.initialFavoriteGroupsState": {
 					"type": "string",
 					"default": "Remember",
 					"enum": [
@@ -1015,7 +1015,7 @@
 						"Show all groups expanded at start."
 					]
 				},
-				"l13Projects.initialWorkspacesGroupState": {
+				"l13Projects.initialWorkspaceGroupsState": {
 					"type": "string",
 					"default": "Remember",
 					"enum": [

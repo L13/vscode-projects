@@ -46,7 +46,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 		this.favoriteGroups = favoriteGroups;
 		this.slots = hotkeySlots;
 		
-		const initialState:InitialState = settings.get('initialFavoritesGroupState', 'Remember');
+		const initialState:InitialState = settings.get('initialFavoriteGroupsState', 'Remember');
 		
 		if (initialState !== 'Remember') {
 			this.favoriteGroups.forEach((favoriteGroup) => favoriteGroup.collapsed = initialState === 'Collapsed');

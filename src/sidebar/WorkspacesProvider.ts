@@ -96,7 +96,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 		const simpleGroupStates = simpleGroups;
 		const typeGroupStates = typeGroups;
-		const initialState:InitialState = settings.get('initialWorkspacesGroupState', 'Remember');
+		const initialState:InitialState = settings.get('initialWorkspaceGroupsState', 'Remember');
 		
 		if (initialState === 'Remember') {
 			setCollapseGroupState(simpleGroupStates, this.simpleGroups);
