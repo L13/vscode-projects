@@ -8,6 +8,9 @@ Manage your workspaces and projects in Visual Studio Code.
 
 - Added groups for favorites and workspaces.
 - Added `l13Projects.initialFavoriteGroupsState` to set the initial state of the favorite groups.
+- Added `l13Projects.confirmOpenMultipleWindows` for `Open All` and `Open All in New Windows`.
+- Added `l13Projects.confirmDeleteFavorite` for deleting favorites.
+- Added `l13Projects.confirmDeleteProject` for deleting projects.
 - Changed `l13Projects.initialWorkspacesGroupState` to `l13Projects.initialWorkspaceGroupsState`.
 - Changed context group for `Open in Current Window` and `Open in New Window` in VS Code explorer view.
 
@@ -104,6 +107,9 @@ Widnows and Linux
 * `l13Projects.workspace.ignore` - The folders which should be ignored. Supports `*` and `?` for names.
 * `l13Projects.subfolder.folders` - The folders to search for subfolders.
 * `l13Projects.subfolder.ignore` - The folders which should be ignored. Supports `*` and `?` for names.
+* `l13Projects.confirmOpenMultipleWindows` - If true `Open All` and `Open All in New Windows` opens a dialog if more than 3 workspaces have to be opend at once.
+* `l13Projects.confirmDeleteFavorite` - If false confirm dialog for deleting favorites does not appear.
+* `l13Projects.confirmDeleteProject` - If false confirm dialog for deleting projects does not appear.
 * `l13Projects.sortWorkspacesBy` - Sort workspaces by name, category or type. Custom groups are always at the top of the tree view. If a project, folder or workspace is part of a custom group, it does not appear in the auto sorted groups anymore.
 	* `Name` - (default) Sort all workspaces by name.
 	* `Simple` - Group all workspaces by category.

@@ -1054,6 +1054,11 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Controls weather a project should ask for confirmation when deleting it."
+				},
+				"l13Projects.confirmOpenMultipleWindows": {
+					"type": "boolean",
+					"default": true,
+					"description": "Controls weather a group should ask for confirmation when more than 3 windows should be opened at once."
 				}
 			}
 		}

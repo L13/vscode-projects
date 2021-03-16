@@ -6,6 +6,9 @@ All notable changes to the "Projects" extension will be documented in this file.
 ### Added
 - Added groups for favorites and workspaces.
 - Added `l13Projects.initialFavoriteGroupsState` to set the initial state of the favorite groups.
+- Added `l13Projects.confirmOpenMultipleWindows` for `Open All` and `Open All in New Windows`.
+- Added `l13Projects.confirmDeleteFavorite` for deleting favorites.
+- Added `l13Projects.confirmDeleteProject` for deleting projects.
 
 ### Changed
 - Changed `l13Projects.initialWorkspacesGroupState` to `l13Projects.initialWorkspaceGroupsState`.

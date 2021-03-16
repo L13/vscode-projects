@@ -7,6 +7,7 @@ import { CommonGroupTreeItems, CommonTreeItems } from '../@types/common';
 import { Project } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
+import * as dialogs from '../common/dialogs';
 import * as files from '../common/files';
 import * as settings from '../common/settings';
 import * as terminal from '../common/terminal';
@@ -87,8 +88,8 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspace.openInTerminal': ({ project }:CommonTreeItems) => terminal.open(getFolderPath(project)),
 		'l13Projects.action.workspace.copyPath': ({ project }:CommonTreeItems) => vscode.env.clipboard.writeText(project.path),
 		
-		'l13Projects.action.workspaceGroup.openAllInCurrentWindows': ({ group }:CommonGroupTreeItems) => files.openAll(group.paths, false),
-		'l13Projects.action.workspaceGroup.openAllInNewWindows': ({ group }:CommonGroupTreeItems) => files.openAll(group.paths, true),
+		'l13Projects.action.workspaceGroup.openAllInCurrentWindows': async ({ group }:CommonGroupTreeItems) => openMultipleWindows(group.paths, false),
+		'l13Projects.action.workspaceGroup.openAllInNewWindows': async ({ group }:CommonGroupTreeItems) => openMultipleWindows(group.paths, true),
 		
 		'l13Projects.action.workspaceGroup.addFoldersToWorkspace': ({ group }:FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
 			
@@ -189,5 +190,18 @@ function openSession (paths:string[], projectsState:ProjectsState) {
 		const remove = vscode.workspace.workspaceFolders?.length || 0;
 		vscode.workspace.updateWorkspaceFolders(0, remove, ...uris);
 	}
+	
+}
+
+async function openMultipleWindows (paths:string[], openInNewWindow:boolean) {
+	
+	if (paths.length > 3 && settings.get('confirmOpenMultipleWindows', true)) {
+		const BUTTON_OPEN_DONT_SHOW_AGAIN = `Open, don't show again`;
+		const value = await dialogs.confirm(`Open ${paths.length} workspaces in multiple windows at once?`, 'Open', BUTTON_OPEN_DONT_SHOW_AGAIN);
+		if (!value) return;
+		if (value === BUTTON_OPEN_DONT_SHOW_AGAIN) settings.update('confirmOpenMultipleWindows', false);
+	}
+	
+	files.openAll(paths, openInNewWindow);
 	
 }
