@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to the "Projects" extension will be documented in this file.
 
-## [0.18.0] - 2021-03-14
+## [0.18.0] - 2021-03-21
 
 ### Added
 - Added groups for favorites and workspaces.
@@ -11,6 +11,9 @@ All notable changes to the "Projects" extension will be documented in this file.
 - Changed `l13Projects.initialWorkspacesGroupState` to `l13Projects.initialWorkspaceGroupsState`.
 - Changed context group for `Open in Current Window` and `Open in New Window` in VS Code explorer view.
 - Refactored extension.
+
+### Fixed
+- Fixed glob pattern for `*` and `?`.
 
 ## [0.17.0] - 2021-01-31
 

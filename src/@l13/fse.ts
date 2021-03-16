@@ -99,8 +99,8 @@ function escapeForRegExp (text:any) :string {
 	
 	return ('' + text).replace(findRegExpChars, (match) => {
 		
-		if (match === '*') return '.+';
-		if (match === '?') return '?';
+		if (match === '*') return '.*';
+		if (match === '?') return '.';
 		
 		return '\\' + match;
 		

@@ -8,6 +8,7 @@ Manage your workspaces and projects in Visual Studio Code.
 
 - Added groups for favorites and workspaces.
 - Added `l13Projects.initialFavoriteGroupsState` to set the initial state of the favorite groups.
+- Changed `l13Projects.initialWorkspacesGroupState` to `l13Projects.initialWorkspaceGroupsState`.
 - Changed context group for `Open in Current Window` and `Open in New Window` in VS Code explorer view.
 
 ## Index
@@ -78,16 +79,15 @@ Priority of icons and labels for saved projects and detected folders and workspa
 * `Projects: Clear Slot` - Clear a slot.
 * `Projects: Clear All Slots` - Clear all slots.
 * `Projects: Go to previous Workspace` - Open the previous active workspace.
-* `Refresh` - Refresh all detected folders and workspaces.
 
 macOS
 
-* `Add Project` - Add folders and workspaces to the project list by dialog.
+* `Add Project` - Add folders and Visual Studio Code workspace files to the project list by dialog.
 
 Widnows and Linux
 
 * `Add Project` - Add folders to the project list by dialog.
-* `Add Project Workspace` - Add workspaces to the project list by dialog.
+* `Add Project Workspace` - Add Visual Studio Code workspace files to the project list by dialog.
 
 ## Available Settings
 
@@ -95,15 +95,15 @@ Widnows and Linux
 * `l13Projects.useCacheForDetectedProjects` - If true detected folders and workspaces will be stored  between window sessions. Default value is false.
 * `l13Projects.git.folders` - The folders to search for Git repositories.
 * `l13Projects.git.maxDepthRecursion` - The maximum depth of folder recursion for Git repositories.
-* `l13Projects.git.ignore` - The folders which should be ignored.
+* `l13Projects.git.ignore` - The folders which should be ignored. Supports `*` and `?` for names.
 * `l13Projects.vsCode.folders` - The folders to search for VS Code projects.
 * `l13Projects.vsCode.maxDepthRecursion` - The maximum depth of folder recursion for VS Code projects.
-* `l13Projects.vsCode.ignore` - The folders which should be ignored.
+* `l13Projects.vsCode.ignore` - The folders which should be ignored. Supports `*` and `?` for names.
 * `l13Projects.workspace.folders` - The folders to search for VS Code workspaces.
 * `l13Projects.workspace.maxDepthRecursion` - The maximum depth of folder recursion for VS Code workspaces.
-* `l13Projects.workspace.ignore` - The folders which should be ignored.
+* `l13Projects.workspace.ignore` - The folders which should be ignored. Supports `*` and `?` for names.
 * `l13Projects.subfolder.folders` - The folders to search for subfolders.
-* `l13Projects.subfolder.ignore` - The folders which should be ignored.
+* `l13Projects.subfolder.ignore` - The folders which should be ignored. Supports `*` and `?` for names.
 * `l13Projects.sortWorkspacesBy` - Sort workspaces by name, category or type. Custom groups are always at the top of the tree view. If a project, folder or workspace is part of a custom group, it does not appear in the auto sorted groups anymore.
 	* `Name` - (default) Sort all workspaces by name.
 	* `Simple` - Group all workspaces by category.
@@ -142,6 +142,7 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 ### Favorites
 
 * `Click` - Open a favorite folder, workspace or project. If `l13Projects.openInNewWindow` is true the project opens in a new window.
+* Tooltip shows path of the favorite workspace.
 
 ### Favorites Context Icons
 
@@ -188,9 +189,14 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Rename` - Rename a favorite group.
 * `Delete` - Delete a favorite group or a favorite group and all favorites in a group.
 
+### Quick Menu for Favorites
+
+* `Click` - Open a favorite folder, workspace or project. If `l13Projects.openInNewWindow` is true the workspace opens in a new window or all workspaces in a group open in new windows.
+
 ### Workspaces
 
 * `Click` - Open a folder, workspace or project. If `l13Projects.openInNewWindow` is true the project opens in a new window.
+* Tooltip shows path of the workspace.
 
 ### Workspaces Context Icons
 
@@ -251,17 +257,14 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Rename` - Rename a workspace group.
 * `Delete` - Delete a workspace group.
 
-### Quick Menu for Favorites
+### Quick Menu for Workspaces
 
-* `Click` - Open a favorite folder, workspace or project. If `l13Projects.openInNewWindow` is true the project opens in a new window.
+* `Click` - Open a folder, workspace or project. If `l13Projects.openInNewWindow` is true the workspace opens in a new window or all workspaces in a group open in new windows.
 
-### Quick Menu for Projects
-
-* `Click` - Open a folder, workspace or project. If `l13Projects.openInNewWindow` is true the project opens in a new window.
-
-### Statusbar
+### Status Bar
 
 * `Click` - Reveal the current folder or workspace file in the Finder/Explorer.
+* Tooltip shows current path of the workspace.
 
 ### Visual Studio Code Explorer Context Menu
 
