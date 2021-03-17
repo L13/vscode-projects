@@ -3,8 +3,10 @@
 import { join } from 'path';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 
-import { FavoriteGroup } from '../../../@types/favorites';
+import { FavoriteGroup, GroupTreeItem } from '../../../@types/favorites';
 import { Slot } from '../../../@types/hotkeys';
+
+import { FavoriteGroupsState } from '../../../states/FavoriteGroupsState';
 
 //	Variables __________________________________________________________________
 
@@ -20,7 +22,7 @@ const iconPath = {
 
 //	Exports ____________________________________________________________________
 
-export class FavoriteGroupTreeItem extends TreeItem {
+export class FavoriteGroupTreeItem extends TreeItem implements GroupTreeItem {
 	
 	public contextValue = 'favoriteGroup';
 		
@@ -32,6 +34,12 @@ export class FavoriteGroupTreeItem extends TreeItem {
 		
 		this.id = `favorite-group-${group.id}`;
 		this.description = slot ? `[${slot.index}]` : '';
+		
+	}
+	
+	public saveGroupState (favoriteGroupsState:FavoriteGroupsState, collapsed:boolean) {
+		
+		favoriteGroupsState.saveCollapsedState(this, collapsed);
 		
 	}
 	

@@ -107,7 +107,7 @@ Widnows and Linux
 * `l13Projects.workspace.ignore` - The folders which should be ignored. Supports `*` and `?` for names.
 * `l13Projects.subfolder.folders` - The folders to search for subfolders.
 * `l13Projects.subfolder.ignore` - The folders which should be ignored. Supports `*` and `?` for names.
-* `l13Projects.confirmOpenMultipleWindows` - If true `Open All` and `Open All in New Windows` opens a dialog if more than 3 workspaces have to be opend at once.
+* `l13Projects.confirmOpenMultipleWindows` - If true `Open All` and `Open All in New Windows` shows a dialog if more than 3 workspaces will be opened at once.
 * `l13Projects.confirmDeleteFavorite` - If false confirm dialog for deleting favorites does not appear.
 * `l13Projects.confirmDeleteProject` - If false confirm dialog for deleting projects does not appear.
 * `l13Projects.sortWorkspacesBy` - Sort workspaces by name, category or type. Custom groups are always at the top of the tree view. If a project, folder or workspace is part of a custom group, it does not appear in the auto sorted groups anymore.
@@ -160,7 +160,7 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 ### Favorites Context menu
 
 * `Open` - Open the favorite project in the current window. Ignores `l13Projects.openInNewWindow`.
-* `Open in new Window` - Open the favorite project in a new window. Ignores `l13Projects.openInNewWindow`.
+* `Open in New Window` - Open the favorite project in a new window. Ignores `l13Projects.openInNewWindow`.
 * `Add to Group` - Add a project, repository or workspace to a favorite group.
 * `Open in Terminal` - Opens the favorite project in the VS Code terminal.
 * `Assign to Slot` - Assign the folder, workspace or project to slot 1 - 9 to open it with a keyboard shortcut.
@@ -224,7 +224,7 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 ### Workspaces Context menu
 
 * `Open` - Open the folder, workspace or project in the current window. Ignores `l13Projects.openInNewWindow`.
-* `Open in new Window` - Open the folder, workspace or project in a new window. Ignores `l13Projects.openInNewWindow`.
+* `Open in New Window` - Open the folder, workspace or project in a new window. Ignores `l13Projects.openInNewWindow`.
 * `Save Project` - Save the folder or workspace as a project.
 * `Add to Favorites` - Add the folder, workspace or project to favorites.
 * `Open in Integrated Terminal` - Open the folder, workspace or project in the terminal.
@@ -274,8 +274,8 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 
 ### Visual Studio Code Explorer Context Menu
 
-* `Open in current Window` - Opens the selected file or folder in the current VS Code Window.
-* `Open in new Window` - Opens the selected file or folder in a new VS Code Window.
+* `Open in Current Window` - Opens the selected file or folder in the current VS Code Window.
+* `Open in New Window` - Opens the selected file or folder in a new VS Code Window.
 
 ## Recommended Extensions
 

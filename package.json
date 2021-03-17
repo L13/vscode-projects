@@ -173,15 +173,15 @@
 				"title": "Remove from Group"
 			},
 			{
-				"command": "l13Projects.action.workspaceGroup.openAllInCurrentWindows",
+				"command": "l13Projects.action.group.openAllInCurrentAndNewWindows",
 				"title": "Open All"
 			},
 			{
-				"command": "l13Projects.action.workspaceGroup.openAllInNewWindows",
+				"command": "l13Projects.action.group.openAllInNewWindows",
 				"title": "Open All in New Windows"
 			},
 			{
-				"command": "l13Projects.action.workspaceGroup.openAsWorkspace",
+				"command": "l13Projects.action.group.openAsWorkspace",
 				"title": "Open as Workspace"
 			},
 			{
@@ -189,7 +189,7 @@
 				"title": "Add to Favorites"
 			},
 			{
-				"command": "l13Projects.action.workspaceGroup.addFoldersToWorkspace",
+				"command": "l13Projects.action.group.addFoldersToWorkspace",
 				"title": "Add Folders to Workspace"
 			},
 			{
@@ -598,15 +598,15 @@
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroup.openAllInCurrentWindows",
+					"command": "l13Projects.action.group.openAllInCurrentAndNewWindows",
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroup.openAllInNewWindows",
+					"command": "l13Projects.action.group.openAllInNewWindows",
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroup.openAsWorkspace",
+					"command": "l13Projects.action.group.openAsWorkspace",
 					"when": "false"
 				},
 				{
@@ -614,7 +614,7 @@
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroup.addFoldersToWorkspace",
+					"command": "l13Projects.action.group.addFoldersToWorkspace",
 					"when": "false"
 				},
 				{
@@ -715,17 +715,17 @@
 					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?(favorite|subfavorite)-(folders?|git|subfolder|vscode|workspace)$/"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroup.openAllInCurrentWindows",
+					"command": "l13Projects.action.group.openAllInCurrentAndNewWindows",
 					"group": "navigation@1",
 					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroup.openAllInNewWindows",
+					"command": "l13Projects.action.group.openAllInNewWindows",
 					"group": "navigation@2",
 					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroup.openAsWorkspace",
+					"command": "l13Projects.action.group.openAsWorkspace",
 					"group": "navigation@3",
 					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
 				},
@@ -740,7 +740,7 @@
 					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
 				},
 				{
-					"command": "l13Projects.action.workspaceGroup.addFoldersToWorkspace",
+					"command": "l13Projects.action.group.addFoldersToWorkspace",
 					"group": "2_workspace@1",
 					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favoriteGroup|workspaceGroup)$/"
 				},

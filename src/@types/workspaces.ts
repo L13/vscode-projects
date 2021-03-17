@@ -12,6 +12,7 @@ import { TypeGroupTreeItem } from '../sidebar/trees/groups/TypeGroupTreeItem';
 import { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGroupTreeItem';
 
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
+import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 
 //	Variables __________________________________________________________________
 
@@ -25,7 +26,11 @@ import { HotkeySlotsState } from '../states/HotkeySlotsState';
 
 export type UpdateCacheCallback = (context:vscode.ExtensionContext, cache:Project[]) => void;
 
-export type GroupTreeItem = WorkspaceGroupTreeItem|SimpleGroupTreeItem|TypeGroupTreeItem;
+export type GroupTreeItems = WorkspaceGroupTreeItem|SimpleGroupTreeItem|TypeGroupTreeItem;
+
+export interface GroupTreeItem extends vscode.TreeItem {
+	saveGroupState:(workspaceGroupsState:WorkspaceGroupsState, collapsed:boolean) => void;
+}
 
 export type SimpleGroup = {
 	label:string,
@@ -79,7 +84,7 @@ export type WorkspaceQuickPickItem = {
 	paths:string[],
 };
 
-export type WorkspacesTreeItems = ColorPickerTreeItem|GroupTreeItem|WorkspaceTreeItems;
+export type WorkspacesTreeItems = ColorPickerTreeItem|GroupTreeItems|WorkspaceTreeItems;
 
 export type WorkspaceTreeItems = CurrentWorkspaceTreeItem|ProjectTreeItem|UnknownProjectTreeItem;
 

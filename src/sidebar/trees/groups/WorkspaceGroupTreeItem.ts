@@ -4,7 +4,9 @@ import { join } from 'path';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 
 import { Slot } from '../../../@types/hotkeys';
-import { WorkspaceGroup } from '../../../@types/workspaces';
+import { GroupTreeItem, WorkspaceGroup } from '../../../@types/workspaces';
+
+import { WorkspaceGroupsState } from '../../../states/WorkspaceGroupsState';
 
 //	Variables __________________________________________________________________
 
@@ -20,7 +22,7 @@ const iconPath = {
 
 //	Exports ____________________________________________________________________
 
-export class WorkspaceGroupTreeItem extends TreeItem {
+export class WorkspaceGroupTreeItem extends TreeItem implements GroupTreeItem {
 	
 	public contextValue = 'workspaceGroup';
 	
@@ -32,6 +34,12 @@ export class WorkspaceGroupTreeItem extends TreeItem {
 		
 		this.id = `workspace-group-${group.id}`;
 		this.description = slot ? `[${slot.index}]` : '';
+		
+	}
+	
+	public saveGroupState (workspaceGroupsState:WorkspaceGroupsState, collapsed:boolean) {
+		
+		workspaceGroupsState.saveWorkspaceGroupState(this, collapsed);
 		
 	}
 	

@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 
-import { GroupTreeItem, Project, WorkspaceTreeItems } from '../@types/workspaces';
+import { GroupTreeItems, Project, WorkspaceTreeItems } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';
@@ -13,8 +13,6 @@ import { ProjectsDialog } from '../dialogs/ProjectsDialog';
 import { WorkspaceGroupsDialog } from '../dialogs/WorkspaceGroupsDialog';
 import { WorkspacesDialog } from '../dialogs/WorkspacesDialog';
 
-import { SimpleGroupTreeItem } from '../sidebar/trees/groups/SimpleGroupTreeItem';
-import { TypeGroupTreeItem } from '../sidebar/trees/groups/TypeGroupTreeItem';
 import { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGroupTreeItem';
 import { ProjectTreeItem } from '../sidebar/trees/items/ProjectTreeItem';
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
@@ -78,13 +76,13 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	subscriptions.push(treeView.onDidCollapseElement(({ element }) => {
 		
-		saveCollapseState(workspaceGroupsState, <GroupTreeItem>element, true);
+		(<GroupTreeItems>element).saveGroupState(workspaceGroupsState, true);
 		
 	}));
 	
 	subscriptions.push(treeView.onDidExpandElement(({ element }) => {
 		
-		saveCollapseState(workspaceGroupsState, <GroupTreeItem>element, false);
+		(<GroupTreeItems>element).saveGroupState(workspaceGroupsState, false);
 		
 	}));
 	
@@ -277,14 +275,6 @@ export function activate (context:vscode.ExtensionContext) {
 }
 
 //	Functions __________________________________________________________________
-
-function saveCollapseState (workspaceGroupState:WorkspaceGroupsState, item:GroupTreeItem, collapsed:boolean) {
-	
-	if (item instanceof WorkspaceGroupTreeItem) workspaceGroupState.saveWorkspaceGroupState(item, collapsed);
-	else if (item instanceof SimpleGroupTreeItem) workspaceGroupState.saveSimpleGroupState(item, collapsed);
-	else if (item instanceof TypeGroupTreeItem) workspaceGroupState.saveTypeGroupState(item, collapsed);
-	
-}
 
 function changeStatusBarColor (statusBarColorState:StatusBarColor, workspacesProvider:WorkspacesProvider, color:number) {
 	

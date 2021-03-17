@@ -4,7 +4,8 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 import { CommonGroupTreeItems, CommonTreeItems } from '../@types/common';
-import { Project } from '../@types/workspaces';
+import { FavoriteGroup } from '../@types/favorites';
+import { Project, WorkspaceGroup } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
 import * as dialogs from '../common/dialogs';
@@ -88,10 +89,10 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspace.openInTerminal': ({ project }:CommonTreeItems) => terminal.open(getFolderPath(project)),
 		'l13Projects.action.workspace.copyPath': ({ project }:CommonTreeItems) => vscode.env.clipboard.writeText(project.path),
 		
-		'l13Projects.action.workspaceGroup.openAllInCurrentWindows': async ({ group }:CommonGroupTreeItems) => openMultipleWindows(group.paths, false),
-		'l13Projects.action.workspaceGroup.openAllInNewWindows': async ({ group }:CommonGroupTreeItems) => openMultipleWindows(group.paths, true),
+		'l13Projects.action.group.openAllInCurrentAndNewWindows': async ({ group }:CommonGroupTreeItems) => openMultipleWindows(group, false),
+		'l13Projects.action.group.openAllInNewWindows': async ({ group }:CommonGroupTreeItems) => openMultipleWindows(group, true),
 		
-		'l13Projects.action.workspaceGroup.addFoldersToWorkspace': ({ group }:FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
+		'l13Projects.action.group.addFoldersToWorkspace': ({ group }:FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
 			
 			const paths = getFolders(group.paths).filter((path) => {
 				
@@ -108,7 +109,7 @@ export function activate (context:vscode.ExtensionContext) {
 			
 		},
 		
-		'l13Projects.action.workspaceGroup.openAsWorkspace': async ({ group }:FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
+		'l13Projects.action.group.openAsWorkspace': async ({ group }:FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
 			
 			const paths = getFolders(group.paths);
 			const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -193,11 +194,14 @@ function openSession (paths:string[], projectsState:ProjectsState) {
 	
 }
 
-async function openMultipleWindows (paths:string[], openInNewWindow:boolean) {
+async function openMultipleWindows (group:FavoriteGroup|WorkspaceGroup, openInNewWindow:boolean) {
+	
+	const paths = group.paths;
 	
 	if (paths.length > 3 && settings.get('confirmOpenMultipleWindows', true)) {
 		const BUTTON_OPEN_DONT_SHOW_AGAIN = `Open, don't show again`;
-		const value = await dialogs.confirm(`Open ${paths.length} workspaces in multiple windows at once?`, 'Open', BUTTON_OPEN_DONT_SHOW_AGAIN);
+		const text = `Open "${group.label}" with ${paths.length} workspaces in multiple windows at once?`;
+		const value = await dialogs.confirm(text, 'Open', BUTTON_OPEN_DONT_SHOW_AGAIN);
 		if (!value) return;
 		if (value === BUTTON_OPEN_DONT_SHOW_AGAIN) settings.update('confirmOpenMultipleWindows', false);
 	}

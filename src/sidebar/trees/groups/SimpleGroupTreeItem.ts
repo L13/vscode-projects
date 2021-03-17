@@ -3,7 +3,9 @@
 import { join } from 'path';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 
-import { SimpleGroup } from '../../../@types/workspaces';
+import { GroupTreeItem, SimpleGroup } from '../../../@types/workspaces';
+
+import { WorkspaceGroupsState } from '../../../states/WorkspaceGroupsState';
 
 //	Variables __________________________________________________________________
 
@@ -15,7 +17,7 @@ const basePath = join(__dirname, '..', 'images', 'groups');
 
 //	Exports ____________________________________________________________________
 
-export class SimpleGroupTreeItem extends TreeItem {
+export class SimpleGroupTreeItem extends TreeItem implements GroupTreeItem {
 	
 	public constructor (public readonly group:SimpleGroup) {
 		
@@ -30,6 +32,12 @@ export class SimpleGroupTreeItem extends TreeItem {
 			light: join(basePath, `${name}-light.svg`),
 			dark: join(basePath, `${name}-dark.svg`),
 		};
+		
+	}
+	
+	public saveGroupState (workspaceGroupsState:WorkspaceGroupsState, collapsed:boolean) {
+		
+		workspaceGroupsState.saveSimpleGroupState(this, collapsed);
 		
 	}
 	

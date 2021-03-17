@@ -1,11 +1,14 @@
 //	Imports ____________________________________________________________________
 
+import * as vscode from 'vscode';
+
 import { Project } from './workspaces';
 
 import { FavoriteGroupTreeItem } from '../sidebar/trees/groups/FavoriteGroupTreeItem';
 import { CurrentFavoriteTreeItem } from '../sidebar/trees/items/CurrentFavoriteTreeItem';
 import { FavoriteTreeItem } from '../sidebar/trees/items/FavoriteTreeItem';
 
+import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
 
 //	Variables __________________________________________________________________
@@ -26,6 +29,10 @@ export type FavoriteGroup = {
 	collapsed:boolean,
 	paths:string[],
 };
+
+export interface GroupTreeItem extends vscode.TreeItem {
+	saveGroupState:(workspaceGroupsState:FavoriteGroupsState, collapsed:boolean) => void;
+}
 
 export type FavoritesStates = {
 	favorites:Favorite[],
