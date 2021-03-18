@@ -64,7 +64,7 @@ export class WorkspaceGroupsDialog {
 			const newWorkspaceGroupItem = { label: '$(add) New Workspace Group...' };
 			const items = [
 				newWorkspaceGroupItem,
-				...workspaceGroups
+				...workspaceGroups,
 			];
 			const selectedItem = await vscode.window.showQuickPick(items, {
 				placeHolder: 'Select a workspace group',

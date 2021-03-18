@@ -6,7 +6,7 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ## What's new in Projects 0.18.0
 
-- Added groups for favorites and workspaces.
+- Added groups for favorites and workspaces. Please read the descriptions for favorite groups and workspace groups.
 - Added `l13Projects.initialFavoriteGroupsState` to set the initial state of the favorite groups.
 - Added `l13Projects.confirmOpenMultipleWindows` for `Open All` and `Open All in New Windows`.
 - Added `l13Projects.confirmDeleteFavorite` for deleting favorites.
@@ -25,22 +25,20 @@ Manage your workspaces and projects in Visual Studio Code.
 ## Features
 
 * Supports extension [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
-* Add folders and workspaces to the project list.
-* Save the current folder or workspace in the project list.
-* Auto detects Git repositories, VS Code folders and VS Code workspaces.
-* Save auto detected Git repositories, VS Code folders and VS Code workspaces in the project list.
+* Auto detects Git repositories, VS Code folders and VS Code workspace files.
+* Add folders and VS Code workspace files to the project list.
+* Save the current workspace in the project list.
+* Save auto detected Git repositories, VS Code folders and VS Code workspaces as projects.
 * Add projects, Git repositories, VS Code folders and VS Code workspaces to favorites.
-* Open and pick a (favorite) folder, workspace or project with the quick menu.
-* Open a folder, workspace or project in  the current or a new window in VS Code Explorer or Projects.
-* Reveal a folder or workspace in the Finder/Explorer.
-* Open a project, Git repository, VS Code folder or VS Code workspace in the Terminal.
-* Delete or rename a favorite or project.
-* Status bar shows current workspace name and opens the current folder or workspace in the Finder/Explorer.
+* Open and pick a (favorite) workspace in the (favorite) quick pick menu.
+* Open a workspace in the current or a new window in VS Code Explorer or Projects.
+* Reveal a workspace in the Finder/Explorer.
+* Open a workspace in the Terminal.
 * Cache detected folders and workspaces between sessions.
 * Sort workspaces by name, category or type.
-* Add custom groups to organize your workspaces.
-* Assign a workspace or a group to a slot to open it with a keyboard shortcut.
-* Select a color for a project which also changes the status bar color for the workspace.
+* Add custom groups to organize your favorites and workspaces.
+* Assign a workspace or group to a slot to open it with a keyboard shortcut.
+* Select a color for a project which also changes the status bar color of the workspace.
 
 ### Workspaces
 
@@ -154,7 +152,7 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 
 #### All Platforms
 
-* `New Favorite Group` - Add a new favorite group.
+* `New Favorite Group` - Add a new favorite group. Favorite groups are by default independent to workspace groups, but they share the same name pool. If a workspace group is added to favorites the group stays connected to the workspace group. Changes in this group also affects the workspace group and vice versa.
 * `Collapse All` - Collapse all groups.
 
 ### Favorites Context menu
