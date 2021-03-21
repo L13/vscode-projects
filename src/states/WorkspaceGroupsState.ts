@@ -98,7 +98,6 @@ export class WorkspaceGroupsState {
 			id: getNextGroupId(this.context),
 			collapsed: false,
 			paths: [],
-			type: 'custom'
 		});
 		
 		sortWorkspaceGroups(workspaceGroups);

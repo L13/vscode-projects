@@ -74,7 +74,6 @@ export type WorkspaceGroup = {
 	id:number,
 	collapsed:boolean,
 	paths:string[],
-	type:'custom',
 };
 
 export type WorkspaceQuickPickItem = {
