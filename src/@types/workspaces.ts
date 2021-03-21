@@ -1,10 +1,18 @@
 //	Imports ____________________________________________________________________
 
-import { ColorPickerTreeItem } from '../sidebar/trees/ColorPickerTreeItem';
-import { CurrentProjectTreeItem } from '../sidebar/trees/CurrentProjectTreeItem';
-import { ProjectTreeItem } from '../sidebar/trees/ProjectTreeItem';
-import { UnknownProjectTreeItem } from '../sidebar/trees/UnknownProjectTreeItem';
-import { GroupTreeItem } from './groups';
+import * as vscode from 'vscode';
+
+import { ColorPickerTreeItem } from '../sidebar/trees/items/ColorPickerTreeItem';
+import { CurrentWorkspaceTreeItem } from '../sidebar/trees/items/CurrentWorkspaceTreeItem';
+import { ProjectTreeItem } from '../sidebar/trees/items/ProjectTreeItem';
+import { UnknownProjectTreeItem } from '../sidebar/trees/items/UnknownProjectTreeItem';
+
+import { SimpleGroupTreeItem } from '../sidebar/trees/groups/SimpleGroupTreeItem';
+import { TypeGroupTreeItem } from '../sidebar/trees/groups/TypeGroupTreeItem';
+import { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGroupTreeItem';
+
+import { HotkeySlotsState } from '../states/HotkeySlotsState';
+import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 
 //	Variables __________________________________________________________________
 
@@ -16,7 +24,38 @@ import { GroupTreeItem } from './groups';
 
 //	Exports ____________________________________________________________________
 
-export type StatusbarColors = {
+export type UpdateCacheCallback = (context:vscode.ExtensionContext, cache:Project[]) => void;
+
+export type GroupTreeItems = WorkspaceGroupTreeItem|SimpleGroupTreeItem|TypeGroupTreeItem;
+
+export interface GroupTreeItem extends vscode.TreeItem {
+	saveGroupState:(workspaceGroupsState:WorkspaceGroupsState, collapsed:boolean) => void;
+}
+
+export type SimpleGroup = {
+	label:string,
+	type:'project'|'git'|'vscode'|'subfolder',
+	projectTypes:(Project['type'])[]
+	collapsed:boolean,
+};
+
+export type SimpleGroupState = {
+	type:'project'|'git'|'vscode'|'subfolder',
+	collapsed:boolean,
+};
+
+export type TypeGroup = {
+	label:string,
+	type:'folder'|'folders'|'git'|'vscode'|'workspace'|'subfolder',
+	collapsed:boolean,
+};
+
+export type TypeGroupState = {
+	type:'folder'|'folders'|'git'|'vscode'|'workspace'|'subfolder',
+	collapsed:boolean,
+};
+
+export type StatusBarColors = {
 	'statusBar.background':string,
 	'statusBar.foreground':string,
 	'statusBarItem.hoverBackground':string,
@@ -25,13 +64,44 @@ export type StatusbarColors = {
 export type Project = {
 	path:string,
 	label:string,
-	type:'folder'|'folders'|'git'|'subfolder'|'vscode'|'workspace',
+	type:'folder'|'folders'|WorkspaceTypes,
 	color?:number,
-	removed?:boolean,
 	deleted?:boolean,
 };
 
-export type TreeItems = ColorPickerTreeItem|CurrentProjectTreeItem|ProjectTreeItem|GroupTreeItem|UnknownProjectTreeItem;
+export type WorkspaceGroup = {
+	label:string,
+	id:number,
+	collapsed:boolean,
+	paths:string[],
+};
+
+export type WorkspaceQuickPickItem = {
+	label:string,
+	description:string,
+	detail?:string
+	paths:string[],
+};
+
+export type WorkspacesTreeItems = ColorPickerTreeItem|GroupTreeItems|WorkspaceTreeItems;
+
+export type WorkspaceTreeItems = CurrentWorkspaceTreeItem|ProjectTreeItem|UnknownProjectTreeItem;
+
+export type WorkspaceTypes = 'git'|'subfolder'|'vscode'|'workspace';
+
+export type WorkspacesStates = {
+	hotkeySlots:HotkeySlotsState,
+	simpleGroups:SimpleGroupState[],
+	typeGroups:TypeGroupState[],
+	workspaces:Project[],
+	workspaceGroups:WorkspaceGroup[],
+};
+
+export type RefreshWorkspacesStates = {
+	task?:() => Promise<Project[]>,
+	workspaces?:Project[],
+	workspaceGroups?:WorkspaceGroup[],
+};
 
 //	Functions __________________________________________________________________
 

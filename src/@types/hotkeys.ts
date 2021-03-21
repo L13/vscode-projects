@@ -15,7 +15,9 @@
 export type Slot = {
 	label:string,
 	index:number,
-	path:string,
+	path?:string,
+	groupId?:number,
+	paths?:string[],
 };
 
 export type Item = {

@@ -3,7 +3,7 @@
 import { join } from 'path';
 import { TreeItem } from 'vscode';
 
-import { Project } from '../../@types/workspaces';
+import { Project } from '../../../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -31,11 +31,7 @@ export class UnknownProjectTreeItem extends TreeItem {
 		
 		super(project.label);
 		
-	}
-	
-	public get tooltip () :string {
-		
-		return this.project.path;
+		this.tooltip = this.project.path;
 		
 	}
 	

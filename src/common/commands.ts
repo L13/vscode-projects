@@ -13,9 +13,11 @@ import * as vscode from 'vscode';
 //	Exports ____________________________________________________________________
 
 export function register (context:vscode.ExtensionContext, commands:{ [command:string]: (...args:any) => void }) {
+	
+	const subscriptions = context.subscriptions;
 
 	for (const [command, callback] of Object.entries(commands)) {
-		context.subscriptions.push(vscode.commands.registerCommand(command, callback));
+		subscriptions.push(vscode.commands.registerCommand(command, callback));
 	}
 	
 }
