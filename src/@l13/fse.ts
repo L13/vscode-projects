@@ -5,9 +5,14 @@ import * as path from 'path';
 
 import { Callback, FileMap, Options, WalkTreeJob } from '../@types/files';
 
+import { isWindows } from './platforms';
+
 //	Variables __________________________________________________________________
 
 const findRegExpChars:RegExp = /([\\\[\]\.\*\^\$\|\+\-\{\}\(\)\?\!\=\:\,])/g;
+
+const findIllegalAndControlChars = /[\x00-\x1f"\*<>\?\|\x80-\x9f]/g;
+const findColon = /:/g;
 
 //	Initialize _________________________________________________________________
 
@@ -15,7 +20,7 @@ const findRegExpChars:RegExp = /([\\\[\]\.\*\^\$\|\+\-\{\}\(\)\?\!\=\:\,])/g;
 
 //	Exports ____________________________________________________________________
 
-export function walktree (cwd:string, options:Callback|Options, callback?:Callback) {
+export function walkTree (cwd:string, options:Callback|Options, callback?:Callback) {
 	
 	callback = typeof options === 'function' ? options : callback;
 	
@@ -78,14 +83,24 @@ export function createFindGlob (ignore:string[]) {
 	
 }
 
+export function sanitize (pathname:string) {
+	
+	let name = `${pathname}`.replace(findIllegalAndControlChars, '');
+	
+	if (!isWindows) name = name.replace(findColon, '');
+	
+	return name;
+	
+}
+
 //	Functions __________________________________________________________________
 
 function escapeForRegExp (text:any) :string {
 	
 	return ('' + text).replace(findRegExpChars, (match) => {
 		
-		if (match === '*') return '.+';
-		if (match === '?') return '?';
+		if (match === '*') return '.*';
+		if (match === '?') return '.';
 		
 		return '\\' + match;
 		

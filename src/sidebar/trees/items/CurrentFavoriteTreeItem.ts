@@ -3,8 +3,8 @@
 import { join } from 'path';
 import { TreeItem } from 'vscode';
 
-import { Slot } from '../../@types/hotkeys';
-import { Project } from '../../@types/workspaces';
+import { Favorite } from '../../../@types/favorites';
+import { Slot } from '../../../@types/hotkeys';
 
 //	Variables __________________________________________________________________
 
@@ -16,42 +16,25 @@ const basePath = join(__dirname, '..', 'images', 'current');
 
 //	Exports ____________________________________________________________________
 
-export class CurrentProjectTreeItem extends TreeItem {
+export class CurrentFavoriteTreeItem extends TreeItem {
 	
-	public constructor (public readonly project:Project, public readonly slot:Slot|null) {
+	public constructor (public readonly project:Favorite, public readonly slot:Slot|null, isSubProject:boolean = false) {
 		
 		super(project.label);
 		
 		const type = project.type;
-		
-		this.contextValue = `current-project-${type}`;
-		
 		let icon = `${type}`;
 		
 		if (type === 'folder' || type === 'folders') icon += `-color-${project.color || 0}`;
+		
+		this.contextValue = `current-${isSubProject ? 'sub' : ''}favorite-${type}`;
+		this.tooltip = project.path;
+		this.description = `${slot ? `[${slot.index}] ` : ''}Current workspace`;
 		
 		this.iconPath = {
 			light: join(basePath, `current-project-${icon}-light.svg`),
 			dark: join(basePath, `current-project-${icon}-dark.svg`),
 		};
-		
-	}
-	
-	public get tooltip () :string {
-		
-		return this.project.path;
-		
-	}
-	
-	public get description () :string {
-		
-		const info:string[] = [];
-		
-		if (this.slot) info.push(`[${this.slot.index}]`);
-		
-		info.push('Current workspace');
-		
-		return info.join(' ');
 		
 	}
 	

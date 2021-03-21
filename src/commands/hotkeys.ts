@@ -4,9 +4,12 @@ import * as vscode from 'vscode';
 
 import * as commands from '../common/commands';
 
-import { HotkeySlots } from '../features/HotkeySlots';
+import { HotkeySlotsDialog } from '../dialogs/HotkeySlotsDialog';
+
 import { FavoritesProvider } from '../sidebar/FavoritesProvider';
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
+
+import { HotkeySlotsState } from '../states/HotkeySlotsState';
 
 //	Variables __________________________________________________________________
 
@@ -20,31 +23,36 @@ import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
 
 export function activate (context:vscode.ExtensionContext) {
 	
-	const hotkeySlots = HotkeySlots.create(context);
+	const hotkeySlotsState = HotkeySlotsState.create(context);
+	const hotkeySlotsDialog = HotkeySlotsDialog.create(hotkeySlotsState);
 	
-	hotkeySlots.onDidChangeSlot(() => {
+	context.subscriptions.push(hotkeySlotsState.onDidChangeSlots(() => {
 		
-		FavoritesProvider.currentProvider?.refresh();
-		WorkspacesProvider.currentProvider?.refresh();
+		FavoritesProvider.current?.refresh();
+		WorkspacesProvider.current?.refresh();
 		
-	});
+	}));
 	
-	HotkeySlots.saveCurrentWorkspace(context);
+	hotkeySlotsState.saveCurrentWorkspace();
 	
 	commands.register(context, {
-		'l13Projects.assignSlot': async ({ project }) => hotkeySlots.assign(project),
-		'l13Projects.removeSlot': () => hotkeySlots.remove(),
-		'l13Projects.clearSlots': () => hotkeySlots.clear(),
-		'l13Projects.slot1': () => hotkeySlots.open(1),
-		'l13Projects.slot2': () => hotkeySlots.open(2),
-		'l13Projects.slot3': () => hotkeySlots.open(3),
-		'l13Projects.slot4': () => hotkeySlots.open(4),
-		'l13Projects.slot5': () => hotkeySlots.open(5),
-		'l13Projects.slot6': () => hotkeySlots.open(6),
-		'l13Projects.slot7': () => hotkeySlots.open(7),
-		'l13Projects.slot8': () => hotkeySlots.open(8),
-		'l13Projects.slot9': () => hotkeySlots.open(9),
-		'l13Projects.previousWorkspace': () => hotkeySlots.previousWorkspace(),
+		'l13Projects.action.workspace.assignSlot': async ({ project }) => hotkeySlotsDialog.assignWorkspace(project),
+		'l13Projects.action.workspaceGroup.assignSlot': async ({ group }) => hotkeySlotsDialog.assignGroup(group),
+		'l13Projects.action.workspace.clearSlot': () => hotkeySlotsDialog.remove(),
+		
+		'l13Projects.action.hotkey.slot1': () => hotkeySlotsState.open(1),
+		'l13Projects.action.hotkey.slot2': () => hotkeySlotsState.open(2),
+		'l13Projects.action.hotkey.slot3': () => hotkeySlotsState.open(3),
+		'l13Projects.action.hotkey.slot4': () => hotkeySlotsState.open(4),
+		'l13Projects.action.hotkey.slot5': () => hotkeySlotsState.open(5),
+		'l13Projects.action.hotkey.slot6': () => hotkeySlotsState.open(6),
+		'l13Projects.action.hotkey.slot7': () => hotkeySlotsState.open(7),
+		'l13Projects.action.hotkey.slot8': () => hotkeySlotsState.open(8),
+		'l13Projects.action.hotkey.slot9': () => hotkeySlotsState.open(9),
+		
+		'l13Projects.action.hotkey.previousWorkspace': () => hotkeySlotsState.previousWorkspace(),
+		
+		'l13Projects.action.hotkeys.clearAllSlots': () => hotkeySlotsDialog.clear(),
 	});
 	
 }

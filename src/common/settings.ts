@@ -5,11 +5,11 @@ import * as jsoncParser from 'jsonc-parser';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import { StatusbarColors } from '../@types/workspaces';
+import { isCodeWorkspace } from './workspaces';
+
+import { StatusBarColors } from '../@types/workspaces';
 
 //	Variables __________________________________________________________________
-
-export const findExtWorkspace = /\.code-workspace$/;
 
 const COLOR_CUSTOMIZATIONS = 'workbench.colorCustomizations';
 
@@ -31,24 +31,7 @@ export function update (key:string, value:any, global:boolean = true) {
 	
 }
 
-export function isCodeWorkspace (workspacePath:string) {
-		
-	return findExtWorkspace.test(workspacePath);
-	
-}
-	
-export function getCurrentWorkspacePath () {
-	
-	const workspace = vscode.workspace;
-	let uri:undefined|vscode.Uri = workspace.workspaceFile;
-	
-	if (!uri && workspace.workspaceFolders) uri = workspace.workspaceFolders[0].uri;
-	
-	return uri && uri.scheme !== 'untitled' ? uri.fsPath : '';
-	
-}
-
-export function updateStatusBarColorSettings (workspacePath:string, statusbarColors:StatusbarColors) {
+export function updateStatusBarColorSettings (workspacePath:string, statusbarColors:StatusBarColors) {
 	
 	const useCodeWorkspace = isCodeWorkspace(workspacePath);
 	const workspaceSettingsPath = useCodeWorkspace ? workspacePath : getSettingsPath(workspacePath);
@@ -73,6 +56,15 @@ export function getStatusBarColorSettings (workspacePath:string) {
 	
 }
 
+export function getWorkspaceFolders (workspacePath:string) :{ path:string }[] {
+	
+	const workspaceSettings = fs.readFileSync(workspacePath, 'utf-8');
+	const json = jsoncParser.parse(workspaceSettings);
+	
+	return json?.folders || [];
+	
+}
+
 //	Functions __________________________________________________________________
 
 function getSettingsPath (workspacePath:string) {
@@ -81,9 +73,9 @@ function getSettingsPath (workspacePath:string) {
 	
 }
 
-function updateSettingsFile (workspaceSettingsPath:string, statusbarColors:StatusbarColors, useCodeWorkspace:boolean) {
+function updateSettingsFile (workspacePath:string, statusbarColors:StatusBarColors, useCodeWorkspace:boolean) {
 	
-	const workspaceSettings:string = fs.readFileSync(workspaceSettingsPath, 'utf-8');
+	const workspaceSettings:string = fs.readFileSync(workspacePath, 'utf-8');
 	const jsonpath = useCodeWorkspace ? ['settings', COLOR_CUSTOMIZATIONS] : [COLOR_CUSTOMIZATIONS];
 	const json = jsoncParser.parse(workspaceSettings);
 	let colorCustomizations:any = (useCodeWorkspace ? json.settings?.[COLOR_CUSTOMIZATIONS] : json[COLOR_CUSTOMIZATIONS]) || {};
@@ -107,16 +99,16 @@ function updateSettingsFile (workspaceSettingsPath:string, statusbarColors:Statu
 	const modifiedJson = jsoncParser.parse(modifiedWorkspaceSettings);
 	
 	if (useCodeWorkspace || Object.keys(modifiedJson).length)  {
-		fs.writeFileSync(workspaceSettingsPath, modifiedWorkspaceSettings, 'utf-8');
+		fs.writeFileSync(workspacePath, modifiedWorkspaceSettings, 'utf-8');
 	} else { // Clean up if config or folder is empty
-		fs.unlinkSync(workspaceSettingsPath);
-		const dirname = path.dirname(workspaceSettingsPath);
+		fs.unlinkSync(workspacePath);
+		const dirname = path.dirname(workspacePath);
 		if (!fs.readdirSync(dirname).length) fs.rmdirSync(dirname);
 	}
 	
 }
 
-function createSettingsFile (workspaceSettingsPath:string, statusbarColors:StatusbarColors) {
+function createSettingsFile (workspaceSettingsPath:string, statusbarColors:StatusBarColors) {
 	
 	const colorCustomizations:any = {};
 	

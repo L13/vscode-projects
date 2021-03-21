@@ -3,11 +3,11 @@
 import { join } from 'path';
 import { TreeItem } from 'vscode';
 
-import { Project } from '../../@types/workspaces';
+import { Project } from '../../../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
-
+const iconPath = join(__filename, '..', '..', 'images', 'picker', 'color-picker.svg');
 
 //	Initialize _________________________________________________________________
 
@@ -23,11 +23,11 @@ export class ColorPickerTreeItem extends TreeItem {
 	
 	public id = 'color-picker';
 	
+	public iconPath = iconPath;
+	
 	public constructor () {
 		
 		super('');
-		
-		this.iconPath = join(__filename, '..', '..', 'images', 'picker', 'color-picker.svg');
 		
 	}
 	

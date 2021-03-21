@@ -2,12 +2,21 @@
 
 import * as vscode from 'vscode';
 
+import { FavoriteTreeItems } from '../@types/favorites';
+
 import * as commands from '../common/commands';
 
-import { HotkeySlots } from '../features/HotkeySlots';
+import { FavoriteGroupsDialog } from '../dialogs/FavoriteGroupsDialog';
+import { FavoritesDialog } from '../dialogs/FavoritesDialog';
+
 import { FavoritesProvider } from '../sidebar/FavoritesProvider';
-import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
-import { StatusBar } from '../statusbar/StatusBar';
+import { FavoriteGroupTreeItem } from '../sidebar/trees/groups/FavoriteGroupTreeItem';
+
+import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
+import { FavoritesState } from '../states/FavoritesState';
+import { HotkeySlotsState } from '../states/HotkeySlotsState';
+import { ProjectsState } from '../states/ProjectsState';
+import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 
 //	Variables __________________________________________________________________
 
@@ -21,25 +30,105 @@ import { StatusBar } from '../statusbar/StatusBar';
 
 export function activate (context:vscode.ExtensionContext) {
 	
-	const favoritesProvider = FavoritesProvider.createProvider(context);
+	const subscriptions = context.subscriptions;
 	
-	vscode.window.registerTreeDataProvider('l13ProjectsFavorites', favoritesProvider);
+	const favoriteGroupsState = FavoriteGroupsState.create(context);
+	const favoritesState = FavoritesState.create(context);
+	const hotkeySlotsState = HotkeySlotsState.create(context);
+	const projectsState = ProjectsState.create(context);
+	const workspaceGroupState = WorkspaceGroupsState.create(context);
 	
-	favoritesProvider.onDidChangeTreeData(() => StatusBar.current?.update());
+	const favoriteGroupsDialog = FavoriteGroupsDialog.create(favoriteGroupsState, workspaceGroupState);
+	const favoritesDialog = FavoritesDialog.create(favoritesState, favoriteGroupsState);
 	
-	FavoritesProvider.onDidChangeFavorite((favorite) => {
-		
-		WorkspacesProvider.updateProject(context, favorite);
-		HotkeySlots.create(context).update(favorite);
-		
+	const favoritesProvider = FavoritesProvider.create({
+		favorites: favoritesState.get(),
+		favoriteGroups: favoriteGroupsState.get(),
+		hotkeySlots: hotkeySlotsState,
 	});
 	
+	const treeView = vscode.window.createTreeView('l13ProjectsFavorites', {
+		treeDataProvider: favoritesProvider,
+		showCollapseAll: true,
+	});
+	
+//	Tree View
+	
+	subscriptions.push(treeView);
+	
+	subscriptions.push(treeView.onDidCollapseElement(({ element }) => {
+		
+		favoriteGroupsState.saveCollapsedState((<FavoriteGroupTreeItem>element), true);
+		
+	}));
+	
+	subscriptions.push(treeView.onDidExpandElement(({ element }) => {
+		
+		favoriteGroupsState.saveCollapsedState((<FavoriteGroupTreeItem>element), false);
+		
+	}));
+	
+//	Favorites
+	
+	subscriptions.push(favoritesState.onDidUpdateFavorite((favorite) => {
+		
+		hotkeySlotsState.updateWorkspace(favorite);
+		projectsState.update(favorite); // updates also status bar info
+		
+	}));
+	
+	subscriptions.push(favoritesState.onDidDeleteFavorite((favorite) => {
+		
+		favoriteGroupsState.removeFavorite(favorite);
+		
+	}));
+	
+	subscriptions.push(favoritesState.onDidChangeFavorites((favorites) => {
+		
+		favoritesProvider.refresh({ favorites });
+		
+	}));
+	
+//	Favorite Groups
+	
+	subscriptions.push(favoriteGroupsState.onDidUpdateFavoriteGroup((favoriteGroup) => {
+		
+		hotkeySlotsState.updateGroup(favoriteGroup);
+		workspaceGroupState.update(favoriteGroup);
+		
+	}));
+	
+	subscriptions.push(favoriteGroupsState.onDidDeleteFavoriteGroup((favoriteGroup) => {
+		
+		if (!workspaceGroupState.getById(favoriteGroup.id)) {
+			hotkeySlotsState.removeGroup(favoriteGroup);
+		}
+		
+	}));
+	
+	subscriptions.push(favoriteGroupsState.onDidChangeFavoriteGroups((favoriteGroups) => {
+		
+		favoritesProvider.refresh({
+			favorites: favoritesState.get(),
+			favoriteGroups
+		});
+		
+	}));
+	
+//	Commands
+	
 	commands.register(context, {
-		'l13Projects.pickFavorite': () => FavoritesProvider.pickFavorite(context),
-		'l13Projects.addToFavorites': ({ project }) => FavoritesProvider.addToFavorites(context, project),
-		'l13Projects.renameFavorite': ({ project }) => FavoritesProvider.renameFavorite(context, project),
-		'l13Projects.removeFavorite': ({ project }) => FavoritesProvider.removeFavorite(context, project),
-		'l13Projects.clearFavorites': () => FavoritesProvider.clearFavorites(context),
+		'l13Projects.action.favorite.addToGroup': ({ project }:FavoriteTreeItems) => favoriteGroupsDialog.addFavoriteToGroup(project),
+		'l13Projects.action.favorite.removeFromGroup': ({ project }:FavoriteTreeItems) => favoriteGroupsState.removeFavorite(project),
+		'l13Projects.action.favorite.rename': ({ project }:FavoriteTreeItems) => favoritesDialog.rename(project),
+		'l13Projects.action.favorite.remove': ({ project }:FavoriteTreeItems) => favoritesDialog.remove(project),
+		
+		'l13Projects.action.favoriteGroups.add': () => favoriteGroupsDialog.add(),
+		'l13Projects.action.favoriteGroups.rename': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsDialog.rename(group),
+		'l13Projects.action.favoriteGroups.remove': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsDialog.remove(group),
+		
+		'l13Projects.action.favorites.pickFavorite': () => favoritesDialog.pick(),
+		'l13Projects.action.favorites.clear': () => favoritesDialog.clear(),
 	});
 	
 }

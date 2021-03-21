@@ -1,6 +1,6 @@
 //	Imports ____________________________________________________________________
 
-import { StatusbarColors } from '../@types/workspaces';
+import { StatusBarColors } from '../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -12,7 +12,7 @@ import { StatusbarColors } from '../@types/workspaces';
 
 //	Exports ____________________________________________________________________
 
-export const colors:StatusbarColors[] = [
+export const colors:StatusBarColors[] = [
 	{
 		'statusBar.background': null,
 		'statusBar.foreground': null,
