@@ -191,7 +191,7 @@ export class TagsDialog {
 	public async remove (tag:Tag) {
 		
 		if (settings.get('confirmDeleteTag', true)) {
-			const buttonDeleteDontShowAgain = `Delete, don't show again`;
+			const buttonDeleteDontShowAgain = 'Delete, don\'t show again';
 			const value = await dialogs.confirm(`Delete tag "${tag.label}"?`, 'Delete', buttonDeleteDontShowAgain);
 			if (!value) return;
 			if (value === buttonDeleteDontShowAgain) settings.update('confirmDeleteTag', false);
@@ -203,7 +203,7 @@ export class TagsDialog {
 	
 	public async clear () {
 		
-		if (await dialogs.confirm(`Delete all tags?'`, 'Delete')) {
+		if (await dialogs.confirm('Delete all tags?', 'Delete')) {
 			this.tagsState.clear();
 		}
 		

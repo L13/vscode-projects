@@ -16,8 +16,8 @@ import { findExtWorkspace } from '../common/workspaces';
 
 //	Variables __________________________________________________________________
 
-const findGitFolder:RegExp = /^\.git$/;
-const findVSCodeFolder:RegExp = /^\.vscode$/;
+const findGitFolder = /^\.git$/;
+const findVSCodeFolder = /^\.vscode$/;
 
 //	Initialize _________________________________________________________________
 
@@ -151,8 +151,7 @@ export class WorkspacesState {
 				maxDepth: 1,
 				ignore: settings.get('subfolder.ignore', []),
 			})
-		])
-		.then(() => {
+		]).then(() => {
 			
 			this.rebuild();
 		

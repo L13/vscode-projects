@@ -113,7 +113,7 @@ export class WorkspaceGroupsDialog {
 	
 	public async clear () {
 		
-		if (await dialogs.confirm(`Delete all workspace groups?'`, 'Delete')) {
+		if (await dialogs.confirm('Delete all workspace groups?', 'Delete')) {
 			this.workspaceGroupsState.clear();
 		}
 		

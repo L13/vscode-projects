@@ -101,9 +101,9 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		{ label: 'Subfolders', type: 'subfolder', collapsed: false },
 	];
 	
-	private constructor ({ hotkeySlots, workspaces, workspaceGroups, tags, simpleGroups, tagGroup, typeGroups }:WorkspacesStates) {
+	private constructor ({ hotkeySlots, workspaces: cache, workspaceGroups, tags, simpleGroups, tagGroup, typeGroups }:WorkspacesStates) {
 		
-		this.workspaces = workspaces;
+		this.workspaces = cache;
 		this.workspaceGroups = workspaceGroups;
 		
 		this.tags = tags;
@@ -415,7 +415,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	public getParent (element:WorkspacesTreeItems) {
+	public getParent () {
 		
 		return Promise.resolve(undefined);
 		
@@ -427,7 +427,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	public async getChildren (element?:WorkspacesTreeItems) {
+	public getChildren (element?:WorkspacesTreeItems) {
 		
 		const list:WorkspacesTreeItems[] = [];
 		

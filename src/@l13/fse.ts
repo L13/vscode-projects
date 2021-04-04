@@ -9,7 +9,7 @@ import { isWindows } from './platforms';
 
 //	Variables __________________________________________________________________
 
-const findRegExpChars:RegExp = /([\\\[\]\.\*\^\$\|\+\-\{\}\(\)\?\!\=\:\,])/g;
+const findRegExpChars = /([\\\[\]\.\*\^\$\|\+\-\{\}\(\)\?\!\=\:\,])/g;
 
 const findIllegalAndControlChars = /[\x00-\x1f"\*<>\?\|\x80-\x9f]/g;
 const findColon = /:/g;
@@ -24,7 +24,7 @@ export function walkTree (cwd:string, options:Callback|Options, callback?:Callba
 	
 	callback = typeof options === 'function' ? options : callback;
 	
-	const findIgnore = Array.isArray((<Options>options).ignore) ? createFindGlob((<string[]>(<Options>options).ignore)) : null;
+	const findIgnore = Array.isArray((<Options>options).ignore) ? createFindGlob((<Options>options).ignore) : null;
 	const maxDepth = (<Options>options).maxDepth || 0;
 	
 	const job:WalkTreeJob = {
@@ -34,7 +34,7 @@ export function walkTree (cwd:string, options:Callback|Options, callback?:Callba
 		ignore: findIgnore,
 		result: {},
 		tasks: 1,
-		done: () => (<Callback>callback)(null, job.result),
+		done: () => callback(null, job.result),
 	};
 	
 	_walktree(job, cwd, maxDepth);
@@ -45,7 +45,7 @@ export function subfolders (cwd:string, options:Callback|Options, callback:Callb
 	
 	callback = typeof options === 'function' ? options : callback;
 	
-	const findIgnore = Array.isArray((<Options>options).ignore) ? createFindGlob((<string[]>(<Options>options).ignore)) : null;
+	const findIgnore = Array.isArray((<Options>options).ignore) ? createFindGlob((<Options>options).ignore) : null;
 	
 	fs.readdir(cwd, (error, names) => {
 		
@@ -97,7 +97,7 @@ export function sanitize (pathname:string) {
 
 function escapeForRegExp (text:any) :string {
 	
-	return ('' + text).replace(findRegExpChars, (match) => {
+	return `${text}`.replace(findRegExpChars, (match) => {
 		
 		if (match === '*') return '.*';
 		if (match === '?') return '.';
@@ -108,7 +108,7 @@ function escapeForRegExp (text:any) :string {
 	
 }
 
-function _walktree (job:WalkTreeJob, cwd:string, depth:number, relative:string = '') {
+function _walktree (job:WalkTreeJob, cwd:string, depth:number, relative = '') {
 	
 	const dirname = path.join(cwd, relative);
 	

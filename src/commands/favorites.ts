@@ -139,15 +139,15 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	}));
 	
-	//	Tags
+//	Tags
 		
-		subscriptions.push(tagsState.onDidChangeTags((tags) => {
+	subscriptions.push(tagsState.onDidChangeTags((tags) => {
 			
-			favoritesProvider.refresh({
-				tags,
-			});
+		favoritesProvider.refresh({
+			tags,
+		});
 			
-		}));
+	}));
 	
 //	Commands
 	

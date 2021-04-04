@@ -190,9 +190,9 @@ function getFolders (paths:string[]) {
 	
 	const values:string[] = [];
 	
-	paths.forEach((path) => {
+	paths.forEach((fsPath) => {
 		
-		const folders = isCodeWorkspace(path) ? settings.getWorkspaceFolders(path).map((workspace) => workspace.path) : [path];
+		const folders = isCodeWorkspace(fsPath) ? settings.getWorkspaceFolders(fsPath).map((workspace) => workspace.path) : [fsPath];
 		
 		for (const folder of folders) {
 			if (!values.includes(folder)) values.push(folder);
@@ -206,13 +206,13 @@ function getFolders (paths:string[]) {
 
 function getWorkspaceUris (paths:string[], projectsState:ProjectsState) {
 	
-	return paths.map((path) => {
+	return paths.map((fsPath) => {
 		
-		const name = projectsState.getByPath(path)?.label;
+		const name = projectsState.getByPath(fsPath)?.label;
 		
 		return {
 			name,
-			uri: vscode.Uri.file(path),
+			uri: vscode.Uri.file(fsPath),
 		};
 		
 	});
@@ -235,7 +235,7 @@ async function openMultipleWindows (group:FavoriteGroup|WorkspaceGroup|Tag, open
 	const paths = group.paths;
 	
 	if (paths.length > 3 && settings.get('confirmOpenMultipleWindows', true)) {
-		const buttonOpenDontShowAgain = `Open, don't show again`;
+		const buttonOpenDontShowAgain = 'Open, don\'t show again';
 		const text = `Open "${group.label}" with ${paths.length} workspaces in multiple windows at once?`;
 		const value = await dialogs.confirm(text, 'Open', buttonOpenDontShowAgain);
 		if (!value) return;
@@ -254,9 +254,9 @@ async function openAsWorkspace (currentPaths:string[], sessionsState:SessionsSta
 	const workspaceFolders = vscode.workspace.workspaceFolders;
 	
 	if (workspaceFolders?.length === paths.length) {
-		const hasSamePaths = paths.every((path) => {
+		const hasSamePaths = paths.every((fsPath) => {
 			
-			return workspaceFolders.some((folder) => folder.uri.fsPath === path);
+			return workspaceFolders.some((folder) => folder.uri.fsPath === fsPath);
 			
 		});
 		if (hasSamePaths) {
@@ -278,11 +278,11 @@ async function openAsWorkspace (currentPaths:string[], sessionsState:SessionsSta
 	
 }
 
-async function addFoldersToWorkspace (currentPaths:string[], projectsState:ProjectsState) {
+function addFoldersToWorkspace (currentPaths:string[], projectsState:ProjectsState) {
 	
-	const paths = getFolders(currentPaths).filter((path) => {
+	const paths = getFolders(currentPaths).filter((fsPath) => {
 				
-		return !vscode.workspace.workspaceFolders?.find((workspace) => workspace.uri.fsPath === path);
+		return !vscode.workspace.workspaceFolders?.find((workspace) => workspace.uri.fsPath === fsPath);
 		
 	});
 	

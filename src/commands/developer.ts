@@ -138,7 +138,7 @@ async function createBackup (context:vscode.ExtensionContext, dirname:string, ba
 async function selectBackup (dirname:string) {
 	
 	if (!fs.existsSync(dirname)) {
-		vscode.window.showInformationMessage(`No backups available`);
+		vscode.window.showInformationMessage('No backups available');
 		return;
 	}
 	
@@ -146,7 +146,7 @@ async function selectBackup (dirname:string) {
 	const items = filenames.filter((name) => findBackupFileName.test(name)).map((label) => ({ label }));
 	
 	if (!items.length) {
-		vscode.window.showInformationMessage(`No backups available`);
+		vscode.window.showInformationMessage('No backups available');
 		return;
 	}
 	
@@ -158,6 +158,7 @@ async function selectBackup (dirname:string) {
 
 function formatDate (date:Date) {
 	
+	// eslint-disable-next-line max-len
 	return `${date.getFullYear()}-${formatDigit(date.getMonth() + 1)}-${formatDigit(date.getDate())}-${formatDigit(date.getHours())}-${formatDigit(date.getMinutes())}-${formatDigit(date.getSeconds())}`;
 	
 }

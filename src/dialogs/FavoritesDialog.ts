@@ -7,7 +7,6 @@ import { Favorite, FavoriteQuickPickItem } from '../@types/favorites';
 import * as dialogs from '../common/dialogs';
 import * as files from '../common/files';
 import * as settings from '../common/settings';
-import { isCodeWorkspace } from '../common/workspaces';
 
 import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
 import { FavoritesState } from '../states/FavoritesState';
@@ -87,7 +86,7 @@ export class FavoritesDialog {
 		if (favorite.label === value || value === undefined) return;
 		
 		if (!value) {
-			vscode.window.showErrorMessage(`Favorite with no name is not valid!`);
+			vscode.window.showErrorMessage('Favorite with no name is not valid!');
 			return;
 		}
 		
@@ -99,7 +98,7 @@ export class FavoritesDialog {
 	public async remove (favorite:Favorite) {
 		
 		if (settings.get('confirmDeleteFavorite', true)) {
-			const buttonDeleteDontShowAgain = `Delete, don't show again`;
+			const buttonDeleteDontShowAgain = 'Delete, don\'t show again';
 			const value = await dialogs.confirm(`Delete favorite "${favorite.label}"?`, 'Delete', buttonDeleteDontShowAgain);
 			if (!value) return;
 			if (value === buttonDeleteDontShowAgain) settings.update('confirmDeleteFavorite', false);
@@ -111,7 +110,7 @@ export class FavoritesDialog {
 	
 	public async clear () {
 		
-		if (await dialogs.confirm(`Delete all favorites and groups?'`, 'Delete')) {
+		if (await dialogs.confirm('Delete all favorites and groups?', 'Delete')) {
 			this.favoritesStates.clear();
 		}
 		

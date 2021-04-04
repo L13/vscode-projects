@@ -81,7 +81,7 @@ export class FavoriteGroupsDialog {
 		
 	}
 	
-	public async addWorkspaceGroup (workspaceGroup:WorkspaceGroup, workspaces:Project[]) {
+	public addWorkspaceGroup (workspaceGroup:WorkspaceGroup, workspaces:Project[]) {
 		
 		if (this.favoriteGroupsState.getById(workspaceGroup.id)) return;
 		

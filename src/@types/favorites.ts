@@ -2,14 +2,13 @@
 
 import * as vscode from 'vscode';
 
-import { Project } from './workspaces';
-
 import { FavoriteGroupTreeItem } from '../sidebar/trees/groups/FavoriteGroupTreeItem';
 import { CurrentFavoriteTreeItem } from '../sidebar/trees/items/CurrentFavoriteTreeItem';
 import { FavoriteTreeItem } from '../sidebar/trees/items/FavoriteTreeItem';
 
 import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
+import { Project } from './workspaces';
 
 import { Tag } from './tags';
 
@@ -23,7 +22,8 @@ import { Tag } from './tags';
 
 //	Exports ____________________________________________________________________
 
-export interface Favorite extends Project {};
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface Favorite extends Project {}
 
 export type FavoriteGroup = {
 	label:string,

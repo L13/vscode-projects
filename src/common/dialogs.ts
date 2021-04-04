@@ -19,6 +19,7 @@ export async function open () {
 		canSelectFolders: true,
 		canSelectMany: true,
 		filters: {
+			// eslint-disable-next-line @typescript-eslint/naming-convention
 			Workspaces: ['code-workspace']
 		}
 	});
@@ -46,6 +47,7 @@ export async function openFile () {
 		canSelectFolders: false,
 		canSelectMany: true,
 		filters: {
+			// eslint-disable-next-line @typescript-eslint/naming-convention
 			Workspaces: ['code-workspace']
 		}
 	});
