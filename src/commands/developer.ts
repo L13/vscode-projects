@@ -6,6 +6,7 @@ import * as vscode from 'vscode';
 
 import { Favorite, FavoriteGroup } from '../@types/favorites';
 import { Slot } from '../@types/hotkeys';
+import { Tag } from '../@types/tags';
 import { Project, WorkspaceGroup } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
@@ -21,8 +22,9 @@ type Backup = {
 	favorites:Favorite[],
 	favoriteGroups:FavoriteGroup[],
 	projects:Project[],
-	workspaceGroups:WorkspaceGroup[],
 	slots:Slot[],
+	tags:Tag[],
+	workspaceGroups:WorkspaceGroup[],
 };
 
 //	Initialize _________________________________________________________________
@@ -67,8 +69,9 @@ export function activate (context:vscode.ExtensionContext) {
 				states.updateFavorites(context, content.favorites);
 				states.updateFavoriteGroups(context, content.favoriteGroups);
 				states.updateProjects(context, content.projects);
-				states.updateWorkspaceGroups(context, content.workspaceGroups);
 				states.updateSlots(context, content.slots);
+				states.updateTags(context, content.tags);
+				states.updateWorkspaceGroups(context, content.workspaceGroups);
 				
 				showMessageReload(`Restored backup "${item.label}"`);
 			}
@@ -82,10 +85,11 @@ export function activate (context:vscode.ExtensionContext) {
 			
 			createBackup(context, dirname, `${formatDate(new Date())}-auto.json`);
 			
-			states.updateSlots(context, undefined);
 			states.updateFavorites(context, undefined);
 			states.updateFavoriteGroups(context, undefined);
 			states.updateProjects(context, undefined);
+			states.updateSlots(context, undefined);
+			states.updateTags(context, undefined);
 			states.updateWorkspaceGroups(context, undefined);
 			
 			states.updateCurrentWorkspace(context, undefined);
@@ -118,8 +122,9 @@ async function createBackup (context:vscode.ExtensionContext, dirname:string, ba
 		favorites: states.getFavorites(context),
 		favoriteGroups: states.getFavoriteGroups(context),
 		projects: states.getProjects(context),
-		workspaceGroups: states.getWorkspaceGroups(context),
 		slots: states.getSlots(context),
+		tags: states.getTags(context),
+		workspaceGroups: states.getWorkspaceGroups(context),
 	};
 	
 	fs.writeFileSync(filename, JSON.stringify(content, null, '\t'), 'utf-8');

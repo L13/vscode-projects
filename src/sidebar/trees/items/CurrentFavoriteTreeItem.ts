@@ -4,7 +4,6 @@ import { join } from 'path';
 import { TreeItem } from 'vscode';
 
 import { Favorite } from '../../../@types/favorites';
-import { Slot } from '../../../@types/hotkeys';
 
 //	Variables __________________________________________________________________
 
@@ -18,7 +17,7 @@ const basePath = join(__dirname, '..', 'images', 'current');
 
 export class CurrentFavoriteTreeItem extends TreeItem {
 	
-	public constructor (public readonly project:Favorite, public readonly slot:Slot|null, isSubProject:boolean = false) {
+	public constructor (public readonly project:Favorite, info:string, isSubProject:boolean = false) {
 		
 		super(project.label);
 		
@@ -29,7 +28,7 @@ export class CurrentFavoriteTreeItem extends TreeItem {
 		
 		this.contextValue = `current-${isSubProject ? 'sub' : ''}favorite-${type}`;
 		this.tooltip = project.path;
-		this.description = `${slot ? `[${slot.index}] ` : ''}Current workspace`;
+		this.description = `◀ Current Workspace${info ? ' • ' + info : ''}`;
 		
 		this.iconPath = {
 			light: join(basePath, `current-project-${icon}-light.svg`),

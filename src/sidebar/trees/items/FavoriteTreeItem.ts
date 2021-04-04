@@ -4,7 +4,6 @@ import { join } from 'path';
 import { TreeItem } from 'vscode';
 
 import { Favorite } from '../../../@types/favorites';
-import { Slot } from '../../../@types/hotkeys';
 
 //	Variables __________________________________________________________________
 
@@ -24,22 +23,17 @@ export class FavoriteTreeItem extends TreeItem {
 		title: 'Open Project',
 	};
 	
-	public constructor (public readonly project:Favorite, public readonly slot:Slot|null, isSubProject:boolean = false) {
+	public constructor (public readonly project:Favorite, public description:string, isSubProject:boolean = false) {
 		
 		super(project.label);
 		
 		const type = project.type;
-		const info:string[] = [];
 		let icon = `${type}`;
-		
-		if (slot) info.push(`[${slot.index}]`);
-		if (project.deleted) info.push('Path does not exist');
 		
 		if (type === 'folder' || type === 'folders') icon += `-color-${project.color || 0}`;
 		
 		this.contextValue = `${isSubProject ? 'sub' : ''}favorite-${type}`;
 		this.tooltip = project.path;
-		this.description = info.join(' ');
 		
 		this.iconPath = {
 			light: join(basePath, `project-${icon}-light.svg`),

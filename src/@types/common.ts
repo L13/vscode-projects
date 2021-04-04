@@ -20,9 +20,15 @@ export type CommonTreeItems = FavoriteTreeItems|WorkspaceTreeItems;
 
 export type CommonGroupTreeItems = FavoriteGroupTreeItem|WorkspaceGroupTreeItem;
 
-export type InitialState = 'Collapsed'|'Expanded'|'Remember';
+export type InitialState = 'collapsed'|'expanded'|'remember';
 
-export type WorkspaceSorting = 'Group'|'Name'|'Simple'|'Type';
+export type WorkspaceSorting = 'name'|'category'|'type';
+
+export type WorkspaceDescriptionFormat = 'both'|'none'|'slot'|'tags';
+
+export type TagDescriptionFormat = 'both'|'none'|'slot'|'workspaces';
+
+export type GroupDescriptionFormat = 'both'|'none'|'slot'|'workspaces';
 
 //	Functions __________________________________________________________________
 

@@ -5,7 +5,8 @@ import * as vscode from 'vscode';
 import * as dialogs from '../common/dialogs';
 
 import { FavoriteGroup } from '../@types/favorites';
-import { Item } from '../@types/hotkeys';
+import { Item, Slot } from '../@types/hotkeys';
+import { Tag } from '../@types/tags';
 import { Project, WorkspaceGroup } from '../@types/workspaces';
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
 
@@ -47,6 +48,14 @@ export class HotkeySlotsDialog {
 		
 	}
 	
+	public async assignTag (tag:Tag) {
+		
+		const item = await this.createQuickPickDialog();
+		
+		if (item) this.hotkeySlotsState.assignTag(tag, item.index);
+		
+	}
+	
 	public async createQuickPickDialog () {
 		
 		const slots = this.hotkeySlotsState.get();
@@ -56,7 +65,7 @@ export class HotkeySlotsDialog {
 			items.push({
 				label: `Slot ${i}`,
 				index: i,
-				description: slots[i]?.label || '',
+				description: formatDescription(slots[i]),
 			});
 		}
 		
@@ -76,7 +85,7 @@ export class HotkeySlotsDialog {
 				items.push({
 					label: `Slot ${slot.index}`,
 					index: slot.index,
-					description: slot.label || '',
+					description: formatDescription(slot),
 				});
 			}
 		}
@@ -101,3 +110,12 @@ export class HotkeySlotsDialog {
 
 //	Functions __________________________________________________________________
 
+function formatDescription (slot:Slot) {
+	
+	if (!slot) return '';
+	
+	if ('tagId' in slot) return `$(tag) ${slot.label}`;
+	
+	return slot.label;
+	
+}

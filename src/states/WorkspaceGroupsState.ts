@@ -11,6 +11,7 @@ import { getNextGroupId } from '../common/groups';
 import * as states from '../common/states';
 
 import { SimpleGroupTreeItem } from '../sidebar/trees/groups/SimpleGroupTreeItem';
+import { TagGroupTreeItem } from '../sidebar/trees/groups/TagGroupTreeItem';
 import { TypeGroupTreeItem } from '../sidebar/trees/groups/TypeGroupTreeItem';
 import { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGroupTreeItem';
 
@@ -69,6 +70,12 @@ export class WorkspaceGroupsState {
 		
 	}
 	
+	public getTagGroup () {
+		
+		return states.getTagGroup(this.context);
+		
+	}
+	
 	public getById (groupId:number) {
 		
 		const workspaceGroups = this.get();
@@ -118,6 +125,60 @@ export class WorkspaceGroupsState {
 			this.save(workspaceGroups);
 			if (previousWorkspaceGroup) this._onDidUpdateWorkspaceGroup.fire(previousWorkspaceGroup);
 			this._onDidUpdateWorkspaceGroup.fire(workspaceGroup);
+			this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
+		}
+		
+	}
+	
+	public editWorkspaces (currentWorkspaceGroup:WorkspaceGroup, workspaces:Project[]) {
+		
+		const workspaceGroups = this.get();
+		const paths = workspaces.map((workspace) => workspace.path);
+		const groupId = currentWorkspaceGroup.id;
+		
+		for (const workspaceGroup of workspaceGroups) {
+			if (workspaceGroup.id === groupId) {
+				workspaceGroup.paths = paths;
+				workspaceGroup.paths.sort();
+				this.save(workspaceGroups);
+				this._onDidUpdateWorkspaceGroup.fire(workspaceGroup);
+				break;
+			} else {
+				let hasChanged = false;
+				paths.forEach((path) => {
+					
+					if (remove(workspaceGroup.paths, path)) hasChanged = true;
+					
+				});
+				if (hasChanged) this._onDidUpdateWorkspaceGroup.fire(workspaceGroup);
+			}
+		}
+		
+		this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
+		
+	}
+	
+	public cleanupUnknownPaths (workspaces:Project[]) {
+		
+		const workspaceGroups = this.get();
+		const paths = workspaces.map((workspace) => workspace.path);
+		let hasChanged = false;
+		
+		workspaceGroups.forEach((workspaceGroup) => {
+			
+			for (const path of workspaceGroup.paths) {
+				if (!paths.includes(path)) {
+					workspaceGroup.paths = workspaceGroup.paths.filter((p) => paths.includes(p));
+					hasChanged = true;
+					this._onDidUpdateWorkspaceGroup.fire(workspaceGroup);
+					break;
+				}
+			}
+			
+		});
+		
+		if (hasChanged) {
+			this.save(workspaceGroups);
 			this._onDidChangeWorkspaceGroups.fire(workspaceGroups);
 		}
 		
@@ -208,6 +269,17 @@ export class WorkspaceGroupsState {
 				break;
 			}
 		}
+		
+	}
+	
+	public saveTagGroupState (item:TagGroupTreeItem, collapsed:boolean) {
+		
+		let groupState = states.getTagGroup(this.context);
+		
+		if (groupState) groupState.collapsed = collapsed;
+		else groupState = { collapsed };
+		
+		states.updateTagGroup(this.context, groupState);
 		
 	}
 	

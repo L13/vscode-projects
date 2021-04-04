@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 import { FavoriteTreeItems } from '../@types/favorites';
 
 import * as commands from '../common/commands';
+import * as settings from '../common/settings';
 
 import { FavoriteGroupsDialog } from '../dialogs/FavoriteGroupsDialog';
 import { FavoritesDialog } from '../dialogs/FavoritesDialog';
@@ -16,6 +17,7 @@ import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
 import { FavoritesState } from '../states/FavoritesState';
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
 import { ProjectsState } from '../states/ProjectsState';
+import { TagsState } from '../states/TagsState';
 import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 
 //	Variables __________________________________________________________________
@@ -36,6 +38,7 @@ export function activate (context:vscode.ExtensionContext) {
 	const favoritesState = FavoritesState.create(context);
 	const hotkeySlotsState = HotkeySlotsState.create(context);
 	const projectsState = ProjectsState.create(context);
+	const tagsState = TagsState.create(context);
 	const workspaceGroupState = WorkspaceGroupsState.create(context);
 	
 	const favoriteGroupsDialog = FavoriteGroupsDialog.create(favoriteGroupsState, workspaceGroupState);
@@ -45,6 +48,7 @@ export function activate (context:vscode.ExtensionContext) {
 		favorites: favoritesState.get(),
 		favoriteGroups: favoriteGroupsState.get(),
 		hotkeySlots: hotkeySlotsState,
+		tags: tagsState.get(),
 	});
 	
 	const treeView = vscode.window.createTreeView('l13ProjectsFavorites', {
@@ -65,6 +69,26 @@ export function activate (context:vscode.ExtensionContext) {
 	subscriptions.push(treeView.onDidExpandElement(({ element }) => {
 		
 		favoriteGroupsState.saveCollapsedState((<FavoriteGroupTreeItem>element), false);
+		
+	}));
+	
+//	Favorites Provider
+		
+	subscriptions.push(vscode.workspace.onDidChangeConfiguration((event) => {
+		
+		let hasChanged = false;
+		
+		if (event.affectsConfiguration('l13Projects.workspaceDescriptionFormat')) {
+			favoritesProvider.workspaceDescriptionFormat = settings.get('workspaceDescriptionFormat');
+			hasChanged = true;
+		}
+		
+		if (event.affectsConfiguration('l13Projects.groupDescriptionFormat')) {
+			favoritesProvider.groupDescriptionFormat = settings.get('groupDescriptionFormat');
+			hasChanged = true;
+		}
+		
+		if (hasChanged) favoritesProvider.refresh();
 		
 	}));
 	
@@ -110,10 +134,20 @@ export function activate (context:vscode.ExtensionContext) {
 		
 		favoritesProvider.refresh({
 			favorites: favoritesState.get(),
-			favoriteGroups
+			favoriteGroups,
 		});
 		
 	}));
+	
+	//	Tags
+		
+		subscriptions.push(tagsState.onDidChangeTags((tags) => {
+			
+			favoritesProvider.refresh({
+				tags,
+			});
+			
+		}));
 	
 //	Commands
 	
@@ -124,8 +158,8 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.favorite.remove': ({ project }:FavoriteTreeItems) => favoritesDialog.remove(project),
 		
 		'l13Projects.action.favoriteGroups.add': () => favoriteGroupsDialog.add(),
-		'l13Projects.action.favoriteGroups.rename': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsDialog.rename(group),
-		'l13Projects.action.favoriteGroups.remove': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsDialog.remove(group),
+		'l13Projects.action.favoriteGroup.rename': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsDialog.rename(group),
+		'l13Projects.action.favoriteGroup.remove': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsDialog.remove(group),
 		
 		'l13Projects.action.favorites.pickFavorite': () => favoritesDialog.pick(),
 		'l13Projects.action.favorites.clear': () => favoritesDialog.clear(),

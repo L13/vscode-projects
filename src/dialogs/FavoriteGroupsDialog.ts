@@ -114,14 +114,14 @@ export class FavoriteGroupsDialog {
 	
 	public async remove (favoriteGroup:FavoriteGroup) {
 		
-		const BUTTON_DELETE_GROUP_AND_FAVORITES = 'Delete Group and Favorites';
+		const buttonDeleteGroupAndFavorites = 'Delete Group and Favorites';
 		const buttons = ['Delete'];
 		
-		if (favoriteGroup.paths.length) buttons.push(BUTTON_DELETE_GROUP_AND_FAVORITES);
+		if (favoriteGroup.paths.length) buttons.push(buttonDeleteGroupAndFavorites);
 		
 		const value = await dialogs.confirm(`Delete favorite group "${favoriteGroup.label}"?`, ...buttons);
 		
-		if (value) this.favoriteGroupsState.remove(favoriteGroup, value === BUTTON_DELETE_GROUP_AND_FAVORITES);
+		if (value) this.favoriteGroupsState.remove(favoriteGroup, value === buttonDeleteGroupAndFavorites);
 		
 	}
 	

@@ -6,6 +6,7 @@ import * as common from './commands/common';
 import * as developer from './commands/developer';
 import * as favorites from './commands/favorites';
 import * as hotkeys from './commands/hotkeys';
+import * as tags from './commands/tags';
 import * as workspaces from './commands/workspaces';
 
 //	Variables __________________________________________________________________
@@ -23,6 +24,7 @@ export function activate (context:vscode.ExtensionContext) {
 	common.activate(context);
 	favorites.activate(context);
 	hotkeys.activate(context);
+	tags.activate(context);
 	workspaces.activate(context);
 	
 	if (context.extensionMode === vscode.ExtensionMode.Development) developer.activate(context);

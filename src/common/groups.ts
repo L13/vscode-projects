@@ -38,5 +38,25 @@ export function getNextGroupId (context:vscode.ExtensionContext) :number {
 	
 }
 
+export function getNextTagId (context:vscode.ExtensionContext) :number {
+	
+	const tags = states.getTags(context);
+	
+	if (!tags.length) return 0;
+	
+	const tagIds:number[] = tags.map((tag) => tag.id);
+	
+	const maxTagId = Math.max(...tagIds);
+	let i = 0;
+	
+	while (i <= maxTagId) {
+		if (!tagIds.includes(i)) return i;
+		i++;
+	}
+	
+	return i;
+	
+}
+
 //	Functions __________________________________________________________________
 

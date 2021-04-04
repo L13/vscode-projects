@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 
-import { WorkspaceQuickPickItem } from '../@types/workspaces';
+import { WorkspaceGroup, WorkspaceQuickPickItem } from '../@types/workspaces';
 
 import * as files from '../common/files';
 
@@ -79,6 +79,35 @@ export class WorkspacesDialog {
 		});
 		
 		return items;
+		
+	}
+	
+	public async editWorkspaces (workspaceGroup:WorkspaceGroup) {
+		
+		const workspaces = this.workspacesState.cache || await this.workspacesState.detect();
+		
+		if (!workspaces.length) return;
+		
+		const items = workspaces.map((workspace) => {
+			
+			return {
+				label: workspace.label,
+				description: workspace.path,
+				detail: workspace.deleted ? '$(alert) Path does not exist' : '',
+				picked: workspaceGroup.paths.includes(workspace.path),
+				workspace,
+			};
+			
+		});
+		
+		const selectedItems = await vscode.window.showQuickPick(items, {
+			placeHolder: `Select workspaces for ${workspaceGroup.label}`,
+			canPickMany: true,
+		});
+		
+		if (!selectedItems) return;
+		
+		this.workspaceGroupsState.editWorkspaces(workspaceGroup, selectedItems.map((item) => item.workspace));
 		
 	}
 	

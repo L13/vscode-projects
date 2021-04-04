@@ -12,19 +12,9 @@
 
 //	Exports ____________________________________________________________________
 
-export type Slot = {
-	label:string,
-	index:number,
-	path?:string,
-	groupId?:number,
-	tagId?:number,
-	paths?:string[],
-};
-
-export type Item = {
-	label:string,
-	index:number,
-	description:string,
+export type Plural = {
+	size:string,
+	[index:number]:string,
 };
 
 //	Functions __________________________________________________________________
