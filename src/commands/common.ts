@@ -13,6 +13,7 @@ import * as commands from '../common/commands';
 import * as dialogs from '../common/dialogs';
 import * as files from '../common/files';
 import * as settings from '../common/settings';
+import * as states from '../common/states';
 import * as terminal from '../common/terminal';
 import { getCurrentWorkspacePath, isCodeWorkspace } from '../common/workspaces';
 
@@ -70,31 +71,38 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	const diffFoldersDialog = DiffFoldersDialog.create(projectsState);
 	
+	let previousLastModified = states.getStateInfo(context).lastModified;
+	
 	context.subscriptions.push(vscode.window.onDidChangeWindowState(({ focused }) => {
 		
 		if (focused) { // Update data if changes in another workspace have been done
-			const tags = tagsState.get();
-			
-			hotkeySlots.saveCurrentWorkspace();
-			hotkeySlots.refresh();
-			
-			FavoritesProvider.current?.refresh({
-				favorites: favoritesState.get(),
-				favoriteGroups: favoriteGroupsState.get(),
-				tags,
-			});
-			
-			if (workspacesState.cache) {
-				WorkspacesProvider.current?.refresh({
-					workspaces: workspacesState.get(),
-					workspaceGroups: workspaceGroupsState.get(),
+			const currentLastModified = states.getStateInfo(context).lastModified;
+			if (previousLastModified !== currentLastModified) {
+				previousLastModified = currentLastModified;
+				
+				const tags = tagsState.get();
+				
+				hotkeySlots.saveCurrentWorkspace();
+				hotkeySlots.refresh();
+				
+				FavoritesProvider.current?.refresh({
+					favorites: favoritesState.get(),
+					favoriteGroups: favoriteGroupsState.get(),
+					tags,
+				});
+				
+				if (workspacesState.cache) {
+					WorkspacesProvider.current?.refresh({
+						workspaces: workspacesState.get(),
+						workspaceGroups: workspaceGroupsState.get(),
+						tags,
+					});
+				}
+				
+				TagsProvider.current?.refresh({
 					tags,
 				});
 			}
-			
-			TagsProvider.current?.refresh({
-				tags,
-			});
 		}
 		
 	}));

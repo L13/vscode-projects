@@ -265,7 +265,7 @@ export class WorkspaceGroupsState {
 		for (const workspaceGroup of workspaceGroups) {
 			if (workspaceGroup.id === groupId) {
 				workspaceGroup.collapsed = collapsed;
-				this.save(workspaceGroups);
+				states.updateCollapseState(this.context, workspaceGroups);
 				break;
 			}
 		}

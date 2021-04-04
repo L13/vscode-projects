@@ -5,10 +5,13 @@ import * as vscode from 'vscode';
 import { Favorite, FavoriteGroup } from '../@types/favorites';
 import { Slot } from '../@types/hotkeys';
 import { NextSession } from '../@types/sessions';
+import { StateInfo } from '../@types/states';
 import { Tag, TagGroupState } from '../@types/tags';
 import { Project, SimpleGroupState, TypeGroupState, WorkspaceGroup } from '../@types/workspaces';
 
 //	Variables __________________________________________________________________
+
+const STATE_INFO = 'stateInfo';
 
 const NEXT_SESSION = 'nextSession';
 
@@ -40,6 +43,12 @@ const SUBFOLDER_CACHE = 'cacheSubfolderProjects';
 
 //	Exports ____________________________________________________________________
 
+export function getStateInfo (context:vscode.ExtensionContext) :StateInfo {
+		
+	return context.globalState.get(STATE_INFO, { lastModified: 0 });
+	
+}
+
 export function getNextSession (context:vscode.ExtensionContext) :NextSession {
 	
 	return context.globalState.get(NEXT_SESSION, null);
@@ -62,6 +71,8 @@ export function updateTags (context:vscode.ExtensionContext, tags:Tag[]) {
 	
 	context.globalState.update(TAGS, tags);
 	
+	updateStateInfo(context);
+	
 }
 
 export function getSlots (context:vscode.ExtensionContext) :Slot[] {
@@ -73,6 +84,8 @@ export function getSlots (context:vscode.ExtensionContext) :Slot[] {
 export function updateSlots (context:vscode.ExtensionContext, slots:Slot[]) {
 	
 	context.globalState.update(SLOTS, slots);
+	
+	updateStateInfo(context);
 	
 }
 
@@ -98,6 +111,8 @@ export function updateFavorites (context:vscode.ExtensionContext, favorites:Favo
 	
 	context.globalState.update(FAVORITES, favorites);
 	
+	updateStateInfo(context);
+	
 }
 
 export function getFavoriteGroups (context:vscode.ExtensionContext) :FavoriteGroup[] {
@@ -109,6 +124,8 @@ export function getFavoriteGroups (context:vscode.ExtensionContext) :FavoriteGro
 export function updateFavoriteGroups (context:vscode.ExtensionContext, favoriteGroups:FavoriteGroup[]) {
 	
 	context.globalState.update(FAVORITE_GROUPS, favoriteGroups);
+	
+	updateStateInfo(context);
 	
 }
 
@@ -122,6 +139,8 @@ export function updateProjects (context:vscode.ExtensionContext, projects:Projec
 	
 	context.globalState.update(PROJECTS, projects);
 	
+	updateStateInfo(context);
+	
 }
 
 export function getWorkspaceGroups (context:vscode.ExtensionContext) :WorkspaceGroup[] {
@@ -134,6 +153,8 @@ export function updateWorkspaceGroups (context:vscode.ExtensionContext, workspac
 	
 	context.globalState.update(WORKSPACE_GROUPS, workspaceGroups);
 	
+	updateStateInfo(context);
+	
 }
 	
 export function getTagGroup (context:vscode.ExtensionContext) :TagGroupState {
@@ -145,6 +166,14 @@ export function getTagGroup (context:vscode.ExtensionContext) :TagGroupState {
 export function updateTagGroup (context:vscode.ExtensionContext, tagGroup:TagGroupState) {
 	
 	context.globalState.update(TAG_GROUP, tagGroup);
+	
+	updateStateInfo(context);
+	
+}
+	
+export function updateCollapseState (context:vscode.ExtensionContext, workspaceGroups:WorkspaceGroup[]) {
+	
+	context.globalState.update(WORKSPACE_GROUPS, workspaceGroups);
 	
 }
 	
@@ -181,6 +210,8 @@ export function getWorkspacesCache (context:vscode.ExtensionContext) :Project[] 
 export function updateWorkspacesCache (context:vscode.ExtensionContext, cache:Project[]) {
 	
 	context.globalState.update(WORKSPACES_CACHE, cache);
+	
+	updateStateInfo(context);
 	
 }
 
@@ -234,3 +265,10 @@ export function updateSubfolderCache (context:vscode.ExtensionContext, cache:Pro
 
 //	Functions __________________________________________________________________
 
+function updateStateInfo (context:vscode.ExtensionContext) {
+	
+	context.globalState.update(STATE_INFO, {
+		lastModified: +new Date(),
+	});
+	
+}
