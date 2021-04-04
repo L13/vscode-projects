@@ -105,10 +105,10 @@ export class ProjectsDialog {
 	public async remove (project:Project) {
 		
 		if (settings.get('confirmDeleteProject', true)) {
-			const BUTTON_DELETE_DONT_SHOW_AGAIN = `Delete, don't show again`;
-			const value = await dialogs.confirm(`Delete project "${project.label}"?`, 'Delete', BUTTON_DELETE_DONT_SHOW_AGAIN);
+			const buttonDeleteDontShowAgain = `Delete, don't show again`;
+			const value = await dialogs.confirm(`Delete project "${project.label}"?`, 'Delete', buttonDeleteDontShowAgain);
 			if (!value) return;
-			if (value === BUTTON_DELETE_DONT_SHOW_AGAIN) settings.update('confirmDeleteProject', false);
+			if (value === buttonDeleteDontShowAgain) settings.update('confirmDeleteProject', false);
 		}
 		
 		this.projectsState.remove(project);

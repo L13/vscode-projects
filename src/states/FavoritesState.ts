@@ -64,6 +64,21 @@ export class FavoritesState {
 		
 	}
 	
+	public cleanupUnknownPaths () {
+		
+		let favorites = this.get();
+		const length = favorites.length;
+		
+		favorites = favorites.filter((favorite) => fs.existsSync(favorite.path));
+		
+		if (length !== favorites.length) {
+			states.updateProjects(this.context, favorites);
+			this.save(favorites);
+			this._onDidChangeFavorites.fire(favorites);
+		}
+		
+	}
+	
 	public add (workspace:Project) {
 		
 		const favorites = this.get();

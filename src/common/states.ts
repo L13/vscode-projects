@@ -5,11 +5,14 @@ import * as vscode from 'vscode';
 import { Favorite, FavoriteGroup } from '../@types/favorites';
 import { Slot } from '../@types/hotkeys';
 import { NextSession } from '../@types/sessions';
+import { Tag, TagGroupState } from '../@types/tags';
 import { Project, SimpleGroupState, TypeGroupState, WorkspaceGroup } from '../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
 const NEXT_SESSION = 'nextSession';
+
+const TAGS = 'tags';
 
 const SLOTS = 'slots';
 const CURRENT_WORKSPACE = 'workspace';
@@ -22,6 +25,8 @@ const WORKSPACE_GROUPS = 'workspaceGroups';
 
 const SIMPLE_GROUPS = 'groupStatesBySimple';
 const TYPE_GROUPS = 'groupStatesByType';
+
+const TAG_GROUP = 'tagGroup';
 
 const WORKSPACES_CACHE = 'cache';
 const GIT_CACHE = 'cacheGitProjects';
@@ -44,6 +49,18 @@ export function getNextSession (context:vscode.ExtensionContext) :NextSession {
 export function updateNextSession (context:vscode.ExtensionContext, session:NextSession) {
 	
 	context.globalState.update(NEXT_SESSION, session);
+	
+}
+
+export function getTags (context:vscode.ExtensionContext) :Tag[] {
+	
+	return context.globalState.get(TAGS, []);
+	
+}
+
+export function updateTags (context:vscode.ExtensionContext, tags:Tag[]) {
+	
+	context.globalState.update(TAGS, tags);
 	
 }
 
@@ -116,6 +133,18 @@ export function getWorkspaceGroups (context:vscode.ExtensionContext) :WorkspaceG
 export function updateWorkspaceGroups (context:vscode.ExtensionContext, workspaceGroups:WorkspaceGroup[]) {
 	
 	context.globalState.update(WORKSPACE_GROUPS, workspaceGroups);
+	
+}
+	
+export function getTagGroup (context:vscode.ExtensionContext) :TagGroupState {
+	
+	return context.globalState.get(TAG_GROUP);
+	
+}
+	
+export function updateTagGroup (context:vscode.ExtensionContext, tagGroup:TagGroupState) {
+	
+	context.globalState.update(TAG_GROUP, tagGroup);
 	
 }
 	

@@ -23,7 +23,7 @@ import { getCurrentWorkspacePath } from './workspaces';
 
 export function open (pathname:string, openInNewWindow?:boolean) {
 	
-	const newWindow = openInNewWindow ?? settings.get('openInNewWindow', false);
+	const newWindow = openInNewWindow ?? settings.openInNewWindow();
 	
 	vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(pathname), newWindow);
 	
@@ -31,7 +31,7 @@ export function open (pathname:string, openInNewWindow?:boolean) {
 
 export function openAll (pathnames:string[], openInNewWindow?:boolean) {
 	
-	const newWindow = openInNewWindow ?? settings.get('openInNewWindow', false);
+	const newWindow = openInNewWindow ?? settings.openInNewWindow();
 	const sortedPaths = pathnames.slice().sort();
 	let currentWorkspacePath = getCurrentWorkspacePath();
 	

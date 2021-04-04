@@ -35,8 +35,8 @@ export class WorkspacesState {
 		
 	}
 	
-	private _onDidChangeCache:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
-	public readonly onDidChangeCache:vscode.Event<Project[]> = this._onDidChangeCache.event;
+	private _onDidChangeWorkspaces:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
+	public readonly onDidChangeWorkspaces:vscode.Event<Project[]> = this._onDidChangeWorkspaces.event;
 	
 	public cache:Project[] = null;
 	
@@ -71,21 +71,6 @@ export class WorkspacesState {
 		}
 		
 		return null;
-		
-	}
-	
-	private cleanupUnknownPaths () {
-		
-		const workspaceGroups = states.getWorkspaceGroups(this.context);
-		const paths = this.cache.map((workspace) => workspace.path);
-		
-		workspaceGroups.forEach((workspaceGroup) => {
-			
-			workspaceGroup.paths = workspaceGroup.paths.filter((path) => paths.includes(path));
-			
-		});
-		
-		states.updateWorkspaceGroups(this.context, workspaceGroups);
 		
 	}
 	
@@ -129,9 +114,8 @@ export class WorkspacesState {
 	public refresh () {
 		
 		this.rebuild();
-		this.cleanupUnknownPaths();
 		
-		this._onDidChangeCache.fire(this.cache);
+		this._onDidChangeWorkspaces.fire(this.cache);
 		
 	}
 	
@@ -171,7 +155,8 @@ export class WorkspacesState {
 		.then(() => {
 			
 			this.rebuild();
-			this.cleanupUnknownPaths();
+		
+			this._onDidChangeWorkspaces.fire(this.cache);
 			
 			return this.cache;
 			

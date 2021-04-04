@@ -3,7 +3,6 @@
 import { join } from 'path';
 import { TreeItem } from 'vscode';
 
-import { Slot } from '../../../@types/hotkeys';
 import { Project } from '../../../@types/workspaces';
 
 //	Variables __________________________________________________________________
@@ -18,7 +17,7 @@ const basePath = join(__dirname, '..', 'images', 'current');
 
 export class CurrentWorkspaceTreeItem extends TreeItem {
 	
-	public constructor (public readonly project:Project, public readonly slot:Slot|null, isSubProject:boolean = false) {
+	public constructor (public readonly project:Project, info:string, isSubProject:boolean = false) {
 		
 		super(project.label);
 		
@@ -29,7 +28,7 @@ export class CurrentWorkspaceTreeItem extends TreeItem {
 		
 		this.contextValue = `current-${isSubProject ? 'sub' : ''}project-${type}`;
 		this.tooltip = project.path;
-		this.description = `${slot ? `[${slot.index}] ` : ''}Current workspace`;
+		this.description = `◀ Current Workspace${info ? ' • ' + info : ''}`;
 		
 		this.iconPath = {
 			light: join(basePath, `current-project-${icon}-light.svg`),

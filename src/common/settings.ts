@@ -5,9 +5,10 @@ import * as jsoncParser from 'jsonc-parser';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import { isCodeWorkspace } from './workspaces';
-
+import { WorkspaceSorting } from '../@types/common';
 import { StatusBarColors } from '../@types/workspaces';
+
+import { isCodeWorkspace } from './workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -28,6 +29,25 @@ export function get (key:string, value?:any) {
 export function update (key:string, value:any, global:boolean = true) {
 	
 	return vscode.workspace.getConfiguration('l13Projects').update(key, value, global);
+	
+}
+
+export function sortWorkspacesBy () :WorkspaceSorting {
+	
+	const value = get('sortWorkspacesBy').toLowerCase();
+	
+	if (value === 'simple') {
+		vscode.window.showWarningMessage('Settings: "Simple" for "l13Projects.sortWorkspacesBy" is depricated. Please use "category" instead.');
+		return 'category';
+	}
+	
+	return value;
+	
+}
+
+export function openInNewWindow () :boolean {
+	
+	return get('openInNewWindow', false);
 	
 }
 

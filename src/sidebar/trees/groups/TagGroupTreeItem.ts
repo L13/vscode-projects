@@ -3,13 +3,17 @@
 import { join } from 'path';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 
-import { GroupTreeItem, TypeGroup } from '../../../@types/workspaces';
+import { GroupTreeItem, TagGroup } from '../../../@types/tags';
 
 import { WorkspaceGroupsState } from '../../../states/WorkspaceGroupsState';
 
 //	Variables __________________________________________________________________
 
-const basePath = join(__dirname, '..', 'images', 'types');
+const basePath = join(__dirname, '..', 'images', 'tags');
+const iconPath = {
+	light: join(basePath, `tag-light.svg`),
+	dark: join(basePath, `tag-dark.svg`),
+};
 
 //	Initialize _________________________________________________________________
 
@@ -17,27 +21,23 @@ const basePath = join(__dirname, '..', 'images', 'types');
 
 //	Exports ____________________________________________________________________
 
-export class TypeGroupTreeItem extends TreeItem implements GroupTreeItem {
+export class TagGroupTreeItem extends TreeItem implements GroupTreeItem {
 	
-	public constructor (public readonly group:TypeGroup, public description:string) {
+	public contextValue = 'tagGroup';
+	
+	public iconPath = iconPath;
+	
+	public constructor (public readonly group:TagGroup) {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
-		const name = `project-${group.type}`;
-		
-		this.contextValue = `group-${name}`;
-		this.id = `group-${name}`;
-		
-		this.iconPath = {
-			light: join(basePath, `${name}-light.svg`),
-			dark: join(basePath, `${name}-dark.svg`),
-		};
+		this.id = 'tag-group';
 		
 	}
 	
 	public saveGroupState (workspaceGroupsState:WorkspaceGroupsState, collapsed:boolean) {
 		
-		workspaceGroupsState.saveTypeGroupState(this, collapsed);
+		workspaceGroupsState.saveTagGroupState(this, collapsed);
 		
 	}
 	

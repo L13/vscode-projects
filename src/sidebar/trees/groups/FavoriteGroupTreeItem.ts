@@ -4,7 +4,6 @@ import { join } from 'path';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 
 import { FavoriteGroup, GroupTreeItem } from '../../../@types/favorites';
-import { Slot } from '../../../@types/hotkeys';
 
 import { FavoriteGroupsState } from '../../../states/FavoriteGroupsState';
 
@@ -28,12 +27,11 @@ export class FavoriteGroupTreeItem extends TreeItem implements GroupTreeItem {
 		
 	public iconPath = iconPath;
 	
-	public constructor (public readonly group:FavoriteGroup, slot:Slot|null) {
+	public constructor (public readonly group:FavoriteGroup, public description:string) {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
 		this.id = `favorite-group-${group.id}`;
-		this.description = slot ? `[${slot.index}]` : '';
 		
 	}
 	

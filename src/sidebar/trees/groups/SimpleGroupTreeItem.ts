@@ -19,7 +19,7 @@ const basePath = join(__dirname, '..', 'images', 'groups');
 
 export class SimpleGroupTreeItem extends TreeItem implements GroupTreeItem {
 	
-	public constructor (public readonly group:SimpleGroup) {
+	public constructor (public readonly group:SimpleGroup, public description:string) {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		

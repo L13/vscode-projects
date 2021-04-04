@@ -3,7 +3,6 @@
 import { join } from 'path';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 
-import { Slot } from '../../../@types/hotkeys';
 import { GroupTreeItem, WorkspaceGroup } from '../../../@types/workspaces';
 
 import { WorkspaceGroupsState } from '../../../states/WorkspaceGroupsState';
@@ -28,12 +27,11 @@ export class WorkspaceGroupTreeItem extends TreeItem implements GroupTreeItem {
 	
 	public iconPath = iconPath;
 	
-	public constructor (public readonly group:WorkspaceGroup, slot:Slot|null) {
+	public constructor (public readonly group:WorkspaceGroup, public description:string) {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
 		this.id = `workspace-group-${group.id}`;
-		this.description = slot ? `[${slot.index}]` : '';
 		
 	}
 	
