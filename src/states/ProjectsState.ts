@@ -54,13 +54,28 @@ export class ProjectsState {
 		
 	}
 	
-	public detectProjectExists () {
+	public detectProjectsExists () {
 		
-		const projects = states.getProjects(this.context);
+		const projects = this.get();
 		
 		projects.forEach((project) => project.deleted = !fs.existsSync(project.path));
 		
 		states.updateProjects(this.context, projects);
+		
+	}
+	
+	public removeDeletedProjects () {
+		
+		let projects = this.get();
+		const length = projects.length;
+		
+		projects = projects.filter((project) => fs.existsSync(project.path));
+		
+		if (length !== projects.length) {
+			states.updateProjects(this.context, projects);
+			this.save(projects);
+			// this._onDidChangeProjects.fire(projects);
+		}
 		
 	}
 	
@@ -83,7 +98,6 @@ export class ProjectsState {
 		addProject(projects, fsPath, label);
 		
 		this.save(projects);
-		
 		this._onDidChangeProjects.fire(projects);
 		
 	}

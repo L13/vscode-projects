@@ -1,6 +1,26 @@
 # Change Log
 All notable changes to the "Projects" extension will be documented in this file.
 
+## [0.19.0] - 2021-03-28
+
+### Added
+
+- Added tags for workspaces. Please read the description for tags.
+- Added `l13Projects.showTagsInWorkspaces` for workspaces.
+- Added `l13Projects.confirmDeleteTag` for deleting tags.
+- Added `l13Projects.autoRemoveDeletedProjects` for reload workspaces or no cache.
+- Added `Edit Workspaces...` for workspace groups in workspaces view.
+- Added `l13Projects.workspaceDescriptionFormat` for workspaces.
+- Added `l13Projects.tagDescriptionFormat` for tags.
+- Added `l13Projects.groupDescriptionFormat` for groups.
+
+### Changed
+
+- Changed values for `l13Projects.sortWorkspacesBy` to lower case.
+- Changed values for `l13Projects.initialFavoriteGroupsState` to lower case.
+- Changed values for `l13Projects.initialWorkspaceGroupsState` to lower case.
+- Changed value `Simple` to `category` for `l13Projects.sortWorkspacesBy`.
+
 ## [0.18.0] - 2021-03-21
 
 ### Added
@@ -12,7 +32,7 @@ All notable changes to the "Projects" extension will be documented in this file.
 
 ### Changed
 - Changed `l13Projects.initialWorkspacesGroupState` to `l13Projects.initialWorkspaceGroupsState`.
-- Changed context group for `Open in Current Window` and `Open in New Window` in VS Code explorer view.
+- Changed context group for `Open in Current Window` and `Open in New Window` in Visual Studio Code explorer view.
 - Refactored extension.
 
 ### Fixed

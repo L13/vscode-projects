@@ -1,6 +1,6 @@
 //	Imports ____________________________________________________________________
 
-
+import { Plural } from '../../@types/formats';
 
 //	Variables __________________________________________________________________
 
@@ -12,20 +12,7 @@
 
 //	Exports ____________________________________________________________________
 
-export type Slot = {
-	label:string,
-	index:number,
-	path?:string,
-	groupId?:number,
-	tagId?:number,
-	paths?:string[],
-};
-
-export type Item = {
-	label:string,
-	index:number,
-	description:string,
-};
+export const pluralWorkspaces:Plural = { size: 'Workspaces', 1: 'Workspace' };
 
 //	Functions __________________________________________________________________
 

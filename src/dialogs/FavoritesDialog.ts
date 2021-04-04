@@ -2,11 +2,12 @@
 
 import * as vscode from 'vscode';
 
-import { Favorite } from '../@types/favorites';
+import { Favorite, FavoriteQuickPickItem } from '../@types/favorites';
 
 import * as dialogs from '../common/dialogs';
 import * as files from '../common/files';
 import * as settings from '../common/settings';
+import { isCodeWorkspace } from '../common/workspaces';
 
 import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
 import { FavoritesState } from '../states/FavoritesState';
@@ -44,13 +45,13 @@ export class FavoritesDialog {
 		});
 			
 		if (item) {
-			if (item.paths) files.openAll(item.paths);
-			else files.open(item.description);
+			if (item.favoriteGroup) files.openAll(item.favoriteGroup.paths);
+			else if (item.favorite) files.open(item.favorite.path);
 		}
 		
 	}
 	
-	private createQuickPickItems () {
+	private createQuickPickItems () :FavoriteQuickPickItem[] {
 		
 		const favoriteGroups = this.favoriteGroupsState.get();
 		const favorites = this.favoritesStates.get();
@@ -63,7 +64,7 @@ export class FavoritesDialog {
 			return {
 				label: favoriteGroup.label,
 				description: names.map((favorite) => favorite.label).join(', '),
-				paths: favoriteGroup.paths,
+				favoriteGroup,
 			};
 			
 		});
@@ -72,7 +73,7 @@ export class FavoritesDialog {
 			label: favorite.label,
 			description: favorite.path,
 			detail: favorite.deleted ? '$(alert) Path does not exist' : '',
-			paths: null,
+			favorite,
 		}));
 		
 		return [...groups, ...items];
@@ -98,10 +99,10 @@ export class FavoritesDialog {
 	public async remove (favorite:Favorite) {
 		
 		if (settings.get('confirmDeleteFavorite', true)) {
-			const BUTTON_DELETE_DONT_SHOW_AGAIN = `Delete, don't show again`;
-			const value = await dialogs.confirm(`Delete favorite "${favorite.label}"?`, 'Delete', BUTTON_DELETE_DONT_SHOW_AGAIN);
+			const buttonDeleteDontShowAgain = `Delete, don't show again`;
+			const value = await dialogs.confirm(`Delete favorite "${favorite.label}"?`, 'Delete', buttonDeleteDontShowAgain);
 			if (!value) return;
-			if (value === BUTTON_DELETE_DONT_SHOW_AGAIN) settings.update('confirmDeleteFavorite', false);
+			if (value === buttonDeleteDontShowAgain) settings.update('confirmDeleteFavorite', false);
 		}
 		
 		this.favoritesStates.remove(favorite);

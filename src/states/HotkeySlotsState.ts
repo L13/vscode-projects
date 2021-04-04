@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 
 import { FavoriteGroup } from '../@types/favorites';
 import { Slot } from '../@types/hotkeys';
+import { Tag } from '../@types/tags';
 import { Project, WorkspaceGroup } from '../@types/workspaces';
 
 import * as files from '../common/files';
@@ -77,6 +78,18 @@ export class HotkeySlotsState {
 		
 	}
 	
+	public getByTag (tag:Tag) {
+		
+		const slots = this.slots;
+		
+		for (const slot of slots) {
+			if (slot && slot.tagId === tag.id) return slot;
+		}
+		
+		return null;
+		
+	}
+	
 	public assign (project:Project, index:number) {
 		
 		const slots = this.slots;
@@ -116,15 +129,23 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public open (index:number) {
+	public assignTag (tag:Tag, index:number) {
 		
 		const slots = this.slots;
-		const slot = slots[index];
 		
-		if (slot) {
-			if (slot.paths) files.openAll(slot.paths);
-			else files.open(slot.path);
+		for (const slot of slots) {
+			if (slot && slot.tagId === tag.id) delete slots[slot.index];
 		}
+		
+		slots[index] = {
+			label: tag.label,
+			index,
+			tagId: tag.id,
+			paths: tag.paths,
+		};
+		
+		states.updateSlots(this.context, slots);
+		this._onDidChangeSlots.fire(slots);
 		
 	}
 	
@@ -152,6 +173,23 @@ export class HotkeySlotsState {
 			if (slot && slot.groupId === group.id) {
 				slot.label = group.label;
 				slot.paths = group.paths;
+				break;
+			}
+		}
+		
+		states.updateSlots(this.context, slots);
+		this._onDidChangeSlots.fire(slots);
+		
+	}
+	
+	public updateTag (tag:Tag) {
+		
+		const slots = this.slots;
+		
+		for (const slot of slots) {
+			if (slot && slot.tagId === tag.id) {
+				slot.label = tag.label;
+				slot.paths = tag.paths;
 				break;
 			}
 		}
@@ -195,6 +233,23 @@ export class HotkeySlotsState {
 		
 	}
 	
+	public removeTag (tag:Tag) {
+		
+		const slots = this.slots;
+		
+		for (let i = 0; i < slots.length; i++) {
+			const slot = slots[i];
+			if (slot && slot.tagId === tag.id) {
+				delete slots[i];
+				break;
+			}
+		}
+		
+		states.updateSlots(this.context, slots);
+		this._onDidChangeSlots.fire(slots);
+		
+	}
+	
 	public remove (index:number) {
 		
 		const slots = this.slots;
@@ -212,14 +267,14 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public previousWorkspace () {
+	public getPreviousWorkspace () {
 		
 		const workspacesPaths = states.getCurrentWorkspace(this.context);
 		const workspacePath = getCurrentWorkspacePath();
 		
-		if (workspacesPaths[1] && workspacesPaths[1] !== workspacePath) files.open(workspacesPaths[1]);
+		if (workspacesPaths[1] && workspacesPaths[1] !== workspacePath) return workspacesPaths[1];
 	//	Fixes async saveCurrentWorkspace if keyboard shortcut was pressed multiple times really fast
-		else if (workspacesPaths[0] && workspacesPaths[0] !== workspacePath) files.open(workspacesPaths[0]);
+		else if (workspacesPaths[0] && workspacesPaths[0] !== workspacePath) return workspacesPaths[0];
 		
 	}
 	

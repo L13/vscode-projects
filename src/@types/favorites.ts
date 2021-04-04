@@ -11,6 +11,8 @@ import { FavoriteTreeItem } from '../sidebar/trees/items/FavoriteTreeItem';
 import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
 
+import { Tag } from './tags';
+
 //	Variables __________________________________________________________________
 
 
@@ -30,23 +32,33 @@ export type FavoriteGroup = {
 	paths:string[],
 };
 
-export interface GroupTreeItem extends vscode.TreeItem {
-	saveGroupState:(workspaceGroupsState:FavoriteGroupsState, collapsed:boolean) => void;
-}
+export type FavoriteQuickPickItem = {
+	label:string,
+	description?:string,
+	detail?:string,
+	favorite?:Favorite,
+	favoriteGroup?:FavoriteGroup,
+};
 
 export type FavoritesStates = {
 	favorites:Favorite[],
 	favoriteGroups:FavoriteGroup[],
 	hotkeySlots:HotkeySlotsState,
+	tags:Tag[],
 };
 
 export type FavoritesTreeItems = FavoriteTreeItems|FavoriteGroupTreeItem;
 
 export type FavoriteTreeItems = CurrentFavoriteTreeItem|FavoriteTreeItem;
 
+export interface GroupTreeItem extends vscode.TreeItem {
+	saveGroupState:(workspaceGroupsState:FavoriteGroupsState, collapsed:boolean) => void;
+}
+
 export type RefreshFavoritesStates = {
 	favorites?:Favorite[],
 	favoriteGroups?:FavoriteGroup[],
+	tags?:Tag[],
 };
 
 //	Functions __________________________________________________________________
