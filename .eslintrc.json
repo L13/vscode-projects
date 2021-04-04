@@ -61,7 +61,8 @@
             "error",
             "tab",
 			{
-				"ignoreComments": true
+				"ignoreComments": true,
+				"SwitchCase": 1
 			}
         ],
         "@typescript-eslint/member-ordering": "off",
