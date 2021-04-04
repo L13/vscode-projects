@@ -1,7 +1,13 @@
 # Change Log
 All notable changes to the "Projects" extension will be documented in this file.
 
-## [0.19.0] - 2021-03-28
+## [0.20.0] - 2021-04-18
+
+### Added
+
+- Extended context menu for [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff) with `Open Workspace`, `Open in New Window`, `Open as Workspace` and `Add Folders to Workspace`.x
+
+## [0.19.0] - 2021-04-04
 
 ### Added
 

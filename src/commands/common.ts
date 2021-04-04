@@ -4,6 +4,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 import { CommonGroupTreeItems } from '../@types/common';
+import { FavoriteTreeItem, HistoryTreeItem } from '../@types/diff';
 import { FavoriteGroup } from '../@types/favorites';
 import { Tag } from '../@types/tags';
 import { Project, WorkspaceGroup } from '../@types/workspaces';
@@ -14,6 +15,8 @@ import * as files from '../common/files';
 import * as settings from '../common/settings';
 import * as terminal from '../common/terminal';
 import { getCurrentWorkspacePath, isCodeWorkspace } from '../common/workspaces';
+
+import { DiffFoldersDialog } from '../dialogs/DiffFoldersDialog';
 
 import { FavoriteGroupTreeItem } from '../sidebar/trees/groups/FavoriteGroupTreeItem';
 import { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGroupTreeItem';
@@ -64,6 +67,8 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	const workspacesState = WorkspacesState.create(context);
 	const workspaceGroupsState = WorkspaceGroupsState.create(context);
+	
+	const diffFoldersDialog = DiffFoldersDialog.create(projectsState);
 	
 	context.subscriptions.push(vscode.window.onDidChangeWindowState(({ focused }) => {
 		
@@ -131,6 +136,42 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.tag.openAsWorkspace': ({ tag }:TagTreeItem) => {
 			
 			openAsWorkspace(tag.paths, sessionsState, projectsState);
+			
+		},
+		
+		'l13Projects.action.diff.favorite.openWorkspace': ({ favorite }:FavoriteTreeItem) => {
+			
+			diffFoldersDialog.openWorkspace([favorite.fileA, favorite.fileB]);
+			
+		},
+		
+		'l13Projects.action.diff.favorite.openAsWorkspace': ({ favorite }:FavoriteTreeItem) => {
+			
+			openAsWorkspace([favorite.fileA, favorite.fileB], sessionsState, projectsState);
+			
+		},
+		
+		'l13Projects.action.diff.favorite.addFoldersToWorkspace': ({ favorite }:FavoriteTreeItem) => {
+			
+			addFoldersToWorkspace([favorite.fileA, favorite.fileB], projectsState);
+			
+		},
+		
+		'l13Projects.action.diff.history.openWorkspace': ({ comparison }:HistoryTreeItem) => {
+			
+			diffFoldersDialog.openWorkspace([comparison.fileA, comparison.fileB]);
+			
+		},
+		
+		'l13Projects.action.diff.history.openAsWorkspace': ({ comparison }:HistoryTreeItem) => {
+			
+			openAsWorkspace([comparison.fileA, comparison.fileB], sessionsState, projectsState);
+			
+		},
+		
+		'l13Projects.action.diff.history.addFoldersToWorkspace': ({ comparison }:HistoryTreeItem) => {
+			
+			addFoldersToWorkspace([comparison.fileA, comparison.fileB], projectsState);
 			
 		},
 	});

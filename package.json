@@ -2,7 +2,7 @@
 	"name": "l13-projects",
 	"displayName": "Projects",
 	"description": "Manage your workspaces and projects in Visual Studio Code",
-	"version": "0.19.0",
+	"version": "0.20.0",
 	"publisher": "L13RARY",
 	"license": "SEE LICENCE IN LICENCE.md",
 	"homepage": "https://github.com/l13/vscode-projects/blob/master/README.md",
@@ -462,6 +462,34 @@
 			{
 				"command": "l13Projects.action.developer.clear",
 				"title": "Developer: Clear Projects Data"
+			},
+			{
+				"command": "l13Projects.action.diff.favorite.openWorkspace",
+				"title": "Open Workspace..."
+			},
+			{
+				"command": "l13Projects.action.diff.favorite.openInNewWorkspace",
+				"title": "Open Workspace in New Window..."
+			},
+			{
+				"command": "l13Projects.action.diff.favorite.openAsWorkspace",
+				"title": "Open as Workspace"
+			},
+			{
+				"command": "l13Projects.action.diff.favorite.addFoldersToWorkspace",
+				"title": "Add Folders to Workspace"
+			},
+			{
+				"command": "l13Projects.action.diff.history.openWorkspace",
+				"title": "Open Workspace..."
+			},
+			{
+				"command": "l13Projects.action.diff.history.openAsWorkspace",
+				"title": "Open as Workspace"
+			},
+			{
+				"command": "l13Projects.action.diff.history.addFoldersToWorkspace",
+				"title": "Add Folders to Workspace"
 			}
 		],
 		"keybindings": [
@@ -777,6 +805,30 @@
 				{
 					"command": "l13Projects.action.developer.clear",
 					"when": "isDevelopment"
+				},
+				{
+					"command": "l13Projects.action.diff.favorite.openWorkspace",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.diff.favorite.openAsWorkspace",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.diff.favorite.addFoldersToWorkspace",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.diff.history.openWorkspace",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.diff.history.openAsWorkspace",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.diff.history.addFoldersToWorkspace",
+					"when": "false"
 				}
 			],
 			"explorer/context": [
@@ -1081,6 +1133,36 @@
 					"command": "l13Projects.action.colorPicker.hide",
 					"group": "inline@9",
 					"when": "view == l13ProjectsWorkspaces && viewItem == color-picker"
+				},
+				{
+					"command": "l13Projects.action.diff.favorite.openWorkspace",
+					"group": "2_workspace@1",
+					"when": "view == l13DiffFavorites && viewItem =~ /favorite$/"
+				},
+				{
+					"command": "l13Projects.action.diff.favorite.openAsWorkspace",
+					"group": "2_workspace@2",
+					"when": "view == l13DiffFavorites && viewItem =~ /favorite$/"
+				},
+				{
+					"command": "l13Projects.action.diff.favorite.addFoldersToWorkspace",
+					"group": "2_workspace@3",
+					"when": "view == l13DiffFavorites && viewItem =~ /favorite$/"
+				},
+				{
+					"command": "l13Projects.action.diff.history.openWorkspace",
+					"group": "2_workspace@1",
+					"when": "view == l13DiffHistory && viewItem == history"
+				},
+				{
+					"command": "l13Projects.action.diff.history.openAsWorkspace",
+					"group": "2_workspace@2",
+					"when": "view == l13DiffHistory && viewItem == history"
+				},
+				{
+					"command": "l13Projects.action.diff.history.addFoldersToWorkspace",
+					"group": "2_workspace@3",
+					"when": "view == l13DiffHistory && viewItem == history"
 				}
 			]
 		},
