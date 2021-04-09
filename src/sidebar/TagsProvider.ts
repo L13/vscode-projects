@@ -56,13 +56,13 @@ export class TagsProvider implements vscode.TreeDataProvider<TagTreeItem> {
 		
 	}
 	
-	public getTreeItem (element:TagTreeItem) :TagTreeItem {
+	public getTreeItem (element:TagTreeItem) {
 		
 		return element;
 		
 	}
 	
-	public getChildren () :TagTreeItem[] {
+	public getChildren () {
 		
 		const list:TagTreeItem[] = [];
 		const tags = this.tags;

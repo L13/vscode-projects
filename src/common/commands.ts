@@ -12,7 +12,7 @@ import * as vscode from 'vscode';
 
 //	Exports ____________________________________________________________________
 
-export function register (context:vscode.ExtensionContext, commands:{ [command:string]: (...args:any) => void }) {
+export function register (context:vscode.ExtensionContext, commands:{ [command:string]:(...args:any) => void }) {
 	
 	const subscriptions = context.subscriptions;
 

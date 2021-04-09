@@ -105,7 +105,7 @@ export class WorkspacesState {
 			
 		});
 		
-		this.cache = Object.values(once).sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+		this.cache = Object.values(once).sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
 		
 		states.updateWorkspacesCache(this.context, this.cache);
 		
@@ -150,7 +150,7 @@ export class WorkspacesState {
 				type: 'folder',
 				maxDepth: 1,
 				ignore: settings.get('subfolder.ignore', []),
-			})
+			}),
 		]).then(() => {
 			
 			this.rebuild();
@@ -165,7 +165,7 @@ export class WorkspacesState {
 	
 	private detectWorkspacesOfType (type:WorkspaceTypes, updateCacheCallback:UpdateCacheCallback, workspaces:Project[], paths:string[], options:Options) {
 		
-		const promises:Promise<FileMap>[] = type === 'subfolder' ? createSubfolderDetection(paths, options) : createWorkspaceDetection(paths, options);
+		const promises:Array<Promise<FileMap>> = type === 'subfolder' ? createSubfolderDetection(paths, options) : createWorkspaceDetection(paths, options);
 		
 		if (promises.length) {
 			return Promise.all(promises).then((results) => {
@@ -202,7 +202,7 @@ export class WorkspacesState {
 
 function createWorkspaceDetection (paths:string[], options:Options) {
 	
-	const promises:Promise<FileMap>[] = [];
+	const promises:Array<Promise<FileMap>> = [];
 	
 	paths.forEach((path) => {
 		
@@ -229,7 +229,7 @@ function createWorkspaceDetection (paths:string[], options:Options) {
 
 function createSubfolderDetection (paths:string[], options:Options) {
 	
-	const promises:Promise<FileMap>[] = [];
+	const promises:Array<Promise<FileMap>> = [];
 	
 	paths.forEach((path) => {
 		

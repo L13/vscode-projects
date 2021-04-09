@@ -50,7 +50,7 @@ export class FavoritesDialog {
 		
 	}
 	
-	private createQuickPickItems () :FavoriteQuickPickItem[] {
+	private createQuickPickItems ():FavoriteQuickPickItem[] {
 		
 		const favoriteGroups = this.favoriteGroupsState.get();
 		const favorites = this.favoritesStates.get();

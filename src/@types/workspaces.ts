@@ -41,7 +41,7 @@ export type SimpleGroupTypes = 'project'|'git'|'vscode'|'subfolder';
 export type SimpleGroup = {
 	label:string,
 	type:SimpleGroupTypes,
-	projectTypes:(Project['type'])[],
+	projectTypes:Array<Project['type']>,
 	collapsed:boolean,
 };
 

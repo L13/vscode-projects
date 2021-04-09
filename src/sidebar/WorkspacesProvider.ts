@@ -82,7 +82,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	private tagGroup:TagGroup = {
 		label: 'Tags',
-		collapsed: false
+		collapsed: false,
 	};
 	
 	private simpleGroups:SimpleGroup[] = [
@@ -421,7 +421,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	public getTreeItem (element:ProjectTreeItem) :vscode.TreeItem {
+	public getTreeItem (element:ProjectTreeItem) {
 		
 		return element;
 		
@@ -468,7 +468,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 
 //	Functions __________________________________________________________________
 
-function setCollapseGroupState (groupStates:(SimpleGroupState|TypeGroupState)[], groups:(SimpleGroup|TypeGroupState)[]) {
+function setCollapseGroupState (groupStates:Array<SimpleGroupState|TypeGroupState>, groups:Array<SimpleGroup|TypeGroupState>) {
 	
 	for (const state of groupStates) {
 		for (const group of groups) {

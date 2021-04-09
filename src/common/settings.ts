@@ -76,7 +76,7 @@ export function getStatusBarColorSettings (workspacePath:string) {
 	
 }
 
-export function getWorkspaceFolders (workspacePath:string) :{ path:string }[] {
+export function getWorkspaceFolders (workspacePath:string) :Array<{ path:string }> {
 	
 	const workspaceSettings = fs.readFileSync(workspacePath, 'utf-8');
 	const json = jsoncParser.parse(workspaceSettings);
@@ -112,13 +112,13 @@ function updateSettingsFile (workspacePath:string, statusbarColors:StatusBarColo
 		formattingOptions: {
 			tabSize,
 			insertSpaces,
-		}
+		},
 	});
 	
 	const modifiedWorkspaceSettings = jsoncParser.applyEdits(workspaceSettings, edits);
 	const modifiedJson = jsoncParser.parse(modifiedWorkspaceSettings);
 	
-	if (useCodeWorkspace || Object.keys(modifiedJson).length)  {
+	if (useCodeWorkspace || Object.keys(modifiedJson).length) {
 		fs.writeFileSync(workspacePath, modifiedWorkspaceSettings, 'utf-8');
 	} else { // Clean up if config or folder is empty
 		fs.unlinkSync(workspacePath);

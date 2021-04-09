@@ -65,7 +65,7 @@ export class FavoriteGroupsDialog {
 			const newFavoriteGroupItem = { label: '$(add) New Favorite Group...' };
 			const items = [
 				newFavoriteGroupItem,
-				...favoriteGroups
+				...favoriteGroups,
 			];
 			const selectedItem = await vscode.window.showQuickPick(items, {
 				placeHolder: 'Select a favorite group',

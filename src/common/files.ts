@@ -44,7 +44,7 @@ export function openAll (pathnames:string[], openInNewWindow?:boolean) {
 	
 }
 	
-export function reveal (pathname:string) :void {
+export function reveal (pathname:string) {
 	
 	if (fs.existsSync(pathname)) {
 		let process:ChildProcessWithoutNullStreams = null;

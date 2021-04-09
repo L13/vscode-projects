@@ -66,7 +66,7 @@ export function subfolders (cwd:string, options:Callback|Options, callback:Callb
 					path: pathname,
 					relative: name,
 					type: 'folder',
-				}
+				};
 			}
 			
 		});

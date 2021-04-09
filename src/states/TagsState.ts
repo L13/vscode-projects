@@ -218,6 +218,6 @@ export class TagsState {
 
 function sortTags (tags:Tag[]) {
 	
-	tags.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+	tags.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
 	
 }
