@@ -490,6 +490,38 @@
 			{
 				"command": "l13Projects.action.diff.history.addFoldersToWorkspace",
 				"title": "Add Folders to Workspace"
+			},
+			{
+				"command": "l13Projects.action.diff.favorite.revealInFinder",
+				"title": "Reveal in Finder..."
+			},
+			{
+				"command": "l13Projects.action.diff.favorite.revealInExplorer",
+				"title": "Reveal in Explorer..."
+			},
+			{
+				"command": "l13Projects.action.diff.favorite.openContainingFolder",
+				"title": "Open Containing Folder..."
+			},
+			{
+				"command": "l13Projects.action.diff.favorite.openInTerminal",
+				"title": "Open in Integrated Terminal..."
+			},
+			{
+				"command": "l13Projects.action.diff.history.revealInFinder",
+				"title": "Reveal in Finder..."
+			},
+			{
+				"command": "l13Projects.action.diff.history.revealInExplorer",
+				"title": "Reveal in Explorer..."
+			},
+			{
+				"command": "l13Projects.action.diff.history.openContainingFolder",
+				"title": "Open Containing Folder..."
+			},
+			{
+				"command": "l13Projects.action.diff.history.openInTerminal",
+				"title": "Open in Integrated Terminal..."
 			}
 		],
 		"keybindings": [
@@ -829,6 +861,38 @@
 				{
 					"command": "l13Projects.action.diff.history.addFoldersToWorkspace",
 					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.diff.favorite.revealInFinder",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.diff.favorite.revealInExplorer",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.diff.favorite.openContainingFolder",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.diff.favorite.openInTerminal",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.diff.history.revealInFinder",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.diff.history.revealInExplorer",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.diff.history.openContainingFolder",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.diff.history.openInTerminal",
+					"when": "false"
 				}
 			],
 			"explorer/context": [
@@ -1148,6 +1212,46 @@
 					"command": "l13Projects.action.diff.favorite.addFoldersToWorkspace",
 					"group": "2_workspace@3",
 					"when": "view == l13DiffFavorites && viewItem =~ /favorite$/"
+				},
+				{
+					"command": "l13Projects.action.diff.favorite.revealInFinder",
+					"group": "navigation@3",
+					"when": "isMac && view == l13DiffFavorites && viewItem =~ /favorite$/"
+				},
+				{
+					"command": "l13Projects.action.diff.favorite.revealInExplorer",
+					"group": "navigation@3",
+					"when": "isWindows && view == l13DiffFavorites && viewItem =~ /favorite$/"
+				},
+				{
+					"command": "l13Projects.action.diff.favorite.openContainingFolder",
+					"group": "navigation@3",
+					"when": "isLinux && view == l13DiffFavorites && viewItem =~ /favorite$/"
+				},
+				{
+					"command": "l13Projects.action.diff.favorite.openInTerminal",
+					"group": "navigation@4",
+					"when": "view == l13DiffFavorites && viewItem =~ /favorite$/"
+				},
+				{
+					"command": "l13Projects.action.diff.history.revealInFinder",
+					"group": "navigation@3",
+					"when": "isMac && view == l13DiffHistory && viewItem == history"
+				},
+				{
+					"command": "l13Projects.action.diff.history.revealInExplorer",
+					"group": "navigation@3",
+					"when": "isWindows && view == l13DiffHistory && viewItem == history"
+				},
+				{
+					"command": "l13Projects.action.diff.history.openContainingFolder",
+					"group": "navigation@3",
+					"when": "isLinux && view == l13DiffHistory && viewItem == history"
+				},
+				{
+					"command": "l13Projects.action.diff.history.openInTerminal",
+					"group": "navigation@4",
+					"when": "view == l13DiffHistory && viewItem == history"
 				},
 				{
 					"command": "l13Projects.action.diff.history.openWorkspace",

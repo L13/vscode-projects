@@ -12,21 +12,21 @@ import * as vscode from 'vscode';
 
 //	Exports ____________________________________________________________________
 
-export type Comparison = {
+type Comparison = {
 	fileA:string,
 	fileB:string,
 	label:string,
 	desc:string,
 };
 
-export type Favorite = {
+type Favorite = {
 	fileA:string;
 	fileB:string;
 	label:string;
 	groupId?:number;
 };
 
-export interface FavoriteTreeItem extends vscode.TreeItem {
+export interface DiffFavoriteTreeItem extends vscode.TreeItem {
 	
 	contextValue:'favorite'|'subfavorite';
 	
@@ -34,7 +34,7 @@ export interface FavoriteTreeItem extends vscode.TreeItem {
 	
 }
 
-export interface HistoryTreeItem extends vscode.TreeItem {
+export interface DiffHistoryTreeItem extends vscode.TreeItem {
 	
 	contextValue:'history';
 	

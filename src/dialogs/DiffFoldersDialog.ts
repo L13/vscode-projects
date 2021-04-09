@@ -1,12 +1,15 @@
 //	Imports ____________________________________________________________________
 
+import * as fs from 'fs';
+import * as path from 'path';
 import * as vscode from 'vscode';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
-import { formatLabel } from '../@l13/formats';
 
 import * as files from '../common/files';
+import { parsePredefinedVariable } from '../common/paths';
 import * as settings from '../common/settings';
+import * as terminal from '../common/terminal';
 
 import { ProjectsState } from '../states/ProjectsState';
 
@@ -32,38 +35,87 @@ export class DiffFoldersDialog {
 	
 	public constructor (private readonly projectsState:ProjectsState) {}
 	
+	public async reveal (paths:string[]) {
+		
+		const items = this.createQuickPickItems(paths);
+		
+		if (!items.length) return;
+		
+		if (items.length > 1) {
+			const selectedItem = await vscode.window.showQuickPick(items, {
+				placeHolder: 'Please select a workspace',
+			});
+			
+			if (selectedItem) files.reveal(selectedItem.workspace.path);
+		} else files.reveal(items[0].workspace.path);
+		
+	}
+	
+	public async openInTerminal (paths:string[]) {
+		
+		const items = this.createQuickPickItems(paths);
+		
+		if (!items.length) return;
+		
+		if (items.length > 1) {
+			const selectedItem = await vscode.window.showQuickPick(items, {
+				placeHolder: 'Please select a workspace',
+			});
+			
+			if (selectedItem) terminal.open(selectedItem.workspace.path);
+		} else terminal.open(items[0].workspace.path);
+		
+	}
+	
 	public async openWorkspace (paths:string[]) {
 		
-		const both = {
-			label: 'Open Both',
-			description: '',
-			workspace: { path: '' },
-		};
-		const items = [both, ...this.createQuickPickItems(paths)];
-		const newWindow = settings.openInNewWindow();
-		const placeHolder = `Select a workspace and open it in ${newWindow ? 'a new' : 'the current'} window`;
-		const selectedItem = await vscode.window.showQuickPick(items, { placeHolder });
+		const items = this.createQuickPickItems(paths);
 		
-		if (selectedItem) {
-			if (selectedItem === both) files.openAll(paths);
-			else files.open(selectedItem.workspace.path);
-		}
+		if (!items.length) return;
+		
+		if (items.length > 1) {
+			const both = {
+				label: 'Open Both Workspaces',
+				description: '',
+				workspace: { path: '' },
+			};
+			const newWindow = settings.openInNewWindow();
+			const placeHolder = `Select a workspace and open it in ${newWindow ? 'a new' : 'the current'} window`;
+			const selectedItem = await vscode.window.showQuickPick([both, ...items], { placeHolder });
+			
+			if (selectedItem) {
+				if (selectedItem === both) files.openAll(paths);
+				else files.open(selectedItem.workspace.path);
+			}
+		} else files.open(items[0].workspace.path);
 		
 	}
 	
 	private createQuickPickItems (paths:string[]) {
 		
-		return paths.map((path) => {
-		
-			const project = this.projectsState.getByPath(path);
+		return paths
+			.map((fsPath) => {
 			
-			return {
-				label: project?.label || formatLabel(path),
-				description: project?.path || path,
-				workspace: project || { path },
-			};
+				return fsPath = parsePredefinedVariable(fsPath);
 			
-		}).sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
+			})
+			.filter((fsPath) => {
+				
+				return fs.existsSync(fsPath);
+				
+			})
+			.map((fsPath) => {
+				
+				const project = this.projectsState.getByPath(fsPath);
+			
+				return {
+					label: project?.label || path.basename(fsPath),
+					description: project?.path || fsPath,
+					workspace: project || { path: fsPath },
+				};
+				
+			})
+			.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
 		
 	}
 	
