@@ -4,39 +4,33 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "npm",
-			"script": "watch",
-			"problemMatcher": "$tsc-watch",
-			"isBackground": true,
-			"presentation": {
-				"reveal": "never"
-			},
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			}
+			"type": "gulp",
+			"task": "watch",
+			"problemMatcher": []
 		},
 		{
-			"type": "npm",
-			"script": "compile",
-			"group": "build",
+			"type": "gulp",
+			"task": "clean",
 			"problemMatcher": []
 		},
 		{
 			"type": "gulp",
 			"task": "build",
-			"group": "build",
 			"problemMatcher": []
 		},
 		{
-			"type": "gulp",
-			"task": "watch",
-			"group": "build",
+			"type": "npm",
+			"script": "compile",
 			"problemMatcher": []
 		},
 		{
 			"type": "gulp",
 			"task": "icons:fix",
+			"problemMatcher": []
+		},
+		{
+			"type": "gulp",
+			"task": "watch",
 			"problemMatcher": []
 		}
 	]

@@ -1,6 +1,5 @@
 {
 	"env": {
-		"browser": true,
 		"es6": true,
 		"node": true
 	},
@@ -52,6 +51,13 @@
 				}
 			}
 		],
+		"comma-dangle": "off",
+		"@typescript-eslint/comma-dangle": [
+			"error",
+			"always-multiline"
+		],
+		"comma-spacing": "off",
+		"@typescript-eslint/comma-spacing": "error",
 		"@typescript-eslint/consistent-type-assertions": [
 			"error",
 			{
@@ -62,6 +68,11 @@
 		"dot-notation": "error",
 		"@typescript-eslint/dot-notation": "error",
 		"@typescript-eslint/explicit-module-boundary-types": "off",
+		"func-call-spacing": "off",
+		"@typescript-eslint/func-call-spacing": [
+			"error",
+			"never"
+		],
 		"@typescript-eslint/indent": [
 			"error",
 			"tab",
@@ -103,6 +114,10 @@
 				"hoist": "all"
 			}
 		],
+		"no-throw-literal": "off",
+		"@typescript-eslint/no-throw-literal": [
+			"error"
+		],
 		"@typescript-eslint/no-unsafe-assignment": "off",
 		"@typescript-eslint/no-unsafe-member-access": "off",
 		"@typescript-eslint/no-unsafe-return": "off",
@@ -117,6 +132,20 @@
 			"single"
 		],
 		"@typescript-eslint/restrict-template-expressions": "off",
+		"space-infix-ops": "off",
+		"@typescript-eslint/space-infix-ops": [
+			"error",
+			{
+				"int32Hint": false
+			}
+		],
+		"require-await": "off",
+		"@typescript-eslint/require-await": "error",
+		"semi": "off",
+		"@typescript-eslint/semi": [
+			"error",
+			"always"
+		],
 		"space-before-function-paren": "off",
 		"@typescript-eslint/space-before-function-paren": "error",
 		"@typescript-eslint/type-annotation-spacing": [
@@ -189,11 +218,6 @@
 		"jsdoc/check-indentation": "error",
 		"jsdoc/newline-after-description": "error",
 		"complexity": "off",
-		"comma-dangle": [
-			"error",
-			"always-multiline"
-		],
-		"comma-spacing": "error",
 		"comma-style": [
 			"error",
 			"last"
@@ -211,26 +235,18 @@
 			"error",
 			"smart"
 		],
-		"func-call-spacing": [
-			"error",
-			"never"
-		],
 		"func-style": [
 			"error",
 			"declaration"
 		],
 		"guard-for-in": "off",
 		"id-blacklist": [
-			"error",
+			2,
 			"any",
-			"Number",
 			"number",
-			"String",
 			"string",
-			"Boolean",
 			"boolean",
-			"Undefined",
-			"undefined"
+			"Undefined"
 		],
 		"id-match": "error",
 		"max-classes-per-file": [
@@ -267,7 +283,6 @@
 		"no-multi-spaces": "error",
 		"no-new-wrappers": "error",
 		"no-new-func": "error",
-		"no-throw-literal": "error",
 		"no-trailing-spaces": [
 			"error",
 			{
@@ -292,11 +307,6 @@
 		],
 		"prefer-const": "error",
 		"radix": "error",
-		"require-await": "error",
-		"semi": [
-			"error",
-			"always"
-		],
 		"semi-style": [
 			"error",
 			"last"
@@ -304,12 +314,6 @@
 		"space-in-parens": [
 			"error",
 			"never"
-		],
-		"space-infix-ops": [
-			"error",
-			{
-				"int32Hint": false
-			}
 		],
 		"space-unary-ops": [
 			"error",

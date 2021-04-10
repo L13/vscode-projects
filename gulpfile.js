@@ -5,6 +5,7 @@ const del = require('del');
 const fs = require('fs');
 const glob = require('glob');
 const gulp = require('gulp');
+const eslint = require('gulp-eslint');
 const rollup = require('rollup');
 
 const typescript = require('@rollup/plugin-typescript');
@@ -21,7 +22,7 @@ const findPattern = /width="100%" height="100%" viewBox="0 0 (\d+) (\d+)"/;
 
 gulp.task('clean', () => {
 	
-	return del(['out']);
+	return del(['out', 'test']);
 	
 });
 
@@ -143,6 +144,14 @@ gulp.task('script:tests', () => {
 	
 });
 
+gulp.task('lint', () => {
+	
+	return gulp.src(['src/**/*.ts'])
+		.pipe(eslint())
+		.pipe(eslint.format());
+	
+});
+
 gulp.task('test', (done) => {
 	
 	const tests = child_process.spawn('npm', ['test']).on('close', () => done());
@@ -156,7 +165,7 @@ gulp.task('test', (done) => {
 
 gulp.task('script', gulp.series('script:services', 'script:tests'));
 
-gulp.task('build', gulp.series('clean', 'icons', 'script', 'test'));
+gulp.task('build', gulp.series('clean', 'icons', 'script', 'lint', 'test'));
 
 gulp.task('watch', () => {
 	
