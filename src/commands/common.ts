@@ -109,8 +109,8 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspace.openInTerminal': ({ project }:ProjectTreeItem) => terminal.open(getFolderPath(project)),
 		'l13Projects.action.workspace.copyPath': ({ project }:ProjectTreeItem) => vscode.env.clipboard.writeText(project.path),
 		
-		'l13Projects.action.group.openAllInCurrentAndNewWindows': async ({ group }:CommonGroupTreeItems) => sessions.openMultipleWindows(group, false),
-		'l13Projects.action.group.openAllInNewWindows': async ({ group }:CommonGroupTreeItems) => sessions.openMultipleWindows(group, true),
+		'l13Projects.action.group.openAllInCurrentAndNewWindows': ({ group }:CommonGroupTreeItems) => sessions.openMultipleWindows(group, false),
+		'l13Projects.action.group.openAllInNewWindows': ({ group }:CommonGroupTreeItems) => sessions.openMultipleWindows(group, true),
 		
 		'l13Projects.action.group.addFoldersToWorkspace': ({ group }:FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
 			
@@ -124,8 +124,8 @@ export function activate (context:vscode.ExtensionContext) {
 			
 		},
 		
-		'l13Projects.action.tag.openAllInCurrentAndNewWindows': async ({ tag }:TagTreeItem) => sessions.openMultipleWindows(tag, false),
-		'l13Projects.action.tag.openAllInNewWindows': async ({ tag }:TagTreeItem) => sessions.openMultipleWindows(tag, true),
+		'l13Projects.action.tag.openAllInCurrentAndNewWindows': ({ tag }:TagTreeItem) => sessions.openMultipleWindows(tag, false),
+		'l13Projects.action.tag.openAllInNewWindows': ({ tag }:TagTreeItem) => sessions.openMultipleWindows(tag, true),
 		
 		'l13Projects.action.tag.addFoldersToWorkspace': ({ tag }:TagTreeItem) => {
 			

@@ -48,9 +48,9 @@ export function activate (context:vscode.ExtensionContext) {
 	hotkeySlotsState.saveCurrentWorkspace();
 	
 	commands.register(context, {
-		'l13Projects.action.workspace.assignSlot': async ({ project }) => hotkeySlotsDialog.assignWorkspace(project),
-		'l13Projects.action.group.assignSlot': async ({ group }) => hotkeySlotsDialog.assignGroup(group),
-		'l13Projects.action.tag.assignSlot': async ({ tag }) => hotkeySlotsDialog.assignTag(tag),
+		'l13Projects.action.workspace.assignSlot': ({ project }) => hotkeySlotsDialog.assignWorkspace(project),
+		'l13Projects.action.group.assignSlot': ({ group }) => hotkeySlotsDialog.assignGroup(group),
+		'l13Projects.action.tag.assignSlot': ({ tag }) => hotkeySlotsDialog.assignTag(tag),
 		'l13Projects.action.workspace.clearSlot': () => hotkeySlotsDialog.remove(),
 		
 		'l13Projects.action.hotkey.slot1': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 1),
