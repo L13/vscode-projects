@@ -319,7 +319,7 @@ function saveCollapseState (groupStates:Array<SimpleGroupState|TypeGroupState>, 
 
 function sortWorkspaceGroups (workspaceGroups:WorkspaceGroup[]) {
 	
-	workspaceGroups.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
+	workspaceGroups.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 	
 }
 

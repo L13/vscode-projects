@@ -257,7 +257,7 @@ function addMissingFavorites (context:vscode.ExtensionContext, workspaces:Projec
 		});
 	}
 	
-	favorites.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
+	favorites.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 	
 	states.updateFavorites(context, favorites);
 	
@@ -265,6 +265,6 @@ function addMissingFavorites (context:vscode.ExtensionContext, workspaces:Projec
 
 function sortFavoriteGroups (favoriteGroups:FavoriteGroup[]) {
 	
-	favoriteGroups.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
+	favoriteGroups.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 	
 }

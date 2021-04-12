@@ -62,13 +62,13 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	subscriptions.push(treeView.onDidCollapseElement(({ element }) => {
 		
-		favoriteGroupsState.saveCollapsedState((<FavoriteGroupTreeItem>element), true);
+		favoriteGroupsState.saveCollapsedState(<FavoriteGroupTreeItem>element, true);
 		
 	}));
 	
 	subscriptions.push(treeView.onDidExpandElement(({ element }) => {
 		
-		favoriteGroupsState.saveCollapsedState((<FavoriteGroupTreeItem>element), false);
+		favoriteGroupsState.saveCollapsedState(<FavoriteGroupTreeItem>element, false);
 		
 	}));
 	

@@ -62,7 +62,6 @@ gulp.task('script:services', () => {
 		input: 'src/extension.ts',
 		onwarn,
 		external: [
-			'child_process',
 			'fs',
 			'jsonc-parser',
 			'path',
@@ -81,7 +80,6 @@ gulp.task('script:services', () => {
 			file: 'out/extension.js',
 			format: 'cjs',
 			globals: {
-				child_process: 'child_process',
 				fs: 'fs',
 				jsoncParser: 'jsonc-parser',
 				path: 'path',

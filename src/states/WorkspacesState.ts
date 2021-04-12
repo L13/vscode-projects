@@ -105,7 +105,7 @@ export class WorkspacesState {
 			
 		});
 		
-		this.cache = Object.values(once).sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
+		this.cache = Object.values(once).sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 		
 		states.updateWorkspacesCache(this.context, this.cache);
 		
@@ -183,7 +183,7 @@ export class WorkspacesState {
 					
 				});
 				
-				workspaces.sort(({ label:a }:Project, { label:b }:Project) => sortCaseInsensitive(a, b));
+				workspaces.sort(({ label: a }:Project, { label: b }:Project) => sortCaseInsensitive(a, b));
 				
 				updateCacheCallback(this.context, workspaces);
 				

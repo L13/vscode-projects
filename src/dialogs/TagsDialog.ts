@@ -72,7 +72,7 @@ export class TagsDialog {
 					workspace: project || { path },
 				};
 				
-			}).sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
+			}).sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 			const newWindow = openInNewWindow ?? settings.openInNewWindow();
 			const placeHolder = `Select a workspace from "${tag.label}" and open it in ${newWindow ? 'a new' : 'the current'} window`;
 			const selectedItem = await vscode.window.showQuickPick(items, { placeHolder });

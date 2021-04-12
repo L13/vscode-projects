@@ -115,7 +115,7 @@ export class DiffFoldersDialog {
 				};
 				
 			})
-			.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
+			.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 		
 	}
 	

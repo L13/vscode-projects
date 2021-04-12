@@ -94,7 +94,7 @@ export class FavoritesState {
 			color: workspace.color,
 		});
 		
-		favorites.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
+		favorites.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 		
 		this.save(favorites);
 		this._onDidChangeFavorites.fire(favorites);
@@ -112,7 +112,7 @@ export class FavoritesState {
 				if (type === 'folder' || type === 'folders') favorite.color = workspace.color;
 				else delete favorite.color;
 				favorite.label = workspace.label;
-				favorites.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
+				favorites.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 				this.save(favorites);
 				this._onDidChangeFavorites.fire(favorites);
 				break;
@@ -129,7 +129,7 @@ export class FavoritesState {
 		for (const fav of favorites) {
 			if (fav.path === fsPath) {
 				fav.label = label;
-				favorites.sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
+				favorites.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 				this.save(favorites);
 				this._onDidUpdateFavorite.fire(fav);
 				this._onDidChangeFavorites.fire(favorites);
