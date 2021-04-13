@@ -5,7 +5,7 @@ All notable changes to the "Projects" extension will be documented in this file.
 
 ### Added
 
-- Extended context menu for [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff) with `Reveal in Finder/Explorer`, `Open in Integrated Terminal`, `Open Workspace`, `Open as Workspace` and `Add Folders to Workspace`.
+- Enhanced context menu for [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff) with `Reveal in Finder/Explorer`, `Open in Integrated Terminal`, `Open Workspace`, `Open as Workspace` and `Add Folders to Workspace`.
 
 ## [0.19.0] - 2021-04-04
 
