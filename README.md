@@ -6,7 +6,7 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ## What's new in Projects 0.20.0
 
-- Extended context menu for [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff) with `Open Workspace`, `Open as Workspace` and `Add Folders to Workspace`.
+- Extended context menu for [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff) with `Reveal in Finder/Explorer`, `Open in Integrated Terminal`, `Open Workspace`, `Open as Workspace` and `Add Folders to Workspace`.
 
 ## Index
 
@@ -193,7 +193,7 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 
 #### Windows
 
-* `Reveal in Explorer` - Opens the favorite folder or Visual Studio Code workspace file in the Explorer.
+* `Reveal in File Explorer` - Opens the favorite folder or Visual Studio Code workspace file in the Explorer.
 
 #### Linux
 
@@ -261,7 +261,7 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 
 #### Windows
 
-* `Reveal in Explorer` - Opens the folder or Visual Studio Code workspace file in the Explorer.
+* `Reveal in File Explorer` - Opens the folder or Visual Studio Code workspace file in the Explorer.
 
 #### Linux
 

@@ -254,7 +254,7 @@
 			},
 			{
 				"command": "l13Projects.action.workspace.revealInExplorer",
-				"title": "Reveal in Explorer"
+				"title": "Reveal in File Explorer"
 			},
 			{
 				"command": "l13Projects.action.workspace.openContainingFolder",
@@ -497,7 +497,7 @@
 			},
 			{
 				"command": "l13Projects.action.diff.favorite.revealInExplorer",
-				"title": "Reveal in Explorer..."
+				"title": "Reveal in File Explorer..."
 			},
 			{
 				"command": "l13Projects.action.diff.favorite.openContainingFolder",
@@ -513,7 +513,7 @@
 			},
 			{
 				"command": "l13Projects.action.diff.history.revealInExplorer",
-				"title": "Reveal in Explorer..."
+				"title": "Reveal in File Explorer..."
 			},
 			{
 				"command": "l13Projects.action.diff.history.openContainingFolder",

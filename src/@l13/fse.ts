@@ -77,6 +77,16 @@ export function subfolders (cwd:string, options:Callback|Options, callback:Callb
 	
 }
 
+export function lstatSync (pathname:string) {
+	
+	try {
+		return fs.lstatSync(pathname);
+	} catch (error) {
+		return null;
+	}
+	
+}
+
 export function createFindGlob (ignore:string[]) {
 	
 	return new RegExp(`^(${ignore.map((value) => escapeForRegExp(value)).join('|')})$`);

@@ -1,9 +1,9 @@
 //	Imports ____________________________________________________________________
 
-import * as fs from 'fs';
 import * as vscode from 'vscode';
 
 import { remove } from '../@l13/arrays';
+import { lstatSync } from '../@l13/fse';
 
 import * as settings from './settings';
 import { getCurrentWorkspacePath } from './workspaces';
@@ -43,7 +43,7 @@ export function openAll (pathnames:string[], openInNewWindow?:boolean) {
 	
 export function reveal (pathname:string) {
 	
-	if (fs.existsSync(pathname)) {
+	if (lstatSync(pathname)) {
 		vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(pathname));
 	} else vscode.window.showErrorMessage(`Path "${pathname}" doesn't exist!`);
 	
