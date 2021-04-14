@@ -146,6 +146,6 @@ export function activate (context:vscode.ExtensionContext) {
 
 function getFolderPath (project:Project) {
 	
-	return project.type === 'folders' || project.type === 'workspace' ? path.dirname(project.path) : project.path;
+	return project.type === 'folders' || project.type === 'workspace' ? path.dirname(project.path) : project.path;
 	
 }

@@ -96,7 +96,7 @@ export class FavoriteGroupsDialog {
 			value: favoriteGroup.label,
 		});
 		
-		if (!label || favoriteGroup.label === label) return;
+		if (!label || favoriteGroup.label === label) return;
 		
 		if (this.workspaceGroupsState.getByName(label)) {
 			vscode.window.showErrorMessage(`Workspace group with name "${label}" exists!`);

@@ -83,7 +83,7 @@ export class ProjectsState {
 		
 		const projects = this.get();
 		
-		return projects.find(({ path }) => path === fsPath) || null;
+		return projects.find(({ path }) => path === fsPath) || null;
 		
 	}
 	

@@ -59,7 +59,7 @@ export class FavoriteGroupsState {
 		
 		const favoriteGroups = this.get();
 		
-		return favoriteGroups.find(({ id }) => id === groupId) || null;
+		return favoriteGroups.find(({ id }) => id === groupId) || null;
 		
 	}
 	
@@ -67,7 +67,7 @@ export class FavoriteGroupsState {
 		
 		const favoriteGroups = this.get();
 		
-		return favoriteGroups.find(({ label }) => label === groupLabel) || null;
+		return favoriteGroups.find(({ label }) => label === groupLabel) || null;
 		
 	}
 	

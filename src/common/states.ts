@@ -203,7 +203,7 @@ export function updateTypeGroups (context:vscode.ExtensionContext, typeGroups:Ty
 
 export function getWorkspacesCache (context:vscode.ExtensionContext) :Project[] {
 	
-	return context.globalState.get(WORKSPACES_CACHE, []);
+	return context.globalState.get(WORKSPACES_CACHE, []);
 	
 }
 
@@ -217,7 +217,7 @@ export function updateWorkspacesCache (context:vscode.ExtensionContext, cache:Pr
 
 export function getGitCache (context:vscode.ExtensionContext) :Project[] {
 	
-	return context.globalState.get(GIT_CACHE, []);
+	return context.globalState.get(GIT_CACHE, []);
 	
 }
 
@@ -229,7 +229,7 @@ export function updateGitCache (context:vscode.ExtensionContext, cache:Project[]
 
 export function getVSCodeCache (context:vscode.ExtensionContext) :Project[] {
 	
-	return context.globalState.get(VSCODE_CACHE, []);
+	return context.globalState.get(VSCODE_CACHE, []);
 	
 }
 
@@ -241,7 +241,7 @@ export function updateVSCodeCache (context:vscode.ExtensionContext, cache:Projec
 
 export function getVSCodeWorkspaceCache (context:vscode.ExtensionContext) :Project[] {
 	
-	return context.globalState.get(VSCODE_WORKSAPCE_CACHE, []);
+	return context.globalState.get(VSCODE_WORKSAPCE_CACHE, []);
 	
 }
 
@@ -253,7 +253,7 @@ export function updateVSCodeWorkspaceCache (context:vscode.ExtensionContext, cac
 
 export function getSubfolderCache (context:vscode.ExtensionContext) :Project[] {
 	
-	return context.globalState.get(SUBFOLDER_CACHE, []);
+	return context.globalState.get(SUBFOLDER_CACHE, []);
 	
 }
 

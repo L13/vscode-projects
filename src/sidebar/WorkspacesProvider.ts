@@ -398,7 +398,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			
 		});
 		
-		if ((type === 'folder' && !workspaceFile || type === 'folders' && workspaceFile)
+		if ((type === 'folder' && !workspaceFile || type === 'folders' && workspaceFile)
 		&& !hasCurrentWorkspace && this.isUnknownWorkspace(workspacePath)) {
 			this.addUnknownItem(list, workspacePath);
 		}

@@ -87,7 +87,7 @@ export class WorkspaceGroupsDialog {
 			value: workspaceGroup.label,
 		});
 		
-		if (!label || workspaceGroup.label === label) return;
+		if (!label || workspaceGroup.label === label) return;
 		
 		if (this.workspaceGroupsState.getByName(label)) {
 			vscode.window.showErrorMessage(`Workspace group with name "${label}" exists!`);

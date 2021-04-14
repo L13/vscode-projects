@@ -66,10 +66,10 @@ export class TagsDialog {
 				const project = this.projectsState.getByPath(path);
 				
 				return {
-					label: project?.label || formatLabel(path),
+					label: project?.label || formatLabel(path),
 					description: project?.path || path,
 					detail: project?.deleted ? '$(alert) Path does not exist' : '',
-					workspace: project || { path },
+					workspace: project || { path },
 				};
 				
 			}).sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
@@ -177,7 +177,7 @@ export class TagsDialog {
 			value: tag.label,
 		});
 		
-		if (!label || tag.label === label) return;
+		if (!label || tag.label === label) return;
 		
 		if (this.tagsState.getByName(label)) {
 			vscode.window.showErrorMessage(`Tag with name "${label}" exists!`);

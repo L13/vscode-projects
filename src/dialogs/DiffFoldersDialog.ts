@@ -111,7 +111,7 @@ export class DiffFoldersDialog {
 				return {
 					label: project?.label || path.basename(fsPath),
 					description: project?.path || fsPath,
-					workspace: project || { path: fsPath },
+					workspace: project || { path: fsPath },
 				};
 				
 			})
