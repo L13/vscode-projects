@@ -39,7 +39,7 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ![Projects](images/previews/preview-workspaces.png)
 
-### Quick Pick and Keyboard Shortcuts
+### Quick Pick, Tags and Keyboard Shortcuts
 
 ![Projects Quick Menu](images/previews/preview-quick-menu.png)
 
