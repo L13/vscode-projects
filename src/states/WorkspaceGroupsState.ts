@@ -4,16 +4,16 @@ import * as vscode from 'vscode';
 
 import { remove, sortCaseInsensitive } from '../@l13/arrays';
 
-import { FavoriteGroup } from '../@types/favorites';
-import { Project, SimpleGroupState, TypeGroupState, WorkspaceGroup } from '../@types/workspaces';
+import type { FavoriteGroup } from '../@types/favorites';
+import type { Project, SimpleGroupState, TypeGroupState, WorkspaceGroup } from '../@types/workspaces';
 
 import { getNextGroupId } from '../common/groups';
 import * as states from '../common/states';
 
-import { SimpleGroupTreeItem } from '../sidebar/trees/groups/SimpleGroupTreeItem';
-import { TagGroupTreeItem } from '../sidebar/trees/groups/TagGroupTreeItem';
-import { TypeGroupTreeItem } from '../sidebar/trees/groups/TypeGroupTreeItem';
-import { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGroupTreeItem';
+import type { SimpleGroupTreeItem } from '../sidebar/trees/groups/SimpleGroupTreeItem';
+import type { TagGroupTreeItem } from '../sidebar/trees/groups/TagGroupTreeItem';
+import type { TypeGroupTreeItem } from '../sidebar/trees/groups/TypeGroupTreeItem';
+import type { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGroupTreeItem';
 
 //	Variables __________________________________________________________________
 

@@ -2,14 +2,14 @@
 
 import * as vscode from 'vscode';
 
-import { TagDescriptionFormat } from '../@types/common';
-import { RefreshTagsStates, Tag, TagsStates } from '../@types/tags';
+import type { TagDescriptionFormat } from '../@types/common';
+import type { RefreshTagsStates, Tag, TagsStates } from '../@types/tags';
 
 import { formatTagDescription } from '../@l13/formats';
 
 import * as settings from '../common/settings';
 
-import { HotkeySlotsState } from '../states/HotkeySlotsState';
+import type { HotkeySlotsState } from '../states/HotkeySlotsState';
 
 import { TagTreeItem } from './trees/items/TagTreeItem';
 

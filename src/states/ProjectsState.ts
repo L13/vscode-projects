@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import { sortCaseInsensitive } from '../@l13/arrays';
 import { formatLabel } from '../@l13/formats';
 
-import { Project } from '../@types/workspaces';
+import type { Project } from '../@types/workspaces';
 
 import * as states from '../common/states';
 import { isCodeWorkspace } from '../common/workspaces';

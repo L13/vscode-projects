@@ -3,7 +3,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { Callback, FileMap, Options, WalkTreeJob } from '../@types/files';
+import type { Callback, FileMap, Options, WalkTreeJob } from '../@types/files';
 
 import { isWindows } from './platforms';
 

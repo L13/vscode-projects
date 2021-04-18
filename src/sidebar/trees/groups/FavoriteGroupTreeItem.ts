@@ -3,9 +3,9 @@
 import { join } from 'path';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 
-import { FavoriteGroup, GroupTreeItem } from '../../../@types/favorites';
+import type { FavoriteGroup, GroupTreeItem } from '../../../@types/favorites';
 
-import { FavoriteGroupsState } from '../../../states/FavoriteGroupsState';
+import type { FavoriteGroupsState } from '../../../states/FavoriteGroupsState';
 
 //	Variables __________________________________________________________________
 

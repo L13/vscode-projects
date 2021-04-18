@@ -4,13 +4,13 @@ import * as vscode from 'vscode';
 
 import { remove, sortCaseInsensitive } from '../@l13/arrays';
 
-import { Favorite, FavoriteGroup } from '../@types/favorites';
-import { Project, WorkspaceGroup } from '../@types/workspaces';
+import type { Favorite, FavoriteGroup } from '../@types/favorites';
+import type { Project, WorkspaceGroup } from '../@types/workspaces';
 
 import { getNextGroupId } from '../common/groups';
 import * as states from '../common/states';
 
-import { FavoriteGroupTreeItem } from '../sidebar/trees/groups/FavoriteGroupTreeItem';
+import type { FavoriteGroupTreeItem } from '../sidebar/trees/groups/FavoriteGroupTreeItem';
 
 //	Variables __________________________________________________________________
 

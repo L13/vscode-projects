@@ -5,13 +5,13 @@ import * as vscode from 'vscode';
 import { formatLabel } from '../@l13/formats';
 import { isMacOs } from '../@l13/platforms';
 
-import { Project } from '../@types/workspaces';
+import type { Project } from '../@types/workspaces';
 
 import * as dialogs from '../common/dialogs';
 import * as settings from '../common/settings';
 import { getCurrentWorkspacePath } from '../common/workspaces';
 
-import { ProjectsState } from '../states/ProjectsState';
+import type { ProjectsState } from '../states/ProjectsState';
 
 //	Variables __________________________________________________________________
 

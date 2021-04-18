@@ -2,12 +2,12 @@
 
 import * as vscode from 'vscode';
 
-import { WorkspaceGroup, WorkspaceQuickPickItem } from '../@types/workspaces';
+import type { WorkspaceGroup, WorkspaceQuickPickItem } from '../@types/workspaces';
 
 import * as files from '../common/files';
 
-import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
-import { WorkspacesState } from '../states/WorkspacesState';
+import type { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
+import type { WorkspacesState } from '../states/WorkspacesState';
 
 //	Variables __________________________________________________________________
 

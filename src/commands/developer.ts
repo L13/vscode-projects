@@ -4,10 +4,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import { Favorite, FavoriteGroup } from '../@types/favorites';
-import { Slot } from '../@types/hotkeys';
-import { Tag } from '../@types/tags';
-import { Project, WorkspaceGroup } from '../@types/workspaces';
+import type { Favorite, FavoriteGroup } from '../@types/favorites';
+import type { Slot } from '../@types/hotkeys';
+import type { Tag } from '../@types/tags';
+import type { Project, WorkspaceGroup } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
 import * as dialogs from '../common/dialogs';
