@@ -60,7 +60,6 @@ export class ProjectsDialog {
 		const fsPath:string = project ? project.path : getCurrentWorkspacePath();
 		
 		if (fsPath) {
-			
 			const existingProject = this.projectsState.getByPath(fsPath);
 			
 			if (existingProject) {
@@ -76,7 +75,6 @@ export class ProjectsDialog {
 			if (!value) return;
 			
 			this.projectsState.add(fsPath, value);
-			
 		} else if (vscode.workspace.workspaceFile?.scheme === 'untitled') {
 			vscode.window.showWarningMessage('Please save your current workspace first.');
 			vscode.commands.executeCommand('workbench.action.saveWorkspaceAs');

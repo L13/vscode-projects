@@ -87,7 +87,6 @@ function openSlot (hotkeySlotsState:HotkeySlotsState, tagsState:TagsState, tagsD
 		if ('tagId' in slot) tagsDialog.open(tagsState.getById(slot.tagId));
 		else if ('groupId' in slot) files.openAll(slot.paths);
 		else files.open(slot.path);
-		
 	}
 	
 }

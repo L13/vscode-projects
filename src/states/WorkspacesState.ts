@@ -187,7 +187,11 @@ export class WorkspacesState {
 				
 				updateCacheCallback(this.context, workspaces);
 				
-			}, (error) => { vscode.window.showErrorMessage(error.message); });
+			}, (error) => {
+				
+				vscode.window.showErrorMessage(error.message);
+			
+			});
 		}
 		
 		updateCacheCallback(this.context, workspaces);
