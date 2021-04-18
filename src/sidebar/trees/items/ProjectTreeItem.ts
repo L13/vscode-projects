@@ -23,7 +23,7 @@ export class ProjectTreeItem extends TreeItem {
 		title: 'Open Project',
 	};
 	
-	public constructor (public readonly project:Project, info:string, isSubProject:boolean = false) {
+	public constructor (public readonly project:Project, info:string, isSubProject = false) {
 		
 		super(project.label);
 		

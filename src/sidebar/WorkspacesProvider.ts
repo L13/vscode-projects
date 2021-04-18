@@ -82,7 +82,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 	
 	private tagGroup:TagGroup = {
 		label: 'Tags',
-		collapsed: false
+		collapsed: false,
 	};
 	
 	private simpleGroups:SimpleGroup[] = [
@@ -101,9 +101,9 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		{ label: 'Subfolders', type: 'subfolder', collapsed: false },
 	];
 	
-	private constructor ({ hotkeySlots, workspaces, workspaceGroups, tags, simpleGroups, tagGroup, typeGroups }:WorkspacesStates) {
+	private constructor ({ hotkeySlots, workspaces: cache, workspaceGroups, tags, simpleGroups, tagGroup, typeGroups }:WorkspacesStates) {
 		
-		this.workspaces = workspaces;
+		this.workspaces = cache;
 		this.workspaceGroups = workspaceGroups;
 		
 		this.tags = tags;
@@ -332,7 +332,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			
 		});
 		
-		if ((type === 'project') && !hasCurrentWorkspace && this.isUnknownWorkspace(workspacePath)) {
+		if (type === 'project' && !hasCurrentWorkspace && this.isUnknownWorkspace(workspacePath)) {
 			this.addUnknownItem(list, workspacePath);
 		}
 		
@@ -398,7 +398,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			
 		});
 		
-		if ((type === 'folder' && !workspaceFile || type === 'folders' && workspaceFile)
+		if ((type === 'folder' && !workspaceFile || type === 'folders' && workspaceFile)
 		&& !hasCurrentWorkspace && this.isUnknownWorkspace(workspacePath)) {
 			this.addUnknownItem(list, workspacePath);
 		}
@@ -415,19 +415,19 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 		
 	}
 	
-	public getParent (element:WorkspacesTreeItems) {
+	public getParent () {
 		
 		return Promise.resolve(undefined);
 		
 	}
 	
-	public getTreeItem (element:ProjectTreeItem) :vscode.TreeItem {
+	public getTreeItem (element:ProjectTreeItem) {
 		
 		return element;
 		
 	}
 	
-	public async getChildren (element?:WorkspacesTreeItems) {
+	public getChildren (element?:WorkspacesTreeItems) {
 		
 		const list:WorkspacesTreeItems[] = [];
 		
@@ -468,7 +468,7 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 
 //	Functions __________________________________________________________________
 
-function setCollapseGroupState (groupStates:(SimpleGroupState|TypeGroupState)[], groups:(SimpleGroup|TypeGroupState)[]) {
+function setCollapseGroupState (groupStates:Array<SimpleGroupState|TypeGroupState>, groups:Array<SimpleGroup|TypeGroupState>) {
 	
 	for (const state of groupStates) {
 		for (const group of groups) {

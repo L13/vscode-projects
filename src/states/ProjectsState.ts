@@ -83,7 +83,7 @@ export class ProjectsState {
 		
 		const projects = this.get();
 		
-		return projects.find(({ path }) => path === fsPath) || null;
+		return projects.find(({ path }) => path === fsPath) || null;
 		
 	}
 	
@@ -133,7 +133,7 @@ export class ProjectsState {
 		for (const project of projects) {
 			if (project.path === fsPath) {
 				project.label = favorite.label;
-				projects.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+				projects.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 				this.save(projects);
 				this._onDidChangeProjects.fire(projects);
 				break;
@@ -150,7 +150,7 @@ export class ProjectsState {
 		for (const pro of projects) {
 			if (pro.path === fsPath) {
 				pro.label = label;
-				projects.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+				projects.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 				this.save(projects);
 				this._onDidUpdateProject.fire(pro);
 				this._onDidChangeProjects.fire(projects);
@@ -198,6 +198,6 @@ function addProject (projects:Project[], path:string, label:string) {
 	
 	projects.push(project);
 	
-	projects.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+	projects.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 	
 }

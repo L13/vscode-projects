@@ -59,7 +59,7 @@ export class FavoriteGroupsState {
 		
 		const favoriteGroups = this.get();
 		
-		return favoriteGroups.find(({ id }) => id === groupId) || null;
+		return favoriteGroups.find(({ id }) => id === groupId) || null;
 		
 	}
 	
@@ -67,7 +67,7 @@ export class FavoriteGroupsState {
 		
 		const favoriteGroups = this.get();
 		
-		return favoriteGroups.find(({ label }) => label === groupLabel) || null;
+		return favoriteGroups.find(({ label }) => label === groupLabel) || null;
 		
 	}
 	
@@ -190,7 +190,7 @@ export class FavoriteGroupsState {
 		const favoriteGroups = this.get();
 		const groupId = favoriteGroup.id;
 		
-		if (!favoriteGroups.some(({ id }) =>  id === groupId )) return;
+		if (!favoriteGroups.some(({ id }) => id === groupId)) return;
 		
 		for (let i = 0; i < favoriteGroups.length; i++) {
 			if (favoriteGroups[i].id === groupId) {
@@ -257,7 +257,7 @@ function addMissingFavorites (context:vscode.ExtensionContext, workspaces:Projec
 		});
 	}
 	
-	favorites.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+	favorites.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 	
 	states.updateFavorites(context, favorites);
 	
@@ -265,6 +265,6 @@ function addMissingFavorites (context:vscode.ExtensionContext, workspaces:Projec
 
 function sortFavoriteGroups (favoriteGroups:FavoriteGroup[]) {
 	
-	favoriteGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+	favoriteGroups.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 	
 }

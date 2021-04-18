@@ -19,8 +19,8 @@ export async function open () {
 		canSelectFolders: true,
 		canSelectMany: true,
 		filters: {
-			Workspaces: ['code-workspace']
-		}
+			Workspaces: ['code-workspace'],
+		},
 	});
 	
 	return uris || null;
@@ -46,8 +46,8 @@ export async function openFile () {
 		canSelectFolders: false,
 		canSelectMany: true,
 		filters: {
-			Workspaces: ['code-workspace']
-		}
+			Workspaces: ['code-workspace'],
+		},
 	});
 	
 	return uris || null;

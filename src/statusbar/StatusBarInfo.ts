@@ -27,7 +27,7 @@ export class StatusBarInfo implements vscode.Disposable {
 	
 	public static create (context:vscode.ExtensionContext) {
 		
-		return StatusBarInfo.current || (StatusBarInfo.current = new StatusBarInfo(context));
+		return StatusBarInfo.current || (StatusBarInfo.current = new StatusBarInfo(context));
 		
 	}
 	
@@ -44,7 +44,7 @@ export class StatusBarInfo implements vscode.Disposable {
 		
 	}
 	
-	public refresh () :void {
+	public refresh () {
 		
 		const workspacePath = getCurrentWorkspacePath();
 		
@@ -70,7 +70,7 @@ export class StatusBarInfo implements vscode.Disposable {
 		
 	}
 	
-	public dispose () :void {
+	public dispose () {
 		
 		this.statusBarItem.dispose();
 		StatusBarInfo.current = undefined;

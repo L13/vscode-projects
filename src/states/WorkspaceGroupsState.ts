@@ -265,7 +265,7 @@ export class WorkspaceGroupsState {
 		for (const workspaceGroup of workspaceGroups) {
 			if (workspaceGroup.id === groupId) {
 				workspaceGroup.collapsed = collapsed;
-				this.save(workspaceGroups);
+				states.updateCollapseState(this.context, workspaceGroups);
 				break;
 			}
 		}
@@ -305,7 +305,7 @@ export class WorkspaceGroupsState {
 
 //	Functions __________________________________________________________________
 
-function saveCollapseState (groupStates:(SimpleGroupState|TypeGroupState)[], item:SimpleGroupTreeItem|TypeGroupTreeItem, collapsed:boolean) {
+function saveCollapseState (groupStates:Array<SimpleGroupState|TypeGroupState>, item:SimpleGroupTreeItem|TypeGroupTreeItem, collapsed:boolean) {
 	
 	const type = item.group.type;
 	const groupState = groupStates.find((state) => state.type === type);
@@ -319,7 +319,7 @@ function saveCollapseState (groupStates:(SimpleGroupState|TypeGroupState)[], ite
 
 function sortWorkspaceGroups (workspaceGroups:WorkspaceGroup[]) {
 	
-	workspaceGroups.sort(({ label:a}, { label:b }) => sortCaseInsensitive(a, b));
+	workspaceGroups.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 	
 }
 

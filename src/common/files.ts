@@ -1,12 +1,9 @@
 //	Imports ____________________________________________________________________
 
-import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
-import * as fs from 'fs';
-import * as path from 'path';
 import * as vscode from 'vscode';
 
 import { remove } from '../@l13/arrays';
-import { isMacOs, isWindows } from '../@l13/platforms';
+import { lstatSync } from '../@l13/fse';
 
 import * as settings from './settings';
 import { getCurrentWorkspacePath } from './workspaces';
@@ -44,41 +41,13 @@ export function openAll (pathnames:string[], openInNewWindow?:boolean) {
 	
 }
 	
-export function reveal (pathname:string) :void {
+export function reveal (pathname:string) {
 	
-	if (fs.existsSync(pathname)) {
-		let process:ChildProcessWithoutNullStreams = null;
-	
-		if (isMacOs) process = showFileInFinder(pathname);
-		else if (isWindows) process = showFileInExplorer(pathname);
-		else process = showFileInFolder(pathname);
-		
-		process.on('error', (error:Error) => {
-			
-			process.kill();
-			vscode.window.showErrorMessage(error.message);
-			
-		});
+	if (lstatSync(pathname)) {
+		vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(pathname));
 	} else vscode.window.showErrorMessage(`Path "${pathname}" doesn't exist!`);
 	
 }
 
 //	Functions __________________________________________________________________
 
-function showFileInFinder (pathname:string) {
-	
-	return spawn('open', ['-R', pathname || '/']);
-	
-}
-
-function showFileInExplorer (pathname:string) {
-	
-	return spawn('explorer', ['/select,', pathname || 'c:\\']);
-	
-}
-
-function showFileInFolder (pathname:string) {
-	
-	return spawn('xdg-open', [path.dirname(pathname) || '/']);
-	
-}

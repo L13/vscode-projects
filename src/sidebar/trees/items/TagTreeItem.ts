@@ -9,9 +9,9 @@ import { Tag } from '../../../@types/tags';
 
 const basePath = join(__dirname, '..', 'images', 'tags');
 const iconPath = {
-	light: join(basePath, `tag-light.svg`),
-	dark: join(basePath, `tag-dark.svg`),
-};;
+	light: join(basePath, 'tag-light.svg'),
+	dark: join(basePath, 'tag-dark.svg'),
+};
 
 //	Initialize _________________________________________________________________
 

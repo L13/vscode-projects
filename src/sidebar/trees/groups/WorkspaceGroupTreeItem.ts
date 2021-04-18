@@ -11,8 +11,8 @@ import { WorkspaceGroupsState } from '../../../states/WorkspaceGroupsState';
 
 const basePath = join(__dirname, '..', 'images', 'groups');
 const iconPath = {
-	light: join(basePath, `group-custom-light.svg`),
-	dark: join(basePath, `group-custom-dark.svg`),
+	light: join(basePath, 'group-custom-light.svg'),
+	dark: join(basePath, 'group-custom-dark.svg'),
 };
 
 //	Initialize _________________________________________________________________

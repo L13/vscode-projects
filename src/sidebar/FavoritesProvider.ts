@@ -74,13 +74,13 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 		
 	}
 	
-	public getTreeItem (element:FavoritesTreeItems) :FavoritesTreeItems {
+	public getTreeItem (element:FavoritesTreeItems) {
 		
 		return element;
 		
 	}
 	
-	public getChildren (element?:FavoritesTreeItems) :Thenable<FavoritesTreeItems[]> {
+	public getChildren (element?:FavoritesTreeItems) {
 		
 		const list:FavoritesTreeItems[] = [];
 		

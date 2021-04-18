@@ -2,8 +2,6 @@
 
 import * as vscode from 'vscode';
 
-import { Tag, TagGroupState } from './tags';
-
 import { ColorPickerTreeItem } from '../sidebar/trees/items/ColorPickerTreeItem';
 import { CurrentWorkspaceTreeItem } from '../sidebar/trees/items/CurrentWorkspaceTreeItem';
 import { ProjectTreeItem } from '../sidebar/trees/items/ProjectTreeItem';
@@ -17,6 +15,8 @@ import { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGroupTr
 
 import { HotkeySlotsState } from '../states/HotkeySlotsState';
 import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
+
+import { Tag, TagGroupState } from './tags';
 
 //	Variables __________________________________________________________________
 
@@ -41,7 +41,7 @@ export type SimpleGroupTypes = 'project'|'git'|'vscode'|'subfolder';
 export type SimpleGroup = {
 	label:string,
 	type:SimpleGroupTypes,
-	projectTypes:(Project['type'])[],
+	projectTypes:Array<Project['type']>,
 	collapsed:boolean,
 };
 

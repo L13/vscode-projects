@@ -1,8 +1,8 @@
 //	Imports ____________________________________________________________________
 
 import * as fs from 'fs';
-import * as jsoncParser from 'jsonc-parser';
 import * as path from 'path';
+import * as jsoncParser from 'jsonc-parser';
 import * as vscode from 'vscode';
 
 import { WorkspaceSorting } from '../@types/common';
@@ -20,13 +20,13 @@ const COLOR_CUSTOMIZATIONS = 'workbench.colorCustomizations';
 
 //	Exports ____________________________________________________________________
 
-export function get (key:string, value?:any) {
+export function get <T = any> (key:string, value?:any) {
 	
-	return vscode.workspace.getConfiguration('l13Projects').get(key, value);
+	return vscode.workspace.getConfiguration('l13Projects').get<T>(key, value);
 	
 }
 	
-export function update (key:string, value:any, global:boolean = true) {
+export function update (key:string, value:any, global = true) {
 	
 	return vscode.workspace.getConfiguration('l13Projects').update(key, value, global);
 	
@@ -34,14 +34,14 @@ export function update (key:string, value:any, global:boolean = true) {
 
 export function sortWorkspacesBy () :WorkspaceSorting {
 	
-	const value = get('sortWorkspacesBy').toLowerCase();
+	const value = get<string>('sortWorkspacesBy').toLowerCase();
 	
 	if (value === 'simple') {
 		vscode.window.showWarningMessage('Settings: "Simple" for "l13Projects.sortWorkspacesBy" is depricated. Please use "category" instead.');
 		return 'category';
 	}
 	
-	return value;
+	return <WorkspaceSorting>value;
 	
 }
 
@@ -76,7 +76,7 @@ export function getStatusBarColorSettings (workspacePath:string) {
 	
 }
 
-export function getWorkspaceFolders (workspacePath:string) :{ path:string }[] {
+export function getWorkspaceFolders (workspacePath:string) :Array<{ path:string }> {
 	
 	const workspaceSettings = fs.readFileSync(workspacePath, 'utf-8');
 	const json = jsoncParser.parse(workspaceSettings);
@@ -112,13 +112,13 @@ function updateSettingsFile (workspacePath:string, statusbarColors:StatusBarColo
 		formattingOptions: {
 			tabSize,
 			insertSpaces,
-		}
+		},
 	});
 	
 	const modifiedWorkspaceSettings = jsoncParser.applyEdits(workspaceSettings, edits);
 	const modifiedJson = jsoncParser.parse(modifiedWorkspaceSettings);
 	
-	if (useCodeWorkspace || Object.keys(modifiedJson).length)  {
+	if (useCodeWorkspace || Object.keys(modifiedJson).length) {
 		fs.writeFileSync(workspacePath, modifiedWorkspaceSettings, 'utf-8');
 	} else { // Clean up if config or folder is empty
 		fs.unlinkSync(workspacePath);

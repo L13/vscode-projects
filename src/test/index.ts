@@ -1,26 +1,33 @@
 //	Imports ____________________________________________________________________
 
-import * as vscode from 'vscode';
+import * as path from 'path';
+import * as glob from 'glob';
+import Mocha from 'mocha';
 
 //	Variables __________________________________________________________________
 
+const mocha = new Mocha({
+	ui: 'tdd',
+	color: true,
+});
 
+const files = glob.sync('**/*.test.js', {
+	cwd: __dirname,
+});
 
 //	Initialize _________________________________________________________________
 
+files.forEach((file) => mocha.addFile(path.resolve(__dirname, file)));
 
+mocha.run(() => {
+	
+	//
+	
+});
 
 //	Exports ____________________________________________________________________
 
-export function register (context:vscode.ExtensionContext, commands:{ [command:string]:(...args:any) => void }) {
-	
-	const subscriptions = context.subscriptions;
 
-	for (const [command, callback] of Object.entries(commands)) {
-		subscriptions.push(vscode.commands.registerCommand(command, callback));
-	}
-	
-}
 
 //	Functions __________________________________________________________________
 

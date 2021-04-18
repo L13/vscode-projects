@@ -17,7 +17,7 @@ const basePath = join(__dirname, '..', 'images', 'current');
 
 export class CurrentFavoriteTreeItem extends TreeItem {
 	
-	public constructor (public readonly project:Favorite, info:string, isSubProject:boolean = false) {
+	public constructor (public readonly project:Favorite, info:string, isSubProject = false) {
 		
 		super(project.label);
 		

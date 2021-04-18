@@ -17,7 +17,7 @@ const basePath = join(__dirname, '..', 'images', 'current');
 
 export class CurrentWorkspaceTreeItem extends TreeItem {
 	
-	public constructor (public readonly project:Project, info:string, isSubProject:boolean = false) {
+	public constructor (public readonly project:Project, info:string, isSubProject = false) {
 		
 		super(project.label);
 		

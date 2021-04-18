@@ -23,7 +23,7 @@ export class FavoriteTreeItem extends TreeItem {
 		title: 'Open Project',
 	};
 	
-	public constructor (public readonly project:Favorite, public description:string, isSubProject:boolean = false) {
+	public constructor (public readonly project:Favorite, public description:string, isSubProject = false) {
 		
 		super(project.label);
 		
