@@ -7,7 +7,6 @@ import { Slot } from '../@types/hotkeys';
 import { Tag } from '../@types/tags';
 import { Project, WorkspaceGroup } from '../@types/workspaces';
 
-import * as files from '../common/files';
 import * as states from '../common/states';
 import { getCurrentWorkspacePath } from '../common/workspaces';
 

@@ -56,18 +56,18 @@ export class TagsProvider implements vscode.TreeDataProvider<TagTreeItem> {
 		
 	}
 	
-	public getTreeItem (element:TagTreeItem) :TagTreeItem {
+	public getTreeItem (element:TagTreeItem) {
 		
 		return element;
 		
 	}
 	
-	public getChildren (element?:TagTreeItem) :Thenable<TagTreeItem[]> {
+	public getChildren () {
 		
 		const list:TagTreeItem[] = [];
 		const tags = this.tags;
 		
-		if (!tags.length) return Promise.resolve(list);
+		if (!tags.length) return list;
 		
 		const slots = this.slots;
 		
@@ -80,7 +80,7 @@ export class TagsProvider implements vscode.TreeDataProvider<TagTreeItem> {
 			
 		});
 		
-		return Promise.resolve(list);
+		return list;
 		
 	}
 	

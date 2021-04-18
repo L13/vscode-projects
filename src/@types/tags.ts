@@ -43,7 +43,7 @@ export type TagsTreeItems = ColorPickerTreeItem|TagTreeItem;
 
 export interface TagQuickPickItem extends vscode.QuickPickItem {
 	workspace?:Project,
-};
+}
 
 export type TagsStates = {
 	hotkeySlots:HotkeySlotsState,

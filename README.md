@@ -4,20 +4,9 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ![Projects](images/previews/preview.png)
 
-## What's new in Projects 0.19.0
+## What's new in Projects 0.20.0
 
-- Added tags for workspaces. Please read the description for tags.
-- Added `l13Projects.showTagsInWorkspaces` for workspaces.
-- Added `l13Projects.confirmDeleteTag` for deleting tags.
-- Added `l13Projects.autoRemoveDeletedProjects` for reload workspaces or no cache.
-- Added `Edit Workspaces...` for workspace groups in workspaces view.
-- Added `l13Projects.workspaceDescriptionFormat` for workspaces.
-- Added `l13Projects.tagDescriptionFormat` for tags.
-- Added `l13Projects.groupDescriptionFormat` for groups.
-- Changed values for `l13Projects.sortWorkspacesBy` to lower case.
-- Changed values for `l13Projects.initialFavoriteGroupsState` to lower case.
-- Changed values for `l13Projects.initialWorkspaceGroupsState` to lower case.
-- Changed value `Simple` to `category` for `l13Projects.sortWorkspacesBy`.
+- Enhanced context menu for [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff) with `Reveal in Finder/Explorer`, `Open in Integrated Terminal`, `Open Workspace`, `Open as Workspace` and `Add Folders to Workspace`.
 
 ## Index
 
@@ -50,7 +39,7 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ![Projects](images/previews/preview-workspaces.png)
 
-### Quick Pick and Keyboard Shortcuts
+### Quick Pick, Tags and Keyboard Shortcuts
 
 ![Projects Quick Menu](images/previews/preview-quick-menu.png)
 
@@ -120,7 +109,7 @@ Windows / Linux
 * `l13Projects.showTagsInWorkspaces` - If true tags view shows up as folder in workspaces.
 * `l13Projects.sortWorkspacesBy` - Sort workspaces by name, category or type. Custom groups are always at the top of the tree view. If a project, folder or workspace is part of a custom group, it does not appear in the auto sorted groups anymore.
 	* `name` - (default) Sort all workspaces by name.
-	* `simple` - Group all workspaces by category.
+	* `category` - Group all workspaces by category.
 	* `type` - Group all workspaces by type.
 * `l13Projects.initialFavoriteGroupsState` - Set the initial state of a favorite group.
 	* `remember` - (default) Remember the collpased or expanded state of each group.
@@ -155,6 +144,7 @@ Windows / Linux
 * `Cmd + L Cmd + P` - Open the projects view.
 * `Cmd + Alt + P` - Open the quick menu to pick a favorite.
 * `Cmd + Alt + Shift + P` - Open the quick menu to pick a project.
+* `Cmd + L Cmd + T` - Open all tags as a quick pick menu.
 * `Cmd + L Cmd + 1 .. 9` - Open a workspace in the slot 1 - 9.
 * `Cmd + L Cmd + 0` - Open the previous active workspace.
 
@@ -163,6 +153,7 @@ Windows / Linux
 * `Ctrl + L Ctrl + P` - Open the projects view.
 * `Ctrl + Alt + P` - Open the quick menu to pick a favorite.
 * `Ctrl + Alt + Shift + P` - Open the quick menu to pick a project.
+* `Ctrl + L Ctrl + T` - Open all tags as a quick pick menu.
 * `Ctrl + L Ctrl + 1 .. 9` - Open a workspace in the slot 1 - 9.
 * `Ctrl + L Ctrl + 0` - Open the previous active workspace.
 
@@ -202,7 +193,7 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 
 #### Windows
 
-* `Reveal in Explorer` - Opens the favorite folder or Visual Studio Code workspace file in the Explorer.
+* `Reveal in File Explorer` - Opens the favorite folder or Visual Studio Code workspace file in the Explorer.
 
 #### Linux
 
@@ -270,7 +261,7 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 
 #### Windows
 
-* `Reveal in Explorer` - Opens the folder or Visual Studio Code workspace file in the Explorer.
+* `Reveal in File Explorer` - Opens the folder or Visual Studio Code workspace file in the Explorer.
 
 #### Linux
 

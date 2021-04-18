@@ -65,7 +65,7 @@ export class FavoriteGroupsDialog {
 			const newFavoriteGroupItem = { label: '$(add) New Favorite Group...' };
 			const items = [
 				newFavoriteGroupItem,
-				...favoriteGroups
+				...favoriteGroups,
 			];
 			const selectedItem = await vscode.window.showQuickPick(items, {
 				placeHolder: 'Select a favorite group',
@@ -81,7 +81,7 @@ export class FavoriteGroupsDialog {
 		
 	}
 	
-	public async addWorkspaceGroup (workspaceGroup:WorkspaceGroup, workspaces:Project[]) {
+	public addWorkspaceGroup (workspaceGroup:WorkspaceGroup, workspaces:Project[]) {
 		
 		if (this.favoriteGroupsState.getById(workspaceGroup.id)) return;
 		
@@ -96,7 +96,7 @@ export class FavoriteGroupsDialog {
 			value: favoriteGroup.label,
 		});
 		
-		if (!label || favoriteGroup.label === label) return;
+		if (!label || favoriteGroup.label === label) return;
 		
 		if (this.workspaceGroupsState.getByName(label)) {
 			vscode.window.showErrorMessage(`Workspace group with name "${label}" exists!`);

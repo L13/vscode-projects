@@ -78,9 +78,9 @@ export class ProjectsDialog {
 			this.projectsState.add(fsPath, value);
 			
 		} else if (vscode.workspace.workspaceFile?.scheme === 'untitled') {
-			vscode.window.showWarningMessage(`Please save your current workspace first.`);
+			vscode.window.showWarningMessage('Please save your current workspace first.');
 			vscode.commands.executeCommand('workbench.action.saveWorkspaceAs');
-		} else vscode.window.showErrorMessage(`No folder or workspace available!`);
+		} else vscode.window.showErrorMessage('No folder or workspace available!');
 		
 	}
 	
@@ -94,7 +94,7 @@ export class ProjectsDialog {
 		if (project.label === value || value === undefined) return;
 		
 		if (!value) {
-			vscode.window.showErrorMessage(`Project with no name is not valid!`);
+			vscode.window.showErrorMessage('Project with no name is not valid!');
 			return;
 		}
 		
@@ -105,7 +105,7 @@ export class ProjectsDialog {
 	public async remove (project:Project) {
 		
 		if (settings.get('confirmDeleteProject', true)) {
-			const buttonDeleteDontShowAgain = `Delete, don't show again`;
+			const buttonDeleteDontShowAgain = 'Delete, don\'t show again';
 			const value = await dialogs.confirm(`Delete project "${project.label}"?`, 'Delete', buttonDeleteDontShowAgain);
 			if (!value) return;
 			if (value === buttonDeleteDontShowAgain) settings.update('confirmDeleteProject', false);
@@ -117,7 +117,7 @@ export class ProjectsDialog {
 	
 	public async clear () {
 		
-		if (await dialogs.confirm(`Delete all projects?'`, 'Delete')) {
+		if (await dialogs.confirm('Delete all projects?', 'Delete')) {
 			this.projectsState.clear();
 		}
 		

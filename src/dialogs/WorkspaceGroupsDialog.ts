@@ -87,7 +87,7 @@ export class WorkspaceGroupsDialog {
 			value: workspaceGroup.label,
 		});
 		
-		if (!label || workspaceGroup.label === label) return;
+		if (!label || workspaceGroup.label === label) return;
 		
 		if (this.workspaceGroupsState.getByName(label)) {
 			vscode.window.showErrorMessage(`Workspace group with name "${label}" exists!`);
@@ -113,7 +113,7 @@ export class WorkspaceGroupsDialog {
 	
 	public async clear () {
 		
-		if (await dialogs.confirm(`Delete all workspace groups?'`, 'Delete')) {
+		if (await dialogs.confirm('Delete all workspace groups?', 'Delete')) {
 			this.workspaceGroupsState.clear();
 		}
 		

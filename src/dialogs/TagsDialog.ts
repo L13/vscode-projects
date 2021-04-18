@@ -66,13 +66,13 @@ export class TagsDialog {
 				const project = this.projectsState.getByPath(path);
 				
 				return {
-					label: project?.label || formatLabel(path),
+					label: project?.label || formatLabel(path),
 					description: project?.path || path,
 					detail: project?.deleted ? '$(alert) Path does not exist' : '',
-					workspace: project || { path },
+					workspace: project || { path },
 				};
 				
-			}).sort(({ label:a }, { label:b }) => sortCaseInsensitive(a, b));
+			}).sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 			const newWindow = openInNewWindow ?? settings.openInNewWindow();
 			const placeHolder = `Select a workspace from "${tag.label}" and open it in ${newWindow ? 'a new' : 'the current'} window`;
 			const selectedItem = await vscode.window.showQuickPick(items, { placeHolder });
@@ -177,7 +177,7 @@ export class TagsDialog {
 			value: tag.label,
 		});
 		
-		if (!label || tag.label === label) return;
+		if (!label || tag.label === label) return;
 		
 		if (this.tagsState.getByName(label)) {
 			vscode.window.showErrorMessage(`Tag with name "${label}" exists!`);
@@ -191,7 +191,7 @@ export class TagsDialog {
 	public async remove (tag:Tag) {
 		
 		if (settings.get('confirmDeleteTag', true)) {
-			const buttonDeleteDontShowAgain = `Delete, don't show again`;
+			const buttonDeleteDontShowAgain = 'Delete, don\'t show again';
 			const value = await dialogs.confirm(`Delete tag "${tag.label}"?`, 'Delete', buttonDeleteDontShowAgain);
 			if (!value) return;
 			if (value === buttonDeleteDontShowAgain) settings.update('confirmDeleteTag', false);
@@ -203,7 +203,7 @@ export class TagsDialog {
 	
 	public async clear () {
 		
-		if (await dialogs.confirm(`Delete all tags?'`, 'Delete')) {
+		if (await dialogs.confirm('Delete all tags?', 'Delete')) {
 			this.tagsState.clear();
 		}
 		

@@ -37,7 +37,7 @@ export class WorkspacesDialog {
 		
 		const item = await vscode.window.showQuickPick(items, {
 			placeHolder: 'Select a project',
-		})
+		});
 		
 		if (item) {
 			if (item.paths) files.openAll(item.paths);

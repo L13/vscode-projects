@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 
 import * as common from './commands/common';
 import * as developer from './commands/developer';
+import * as diff from './commands/diff';
 import * as favorites from './commands/favorites';
 import * as hotkeys from './commands/hotkeys';
 import * as tags from './commands/tags';
@@ -22,6 +23,7 @@ import * as workspaces from './commands/workspaces';
 export function activate (context:vscode.ExtensionContext) {
 	
 	common.activate(context);
+	diff.activate(context);
 	favorites.activate(context);
 	hotkeys.activate(context);
 	tags.activate(context);

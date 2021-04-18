@@ -2,6 +2,7 @@
 .vscode-test/**
 out/test/**
 src/**
+test/**
 .gitignore
 gulpfile.js
 **/tsconfig.json
