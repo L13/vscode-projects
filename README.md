@@ -314,6 +314,16 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Open in Current Window` - Opens the selected file or folder in the current window.
 * `Open in New Window` - Opens the selected file or folder in a new window.
 
+### [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
+
+#### Context Menu
+
+* `Reveal in Finder/Explorer` - Reveal the left or right file/folder in the finder/explorer.
+* `Open in Integrated Terminal` - Open the left or right path in the integrated terminal.
+* `Open Workspace` - Open the left or right path as a workspace.
+* `Open as Workspace` - Open the two paths as a workspace.
+* `Add Folders to Workspace` - Add the paths to the current workspace.
+
 ## Recommended Extensions
 
 - [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
