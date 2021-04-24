@@ -114,7 +114,7 @@ function escapeForRegExp (text:any) :string {
 		if (match === '*') return '.*';
 		if (match === '?') return '.';
 		
-		return '\\' + match;
+		return `\\${match}`;
 		
 	});
 	

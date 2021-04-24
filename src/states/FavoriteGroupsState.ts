@@ -245,9 +245,9 @@ function addMissingFavorites (context:vscode.ExtensionContext, workspaces:Projec
 	
 	const favorites = states.getFavorites(context);
 		
-	workspaces: for (const workspace of workspaces) {
+	search: for (const workspace of workspaces) {
 		for (const favorite of favorites) {
-			if (favorite.path === workspace.path) continue workspaces;
+			if (favorite.path === workspace.path) continue search;
 		}
 		favorites.push({
 			label: workspace.label,
