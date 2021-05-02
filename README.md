@@ -319,10 +319,12 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 #### Context Menu
 
 * `Reveal in Finder/Explorer` - Reveal the left or right file/folder in the finder/explorer.
-* `Open in Integrated Terminal` - Open the left or right path in the integrated terminal.
-* `Open Workspace` - Open the left or right path as a workspace.
-* `Open as Workspace` - Open the two paths as a workspace.
-* `Add Folders to Workspace` - Add the paths to the current workspace.
+* `Open in Integrated Terminal` [1] - Open the left or right path in the integrated terminal.
+* `Open Workspace` [1] - Open the left or right path as a workspace.
+* `Open as Workspace` [1] - Open the two paths as a workspace.
+* `Add Folders to Workspace` [1] - Add the paths to the current workspace.
+
+[1] Only available for previous folder comparisons.
 
 ## Recommended Extensions
 
