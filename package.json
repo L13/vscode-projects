@@ -2,7 +2,7 @@
 	"name": "l13-projects",
 	"displayName": "Projects",
 	"description": "Manage your workspaces and projects in Visual Studio Code",
-	"version": "0.20.0",
+	"version": "0.21.0",
 	"publisher": "L13RARY",
 	"license": "SEE LICENCE IN LICENCE.md",
 	"homepage": "https://github.com/l13/vscode-projects/blob/master/README.md",
@@ -1236,37 +1236,37 @@
 				{
 					"command": "l13Projects.action.diff.history.revealInFinder",
 					"group": "navigation@3",
-					"when": "isMac && view == l13DiffHistory && viewItem == history"
+					"when": "isMac && view == l13DiffHistory && viewItem =~ /^history(-file|-folder)?$/"
 				},
 				{
 					"command": "l13Projects.action.diff.history.revealInExplorer",
 					"group": "navigation@3",
-					"when": "isWindows && view == l13DiffHistory && viewItem == history"
+					"when": "isWindows && view == l13DiffHistory && viewItem =~ /^history(-file|-folder)?$/"
 				},
 				{
 					"command": "l13Projects.action.diff.history.openContainingFolder",
 					"group": "navigation@3",
-					"when": "isLinux && view == l13DiffHistory && viewItem == history"
+					"when": "isLinux && view == l13DiffHistory && viewItem =~ /^history(-file|-folder)?$/"
 				},
 				{
 					"command": "l13Projects.action.diff.history.openInTerminal",
 					"group": "navigation@4",
-					"when": "view == l13DiffHistory && viewItem == history"
+					"when": "view == l13DiffHistory && viewItem =~ /^history(-folder)?$/"
 				},
 				{
 					"command": "l13Projects.action.diff.history.openWorkspace",
 					"group": "2_workspace@1",
-					"when": "view == l13DiffHistory && viewItem == history"
+					"when": "view == l13DiffHistory && viewItem =~ /^history(-folder)?$/"
 				},
 				{
 					"command": "l13Projects.action.diff.history.openAsWorkspace",
 					"group": "2_workspace@2",
-					"when": "view == l13DiffHistory && viewItem == history"
+					"when": "view == l13DiffHistory && viewItem =~ /^history(-folder)?$/"
 				},
 				{
 					"command": "l13Projects.action.diff.history.addFoldersToWorkspace",
 					"group": "2_workspace@3",
-					"when": "view == l13DiffHistory && viewItem == history"
+					"when": "view == l13DiffHistory && viewItem =~ /^history(-folder)?$/"
 				}
 			]
 		},
