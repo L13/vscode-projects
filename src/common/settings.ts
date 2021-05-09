@@ -5,8 +5,8 @@ import * as path from 'path';
 import * as jsoncParser from 'jsonc-parser';
 import * as vscode from 'vscode';
 
-import { WorkspaceSorting } from '../@types/common';
-import { StatusBarColors } from '../@types/workspaces';
+import type { WorkspaceSorting } from '../@types/common';
+import type { StatusBarColors } from '../@types/workspaces';
 
 import { isCodeWorkspace } from './workspaces';
 

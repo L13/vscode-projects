@@ -2,13 +2,13 @@
 
 import * as vscode from 'vscode';
 
-import { FavoriteGroup } from '../@types/favorites';
-import { Project, WorkspaceGroup } from '../@types/workspaces';
+import type { FavoriteGroup } from '../@types/favorites';
+import type { Project, WorkspaceGroup } from '../@types/workspaces';
 
 import * as dialogs from '../common/dialogs';
 
-import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
-import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
+import type { FavoriteGroupsState } from '../states/FavoriteGroupsState';
+import type { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 
 //	Variables __________________________________________________________________
 

@@ -2,14 +2,14 @@
 
 import * as vscode from 'vscode';
 
-import { Favorite, FavoriteQuickPickItem } from '../@types/favorites';
+import type { Favorite, FavoriteQuickPickItem } from '../@types/favorites';
 
 import * as dialogs from '../common/dialogs';
 import * as files from '../common/files';
 import * as settings from '../common/settings';
 
-import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
-import { FavoritesState } from '../states/FavoritesState';
+import type { FavoriteGroupsState } from '../states/FavoriteGroupsState';
+import type { FavoritesState } from '../states/FavoritesState';
 
 //	Variables __________________________________________________________________
 

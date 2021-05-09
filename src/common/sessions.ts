@@ -2,9 +2,9 @@
 
 import * as vscode from 'vscode';
 
-import { FavoriteGroup } from '../@types/favorites';
-import { Tag } from '../@types/tags';
-import { WorkspaceGroup } from '../@types/workspaces';
+import type { FavoriteGroup } from '../@types/favorites';
+import type { Tag } from '../@types/tags';
+import type { WorkspaceGroup } from '../@types/workspaces';
 
 import * as dialogs from '../common/dialogs';
 import * as files from '../common/files';

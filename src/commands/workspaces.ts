@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 
-import { GroupTreeItems, Project } from '../@types/workspaces';
+import type { GroupTreeItems, Project } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';

@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 
-import { NextSession } from '../@types/sessions';
+import type { NextSession } from '../@types/sessions';
 
 import * as states from '../common/states';
 

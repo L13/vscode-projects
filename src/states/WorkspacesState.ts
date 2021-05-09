@@ -7,8 +7,8 @@ import { sortCaseInsensitive } from '../@l13/arrays';
 import { formatLabel } from '../@l13/formats';
 import { sanitize, subfolders, walkTree } from '../@l13/fse';
 
-import { FileMap, Options } from '../@types/files';
-import { Project, UpdateCacheCallback, WorkspaceTypes } from '../@types/workspaces';
+import type { FileMap, Options } from '../@types/files';
+import type { Project, UpdateCacheCallback, WorkspaceTypes } from '../@types/workspaces';
 
 import * as settings from '../common/settings';
 import * as states from '../common/states';
@@ -187,7 +187,11 @@ export class WorkspacesState {
 				
 				updateCacheCallback(this.context, workspaces);
 				
-			}, (error) => { vscode.window.showErrorMessage(error.message); });
+			}, (error) => {
+				
+				vscode.window.showErrorMessage(error.message);
+			
+			});
 		}
 		
 		updateCacheCallback(this.context, workspaces);

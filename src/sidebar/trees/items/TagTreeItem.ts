@@ -3,7 +3,7 @@
 import { join } from 'path';
 import { TreeItem } from 'vscode';
 
-import { Tag } from '../../../@types/tags';
+import type { Tag } from '../../../@types/tags';
 
 //	Variables __________________________________________________________________
 

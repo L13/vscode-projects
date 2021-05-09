@@ -1,7 +1,7 @@
 //	Imports ____________________________________________________________________
 
-import { FavoriteTreeItems } from '../@types/favorites';
-import { WorkspaceTreeItems } from '../@types/workspaces';
+import type { FavoriteTreeItems } from '../@types/favorites';
+import type { WorkspaceTreeItems } from '../@types/workspaces';
 
 import { FavoriteGroupTreeItem } from '../sidebar/trees/groups/FavoriteGroupTreeItem';
 import { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGroupTreeItem';

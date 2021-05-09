@@ -3,9 +3,9 @@
 import { join } from 'path';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 
-import { GroupTreeItem, TagGroup } from '../../../@types/tags';
+import type { GroupTreeItem, TagGroup } from '../../../@types/tags';
 
-import { WorkspaceGroupsState } from '../../../states/WorkspaceGroupsState';
+import type { WorkspaceGroupsState } from '../../../states/WorkspaceGroupsState';
 
 //	Variables __________________________________________________________________
 

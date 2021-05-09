@@ -5,8 +5,8 @@ import * as vscode from 'vscode';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
 
-import { Favorite } from '../@types/favorites';
-import { Project } from '../@types/workspaces';
+import type { Favorite } from '../@types/favorites';
+import type { Project } from '../@types/workspaces';
 
 import * as states from '../common/states';
 

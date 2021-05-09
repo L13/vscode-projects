@@ -1,12 +1,13 @@
 //	Imports ____________________________________________________________________
 
 import { basename } from 'path';
-import { GroupDescriptionFormat, TagDescriptionFormat, WorkspaceDescriptionFormat } from '../@types/common';
 
-import { Plural } from '../@types/formats';
-import { Slot } from '../@types/hotkeys';
-import { Tag } from '../@types/tags';
-import { Project } from '../@types/workspaces';
+import type { GroupDescriptionFormat, TagDescriptionFormat, WorkspaceDescriptionFormat } from '../@types/common';
+import type { Plural } from '../@types/formats';
+import type { Slot } from '../@types/hotkeys';
+import type { Tag } from '../@types/tags';
+import type { Project } from '../@types/workspaces';
+
 import { pluralWorkspaces } from './units/projects';
 
 //	Variables __________________________________________________________________

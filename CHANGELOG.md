@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to the "Projects" extension will be documented in this file.
 
+## [0.21.0] - 2021-05-09
+
+### Added
+
+- Optimized context menu for files in [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff) History.
+
 ## [0.20.0] - 2021-04-18
 
 ### Added

@@ -1,6 +1,6 @@
 //	Imports ____________________________________________________________________
 
-import { StatusBarColors } from '../@types/workspaces';
+import type { StatusBarColors } from '../@types/workspaces';
 
 //	Variables __________________________________________________________________
 

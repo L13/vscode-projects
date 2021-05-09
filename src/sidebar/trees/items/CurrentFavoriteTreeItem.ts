@@ -3,7 +3,7 @@
 import { join } from 'path';
 import { TreeItem } from 'vscode';
 
-import { Favorite } from '../../../@types/favorites';
+import type { Favorite } from '../../../@types/favorites';
 
 //	Variables __________________________________________________________________
 
@@ -22,13 +22,14 @@ export class CurrentFavoriteTreeItem extends TreeItem {
 		super(project.label);
 		
 		const type = project.type;
+		const formattedInfo = info ? ` • ${info}` : '';
 		let icon = `${type}`;
 		
 		if (type === 'folder' || type === 'folders') icon += `-color-${project.color || 0}`;
 		
 		this.contextValue = `current-${isSubProject ? 'sub' : ''}favorite-${type}`;
 		this.tooltip = project.path;
-		this.description = `◀ Current Workspace${info ? ' • ' + info : ''}`;
+		this.description = `◀ Current Workspace${formattedInfo}`;
 		
 		this.iconPath = {
 			light: join(basePath, `current-project-${icon}-light.svg`),
