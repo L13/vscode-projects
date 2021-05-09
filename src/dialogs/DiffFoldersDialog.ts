@@ -96,7 +96,7 @@ export class DiffFoldersDialog {
 		return paths
 			.map((fsPath) => {
 			
-				return fsPath = parsePredefinedVariable(fsPath);
+				return parsePredefinedVariable(fsPath);
 			
 			})
 			.filter((fsPath) => {

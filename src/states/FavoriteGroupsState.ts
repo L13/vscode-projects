@@ -4,13 +4,13 @@ import * as vscode from 'vscode';
 
 import { remove, sortCaseInsensitive } from '../@l13/arrays';
 
-import { Favorite, FavoriteGroup } from '../@types/favorites';
-import { Project, WorkspaceGroup } from '../@types/workspaces';
+import type { Favorite, FavoriteGroup } from '../@types/favorites';
+import type { Project, WorkspaceGroup } from '../@types/workspaces';
 
 import { getNextGroupId } from '../common/groups';
 import * as states from '../common/states';
 
-import { FavoriteGroupTreeItem } from '../sidebar/trees/groups/FavoriteGroupTreeItem';
+import type { FavoriteGroupTreeItem } from '../sidebar/trees/groups/FavoriteGroupTreeItem';
 
 //	Variables __________________________________________________________________
 
@@ -245,9 +245,9 @@ function addMissingFavorites (context:vscode.ExtensionContext, workspaces:Projec
 	
 	const favorites = states.getFavorites(context);
 		
-	workspaces: for (const workspace of workspaces) {
+	search: for (const workspace of workspaces) {
 		for (const favorite of favorites) {
-			if (favorite.path === workspace.path) continue workspaces;
+			if (favorite.path === workspace.path) continue search;
 		}
 		favorites.push({
 			label: workspace.label,

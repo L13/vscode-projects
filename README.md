@@ -4,9 +4,9 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ![Projects](images/previews/preview.png)
 
-## What's new in Projects 0.20.0
+## What's new in Projects 0.21.0
 
-- Enhanced context menu for [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff) with `Reveal in Finder/Explorer`, `Open in Integrated Terminal`, `Open Workspace`, `Open as Workspace` and `Add Folders to Workspace`.
+- Optimized context menu for files in [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff) History.
 
 ## Index
 
@@ -313,6 +313,18 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 
 * `Open in Current Window` - Opens the selected file or folder in the current window.
 * `Open in New Window` - Opens the selected file or folder in a new window.
+
+### [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff)
+
+#### Context Menu
+
+* `Reveal in Finder/Explorer` - Reveal the left or right file/folder in the finder/explorer.
+* `Open in Integrated Terminal` [1] - Open the left or right path in the integrated terminal.
+* `Open Workspace` [1] - Open the left or right path as a workspace.
+* `Open as Workspace` [1] - Open the two paths as a workspace.
+* `Add Folders to Workspace` [1] - Add the paths to the current workspace.
+
+[1] Only available for previous folder comparisons.
 
 ## Recommended Extensions
 

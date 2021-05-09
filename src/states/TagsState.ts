@@ -4,8 +4,8 @@ import * as vscode from 'vscode';
 
 import { remove, sortCaseInsensitive } from '../@l13/arrays';
 
-import { Tag } from '../@types/tags';
-import { Project } from '../@types/workspaces';
+import type { Tag } from '../@types/tags';
+import type { Project } from '../@types/workspaces';
 
 import { getNextTagId } from '../common/groups';
 import * as states from '../common/states';

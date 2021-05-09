@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 
-import { Project } from '../@types/workspaces';
+import type { Project } from '../@types/workspaces';
 
 import * as settings from '../common/settings';
 import * as states from '../common/states';

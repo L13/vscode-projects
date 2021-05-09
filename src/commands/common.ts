@@ -3,8 +3,8 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import { CommonGroupTreeItems } from '../@types/common';
-import { Project } from '../@types/workspaces';
+import type { CommonGroupTreeItems } from '../@types/common';
+import type { Project } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';

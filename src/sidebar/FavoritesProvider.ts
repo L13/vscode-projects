@@ -2,8 +2,8 @@
 
 import * as vscode from 'vscode';
 
-import { GroupDescriptionFormat, InitialState, WorkspaceDescriptionFormat } from '../@types/common';
-import { Tag } from '../@types/tags';
+import type { GroupDescriptionFormat, InitialState, WorkspaceDescriptionFormat } from '../@types/common';
+import type { Tag } from '../@types/tags';
 
 import { formatGroupDescription, formatWorkspaceDescription } from '../@l13/formats';
 import { Favorite, FavoriteGroup, FavoritesStates, FavoritesTreeItems, RefreshFavoritesStates } from '../@types/favorites';
@@ -11,7 +11,7 @@ import { Favorite, FavoriteGroup, FavoritesStates, FavoritesTreeItems, RefreshFa
 import * as settings from '../common/settings';
 import { getCurrentWorkspacePath } from '../common/workspaces';
 
-import { HotkeySlotsState } from '../states/HotkeySlotsState';
+import type { HotkeySlotsState } from '../states/HotkeySlotsState';
 
 import { FavoriteGroupTreeItem } from './trees/groups/FavoriteGroupTreeItem';
 import { CurrentFavoriteTreeItem } from './trees/items/CurrentFavoriteTreeItem';

@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 
-import { DiffFavoriteTreeItem, DiffHistoryTreeItem } from '../@types/diff';
+import type { DiffFavoriteTreeItem, DiffHistoryTreeItem } from '../@types/diff';
 
 import * as commands from '../common/commands';
 import * as sessions from '../common/sessions';

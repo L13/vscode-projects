@@ -2,8 +2,8 @@
 
 import * as vscode from 'vscode';
 
-import { Tag } from '../@types/tags';
-import { Project } from '../@types/workspaces';
+import type { Tag } from '../@types/tags';
+import type { Project } from '../@types/workspaces';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
 import { formatAmount, formatLabel } from '../@l13/formats';
@@ -13,9 +13,9 @@ import * as dialogs from '../common/dialogs';
 import * as files from '../common/files';
 import * as settings from '../common/settings';
 
-import { ProjectsState } from '../states/ProjectsState';
-import { TagsState } from '../states/TagsState';
-import { WorkspacesState } from '../states/WorkspacesState';
+import type { ProjectsState } from '../states/ProjectsState';
+import type { TagsState } from '../states/TagsState';
+import type { WorkspacesState } from '../states/WorkspacesState';
 
 //	Variables __________________________________________________________________
 

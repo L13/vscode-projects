@@ -2,12 +2,12 @@
 
 import * as vscode from 'vscode';
 
-import { Favorite, FavoriteGroup } from '../@types/favorites';
-import { Slot } from '../@types/hotkeys';
-import { NextSession } from '../@types/sessions';
-import { StateInfo } from '../@types/states';
-import { Tag, TagGroupState } from '../@types/tags';
-import { Project, SimpleGroupState, TypeGroupState, WorkspaceGroup } from '../@types/workspaces';
+import type { Favorite, FavoriteGroup } from '../@types/favorites';
+import type { Slot } from '../@types/hotkeys';
+import type { NextSession } from '../@types/sessions';
+import type { StateInfo } from '../@types/states';
+import type { Tag, TagGroupState } from '../@types/tags';
+import type { Project, SimpleGroupState, TypeGroupState, WorkspaceGroup } from '../@types/workspaces';
 
 //	Variables __________________________________________________________________
 

@@ -4,9 +4,15 @@ import * as vscode from 'vscode';
 
 import { formatGroupDescription, formatLabel, formatTagDescription, formatWorkspaceDescription } from '../@l13/formats';
 
-import { GroupDescriptionFormat, InitialState, TagDescriptionFormat, WorkspaceDescriptionFormat, WorkspaceSorting } from '../@types/common';
-import { Tag, TagGroup } from '../@types/tags';
-import {
+import type {
+	GroupDescriptionFormat,
+	InitialState,
+	TagDescriptionFormat,
+	WorkspaceDescriptionFormat,
+	WorkspaceSorting,
+} from '../@types/common';
+import type { Tag, TagGroup } from '../@types/tags';
+import type {
 	Project,
 	RefreshWorkspacesStates,
 	SimpleGroup,

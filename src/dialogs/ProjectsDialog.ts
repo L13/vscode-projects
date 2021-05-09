@@ -5,13 +5,13 @@ import * as vscode from 'vscode';
 import { formatLabel } from '../@l13/formats';
 import { isMacOs } from '../@l13/platforms';
 
-import { Project } from '../@types/workspaces';
+import type { Project } from '../@types/workspaces';
 
 import * as dialogs from '../common/dialogs';
 import * as settings from '../common/settings';
 import { getCurrentWorkspacePath } from '../common/workspaces';
 
-import { ProjectsState } from '../states/ProjectsState';
+import type { ProjectsState } from '../states/ProjectsState';
 
 //	Variables __________________________________________________________________
 
@@ -60,7 +60,6 @@ export class ProjectsDialog {
 		const fsPath:string = project ? project.path : getCurrentWorkspacePath();
 		
 		if (fsPath) {
-			
 			const existingProject = this.projectsState.getByPath(fsPath);
 			
 			if (existingProject) {
@@ -76,7 +75,6 @@ export class ProjectsDialog {
 			if (!value) return;
 			
 			this.projectsState.add(fsPath, value);
-			
 		} else if (vscode.workspace.workspaceFile?.scheme === 'untitled') {
 			vscode.window.showWarningMessage('Please save your current workspace first.');
 			vscode.commands.executeCommand('workbench.action.saveWorkspaceAs');

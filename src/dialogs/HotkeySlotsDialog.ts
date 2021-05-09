@@ -4,11 +4,12 @@ import * as vscode from 'vscode';
 
 import * as dialogs from '../common/dialogs';
 
-import { FavoriteGroup } from '../@types/favorites';
-import { Item, Slot } from '../@types/hotkeys';
-import { Tag } from '../@types/tags';
-import { Project, WorkspaceGroup } from '../@types/workspaces';
-import { HotkeySlotsState } from '../states/HotkeySlotsState';
+import type { FavoriteGroup } from '../@types/favorites';
+import type { Item, Slot } from '../@types/hotkeys';
+import type { Tag } from '../@types/tags';
+import type { Project, WorkspaceGroup } from '../@types/workspaces';
+
+import type { HotkeySlotsState } from '../states/HotkeySlotsState';
 
 //	Variables __________________________________________________________________
 
