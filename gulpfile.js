@@ -84,12 +84,15 @@ gulp.task('icons:colors', (done) => {
 		
 		glob.sync(globPattern).forEach((filename) => {
 			
-			let content = fs.readFileSync(filename, 'utf-8');
+			const content = fs.readFileSync(filename, 'utf-8');
 			const colors = filename.includes('-light.svg') ? colorsLight : colorsDark;
 			
 			for (let i = 1; i < colors.length; i++) {
-				const icon = content.replace('fill:white;', `fill:rgb(${colors[i].join(',')})`);
-				fs.writeFileSync(filename.replace('-x-', `-${i}-`), icon, 'utf-8');
+				const iconContent = content.replace('fill:white;', `fill:rgb(${colors[i].join(',')});`);
+				const colorFilename = filename.replace('-x-', `-${i}-`);
+				if (fs.existsSync(colorFilename) && iconContent !== fs.readFileSync(colorFilename, 'utf-8')) {
+					fs.writeFileSync(colorFilename, iconContent, 'utf-8');
+				}
 			}
 			
 		});
@@ -100,7 +103,7 @@ gulp.task('icons:colors', (done) => {
 	
 });
 
-gulp.task('icons', gulp.series('icons:fix'));
+gulp.task('icons', gulp.series('icons:fix', 'icons:colors'));
 
 gulp.task('script:services', () => {
 	
@@ -222,6 +225,10 @@ gulp.task('watch', () => {
 		'src/**/*.svg',
 		'images/**/*.svg',
 	], gulp.parallel('icons:fix'));
+	
+	gulp.watch([
+		'images/**/?(current-)project-*-color-x-*.svg',
+	], gulp.parallel('icons:colors'));
 	
 	gulp.watch([
 		'src/**/*.ts',
