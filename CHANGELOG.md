@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to the "Projects" extension will be documented in this file.
 
+## [1.0.0] - 2021-05-16
+
+### Changed
+
+- Changed some icons.
+
 ## [0.21.0] - 2021-05-09
 
 ### Added

@@ -1,5 +1,6 @@
 .vscode/**
 .vscode-test/**
+images/**/?(current-)project-*-color-x-*.svg
 out/test/**
 src/**
 test/**
