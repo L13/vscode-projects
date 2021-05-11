@@ -16,10 +16,10 @@ const findPattern = /width="100%" height="100%" viewBox="0 0 (\d+) (\d+)"/;
 
 const colorsLight = [
 	null,
-	[105, 29, 124], // purple
+	[143, 66, 170], // purple
 	[1, 120, 207], // blue
 	[50, 126, 54], // green
-	[167, 156, 33], // yellow
+	[187, 170, 73], // yellow
 	[206, 126, 28], // orange
 	[214, 63, 38], // red
 	[133, 133, 133], // grey
@@ -27,10 +27,10 @@ const colorsLight = [
 
 const colorsDark = [
 	null,
-	[105, 29, 124], // purple
+	[143, 66, 170], // purple
 	[1, 120, 207], // blue
 	[50, 126, 54], // green
-	[167, 156, 33], // yellow
+	[187, 170, 73], // yellow
 	[206, 126, 28], // orange
 	[214, 63, 38], // red
 	[133, 133, 133], // grey
