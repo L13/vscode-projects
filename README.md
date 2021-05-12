@@ -324,7 +324,7 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Open as Workspace` [1] - Open the two paths as a workspace.
 * `Add Folders to Workspace` [1] - Add the paths to the current workspace.
 
-[1] Only available for previous folder comparisons.
+[1] Not available for previous file comparisons in history view.
 
 ## Recommended Extensions
 
