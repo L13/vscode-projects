@@ -120,8 +120,8 @@ Windows / Linux
 	* `collapsed` - Show all groups collapsed at start.
 	* `expanded` - Show all groups expanded at start.
 * `l13Projects.workspaceDescriptionFormat` - Indicates what kind of additional information of a workspace should be visible in the favorites and workspaces view.
-	* `both` - Show the slot number and all tags.
-	* `slot` - (default) Show the slot number.
+	* `both` - (default) Show the slot number and all tags.
+	* `slot` - Show the slot number.
 	* `tags` - Show all assigned tags.
 	* `none` - No additional info.
 * `l13Projects.tagDescriptionFormat` - Indicates what kind of additional information of a tag should be visible in the tags view.
