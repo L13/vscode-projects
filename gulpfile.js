@@ -14,6 +14,28 @@ const typescript = require('@rollup/plugin-typescript');
 
 const findPattern = /width="100%" height="100%" viewBox="0 0 (\d+) (\d+)"/;
 
+const colorsLight = [
+	null,
+	[143, 66, 170], // purple
+	[1, 120, 207], // blue
+	[50, 126, 54], // green
+	[187, 170, 73], // yellow
+	[206, 126, 28], // orange
+	[214, 63, 38], // red
+	[133, 133, 133], // grey
+];
+
+const colorsDark = [
+	null,
+	[143, 66, 170], // purple
+	[1, 120, 207], // blue
+	[50, 126, 54], // green
+	[187, 170, 73], // yellow
+	[206, 126, 28], // orange
+	[214, 63, 38], // red
+	[133, 133, 133], // grey
+];
+
 //	Initialize _________________________________________________________________
 
 
@@ -54,7 +76,34 @@ gulp.task('icons:fix', (done) => {
 	
 });
 
-gulp.task('icons', gulp.series('icons:fix'));
+gulp.task('icons:colors', (done) => {
+	
+	[
+		'images/**/?(current-)project-*-color-x-*.svg',
+	].forEach((globPattern) => {
+		
+		glob.sync(globPattern).forEach((filename) => {
+			
+			const content = fs.readFileSync(filename, 'utf-8');
+			const colors = filename.includes('-light.svg') ? colorsLight : colorsDark;
+			
+			for (let i = 1; i < colors.length; i++) {
+				const iconContent = content.replace('fill:white;', `fill:rgb(${colors[i].join(',')});`);
+				const colorFilename = filename.replace('-x-', `-${i}-`);
+				if (fs.existsSync(colorFilename) && iconContent !== fs.readFileSync(colorFilename, 'utf-8')) {
+					fs.writeFileSync(colorFilename, iconContent, 'utf-8');
+				}
+			}
+			
+		});
+		
+	});
+	
+	done();
+	
+});
+
+gulp.task('icons', gulp.series('icons:fix', 'icons:colors'));
 
 gulp.task('script:services', () => {
 	
@@ -176,6 +225,10 @@ gulp.task('watch', () => {
 		'src/**/*.svg',
 		'images/**/*.svg',
 	], gulp.parallel('icons:fix'));
+	
+	gulp.watch([
+		'images/**/?(current-)project-*-color-x-*.svg',
+	], gulp.parallel('icons:colors'));
 	
 	gulp.watch([
 		'src/**/*.ts',

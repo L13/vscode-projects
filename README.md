@@ -4,9 +4,9 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ![Projects](images/previews/preview.png)
 
-## What's new in Projects 0.21.0
+Welcome to version 1.0 of the extension Projects. All of the features on my to-do list are done, but that doesn't mean the extension's development is finished. There are more ideas for the future.
 
-- Optimized context menu for files in [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff) History.
+I also want to say thank you to all reviewers on the Visual Studio Code Marketplace and Github for the positive feedback. I never expected that so many people would download or use the extension. Thank you very much.
 
 ## Index
 
@@ -120,8 +120,8 @@ Windows / Linux
 	* `collapsed` - Show all groups collapsed at start.
 	* `expanded` - Show all groups expanded at start.
 * `l13Projects.workspaceDescriptionFormat` - Indicates what kind of additional information of a workspace should be visible in the favorites and workspaces view.
-	* `both` - Show the slot number and all tags.
-	* `slot` - (default) Show the slot number.
+	* `both` - (default) Show the slot number and all tags.
+	* `slot` - Show the slot number.
 	* `tags` - Show all assigned tags.
 	* `none` - No additional info.
 * `l13Projects.tagDescriptionFormat` - Indicates what kind of additional information of a tag should be visible in the tags view.
@@ -324,7 +324,7 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Open as Workspace` [1] - Open the two paths as a workspace.
 * `Add Folders to Workspace` [1] - Add the paths to the current workspace.
 
-[1] Only available for previous folder comparisons.
+[1] Not available for previous file comparisons in history view.
 
 ## Recommended Extensions
 
