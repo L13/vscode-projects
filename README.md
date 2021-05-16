@@ -4,9 +4,9 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ![Projects](images/previews/preview.png)
 
-## What's new in Projects 0.21.0
+Welcome to version 1.0 of the extension Projects. All of the features on my to-do list are done, but that doesn't mean the extension's development is finished. There are more ideas for the future.
 
-- Optimized context menu for files in [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff) History.
+I also want to say thank you to all reviewers on the Visual Studio Code Marketplace and Github for the positive feedback. I never expected that so many people would download or use the extension. Thank you very much.
 
 ## Index
 

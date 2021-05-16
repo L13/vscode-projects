@@ -5,7 +5,7 @@ All notable changes to the "Projects" extension will be documented in this file.
 
 ### Changed
 
-- Changed some icons.
+- Changed project workspace icons and fixed some icon colors.
 
 ## [0.21.0] - 2021-05-09
 
