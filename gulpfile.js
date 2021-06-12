@@ -90,7 +90,8 @@ gulp.task('icons:colors', (done) => {
 			for (let i = 1; i < colors.length; i++) {
 				const iconContent = content.replace('fill:white;', `fill:rgb(${colors[i].join(',')});`);
 				const colorFilename = filename.replace('-x-', `-${i}-`);
-				if (fs.existsSync(colorFilename) && iconContent !== fs.readFileSync(colorFilename, 'utf-8')) {
+				const exists = fs.existsSync(colorFilename);
+				if (!exists || exists && iconContent !== fs.readFileSync(colorFilename, 'utf-8')) {
 					fs.writeFileSync(colorFilename, iconContent, 'utf-8');
 				}
 			}
@@ -105,7 +106,7 @@ gulp.task('icons:colors', (done) => {
 
 gulp.task('icons', gulp.series('icons:fix', 'icons:colors'));
 
-gulp.task('script:services', () => {
+gulp.task('script:extension', () => {
 	
 	return rollup.rollup({
 		input: 'src/extension.ts',
@@ -119,7 +120,7 @@ gulp.task('script:services', () => {
 		plugins: [
 			typescript({
 				include: [
-					'src/**/!(.test).ts',
+					'src/**/!(*.test).ts',
 				],
 			}),
 		]
@@ -163,8 +164,6 @@ gulp.task('script:tests', () => {
 				typescript({
 					include: [
 						'src/@l13/**/*.ts',
-						'src/services/@l13/**/*.ts',
-						'src/views/vscode.d.ts',
 						'src/test/index.ts',
 					],
 				}),
@@ -215,7 +214,7 @@ gulp.task('test', (done) => {
 	
 });
 
-gulp.task('script', gulp.series('script:services', 'script:tests'));
+gulp.task('script', gulp.series('script:extension', 'script:tests'));
 
 gulp.task('build', gulp.series('clean', 'icons', 'script', 'lint', 'test'));
 
@@ -231,8 +230,8 @@ gulp.task('watch', () => {
 	], gulp.parallel('icons:colors'));
 	
 	gulp.watch([
-		'src/**/*.ts',
-	], gulp.parallel('script'));
+		'src/**/!(*.test).ts',
+	], gulp.parallel('script:extension'));
 	
 	gulp.watch([
 		'src/test/index.ts',

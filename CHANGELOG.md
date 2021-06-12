@@ -1,6 +1,16 @@
 # Change Log
 All notable changes to the "Projects" extension will be documented in this file.
 
+## [1.1.0] - 2021-06-13
+
+### Added
+
+- Added basic support for workspace trust.
+
+### Changed
+
+- Changed icons for subfolders.
+
 ## [1.0.0] - 2021-05-16
 
 ### Changed

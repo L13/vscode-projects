@@ -342,7 +342,8 @@ function addToWorkspace (project:Project) {
 
 function updateProjectsAndFavorites (statusBarColorState:StatusBarColor, favoritesState:FavoritesState, projectsState:ProjectsState) {
 	
-	statusBarColorState.detectProjectColors();
+	if (!settings.isTrustedWorkspaceEnabled()) statusBarColorState.detectProjectColors();
+	else if (vscode.workspace.isTrusted) statusBarColorState.detectCurrentProjectColor();
 				
 	if (settings.get('autoRemoveDeletedProjects')) {
 		favoritesState.cleanupUnknownPaths();

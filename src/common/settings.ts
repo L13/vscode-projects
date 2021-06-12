@@ -85,6 +85,12 @@ export function getWorkspaceFolders (workspacePath:string) :Array<{ path:string 
 	
 }
 
+export function isTrustedWorkspaceEnabled () {
+	
+	return vscode.workspace.getConfiguration().get('security.workspace.trust.enabled', false);
+	
+}
+
 //	Functions __________________________________________________________________
 
 function getSettingsPath (workspacePath:string) {
