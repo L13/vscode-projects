@@ -6,6 +6,7 @@ import type { Project } from '../@types/workspaces';
 
 import * as settings from '../common/settings';
 import * as states from '../common/states';
+import * as workspaces from '../common/workspaces';
 
 import { colors } from './colors';
 
@@ -45,7 +46,7 @@ export class StatusBarColor {
 		for (const project of projects) {
 			const statusBarColors = settings.getStatusBarColorSettings(project.path);
 			if (statusBarColors) {
-				detect:for (let i = 1; i < colors.length; i++) {
+				detect: for (let i = 1; i < colors.length; i++) {
 					const color:any = colors[i];
 					for (const name in color) {
 						if (color[name] !== statusBarColors[name]) continue detect;
@@ -61,6 +62,34 @@ export class StatusBarColor {
 		}
 		
 		if (hasChangedColor) states.updateProjects(this.context, projects);
+		
+	}
+	
+	public detectCurrentProjectColor () {
+		
+		const workspacePath = workspaces.getCurrentWorkspacePath();
+		
+		const statusBarColors = settings.getStatusBarColorSettings(workspacePath);
+		
+		if (statusBarColors) {
+			const projects = states.getProjects(this.context);
+			for (const project of projects) {
+				if (project.path === workspacePath) {
+					detect: for (let i = 1; i < colors.length; i++) {
+						const color:any = colors[i];
+						for (const name in color) {
+							if (color[name] !== statusBarColors[name]) continue detect;
+						}
+						if (project.color !== i) {
+							project.color = i;
+							states.updateProjects(this.context, projects);
+							this._onDidUpdateColor.fire(project);
+						}
+						return;
+					}
+				}
+			}
+		}
 		
 	}
 	
