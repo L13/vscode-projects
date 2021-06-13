@@ -2,7 +2,7 @@
 	"name": "l13-projects",
 	"displayName": "Projects",
 	"description": "Manage your workspaces and projects in Visual Studio Code",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"publisher": "L13RARY",
 	"license": "SEE LICENCE IN LICENCE.md",
 	"homepage": "https://github.com/l13/vscode-projects/blob/master/README.md",
@@ -34,6 +34,16 @@
 	"activationEvents": [
 		"*"
 	],
+	"extensionKind": [
+		"ui",
+		"workspace"
+	],
+	"capabilities": {
+		"untrustedWorkspaces": {
+			"supported": "limited",
+			"description": "If 'Security > Workspace > Trust: Enabled' is true the feature 'Select Status Bar Color' works only in the current workspace."
+		}
+	},
 	"main": "./out/extension.js",
 	"contributes": {
 		"viewsContainers": {
@@ -90,7 +100,8 @@
 			},
 			{
 				"command": "l13Projects.action.favorites.pickFavorite",
-				"title": "Projects: Open Favorite Workspace"
+				"category": "Projects",
+				"title": "Open Favorite Workspace"
 			},
 			{
 				"command": "l13Projects.action.workspace.addToFavorites",
@@ -110,10 +121,12 @@
 			},
 			{
 				"command": "l13Projects.action.favorites.clear",
-				"title": "Projects: Delete All Favorites and Groups"
+				"category": "Projects",
+				"title": "Delete All Favorites and Groups"
 			},
 			{
 				"command": "l13Projects.action.favoriteGroups.add",
+				"category": "Projects",
 				"title": "New Favorite Group",
 				"icon": {
 					"light": "images/workspaces/group-new-light.svg",
@@ -138,10 +151,12 @@
 			},
 			{
 				"command": "l13Projects.action.workspaces.pickWorkspace",
-				"title": "Projects: Open Workspace"
+				"category": "Projects",
+				"title": "Open Workspace"
 			},
 			{
 				"command": "l13Projects.action.workspaces.addProject",
+				"category": "Projects",
 				"title": "Add Project",
 				"icon": {
 					"light": "images/workspaces/project-save-light.svg",
@@ -150,6 +165,7 @@
 			},
 			{
 				"command": "l13Projects.action.workspaces.addProjectWorkspace",
+				"category": "Projects",
 				"title": "Add Project Workspace",
 				"icon": {
 					"light": "images/workspaces/project-workspace-save-light.svg",
@@ -158,10 +174,12 @@
 			},
 			{
 				"command": "l13Projects.action.workspaces.saveProject",
-				"title": "Projects: Save Project..."
+				"category": "Projects",
+				"title": "Save Project..."
 			},
 			{
 				"command": "l13Projects.action.workspaces.refresh",
+				"category": "Projects",
 				"title": "Refresh",
 				"icon": {
 					"light": "images/workspaces/project-refresh-light.svg",
@@ -170,6 +188,7 @@
 			},
 			{
 				"command": "l13Projects.action.workspaceGroups.add",
+				"category": "Projects",
 				"title": "New Workspace Group",
 				"icon": {
 					"light": "images/workspaces/group-new-light.svg",
@@ -218,7 +237,8 @@
 			},
 			{
 				"command": "l13Projects.action.workspaceGroups.clear",
-				"title": "Projects: Delete All Workspace Groups"
+				"category": "Projects",
+				"title": "Delete All Workspace Groups"
 			},
 			{
 				"command": "l13Projects.action.workspace.saveDetectedProject",
@@ -246,7 +266,8 @@
 			},
 			{
 				"command": "l13Projects.action.projects.clear",
-				"title": "Projects: Delete All Projects"
+				"category": "Projects",
+				"title": "Delete All Projects"
 			},
 			{
 				"command": "l13Projects.action.workspace.revealInFinder",
@@ -281,11 +302,8 @@
 				"title": "Assign to Slot..."
 			},
 			{
-				"command": "l13Projects.action.workspace.clearSlot",
-				"title": "Projects: Clear Slot..."
-			},
-			{
 				"command": "l13Projects.action.tag.add",
+				"category": "Projects",
 				"title": "New Tag",
 				"icon": {
 					"light": "images/tags/tag-new-light.svg",
@@ -338,55 +356,73 @@
 			},
 			{
 				"command": "l13Projects.action.tag.pickTag",
-				"title": "Projects: Select a Tag..."
+				"category": "Projects",
+				"title": "Select a Tag..."
 			},
 			{
 				"command": "l13Projects.action.tags.clear",
-				"title": "Projects: Delete All Tags"
+				"category": "Projects",
+				"title": "Delete All Tags"
+			},
+			{
+				"command": "l13Projects.action.hotkeys.clearSlot",
+				"category": "Projects",
+				"title": "Clear Slot..."
 			},
 			{
 				"command": "l13Projects.action.hotkeys.clearAllSlots",
-				"title": "Projects: Clear All Slots"
+				"category": "Projects",
+				"title": "Clear All Slots"
 			},
 			{
 				"command": "l13Projects.action.hotkey.slot1",
-				"title": "Projects: Slot 1"
+				"category": "Projects",
+				"title": "Slot 1"
 			},
 			{
 				"command": "l13Projects.action.hotkey.slot2",
-				"title": "Projects: Slot 2"
+				"category": "Projects",
+				"title": "Slot 2"
 			},
 			{
 				"command": "l13Projects.action.hotkey.slot3",
-				"title": "Projects: Slot 3"
+				"category": "Projects",
+				"title": "Slot 3"
 			},
 			{
 				"command": "l13Projects.action.hotkey.slot4",
-				"title": "Projects: Slot 4"
+				"category": "Projects",
+				"title": "Slot 4"
 			},
 			{
 				"command": "l13Projects.action.hotkey.slot5",
-				"title": "Projects: Slot 5"
+				"category": "Projects",
+				"title": "Slot 5"
 			},
 			{
 				"command": "l13Projects.action.hotkey.slot6",
-				"title": "Projects: Slot 6"
+				"category": "Projects",
+				"title": "Slot 6"
 			},
 			{
 				"command": "l13Projects.action.hotkey.slot7",
-				"title": "Projects: Slot 7"
+				"category": "Projects",
+				"title": "Slot 7"
 			},
 			{
 				"command": "l13Projects.action.hotkey.slot8",
-				"title": "Projects: Slot 8"
+				"category": "Projects",
+				"title": "Slot 8"
 			},
 			{
 				"command": "l13Projects.action.hotkey.slot9",
-				"title": "Projects: Slot 9"
+				"category": "Projects",
+				"title": "Slot 9"
 			},
 			{
 				"command": "l13Projects.action.hotkey.previousWorkspace",
-				"title": "Projects: Go to previous Workspace"
+				"category": "Projects",
+				"title": "Go to previous Workspace"
 			},
 			{
 				"command": "l13Projects.action.colorPicker.selectColor",
@@ -783,10 +819,6 @@
 					"when": "false"
 				},
 				{
-					"command": "l13Projects.action.workspaces.refresh",
-					"when": "false"
-				},
-				{
 					"command": "l13Projects.action.group.openAllInCurrentAndNewWindows",
 					"when": "false"
 				},
@@ -1071,7 +1103,12 @@
 				{
 					"command": "l13Projects.action.colorPicker.selectColor",
 					"group": "navigation@11",
-					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?(project|subproject)-folders?$/"
+					"when": "view == l13ProjectsWorkspaces && !config.security.workspace.trust.enabled && viewItem =~ /^(current-)?(sub)?project-folders?$/"
+				},
+				{
+					"command": "l13Projects.action.colorPicker.selectColor",
+					"group": "navigation@11",
+					"when": "view == l13ProjectsWorkspaces && config.security.workspace.trust.enabled && isWorkspaceTrusted && viewItem =~ /^current-(sub)?project-folders?$/"
 				},
 				{
 					"command": "l13Projects.action.workspace.addToWorkspace",
@@ -1423,14 +1460,14 @@
 					"type": "string",
 					"default": "name",
 					"enum": [
-						"name",
 						"category",
+						"name",
 						"type"
 					],
 					"description": "Indicates how the workspaces should be sorted. Custom groups are always at the top of the tree view. If a workspace is part of a custom group, it does not appear in the auto sorted groups anymore.",
 					"enumDescriptions": [
-						"Sort all workspaces by name.",
 						"Group all workspaces by category.",
+						"Sort all workspaces by name.",
 						"Group all workspaces by type."
 					]
 				},

@@ -14,6 +14,7 @@ I also want to say thank you to all reviewers on the Visual Studio Code Marketpl
 1. [Available Commands](#available-commands)
 1. [Available Settings](#available-settings)
 1. [Mouse and Keyboard Shortcuts](#mouse-and-keyboard-shortcuts)
+1. [Workspace Trust](#workspace-trust)
 1. [Recommended Extensions](#recommended-extensions)
 
 ## Features
@@ -66,16 +67,16 @@ Priority of icons and labels for saved projects and detected folders and workspa
 
 ## Available Commands
 
-* `Projects: Save Project` - Save the detected folder or workspace in the project list.
-* `Projects: Delete All Projects` - Delete all saved projects in the project list.
-* `Projects: Delete All Tags` - Delete all tags.
-* `Projects: Delete All Favorites` - Delete all favorites.
-* `Projects: Open Favorite Workspace` - Open the quick menu and pick a favorite.
-* `Projects: Open Workspace` - Open the quick menu and pick a workspace.
-* `Projects: Slot 1 .. 9` - Open a workspace assigned to a slot.
-* `Projects: Clear Slot` - Clear a slot.
-* `Projects: Clear All Slots` - Clear all slots.
-* `Projects: Go to previous Workspace` - Open the previous active workspace.
+* `Save Project` - Save the detected folder or workspace in the project list.
+* `Delete All Projects` - Delete all saved projects in the project list.
+* `Delete All Tags` - Delete all tags.
+* `Delete All Favorites` - Delete all favorites.
+* `Open Favorite Workspace` - Open the quick menu and pick a favorite.
+* `Open Workspace` - Open the quick menu and pick a workspace.
+* `Slot 1 .. 9` - Open a workspace assigned to a slot.
+* `Clear Slot` - Clear a slot.
+* `Clear All Slots` - Clear all slots.
+* `Go to previous Workspace` - Open the previous active workspace.
 
 macOS
 
@@ -325,6 +326,10 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Add Folders to Workspace` [1] - Add the paths to the current workspace.
 
 [1] Not available for previous file comparisons in history view.
+
+## Workspace Trust
+
+If `Security > Workspace > Trust: Enabled` is true the feature `Select Status Bar Color` works only in the current workspace and the color detection for other workspaces is disabled.
 
 ## Recommended Extensions
 
