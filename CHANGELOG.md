@@ -5,6 +5,7 @@ All notable changes to the "Projects" extension will be documented in this file.
 
 ### Added
 
+- Added `category` for some commands in package.json
 - Added basic support for workspace trust.
 
 ### Changed
