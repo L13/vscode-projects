@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to the "Projects" extension will be documented in this file.
 
+## [1.1.1] - 2022-02-27
+
+### Fixed
+
+- Fixed duplicated workspace for `sortWorkspacesBy` with value `name` [Issue 40](https://github.com/L13/vscode-projects/issues/40)
+
 ## [1.1.0] - 2021-06-13
 
 ### Added
