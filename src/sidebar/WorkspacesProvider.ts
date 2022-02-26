@@ -231,7 +231,9 @@ export class WorkspacesProvider implements vscode.TreeDataProvider<WorkspacesTre
 			
 		});
 		
-		if (workspacePath && !hasCurrentWorkspace) this.addUnknownItem(list, workspacePath);
+		if (workspacePath && !hasCurrentWorkspace && this.isUnknownWorkspace(workspacePath)) {
+			this.addUnknownItem(list, workspacePath);
+		}
 		
 	}
 	
