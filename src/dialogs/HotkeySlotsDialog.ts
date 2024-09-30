@@ -23,17 +23,17 @@ import type { HotkeySlotsState } from '../states/HotkeySlotsState';
 
 export class HotkeySlotsDialog {
 	
-	private static current:HotkeySlotsDialog;
+	private static current: HotkeySlotsDialog;
 	
-	public static create (hotkeySlotsState:HotkeySlotsState) {
+	public static create (hotkeySlotsState: HotkeySlotsState) {
 		
 		return HotkeySlotsDialog.current || (HotkeySlotsDialog.current = new HotkeySlotsDialog(hotkeySlotsState));
 		
 	}
 	
-	private constructor (private readonly hotkeySlotsState:HotkeySlotsState) {}
+	private constructor (private readonly hotkeySlotsState: HotkeySlotsState) {}
 	
-	public async assignWorkspace (project:Project) {
+	public async assignWorkspace (project: Project) {
 		
 		const item = await this.createQuickPickDialog();
 		
@@ -41,7 +41,7 @@ export class HotkeySlotsDialog {
 		
 	}
 	
-	public async assignGroup (group:FavoriteGroup|WorkspaceGroup) {
+	public async assignGroup (group: FavoriteGroup|WorkspaceGroup) {
 		
 		const item = await this.createQuickPickDialog();
 		
@@ -49,7 +49,7 @@ export class HotkeySlotsDialog {
 		
 	}
 	
-	public async assignTag (tag:Tag) {
+	public async assignTag (tag: Tag) {
 		
 		const item = await this.createQuickPickDialog();
 		
@@ -60,7 +60,7 @@ export class HotkeySlotsDialog {
 	public async createQuickPickDialog () {
 		
 		const slots = this.hotkeySlotsState.get();
-		const items:Item[] = [];
+		const items: Item[] = [];
 		
 		for (let i = 1; i < 10; i++) {
 			items.push({
@@ -79,7 +79,7 @@ export class HotkeySlotsDialog {
 	public async remove () {
 		
 		const slots = this.hotkeySlotsState.get();
-		const items:Item[] = [];
+		const items: Item[] = [];
 		
 		for (const slot of slots) {
 			if (slot) {
@@ -111,7 +111,7 @@ export class HotkeySlotsDialog {
 
 //	Functions __________________________________________________________________
 
-function formatDescription (slot:Slot) {
+function formatDescription (slot: Slot) {
 	
 	if (!slot) return '';
 	

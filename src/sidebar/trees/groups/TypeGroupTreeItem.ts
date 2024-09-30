@@ -19,11 +19,11 @@ const basePath = join(__dirname, '..', 'images', 'types');
 
 export class TypeGroupTreeItem extends TreeItem implements GroupTreeItem {
 	
-	public constructor (public readonly group:TypeGroup, public description:string) {
+	public constructor (public readonly group: TypeGroup, public description: string) {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
-		const name = `project-${group.type}`;
+		const name = `${group.remote ? 'remote' : 'project'}-${group.type}`;
 		
 		this.contextValue = `group-${name}`;
 		this.id = `group-${name}`;
@@ -35,7 +35,7 @@ export class TypeGroupTreeItem extends TreeItem implements GroupTreeItem {
 		
 	}
 	
-	public saveGroupState (workspaceGroupsState:WorkspaceGroupsState, collapsed:boolean) {
+	public saveGroupState (workspaceGroupsState: WorkspaceGroupsState, collapsed: boolean) {
 		
 		workspaceGroupsState.saveTypeGroupState(this, collapsed);
 		

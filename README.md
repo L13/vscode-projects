@@ -4,9 +4,17 @@ Manage your workspaces and projects in Visual Studio Code.
 
 ![Projects](images/previews/preview.png)
 
-Welcome to version 1.0 of the extension Projects. All of the features on my to-do list are done, but that doesn't mean the extension's development is finished. There are more ideas for the future.
+## Important Notice
 
-I also want to say thank you to all reviewers on the Visual Studio Code Marketplace and Github for the positive feedback. I never expected that so many people would download or use the extension. Thank you very much.
+> The current version is a beta because it is not possible to test all types of remote workspaces. If something unexpected appears, please open an issue on GitHub.
+
+> Remote workspaces do not support auto remove. Instead of a local file system, there is no guarantee that it will be always available to check if the folder still exists.
+
+## What's new in Projects 2.0.0 Beta
+
+- Added support for remote workspaces.
+- Added sort workspaces by root.
+- Added actions for reveal folder in os, show favorites, workspaces or tags to statusbar icons.
 
 ## Index
 
@@ -14,6 +22,7 @@ I also want to say thank you to all reviewers on the Visual Studio Code Marketpl
 1. [Available Commands](#available-commands)
 1. [Available Settings](#available-settings)
 1. [Mouse and Keyboard Shortcuts](#mouse-and-keyboard-shortcuts)
+1. [Local vs. Remote Workspaces](#local-vs-remote-workspaces)
 1. [Workspace Trust](#workspace-trust)
 1. [Recommended Extensions](#recommended-extensions)
 
@@ -97,7 +106,7 @@ Windows / Linux
 * `l13Projects.vsCode.folders` - The folders to search for Visual Studio Code folders.
 * `l13Projects.vsCode.maxDepthRecursion` - The maximum depth of folder recursion for Visual Studio Code folders.
 * `l13Projects.vsCode.ignore` - The folders which should be ignored. Supports `*` and `?` for names.
-* `l13Projects.workspace.folders` - The folders to search for Visual Studio Code workspace files.
+* `l13Projects.workspace.folders` - The folders to search for Visual Studio Code workspace files. Remote workspace files are not supported by Visual Studio Code.
 * `l13Projects.workspace.maxDepthRecursion` - The maximum depth of folder recursion for Visual Studio Code workspace files.
 * `l13Projects.workspace.ignore` - The folders which should be ignored. Supports `*` and `?` for names.
 * `l13Projects.subfolder.folders` - The folders to search for subfolders.
@@ -177,28 +186,32 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Open` - Open the favorite workspace in the current window. Ignores `l13Projects.openInNewWindow`.
 * `Open in New Window` - Open the favorite workspace in a new window. Ignores `l13Projects.openInNewWindow`.
 * `Add to Group` - Add a workspace to a favorite group.
-* `Open in Integrated Terminal` - Opens the favorite workspace in the Visual Studio Code terminal.
+* `Open in Integrated Terminal` [2] - Opens the favorite workspace in the Visual Studio Code terminal.
 * `Assign to Slot` - Assign the workspace to slot 1 - 9 to open it with a keyboard shortcut.
-* `Select for Compare` - Select a folder for a comparison. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
-* `Compare with Selected` - Compare the folder with the current selection. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
-* `Compare with Workspace` - Compares the folder with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
-* `Open in Diff Folders` - Opens the favorite folder in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Select for Compare` [4] - Select a folder for a comparison. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Compare with Selected` [4] - Compare the folder with the current selection. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Compare with Workspace` [4] - Compares the folder with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Open in Diff Folders` [4] - Opens the favorite folder in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Copy Path` - Copy the path of the workspace to the clipboard.
 * `Remove from Group` - Remove a workspace from a favorite group.
 * `Rename` - Change the name of the favorite project.
 * `Delete` - Remove the workspace from favorites.
 
+[2] Not supported by remote and virtual workspaces.
+
+[4] Remote and virtual workspaces are not supported by Diff Folders.
+
 #### macOS
 
-* `Reveal in Finder` - Opens the favorite folder or Visual Studio Code workspace file in the Finder.
+* `Reveal in Finder` [2] - Opens the favorite folder or Visual Studio Code workspace file in the Finder.
 
 #### Windows
 
-* `Reveal in File Explorer` - Opens the favorite folder or Visual Studio Code workspace file in the Explorer.
+* `Reveal in File Explorer` [2] - Opens the favorite folder or Visual Studio Code workspace file in the Explorer.
 
 #### Linux
 
-* `Open Containing Folder` - Opens the favorite folder or Visual Studio Code workspace file in the file manager.
+* `Open Containing Folder` [2] - Opens the favorite folder or Visual Studio Code workspace file in the file manager.
 
 ### Favorite Groups Context Menu
 
@@ -224,8 +237,10 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 #### All Platforms
 
 * `New Workspace Group` - Add a new workspace group.
-* `Refresh` - Refresh workspace and favorite list.
+* `Refresh` [5] - Refresh workspace and favorite list.
 * `Collapse All` - Collapse all groups.
+
+[5] Status bar colors in remote workspaces can not only be detected if the project is the current workspace.
 
 #### macOS
 
@@ -234,7 +249,9 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 #### Windows / Linux
 
 * `Add Project` - Add a folder as project to the workspace list.
-* `Add Project Workspace` - Add a Visual Studio Code workspace file as project workspace to the workspace list.
+* `Add Project Workspace` [2] - Add a Visual Studio Code workspace file as project workspace to the workspace list.
+
+[2] Not supported by remote and virtual workspaces.
 
 ### Workspaces Context menu
 
@@ -242,31 +259,37 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Open in New Window` - Open the workspace in a new window. Ignores `l13Projects.openInNewWindow`.
 * `Save Project` - Save the folder or workspace as a project.
 * `Add to Favorites` - Add the workspace to favorites.
-* `Open in Integrated Terminal` - Open the workspace in the terminal.
+* `Open in Integrated Terminal` [2] - Open the workspace in the terminal.
 * `Add to Group` - Add a project, repository or workspace to a workspace group.
 * `Edit Tags` - Assign or unassign tags to the workspace.
 * `Assign to Slot` - Assign the workspace to slot 1 - 9 to open it with a keyboard shortcut.
-* `Select Status Bar Color` - Select a color for a project. The color also appears in the status bar.
-* `Select for Compare` - Select a folder for a comparison. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
-* `Compare with Selected` - Compare the folder with the current selection. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
-* `Compare with Workspace` - Compares the folder with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
-* `Open in Diff Folders` - Opens the folder in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Select Status Bar Color` [3] - Select a color for a project. The color also appears in the status bar.
+* `Select for Compare` [4] - Select a folder for a comparison. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Compare with Selected` [4] - Compare the folder with the current selection. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Compare with Workspace` [4] - Compares the folder with the current workspace. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
+* `Open in Diff Folders` [4] - Opens the folder in Diff Folders. Requires [Diff Folders](https://marketplace.visualstudio.com/items?itemName=L13RARY.l13-diff).
 * `Copy Path` - Copy the path of the workspace to the clipboard.
 * `Remove from Group` - Remove a workspace from a workspace group.
 * `Rename` - Change the name of a project.
 * `Delete` - Delete the project.
 
+[2] Not supported by remote and virtual workspaces.
+
+[3] Only available if remote workspace is active.
+
+[4] Remote and virtual workspaces are not supported by Diff Folders.
+
 #### macOS
 
-* `Reveal in Finder` - Opens the folder or Visual Studio Code workspace file in the Finder.
+* `Reveal in Finder` [2] - Opens the folder or Visual Studio Code workspace file in the Finder.
 
 #### Windows
 
-* `Reveal in File Explorer` - Opens the folder or Visual Studio Code workspace file in the Explorer.
+* `Reveal in File Explorer` [2] - Opens the folder or Visual Studio Code workspace file in the Explorer.
 
 #### Linux
 
-* `Open Containing Folder` - Opens the folder or Visual Studio Code workspace file in the file manager.
+* `Open Containing Folder` [2] - Opens the folder or Visual Studio Code workspace file in the file manager.
 
 ### Workspace Groups Context Menu
 
@@ -326,6 +349,15 @@ If the key bindings don't work, please check `Preferences -> Keyboard Shortcuts`
 * `Add Folders to Workspace` [1] - Add the paths to the current workspace.
 
 [1] Not available for previous file comparisons in history view.
+
+## Local vs. Remote Workspaces
+
+Remote and virtual workspaces have technically some limitations and do not support all features of local workspaces. The following list shows which features are limited or are not available in remote and virtual workspaces.
+
+* `Select Status Bar Color` - Not available for remote and virtual workspaces.
+* `Reveal in Finder`, `Reveal in File Explorer`, `Open Containing Folder` - Not available because not possible.
+* `Open in Integrated Terminal` - Not available because it does not work if the remote or virtual workspace is not the current workspace.
+* `*.code-workspace` - Visual Studio Code Workspace files don't work on remote and virtual workspaces.
 
 ## Workspace Trust
 

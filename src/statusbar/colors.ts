@@ -12,7 +12,7 @@ import type { StatusBarColors } from '../@types/workspaces';
 
 //	Exports ____________________________________________________________________
 
-export const colors:StatusBarColors[] = [
+export const colors: StatusBarColors[] = [
 	{
 		'statusBar.background': null,
 		'statusBar.foreground': null,

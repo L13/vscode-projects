@@ -20,12 +20,12 @@ import * as states from '../common/states';
 const findBackupFileName = /\d{4}(\-\d{2}){5}(?:\-auto)?.json/;
 
 type Backup = {
-	favorites:Favorite[],
-	favoriteGroups:FavoriteGroup[],
-	projects:Project[],
-	slots:Slot[],
-	tags:Tag[],
-	workspaceGroups:WorkspaceGroup[],
+	favorites: Favorite[],
+	favoriteGroups: FavoriteGroup[],
+	projects: Project[],
+	slots: Slot[],
+	tags: Tag[],
+	workspaceGroups: WorkspaceGroup[],
 };
 
 //	Initialize _________________________________________________________________
@@ -34,7 +34,7 @@ type Backup = {
 
 //	Exports ____________________________________________________________________
 
-export function activate (context:vscode.ExtensionContext) {
+export function activate (context: vscode.ExtensionContext) {
 	
 	const dirname = path.join(context.globalStorageUri.fsPath, 'backups');
 	
@@ -113,13 +113,13 @@ export function activate (context:vscode.ExtensionContext) {
 
 //	Functions __________________________________________________________________
 
-async function createBackup (context:vscode.ExtensionContext, dirname:string, basename:string) {
+async function createBackup (context: vscode.ExtensionContext, dirname: string, basename: string) {
 	
 	if (!fs.existsSync(dirname)) fs.mkdirSync(dirname, { recursive: true });
 	
 	const filename = path.join(dirname, basename);
 			
-	const content:Backup = {
+	const content: Backup = {
 		favorites: states.getFavorites(context),
 		favoriteGroups: states.getFavoriteGroups(context),
 		projects: states.getProjects(context),
@@ -136,7 +136,7 @@ async function createBackup (context:vscode.ExtensionContext, dirname:string, ba
 	
 }
 
-async function selectBackup (dirname:string) {
+async function selectBackup (dirname: string) {
 	
 	if (!fs.existsSync(dirname)) {
 		vscode.window.showInformationMessage('No backups available');
@@ -157,20 +157,20 @@ async function selectBackup (dirname:string) {
 	
 }
 
-function formatDate (date:Date) {
+function formatDate (date: Date) {
 	
 	// eslint-disable-next-line max-len
 	return `${date.getFullYear()}-${formatDigit(date.getMonth() + 1)}-${formatDigit(date.getDate())}-${formatDigit(date.getHours())}-${formatDigit(date.getMinutes())}-${formatDigit(date.getSeconds())}`;
 	
 }
 
-function formatDigit (digit:number) {
+function formatDigit (digit: number) {
 	
 	return `${digit}`.padStart(2, '0');
 	
 }
 
-async function showMessageReload (text:string) {
+async function showMessageReload (text: string) {
 	
 	const reload = await vscode.window.showInformationMessage(text, 'Reload Window');
 	

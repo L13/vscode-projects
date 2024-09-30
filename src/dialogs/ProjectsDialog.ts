@@ -3,7 +3,6 @@
 import * as vscode from 'vscode';
 
 import { formatLabel } from '../@l13/formats';
-import { isMacOs } from '../@l13/platforms';
 
 import type { Project } from '../@types/workspaces';
 
@@ -25,19 +24,19 @@ import type { ProjectsState } from '../states/ProjectsState';
 
 export class ProjectsDialog {
 	
-	private static current:ProjectsDialog = null;
+	private static current: ProjectsDialog = null;
 	
-	public static create (projectsState:ProjectsState) {
+	public static create (projectsState: ProjectsState) {
 		
 		return ProjectsDialog.current || (ProjectsDialog.current = new ProjectsDialog(projectsState));
 		
 	}
 	
-	public constructor (private readonly projectsState:ProjectsState) {}
+	private constructor (private readonly projectsState: ProjectsState) {}
 	
 	public async addDirectory () {
 		
-		const uris = isMacOs ? await dialogs.open() : await dialogs.openFolder();
+		const uris = await dialogs.openWorkspaceFolder();
 		
 		if (!uris) return;
 		
@@ -45,9 +44,9 @@ export class ProjectsDialog {
 		
 	}
 	
-	public async addVSCodeWorkspace () {
+	public async addWorkspaceFile () {
 		
-		const uris = await dialogs.openFile();
+		const uris = await dialogs.openWorkspaceFile();
 		
 		if (!uris) return;
 		
@@ -55,26 +54,26 @@ export class ProjectsDialog {
 		
 	}
 	
-	public async save (project?:Project) {
+	public async save (project?: Project) {
 		
-		const fsPath:string = project ? project.path : getCurrentWorkspacePath();
+		const path: string = project ? project.path : getCurrentWorkspacePath();
 		
-		if (fsPath) {
-			const existingProject = this.projectsState.getByPath(fsPath);
+		if (path) {
+			const existingProject = this.projectsState.getByPath(path);
 			
 			if (existingProject) {
 				vscode.window.showInformationMessage(`Project "${existingProject.label}" exists!`);
 				return;
 			}
 			
-			const value = await vscode.window.showInputBox({
-				value: formatLabel(fsPath),
+			const label = await vscode.window.showInputBox({
+				value: formatLabel(path),
 				placeHolder: 'Please enter a name for the project',
 			});
 			
-			if (!value) return;
+			if (!label) return;
 			
-			this.projectsState.add(fsPath, value);
+			this.projectsState.add(path, label);
 		} else if (vscode.workspace.workspaceFile?.scheme === 'untitled') {
 			vscode.window.showWarningMessage('Please save your current workspace first.');
 			vscode.commands.executeCommand('workbench.action.saveWorkspaceAs');
@@ -82,25 +81,25 @@ export class ProjectsDialog {
 		
 	}
 	
-	public async rename (project:Project) {
+	public async rename (project: Project) {
 		
-		const value = await vscode.window.showInputBox({
+		const label = await vscode.window.showInputBox({
 			value: project.label,
 			placeHolder: 'Please enter a new name for the project',
 		});
 		
-		if (project.label === value || value === undefined) return;
+		if (project.label === label || label === undefined) return;
 		
-		if (!value) {
+		if (!label) {
 			vscode.window.showErrorMessage('Project with no name is not valid!');
 			return;
 		}
 		
-		this.projectsState.rename(project, value);
+		this.projectsState.rename(project, label);
 		
 	}
 	
-	public async remove (project:Project) {
+	public async remove (project: Project) {
 		
 		if (settings.get('confirmDeleteProject', true)) {
 			const buttonDeleteDontShowAgain = 'Delete, don\'t show again';

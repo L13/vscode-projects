@@ -21,15 +21,15 @@ import type { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 
 export class WorkspaceGroupsDialog {
 	
-	private static current:WorkspaceGroupsDialog = null;
+	private static current: WorkspaceGroupsDialog = null;
 	
-	public static create (workspaceGroupsState:WorkspaceGroupsState, favoriteGroupsState:FavoriteGroupsState) {
+	public static create (workspaceGroupsState: WorkspaceGroupsState, favoriteGroupsState: FavoriteGroupsState) {
 		
 		return WorkspaceGroupsDialog.current || (WorkspaceGroupsDialog.current = new WorkspaceGroupsDialog(workspaceGroupsState, favoriteGroupsState));
 		
 	}
 	
-	public constructor (private readonly workspaceGroupsState:WorkspaceGroupsState, private readonly favoriteGroupsState:FavoriteGroupsState) {}
+	private constructor (private readonly workspaceGroupsState: WorkspaceGroupsState, private readonly favoriteGroupsState: FavoriteGroupsState) {}
 	
 	public async add () {
 		
@@ -55,10 +55,10 @@ export class WorkspaceGroupsDialog {
 		
 	}
 	
-	public async addWorkspaceToGroup (workspace:Project) {
+	public async addWorkspaceToGroup (workspace: Project) {
 		
 		const workspaceGroups = this.workspaceGroupsState.get();
-		let workspaceGroup:WorkspaceGroup = null;
+		let workspaceGroup: WorkspaceGroup = null;
 		
 		if (workspaceGroups.length) {
 			const newWorkspaceGroupItem = { label: '$(add) New Workspace Group...' };
@@ -80,7 +80,7 @@ export class WorkspaceGroupsDialog {
 		
 	}
 	
-	public async rename (workspaceGroup:WorkspaceGroup) {
+	public async rename (workspaceGroup: WorkspaceGroup) {
 		
 		const label = await vscode.window.showInputBox({
 			placeHolder: 'Please enter a new name for the group.',
@@ -103,7 +103,7 @@ export class WorkspaceGroupsDialog {
 		
 	}
 	
-	public async remove (workspaceGroup:WorkspaceGroup) {
+	public async remove (workspaceGroup: WorkspaceGroup) {
 		
 		if (await dialogs.confirm(`Delete workspace group "${workspaceGroup.label}"?`, 'Delete')) {
 			this.workspaceGroupsState.remove(workspaceGroup);

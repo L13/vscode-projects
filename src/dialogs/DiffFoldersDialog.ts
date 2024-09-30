@@ -1,12 +1,12 @@
 //	Imports ____________________________________________________________________
 
-import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
 
 import * as files from '../common/files';
+import * as fse from '../common/fse';
 import { parsePredefinedVariable } from '../common/paths';
 import * as settings from '../common/settings';
 import * as terminal from '../common/terminal';
@@ -25,19 +25,19 @@ import { ProjectsState } from '../states/ProjectsState';
 
 export class DiffFoldersDialog {
 	
-	private static current:DiffFoldersDialog = null;
+	private static current: DiffFoldersDialog = null;
 	
-	public static create (projectsState:ProjectsState) {
+	public static create (projectsState: ProjectsState) {
 		
 		return DiffFoldersDialog.current || (DiffFoldersDialog.current = new DiffFoldersDialog(projectsState));
 		
 	}
 	
-	public constructor (private readonly projectsState:ProjectsState) {}
+	private constructor (private readonly projectsState: ProjectsState) {}
 	
-	public async reveal (paths:string[]) {
+	public async reveal (paths: string[]) {
 		
-		const items = this.createQuickPickItems(paths);
+		const items = await this.createQuickPickItems(paths);
 		
 		if (!items.length) return;
 		
@@ -51,9 +51,9 @@ export class DiffFoldersDialog {
 		
 	}
 	
-	public async openInTerminal (paths:string[]) {
+	public async openInTerminal (paths: string[]) {
 		
-		const items = this.createQuickPickItems(paths);
+		const items = await this.createQuickPickItems(paths);
 		
 		if (!items.length) return;
 		
@@ -67,9 +67,9 @@ export class DiffFoldersDialog {
 		
 	}
 	
-	public async openWorkspace (paths:string[]) {
+	public async openWorkspace (paths: string[]) {
 		
-		const items = this.createQuickPickItems(paths);
+		const items = await this.createQuickPickItems(paths);
 		
 		if (!items.length) return;
 		
@@ -91,19 +91,21 @@ export class DiffFoldersDialog {
 		
 	}
 	
-	private createQuickPickItems (paths:string[]) {
+	private async createQuickPickItems (paths: string[]) {
 		
-		return paths
-			.map((fsPath) => {
-			
-				return parsePredefinedVariable(fsPath);
-			
-			})
-			.filter((fsPath) => {
-				
-				return fs.existsSync(fsPath);
-				
-			})
+		const parsedPaths = paths.map((fsPath) => {
+		
+			return parsePredefinedVariable(fsPath);
+		
+		});
+		
+		const filteredPaths = [];
+		
+		for (const fsPath of parsedPaths) {
+			if (await fse.exists(fsPath)) filteredPaths.push(fsPath);
+		}
+		
+		return filteredPaths
 			.map((fsPath) => {
 				
 				const project = this.projectsState.getByPath(fsPath);

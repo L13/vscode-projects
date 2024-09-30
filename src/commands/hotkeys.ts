@@ -27,7 +27,7 @@ import { WorkspacesState } from '../states/WorkspacesState';
 
 //	Exports ____________________________________________________________________
 
-export function activate (context:vscode.ExtensionContext) {
+export function activate (context: vscode.ExtensionContext) {
 	
 	const hotkeySlotsState = HotkeySlotsState.create(context);
 	const projectsState = ProjectsState.create(context);
@@ -51,7 +51,6 @@ export function activate (context:vscode.ExtensionContext) {
 		'l13Projects.action.workspace.assignSlot': ({ project }) => hotkeySlotsDialog.assignWorkspace(project),
 		'l13Projects.action.group.assignSlot': ({ group }) => hotkeySlotsDialog.assignGroup(group),
 		'l13Projects.action.tag.assignSlot': ({ tag }) => hotkeySlotsDialog.assignTag(tag),
-		'l13Projects.action.workspace.clearSlot': () => hotkeySlotsDialog.remove(),
 		
 		'l13Projects.action.hotkey.slot1': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 1),
 		'l13Projects.action.hotkey.slot2': () => openSlot(hotkeySlotsState, tagsState, tagsDialog, 2),
@@ -71,6 +70,7 @@ export function activate (context:vscode.ExtensionContext) {
 			
 		},
 		
+		'l13Projects.action.hotkeys.clearSlot': () => hotkeySlotsDialog.remove(),
 		'l13Projects.action.hotkeys.clearAllSlots': () => hotkeySlotsDialog.clear(),
 	});
 	
@@ -78,7 +78,7 @@ export function activate (context:vscode.ExtensionContext) {
 
 //	Functions __________________________________________________________________
 
-function openSlot (hotkeySlotsState:HotkeySlotsState, tagsState:TagsState, tagsDialog:TagsDialog, index:number) {
+function openSlot (hotkeySlotsState: HotkeySlotsState, tagsState: TagsState, tagsDialog: TagsDialog, index: number) {
 	
 	const slots = hotkeySlotsState.get();
 	const slot = slots[index];

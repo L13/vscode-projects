@@ -25,30 +25,30 @@ import { TagTreeItem } from './trees/items/TagTreeItem';
 
 export class TagsProvider implements vscode.TreeDataProvider<TagTreeItem> {
 	
-	private _onDidChangeTreeData:vscode.EventEmitter<TagTreeItem|undefined> = new vscode.EventEmitter<TagTreeItem|undefined>();
-	public readonly onDidChangeTreeData:vscode.Event<TagTreeItem|undefined> = this._onDidChangeTreeData.event;
+	private _onDidChangeTreeData: vscode.EventEmitter<TagTreeItem|undefined> = new vscode.EventEmitter<TagTreeItem|undefined>();
+	public readonly onDidChangeTreeData: vscode.Event<TagTreeItem|undefined> = this._onDidChangeTreeData.event;
 	
-	public tagDescriptionFormat:TagDescriptionFormat = settings.get('tagDescriptionFormat');
+	public tagDescriptionFormat: TagDescriptionFormat = settings.get('tagDescriptionFormat');
 	
-	private tags:Tag[] = [];
-	private slots:HotkeySlotsState = null;
+	private tags: Tag[] = [];
+	private slots: HotkeySlotsState = null;
 	
-	public static current:TagsProvider;
+	public static current: TagsProvider;
 	
-	public static create (states:TagsStates) {
+	public static create (states: TagsStates) {
 		
 		return TagsProvider.current || (TagsProvider.current = new TagsProvider(states));
 		
 	}
 	
-	private constructor ({ tags, hotkeySlots }:TagsStates) {
+	private constructor ({ tags, hotkeySlots }: TagsStates) {
 		
 		this.tags = tags;
 		this.slots = hotkeySlots;
 		
 	}
 	
-	public refresh (refreshStates?:RefreshTagsStates) {
+	public refresh (refreshStates?: RefreshTagsStates) {
 		
 		if (refreshStates?.tags) this.tags = refreshStates.tags;
 		
@@ -56,7 +56,7 @@ export class TagsProvider implements vscode.TreeDataProvider<TagTreeItem> {
 		
 	}
 	
-	public getTreeItem (element:TagTreeItem) {
+	public getTreeItem (element: TagTreeItem) {
 		
 		return element;
 		
@@ -64,7 +64,7 @@ export class TagsProvider implements vscode.TreeDataProvider<TagTreeItem> {
 	
 	public getChildren () {
 		
-		const list:TagTreeItem[] = [];
+		const list: TagTreeItem[] = [];
 		const tags = this.tags;
 		
 		if (!tags.length) return list;

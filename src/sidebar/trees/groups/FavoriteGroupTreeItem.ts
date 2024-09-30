@@ -27,7 +27,7 @@ export class FavoriteGroupTreeItem extends TreeItem implements GroupTreeItem {
 		
 	public iconPath = iconPath;
 	
-	public constructor (public readonly group:FavoriteGroup, public description:string) {
+	public constructor (public readonly group: FavoriteGroup, public description: string) {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
@@ -35,7 +35,7 @@ export class FavoriteGroupTreeItem extends TreeItem implements GroupTreeItem {
 		
 	}
 	
-	public saveGroupState (favoriteGroupsState:FavoriteGroupsState, collapsed:boolean) {
+	public saveGroupState (favoriteGroupsState: FavoriteGroupsState, collapsed: boolean) {
 		
 		favoriteGroupsState.saveCollapsedState(this, collapsed);
 		

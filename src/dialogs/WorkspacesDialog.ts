@@ -2,6 +2,8 @@
 
 import * as vscode from 'vscode';
 
+import { formatNotAvailableAlert } from '../@l13/formats';
+
 import type { WorkspaceGroup, WorkspaceQuickPickItem } from '../@types/workspaces';
 
 import * as files from '../common/files';
@@ -21,15 +23,15 @@ import type { WorkspacesState } from '../states/WorkspacesState';
 
 export class WorkspacesDialog {
 	
-	private static current:WorkspacesDialog = null;
+	private static current: WorkspacesDialog = null;
 	
-	public static create (workspacesState:WorkspacesState, workspaceGroupsState:WorkspaceGroupsState) {
+	public static create (workspacesState: WorkspacesState, workspaceGroupsState: WorkspaceGroupsState) {
 		
 		return WorkspacesDialog.current || (WorkspacesDialog.current = new WorkspacesDialog(workspacesState, workspaceGroupsState));
 		
 	}
 	
-	public constructor (private readonly workspacesState:WorkspacesState, private readonly workspaceGroupsState:WorkspaceGroupsState) {}
+	private constructor (private readonly workspacesState: WorkspacesState, private readonly workspaceGroupsState: WorkspaceGroupsState) {}
 	
 	public async pick () {
 		
@@ -50,7 +52,7 @@ export class WorkspacesDialog {
 		
 		if (!this.workspacesState.cache) await this.workspacesState.detect();
 		
-		const items:WorkspaceQuickPickItem[] = [];
+		const items: WorkspaceQuickPickItem[] = [];
 		const workspacesCache = this.workspacesState.cache;
 		const workspaceGroups = this.workspaceGroupsState.get();
 		
@@ -72,7 +74,7 @@ export class WorkspacesDialog {
 			items.push({
 				label: project.label,
 				description: project.path,
-				detail: project.deleted ? '$(alert) Path does not exist' : '',
+				detail: project.deleted ? formatNotAvailableAlert(project) : '',
 				paths: null,
 			});
 			
@@ -82,7 +84,7 @@ export class WorkspacesDialog {
 		
 	}
 	
-	public async editWorkspaces (workspaceGroup:WorkspaceGroup) {
+	public async editWorkspaces (workspaceGroup: WorkspaceGroup) {
 		
 		const workspaces = this.workspacesState.cache || await this.workspacesState.detect();
 		
@@ -93,7 +95,7 @@ export class WorkspacesDialog {
 			return {
 				label: workspace.label,
 				description: workspace.path,
-				detail: workspace.deleted ? '$(alert) Path does not exist' : '',
+				detail: workspace.deleted ? formatNotAvailableAlert(workspace) : '',
 				picked: workspaceGroup.paths.includes(workspace.path),
 				workspace,
 			};

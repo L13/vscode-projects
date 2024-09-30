@@ -1,23 +1,42 @@
 //	Imports ____________________________________________________________________
 
-import * as fs from 'fs';
 import * as vscode from 'vscode';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
-import { formatLabel } from '../@l13/formats';
-import { sanitize, subfolders, walkTree } from '../@l13/fse';
+import { sanitizePath, sanitizeUri } from '../@l13/fse';
+import { isFileUri, isUri } from '../@l13/uris';
 
-import type { FileMap, Options } from '../@types/files';
-import type { Project, UpdateCacheCallback, WorkspaceTypes } from '../@types/workspaces';
+import type { Dictionary } from '../@types/basics';
+import type { ScanResult, ScanFolder, WalkTreeOptions } from '../@types/files';
+import type { Project, ProjectTypes, UpdateCacheCallback, WorkspaceTypes } from '../@types/workspaces';
 
+import { walkTree } from '../common/fse';
 import * as settings from '../common/settings';
 import * as states from '../common/states';
-import { findExtWorkspace } from '../common/workspaces';
+import { createWorkspaceItem, findExtWorkspace } from '../common/workspaces';
 
 //	Variables __________________________________________________________________
 
 const findGitFolder = /^\.git$/;
 const findVSCodeFolder = /^\.vscode$/;
+
+const projectTypes: ProjectTypes[] = [
+	'codespace',
+	'container',
+	'github',
+	'wsl',
+	
+	'remote',
+	'virtual',
+	'ssh',
+	
+	'folder',
+	'folders',
+	'git',
+	'vscode',
+	'workspace',
+	'subfolder',
+];
 
 //	Initialize _________________________________________________________________
 
@@ -27,25 +46,37 @@ const findVSCodeFolder = /^\.vscode$/;
 
 export class WorkspacesState {
 	
-	private static current:WorkspacesState = null;
+	private static current: WorkspacesState = null;
 	
-	public static create (context:vscode.ExtensionContext) {
+	public static create (context: vscode.ExtensionContext) {
 		
 		return WorkspacesState.current || (WorkspacesState.current = new WorkspacesState(context));
 		
 	}
 	
-	private _onDidChangeWorkspaces:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
-	public readonly onDidChangeWorkspaces:vscode.Event<Project[]> = this._onDidChangeWorkspaces.event;
+	private _onDidChangeWorkspaces: vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
+	public readonly onDidChangeWorkspaces: vscode.Event<Project[]> = this._onDidChangeWorkspaces.event;
 	
-	public cache:Project[] = null;
+	private _onWillScanWorkspaces: vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
+	public readonly onWillScanWorkspaces: vscode.Event<undefined> = this._onWillScanWorkspaces.event;
 	
-	private gitCache:Project[] = [];
-	private vscodeCache:Project[] = [];
-	private workspaceCache:Project[] = [];
-	private subfolderCache:Project[] = [];
+	private _onDidScanWorkspaces: vscode.EventEmitter<undefined> = new vscode.EventEmitter<undefined>();
+	public readonly onDidScanWorkspaces: vscode.Event<undefined> = this._onDidScanWorkspaces.event;
 	
-	public constructor (private readonly context:vscode.ExtensionContext) {
+	private _onWillScanWorkspace: vscode.EventEmitter<ScanFolder> = new vscode.EventEmitter<ScanFolder>();
+	public readonly onWillScanWorkspace: vscode.Event<ScanFolder> = this._onWillScanWorkspace.event;
+	
+	private _onDidScanWorkspace: vscode.EventEmitter<ScanResult> = new vscode.EventEmitter<ScanResult>();
+	public readonly onDidScanWorkspace: vscode.Event<ScanResult> = this._onDidScanWorkspace.event;
+	
+	public cache: Project[] = null;
+	
+	private gitCache: Project[] = [];
+	private vscodeCache: Project[] = [];
+	private workspaceCache: Project[] = [];
+	private subfolderCache: Project[] = [];
+	
+	private constructor (private readonly context: vscode.ExtensionContext) {
 		
 		if (settings.get('useCacheForDetectedProjects', false)) this.get();
 		
@@ -62,9 +93,9 @@ export class WorkspacesState {
 		
 	}
 	
-	public getByPath (fsPath:string) {
+	public getByPath (fsPath: string) {
 		
-		if (!this.workspaceCache) return null;
+		if (!this.cache) return null;
 		
 		for (const workspace of this.cache) {
 			if (workspace.path === fsPath) return workspace;
@@ -78,7 +109,7 @@ export class WorkspacesState {
 		
 		const projects = states.getProjects(this.context);
 		
-		const once:{ [name:string]:Project } = {};
+		const once: Dictionary<Project> = {};
 		const all = [
 			...projects,
 			...this.gitCache,
@@ -91,16 +122,10 @@ export class WorkspacesState {
 			
 			if (once[workspace.path]) {
 				const type = once[workspace.path].type;
-				if (type === 'folder') return;
-				if (workspace.type === 'folder') return once[workspace.path] = workspace;
-				if (type === 'folders') return;
-				if (workspace.type === 'folders') return once[workspace.path] = workspace;
-				if (type === 'git') return;
-				if (workspace.type === 'git') return once[workspace.path] = workspace;
-				if (type === 'vscode') return;
-				if (workspace.type === 'vscode') return once[workspace.path] = workspace;
-				if (type === 'subfolder') return;
-				if (workspace.type === 'subfolder') return once[workspace.path] = workspace;
+				for (const projectType of projectTypes) {
+					if (type === projectType) return;
+					if (workspace.type === projectType) return once[workspace.path] = workspace;
+				}
 			} else once[workspace.path] = workspace;
 			
 		});
@@ -121,10 +146,12 @@ export class WorkspacesState {
 	
 	public detect () {
 		
-		const gitFolders = settings.get('git.folders', []);
-		const vscodeFolders = settings.get('vsCode.folders', []);
-		const workspaceFolders = settings.get('workspace.folders', []);
-		const subfolderFolders = settings.get('subfolder.folders', []);
+		const gitFolders = filterFilePaths(settings.get('git.folders', []));
+		const vscodeFolders = filterFilePaths(settings.get('vsCode.folders', []));
+		const workspaceFolders = filterFilePaths(settings.get('workspace.folders', []));
+		const subfolderFolders = filterFilePaths(settings.get('subfolder.folders', []));
+		
+		this._onWillScanWorkspaces.fire(undefined);
 		
 		return Promise.all([
 			this.detectWorkspacesOfType('git', states.updateGitCache, this.gitCache = [], gitFolders, {
@@ -147,11 +174,13 @@ export class WorkspacesState {
 			}),
 			this.detectWorkspacesOfType('subfolder', states.updateSubfolderCache, this.subfolderCache = [], subfolderFolders, {
 				find: null,
-				type: 'folder',
+				type: 'subfolder',
 				maxDepth: 1,
 				ignore: settings.get('subfolder.ignore', []),
 			}),
 		]).then(() => {
+			
+			this._onDidScanWorkspaces.fire(undefined);
 			
 			this.rebuild();
 		
@@ -163,27 +192,28 @@ export class WorkspacesState {
 		
 	}
 	
-	private detectWorkspacesOfType (type:WorkspaceTypes, updateCacheCallback:UpdateCacheCallback, workspaces:Project[], paths:string[], options:Options) {
+	// eslint-disable-next-line max-len
+	private detectWorkspacesOfType (type: WorkspaceTypes, updateCacheCallback: UpdateCacheCallback, workspaces: Project[], paths: string[], options: WalkTreeOptions) {
 		
-		const promises:Array<Promise<FileMap>> = type === 'subfolder' ? createSubfolderDetection(paths, options) : createWorkspaceDetection(paths, options);
+		options.done = (error, result) => this._onDidScanWorkspace.fire({ error, result, type });
+		
+		const promises = paths.map((path) => {
+			
+			this._onWillScanWorkspace.fire({ path, type });
+			
+			return walkTree(sanitize(path), options);
+			
+		});
 		
 		if (promises.length) {
 			return Promise.all(promises).then((results) => {
 				
-				results.forEach((files) => {
-					
-					for (const file of Object.values(files)) {
-						const pathname = file.path;
-						workspaces.push({
-							label: formatLabel(pathname),
-							path: pathname,
-							type,
-						});
-					}
-					
-				});
+				for (const result of results) {
+					const root = result.root;
+					for (const uri of result.uris) workspaces.push(createWorkspaceItem(uri, type, null, root));
+				}
 				
-				workspaces.sort(({ label: a }:Project, { label: b }:Project) => sortCaseInsensitive(a, b));
+				workspaces.sort(({ label: a }: Project, { label: b }: Project) => sortCaseInsensitive(a, b));
 				
 				updateCacheCallback(this.context, workspaces);
 				
@@ -204,56 +234,14 @@ export class WorkspacesState {
 
 //	Functions __________________________________________________________________
 
-function createWorkspaceDetection (paths:string[], options:Options) {
+function sanitize (path: string) {
 	
-	const promises:Array<Promise<FileMap>> = [];
-	
-	paths.forEach((path) => {
-		
-		path = sanitize(path);
-			
-		if (fs.existsSync(path)) {
-			promises.push(new Promise((resolve, reject) => {
-				
-				walkTree(path, options, (error, result) => {
-					
-					if (error) reject(error);
-					else resolve(result);
-					
-				});
-				
-			}));
-		}
-		
-	});
-	
-	return promises;
+	return isUri(path) ? sanitizeUri(path) : sanitizePath(path);
 	
 }
 
-function createSubfolderDetection (paths:string[], options:Options) {
+function filterFilePaths (paths: string[]) {
 	
-	const promises:Array<Promise<FileMap>> = [];
-	
-	paths.forEach((path) => {
-		
-		path = sanitize(path);
-			
-		if (fs.existsSync(path)) {
-			promises.push(new Promise((resolve, reject) => {
-				
-				subfolders(path, options, (error, result) => {
-					
-					if (error) reject(error);
-					else resolve(result);
-					
-				});
-				
-			}));
-		}
-		
-	});
-	
-	return promises;
+	return paths.filter((path) => !isUri(path) || isFileUri(path));
 	
 }

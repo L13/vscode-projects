@@ -17,7 +17,7 @@ const iconPath = join(__filename, '..', '..', 'images', 'picker', 'color-picker.
 
 export class ColorPickerTreeItem extends TreeItem {
 	
-	public project:Project = null;
+	public project: Project = null;
 	
 	public contextValue = 'color-picker';
 	

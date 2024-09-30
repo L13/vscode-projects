@@ -8,10 +8,6 @@ import type { Project } from '../../../@types/workspaces';
 //	Variables __________________________________________________________________
 
 const basePath = join(__dirname, '..', 'images', 'unknown');
-const iconPath = {
-	light: join(basePath, 'unknown-project-light.svg'),
-	dark: join(basePath, 'unknown-project-dark.svg'),
-};
 
 //	Initialize _________________________________________________________________
 
@@ -21,15 +17,21 @@ const iconPath = {
 
 export class UnknownProjectTreeItem extends TreeItem {
 	
-	public contextValue = 'unknown-project';
-	
-	public iconPath = iconPath;
-	
 	public description = 'Unknown workspace';
 	
-	public constructor (public readonly project:Project) {
+	public constructor (public readonly project: Project) {
 		
 		super(project.label);
+		
+		const remote = project.remote;
+		const icon = remote ? 'remote' : 'project';
+		
+		this.contextValue = `unknown-${remote ? 'remote-' : ''}project`;
+		
+		this.iconPath = {
+			light: join(basePath, `unknown-${icon}-light.svg`),
+			dark: join(basePath, `unknown-${icon}-dark.svg`),
+		};
 		
 		this.tooltip = this.project.path;
 		

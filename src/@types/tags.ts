@@ -21,37 +21,37 @@ import { Project } from './workspaces';
 //	Exports ____________________________________________________________________
 
 export interface GroupTreeItem extends vscode.TreeItem {
-	saveGroupState:(workspaceGroupsState:WorkspaceGroupsState, collapsed:boolean) => void;
+	saveGroupState: (workspaceGroupsState: WorkspaceGroupsState, collapsed: boolean) => void;
 }
 
 export type Tag = {
-	label:string,
-	id:number,
-	paths:string[],
+	label: string,
+	id: number,
+	paths: string[],
 };
 
 export type TagGroup = {
-	label:string,
-	collapsed:boolean,
+	label: string,
+	collapsed: boolean,
 };
 
 export type TagGroupState = {
-	collapsed:boolean,
+	collapsed: boolean,
 };
 
 export type TagsTreeItems = ColorPickerTreeItem|TagTreeItem;
 
 export interface TagQuickPickItem extends vscode.QuickPickItem {
-	workspace?:Project,
+	workspace?: Project,
 }
 
 export type TagsStates = {
-	hotkeySlots:HotkeySlotsState,
-	tags:Tag[],
+	hotkeySlots: HotkeySlotsState,
+	tags: Tag[],
 };
 
 export type RefreshTagsStates = {
-	tags?:Tag[],
+	tags?: Tag[],
 };
 
 //	Functions __________________________________________________________________

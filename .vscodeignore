@@ -1,12 +1,14 @@
 .vscode/**
 .vscode-test/**
 images/**/?(current-)project-*-color-x-*.svg
-out/test/**
+plugins/**
 src/**
+tasks/**
 test/**
+.eslintignore
+.eslintrc.json
 .gitignore
 gulpfile.js
-**/tsconfig.json
-**/tslint.json
+tsconfig.json
 **/*.map
 **/*.ts

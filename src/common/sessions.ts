@@ -14,6 +14,8 @@ import { isCodeWorkspace } from '../common/workspaces';
 import { ProjectsState } from '../states/ProjectsState';
 import { SessionsState } from '../states/SessionsState';
 
+import { createUri, getPath } from './uris';
+
 //	Variables __________________________________________________________________
 
 
@@ -24,7 +26,7 @@ import { SessionsState } from '../states/SessionsState';
 
 //	Exports ____________________________________________________________________
 
-export function openSession (paths:string[], projectsState:ProjectsState) {
+export function openSession (paths: string[], projectsState: ProjectsState) {
 	
 	const uris = getWorkspaceUris(paths, projectsState);
 	
@@ -35,7 +37,7 @@ export function openSession (paths:string[], projectsState:ProjectsState) {
 	
 }
 
-export async function openMultipleWindows (group:FavoriteGroup|WorkspaceGroup|Tag, openInNewWindow:boolean) {
+export async function openMultipleWindows (group: FavoriteGroup|WorkspaceGroup|Tag, openInNewWindow: boolean) {
 	
 	const paths = group.paths;
 	
@@ -51,17 +53,17 @@ export async function openMultipleWindows (group:FavoriteGroup|WorkspaceGroup|Ta
 	
 }
 
-export async function openAsWorkspace (currentPaths:string[], sessionsState:SessionsState, projectsState:ProjectsState) {
+export async function openAsWorkspace (currentPaths: string[], sessionsState: SessionsState, projectsState: ProjectsState) {
 	
 	if (!currentPaths.length) return;
 	
-	const paths = getFolders(currentPaths);
+	const paths = await getFolders(currentPaths);
 	const workspaceFolders = vscode.workspace.workspaceFolders;
 	
 	if (workspaceFolders?.length === paths.length) {
 		const hasSamePaths = paths.every((fsPath) => {
 			
-			return workspaceFolders.some((folder) => folder.uri.fsPath === fsPath);
+			return workspaceFolders.some((folder) => getPath(folder.uri) === fsPath);
 			
 		});
 		if (hasSamePaths) {
@@ -83,11 +85,11 @@ export async function openAsWorkspace (currentPaths:string[], sessionsState:Sess
 	
 }
 
-export function addFoldersToWorkspace (currentPaths:string[], projectsState:ProjectsState) {
+export async function addFoldersToWorkspace (currentPaths: string[], projectsState: ProjectsState) {
 	
-	const paths = getFolders(currentPaths).filter((fsPath) => {
+	const paths = (await getFolders(currentPaths)).filter((fsPath) => {
 				
-		return !vscode.workspace.workspaceFolders?.find((workspace) => workspace.uri.fsPath === fsPath);
+		return !vscode.workspace.workspaceFolders?.find((workspace) => getPath(workspace.uri) === fsPath);
 		
 	});
 	
@@ -102,25 +104,22 @@ export function addFoldersToWorkspace (currentPaths:string[], projectsState:Proj
 
 //	Functions __________________________________________________________________
 
-function getFolders (paths:string[]) {
+async function getFolders (paths: string[]) {
 	
-	const values:string[] = [];
+	const values: string[] = [];
 	
-	paths.forEach((fsPath) => {
-		
-		const folders = isCodeWorkspace(fsPath) ? settings.getWorkspaceFolders(fsPath).map((workspace) => workspace.path) : [fsPath];
-		
+	for (const fsPath of paths) {
+		const folders = isCodeWorkspace(fsPath) ? (await settings.getWorkspaceFolders(fsPath)).map((workspace) => workspace.path) : [fsPath];
 		for (const folder of folders) {
 			if (!values.includes(folder)) values.push(folder);
 		}
-		
-	});
+	}
 	
 	return values;
 	
 }
 
-function getWorkspaceUris (paths:string[], projectsState:ProjectsState) {
+function getWorkspaceUris (paths: string[], projectsState: ProjectsState) {
 	
 	return paths.map((fsPath) => {
 		
@@ -128,7 +127,7 @@ function getWorkspaceUris (paths:string[], projectsState:ProjectsState) {
 		
 		return {
 			name,
-			uri: vscode.Uri.file(fsPath),
+			uri: createUri(fsPath),
 		};
 		
 	});

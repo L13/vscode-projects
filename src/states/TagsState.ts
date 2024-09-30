@@ -22,24 +22,24 @@ import * as states from '../common/states';
 
 export class TagsState {
 	
-	private static current:TagsState = null;
+	private static current: TagsState = null;
 	
-	public static create (context:vscode.ExtensionContext) {
+	public static create (context: vscode.ExtensionContext) {
 		
 		return TagsState.current || (TagsState.current = new TagsState(context));
 		
 	}
 	
-	public constructor (private readonly context:vscode.ExtensionContext) {}
+	private constructor (private readonly context: vscode.ExtensionContext) {}
 	
-	private _onDidUpdateTag:vscode.EventEmitter<Tag> = new vscode.EventEmitter<Tag>();
-	public readonly onDidUpdateTag:vscode.Event<Tag> = this._onDidUpdateTag.event;
+	private _onDidUpdateTag: vscode.EventEmitter<Tag> = new vscode.EventEmitter<Tag>();
+	public readonly onDidUpdateTag: vscode.Event<Tag> = this._onDidUpdateTag.event;
 	
-	private _onDidDeleteTag:vscode.EventEmitter<Tag> = new vscode.EventEmitter<Tag>();
-	public readonly onDidDeleteTag:vscode.Event<Tag> = this._onDidDeleteTag.event;
+	private _onDidDeleteTag: vscode.EventEmitter<Tag> = new vscode.EventEmitter<Tag>();
+	public readonly onDidDeleteTag: vscode.Event<Tag> = this._onDidDeleteTag.event;
 	
-	private _onDidChangeTags:vscode.EventEmitter<Tag[]> = new vscode.EventEmitter<Tag[]>();
-	public readonly onDidChangeTags:vscode.Event<Tag[]> = this._onDidChangeTags.event;
+	private _onDidChangeTags: vscode.EventEmitter<Tag[]> = new vscode.EventEmitter<Tag[]>();
+	public readonly onDidChangeTags: vscode.Event<Tag[]> = this._onDidChangeTags.event;
 	
 	public get () {
 		
@@ -47,13 +47,13 @@ export class TagsState {
 		
 	}
 	
-	private save (tags:Tag[]) {
+	private save (tags: Tag[]) {
 		
 		states.updateTags(this.context, tags);
 		
 	}
 	
-	public getById (tagId:number) {
+	public getById (tagId: number) {
 		
 		const tags = this.get();
 		
@@ -61,7 +61,7 @@ export class TagsState {
 		
 	}
 	
-	public getByName (name:string) {
+	public getByName (name: string) {
 		
 		const tags = this.get();
 		
@@ -69,7 +69,7 @@ export class TagsState {
 		
 	}
 	
-	public add (label:string) {
+	public add (label: string) {
 		
 		const tags = this.get();
 		
@@ -90,7 +90,7 @@ export class TagsState {
 		
 	}
 	
-	public editTags (workspace:Project, selectTags:Tag[]) {
+	public editTags (workspace: Project, selectTags: Tag[]) {
 		
 		const tags = this.get();
 		const path = workspace.path;
@@ -109,7 +109,7 @@ export class TagsState {
 		
 	}
 	
-	public editWorkspaces (currentTag:Tag, workspaces:Project[]) {
+	public editWorkspaces (currentTag: Tag, workspaces: Project[]) {
 		
 		const tags = this.get();
 		const paths = workspaces.map((workspace) => workspace.path);
@@ -128,7 +128,7 @@ export class TagsState {
 		
 	}
 	
-	public cleanupUnknownPaths (workspaces:Project[]) {
+	public cleanupUnknownPaths (workspaces: Project[]) {
 		
 		const tags = this.get();
 		const paths = workspaces.map((workspace) => workspace.path);
@@ -154,7 +154,7 @@ export class TagsState {
 		
 	}
 	
-	public rename (currentTag:Tag, label:string) {
+	public rename (currentTag: Tag, label: string) {
 		
 		const tags = this.get();
 		
@@ -171,7 +171,7 @@ export class TagsState {
 		
 	}
 	
-	public removeWorkspace (currentTag:Tag, workspace:Project) {
+	public removeWorkspace (currentTag: Tag, workspace: Project) {
 		
 		if (remove(currentTag.paths, workspace.path)) {
 			const tags = this.get();
@@ -188,7 +188,7 @@ export class TagsState {
 		
 	}
 	
-	public remove (currentTag:Tag) {
+	public remove (currentTag: Tag) {
 		
 		const tags = this.get();
 		const tagId = currentTag.id;
@@ -216,7 +216,7 @@ export class TagsState {
 
 //	Functions __________________________________________________________________
 
-function sortTags (tags:Tag[]) {
+function sortTags (tags: Tag[]) {
 	
 	tags.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 	

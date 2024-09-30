@@ -22,15 +22,15 @@ import type { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 
 export class FavoriteGroupsDialog {
 	
-	private static current:FavoriteGroupsDialog = null;
+	private static current: FavoriteGroupsDialog = null;
 	
-	public static create (favoriteGroupsState:FavoriteGroupsState, workspaceGroupsState:WorkspaceGroupsState) {
+	public static create (favoriteGroupsState: FavoriteGroupsState, workspaceGroupsState: WorkspaceGroupsState) {
 		
 		return FavoriteGroupsDialog.current || (FavoriteGroupsDialog.current = new FavoriteGroupsDialog(favoriteGroupsState, workspaceGroupsState));
 		
 	}
 	
-	public constructor (private readonly favoriteGroupsState:FavoriteGroupsState, private readonly workspaceGroupsState:WorkspaceGroupsState) {}
+	private constructor (private readonly favoriteGroupsState: FavoriteGroupsState, private readonly workspaceGroupsState: WorkspaceGroupsState) {}
 	
 	public async add () {
 		
@@ -56,10 +56,10 @@ export class FavoriteGroupsDialog {
 		
 	}
 	
-	public async addFavoriteToGroup (favorite:Project) {
+	public async addFavoriteToGroup (favorite: Project) {
 		
 		const favoriteGroups = this.favoriteGroupsState.get();
-		let favoriteGroup:FavoriteGroup = null;
+		let favoriteGroup: FavoriteGroup = null;
 		
 		if (favoriteGroups.length) {
 			const newFavoriteGroupItem = { label: '$(add) New Favorite Group...' };
@@ -81,7 +81,7 @@ export class FavoriteGroupsDialog {
 		
 	}
 	
-	public addWorkspaceGroup (workspaceGroup:WorkspaceGroup, workspaces:Project[]) {
+	public addWorkspaceGroup (workspaceGroup: WorkspaceGroup, workspaces: Project[]) {
 		
 		if (this.favoriteGroupsState.getById(workspaceGroup.id)) return;
 		
@@ -89,7 +89,7 @@ export class FavoriteGroupsDialog {
 		
 	}
 	
-	public async rename (favoriteGroup:FavoriteGroup) {
+	public async rename (favoriteGroup: FavoriteGroup) {
 		
 		const label = await vscode.window.showInputBox({
 			placeHolder: 'Please enter a new name for the group.',
@@ -112,7 +112,7 @@ export class FavoriteGroupsDialog {
 		
 	}
 	
-	public async remove (favoriteGroup:FavoriteGroup) {
+	public async remove (favoriteGroup: FavoriteGroup) {
 		
 		const buttonDeleteGroupAndFavorites = 'Delete Group and Favorites';
 		const buttons = ['Delete'];

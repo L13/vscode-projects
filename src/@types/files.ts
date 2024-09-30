@@ -1,6 +1,8 @@
 //	Imports ____________________________________________________________________
 
+import * as vscode from 'vscode';
 
+import type { WorkspaceTypes } from './workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -12,40 +14,34 @@
 
 //	Exports ____________________________________________________________________
 
-export type Callback = (error?:null|Error, result?:FileMap) => void;
+export type ScanFolder = {
+	path: string,
+	type: WorkspaceTypes,
+};
 
-export type File = {
-	path:string,
-	folder:string,
-	relative:string,
-	type?:'file'|'folder'|'symlink',
+export type ScanResult = {
+	error: Error,
+	result: WalkTreeJob['result'],
+	type: WorkspaceTypes,
+};
+
+export type WalkTreeOptions = {
+	find: RegExp,
+	type: 'file'|'folder'|'subfolder',
+	ignore?: string[],
+	maxDepth?: number,
+	done?: (error: Error, job?: WalkTreeJob['result']) => void,
 };
 
 export type WalkTreeJob = {
-	error:null|Error,
-	find:RegExp,
-	type:'file'|'folder',
-	ignore:null|RegExp,
-	tasks:number,
-	result:FileMap,
-	done:(error?:Error) => void,
-};
-
-export type CopyFilesJob = {
-	error:null|Error,
-	tasks:number,
-	done:(error?:Error) => void,
-};
-
-export type Options = {
-	find:RegExp,
-	type:'file'|'folder',
-	ignore?:string[],
-	maxDepth?:number,
-};
-
-export type FileMap = {
-	[pathname:string]:File,
+	find: RegExp,
+	type: 'file'|'folder'|'subfolder',
+	ignore: RegExp,
+	result: {
+		root: string,
+		uris: vscode.Uri[],
+	},
+	done?: (error: Error, job?: WalkTreeJob['result']) => void,
 };
 
 //	Functions __________________________________________________________________

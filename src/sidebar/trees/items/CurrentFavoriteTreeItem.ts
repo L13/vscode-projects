@@ -1,13 +1,14 @@
 //	Imports ____________________________________________________________________
 
-import { join } from 'path';
 import { TreeItem } from 'vscode';
 
 import type { Favorite } from '../../../@types/favorites';
 
+import { getContextValue, getDescription, getIconPath } from '../../../common/treeview';
+
 //	Variables __________________________________________________________________
 
-const basePath = join(__dirname, '..', 'images', 'current');
+
 
 //	Initialize _________________________________________________________________
 
@@ -17,24 +18,14 @@ const basePath = join(__dirname, '..', 'images', 'current');
 
 export class CurrentFavoriteTreeItem extends TreeItem {
 	
-	public constructor (public readonly project:Favorite, info:string, isSubProject = false) {
+	public constructor (public readonly project: Favorite, info: string, isSubItem = false) {
 		
 		super(project.label);
 		
-		const type = project.type;
-		const formattedInfo = info ? ` • ${info}` : '';
-		let icon = `${type}`;
-		
-		if (type === 'folder' || type === 'folders') icon += `-color-${project.color || 0}`;
-		
-		this.contextValue = `current-${isSubProject ? 'sub' : ''}favorite-${type}`;
+		this.iconPath = getIconPath(project, true);
+		this.description = getDescription(info);
+		this.contextValue = `current-${getContextValue(project, isSubItem, 'favorite')}`;
 		this.tooltip = project.path;
-		this.description = `◀ Current Workspace${formattedInfo}`;
-		
-		this.iconPath = {
-			light: join(basePath, `current-project-${icon}-light.svg`),
-			dark: join(basePath, `current-project-${icon}-dark.svg`),
-		};
 		
 	}
 	

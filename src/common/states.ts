@@ -7,7 +7,7 @@ import type { Slot } from '../@types/hotkeys';
 import type { NextSession } from '../@types/sessions';
 import type { StateInfo } from '../@types/states';
 import type { Tag, TagGroupState } from '../@types/tags';
-import type { Project, SimpleGroupState, TypeGroupState, WorkspaceGroup } from '../@types/workspaces';
+import type { Project, SimpleGroupState, TypeGroupState, RootGroupState, WorkspaceGroup, PinnedGroupState } from '../@types/workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -26,10 +26,12 @@ const FAVORITE_GROUPS = 'favoriteGroups';
 const PROJECTS = 'projects';
 const WORKSPACE_GROUPS = 'workspaceGroups';
 
+const ROOT_GROUPS = 'groupStatesByRoot';
 const SIMPLE_GROUPS = 'groupStatesBySimple';
 const TYPE_GROUPS = 'groupStatesByType';
 
 const TAG_GROUP = 'tagGroup';
+const PINNED_GROUP = 'pinnedGroup';
 
 const WORKSPACES_CACHE = 'cache';
 const GIT_CACHE = 'cacheGitProjects';
@@ -43,31 +45,31 @@ const SUBFOLDER_CACHE = 'cacheSubfolderProjects';
 
 //	Exports ____________________________________________________________________
 
-export function getStateInfo (context:vscode.ExtensionContext) :StateInfo {
+export function getStateInfo (context: vscode.ExtensionContext): StateInfo {
 		
 	return context.globalState.get(STATE_INFO, { lastModified: 0 });
 	
 }
 
-export function getNextSession (context:vscode.ExtensionContext) :NextSession {
+export function getNextSession (context: vscode.ExtensionContext): NextSession {
 	
 	return context.globalState.get(NEXT_SESSION, null);
 	
 }
 
-export function updateNextSession (context:vscode.ExtensionContext, session:NextSession) {
+export function updateNextSession (context: vscode.ExtensionContext, session: NextSession) {
 	
 	context.globalState.update(NEXT_SESSION, session);
 	
 }
 
-export function getTags (context:vscode.ExtensionContext) :Tag[] {
+export function getTags (context: vscode.ExtensionContext): Tag[] {
 	
 	return context.globalState.get(TAGS, []);
 	
 }
 
-export function updateTags (context:vscode.ExtensionContext, tags:Tag[]) {
+export function updateTags (context: vscode.ExtensionContext, tags: Tag[]) {
 	
 	context.globalState.update(TAGS, tags);
 	
@@ -75,13 +77,13 @@ export function updateTags (context:vscode.ExtensionContext, tags:Tag[]) {
 	
 }
 
-export function getSlots (context:vscode.ExtensionContext) :Slot[] {
+export function getSlots (context: vscode.ExtensionContext): Slot[] {
 	
 	return context.globalState.get(SLOTS, []);
 	
 }
 
-export function updateSlots (context:vscode.ExtensionContext, slots:Slot[]) {
+export function updateSlots (context: vscode.ExtensionContext, slots: Slot[]) {
 	
 	context.globalState.update(SLOTS, slots);
 	
@@ -89,25 +91,25 @@ export function updateSlots (context:vscode.ExtensionContext, slots:Slot[]) {
 	
 }
 
-export function getCurrentWorkspace (context:vscode.ExtensionContext) :string[] {
+export function getCurrentWorkspace (context: vscode.ExtensionContext): string[] {
 	
 	return context.globalState.get(CURRENT_WORKSPACE, []);
 	
 }
 
-export function updateCurrentWorkspace (context:vscode.ExtensionContext, workspacePaths:string[]) {
+export function updateCurrentWorkspace (context: vscode.ExtensionContext, workspacePaths: string[]) {
 	
 	context.globalState.update(CURRENT_WORKSPACE, workspacePaths);
 	
 }
 
-export function getFavorites (context:vscode.ExtensionContext) :Favorite[] {
+export function getFavorites (context: vscode.ExtensionContext): Favorite[] {
 	
 	return context.globalState.get(FAVORITES, []);
 	
 }
 
-export function updateFavorites (context:vscode.ExtensionContext, favorites:Favorite[]) {
+export function updateFavorites (context: vscode.ExtensionContext, favorites: Favorite[]) {
 	
 	context.globalState.update(FAVORITES, favorites);
 	
@@ -115,13 +117,13 @@ export function updateFavorites (context:vscode.ExtensionContext, favorites:Favo
 	
 }
 
-export function getFavoriteGroups (context:vscode.ExtensionContext) :FavoriteGroup[] {
+export function getFavoriteGroups (context: vscode.ExtensionContext): FavoriteGroup[] {
 	
 	return context.globalState.get(FAVORITE_GROUPS, []);
 	
 }
 
-export function updateFavoriteGroups (context:vscode.ExtensionContext, favoriteGroups:FavoriteGroup[]) {
+export function updateFavoriteGroups (context: vscode.ExtensionContext, favoriteGroups: FavoriteGroup[]) {
 	
 	context.globalState.update(FAVORITE_GROUPS, favoriteGroups);
 	
@@ -129,13 +131,13 @@ export function updateFavoriteGroups (context:vscode.ExtensionContext, favoriteG
 	
 }
 
-export function getProjects (context:vscode.ExtensionContext) :Project[] {
+export function getProjects (context: vscode.ExtensionContext): Project[] {
 	
 	return context.globalState.get(PROJECTS, []);
 	
 }
 
-export function updateProjects (context:vscode.ExtensionContext, projects:Project[]) {
+export function updateProjects (context: vscode.ExtensionContext, projects: Project[]) {
 	
 	context.globalState.update(PROJECTS, projects);
 	
@@ -143,13 +145,13 @@ export function updateProjects (context:vscode.ExtensionContext, projects:Projec
 	
 }
 
-export function getWorkspaceGroups (context:vscode.ExtensionContext) :WorkspaceGroup[] {
+export function getWorkspaceGroups (context: vscode.ExtensionContext): WorkspaceGroup[] {
 	
 	return context.globalState.get(WORKSPACE_GROUPS, []);
 	
 }
 
-export function updateWorkspaceGroups (context:vscode.ExtensionContext, workspaceGroups:WorkspaceGroup[]) {
+export function updateWorkspaceGroups (context: vscode.ExtensionContext, workspaceGroups: WorkspaceGroup[]) {
 	
 	context.globalState.update(WORKSPACE_GROUPS, workspaceGroups);
 	
@@ -157,13 +159,13 @@ export function updateWorkspaceGroups (context:vscode.ExtensionContext, workspac
 	
 }
 	
-export function getTagGroup (context:vscode.ExtensionContext) :TagGroupState {
+export function getTagGroup (context: vscode.ExtensionContext): TagGroupState {
 	
 	return context.globalState.get(TAG_GROUP);
 	
 }
 	
-export function updateTagGroup (context:vscode.ExtensionContext, tagGroup:TagGroupState) {
+export function updateTagGroup (context: vscode.ExtensionContext, tagGroup: TagGroupState) {
 	
 	context.globalState.update(TAG_GROUP, tagGroup);
 	
@@ -171,43 +173,69 @@ export function updateTagGroup (context:vscode.ExtensionContext, tagGroup:TagGro
 	
 }
 	
-export function updateCollapseState (context:vscode.ExtensionContext, workspaceGroups:WorkspaceGroup[]) {
+export function getPinnedGroup (context: vscode.ExtensionContext): PinnedGroupState {
+	
+	return context.globalState.get(PINNED_GROUP);
+	
+}
+	
+export function updatePinnedGroup (context: vscode.ExtensionContext, pinnedGroup: PinnedGroupState) {
+	
+	context.globalState.update(PINNED_GROUP, pinnedGroup);
+	
+	updateStateInfo(context);
+	
+}
+	
+export function updateCollapseState (context: vscode.ExtensionContext, workspaceGroups: WorkspaceGroup[]) {
 	
 	context.globalState.update(WORKSPACE_GROUPS, workspaceGroups);
 	
 }
+
+export function getRootGroups (context: vscode.ExtensionContext): RootGroupState[] {
 	
-export function getSimpleGroups (context:vscode.ExtensionContext) :SimpleGroupState[] {
+	return context.globalState.get(ROOT_GROUPS, []);
+	
+}
+
+export function updateRootGroups (context: vscode.ExtensionContext, rootGroups: RootGroupState[]) {
+	
+	context.globalState.update(ROOT_GROUPS, rootGroups);
+	
+}
+	
+export function getSimpleGroups (context: vscode.ExtensionContext): SimpleGroupState[] {
 	
 	return context.globalState.get(SIMPLE_GROUPS, []);
 	
 }
 	
-export function updateSimpleGroups (context:vscode.ExtensionContext, simpleGroups:SimpleGroupState[]) {
+export function updateSimpleGroups (context: vscode.ExtensionContext, simpleGroups: SimpleGroupState[]) {
 	
 	context.globalState.update(SIMPLE_GROUPS, simpleGroups);
 	
 }
 
-export function getTypeGroups (context:vscode.ExtensionContext) :TypeGroupState[] {
+export function getTypeGroups (context: vscode.ExtensionContext): TypeGroupState[] {
 	
 	return context.globalState.get(TYPE_GROUPS, []);
 	
 }
 
-export function updateTypeGroups (context:vscode.ExtensionContext, typeGroups:TypeGroupState[]) {
+export function updateTypeGroups (context: vscode.ExtensionContext, typeGroups: TypeGroupState[]) {
 	
 	context.globalState.update(TYPE_GROUPS, typeGroups);
 	
 }
 
-export function getWorkspacesCache (context:vscode.ExtensionContext) :Project[] {
+export function getWorkspacesCache (context: vscode.ExtensionContext): Project[] {
 	
 	return context.globalState.get(WORKSPACES_CACHE, []);
 	
 }
 
-export function updateWorkspacesCache (context:vscode.ExtensionContext, cache:Project[]) {
+export function updateWorkspacesCache (context: vscode.ExtensionContext, cache: Project[]) {
 	
 	context.globalState.update(WORKSPACES_CACHE, cache);
 	
@@ -215,49 +243,49 @@ export function updateWorkspacesCache (context:vscode.ExtensionContext, cache:Pr
 	
 }
 
-export function getGitCache (context:vscode.ExtensionContext) :Project[] {
+export function getGitCache (context: vscode.ExtensionContext): Project[] {
 	
 	return context.globalState.get(GIT_CACHE, []);
 	
 }
 
-export function updateGitCache (context:vscode.ExtensionContext, cache:Project[]) {
+export function updateGitCache (context: vscode.ExtensionContext, cache: Project[]) {
 	
 	context.globalState.update(GIT_CACHE, cache);
 	
 }
 
-export function getVSCodeCache (context:vscode.ExtensionContext) :Project[] {
+export function getVSCodeCache (context: vscode.ExtensionContext): Project[] {
 	
 	return context.globalState.get(VSCODE_CACHE, []);
 	
 }
 
-export function updateVSCodeCache (context:vscode.ExtensionContext, cache:Project[]) {
+export function updateVSCodeCache (context: vscode.ExtensionContext, cache: Project[]) {
 	
 	context.globalState.update(VSCODE_CACHE, cache);
 	
 }
 
-export function getVSCodeWorkspaceCache (context:vscode.ExtensionContext) :Project[] {
+export function getVSCodeWorkspaceCache (context: vscode.ExtensionContext): Project[] {
 	
 	return context.globalState.get(VSCODE_WORKSAPCE_CACHE, []);
 	
 }
 
-export function updateVSCodeWorkspaceCache (context:vscode.ExtensionContext, cache:Project[]) {
+export function updateVSCodeWorkspaceCache (context: vscode.ExtensionContext, cache: Project[]) {
 	
 	context.globalState.update(VSCODE_WORKSAPCE_CACHE, cache);
 	
 }
 
-export function getSubfolderCache (context:vscode.ExtensionContext) :Project[] {
+export function getSubfolderCache (context: vscode.ExtensionContext): Project[] {
 	
 	return context.globalState.get(SUBFOLDER_CACHE, []);
 	
 }
 
-export function updateSubfolderCache (context:vscode.ExtensionContext, cache:Project[]) {
+export function updateSubfolderCache (context: vscode.ExtensionContext, cache: Project[]) {
 	
 	context.globalState.update(SUBFOLDER_CACHE, cache);
 	
@@ -265,7 +293,7 @@ export function updateSubfolderCache (context:vscode.ExtensionContext, cache:Pro
 
 //	Functions __________________________________________________________________
 
-function updateStateInfo (context:vscode.ExtensionContext) {
+function updateStateInfo (context: vscode.ExtensionContext) {
 	
 	context.globalState.update(STATE_INFO, {
 		lastModified: +new Date(),

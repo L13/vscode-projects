@@ -1,6 +1,5 @@
 //	Imports ____________________________________________________________________
 
-import * as path from 'path';
 import * as vscode from 'vscode';
 
 import type { CommonGroupTreeItems } from '../@types/common';
@@ -11,12 +10,13 @@ import * as files from '../common/files';
 import * as sessions from '../common/sessions';
 import * as states from '../common/states';
 import * as terminal from '../common/terminal';
+import { createUri, dirname } from '../common/uris';
 import { getCurrentWorkspacePath } from '../common/workspaces';
 
 import { FavoriteGroupTreeItem } from '../sidebar/trees/groups/FavoriteGroupTreeItem';
 import { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGroupTreeItem';
-import { ProjectTreeItem } from '../sidebar/trees/items/ProjectTreeItem';
 import { TagTreeItem } from '../sidebar/trees/items/TagTreeItem';
+import { WorkspaceTreeItem } from '../sidebar/trees/items/WorkspaceTreeItem';
 
 import { FavoritesProvider } from '../sidebar/FavoritesProvider';
 import { TagsProvider } from '../sidebar/TagsProvider';
@@ -41,7 +41,7 @@ import { WorkspacesState } from '../states/WorkspacesState';
 
 //	Exports ____________________________________________________________________
 
-export function activate (context:vscode.ExtensionContext) {
+export function activate (context: vscode.ExtensionContext) {
 	
 	const projectsState = ProjectsState.create(context);
 	const sessionsState = SessionsState.create(context);
@@ -100,40 +100,42 @@ export function activate (context:vscode.ExtensionContext) {
 	}));
 	
 	commands.register(context, {
-		'l13Projects.action.explorer.openInNewWindow': (uri:vscode.Uri) => vscode.commands.executeCommand('vscode.openFolder', uri, true),
-		'l13Projects.action.explorer.openInCurrentWindow': (uri:vscode.Uri) => vscode.commands.executeCommand('vscode.openFolder', uri, false),
+		'l13Projects.action.explorer.openInNewWindow': (uri: vscode.Uri) => vscode.commands.executeCommand('vscode.openFolder', uri, true),
+		'l13Projects.action.explorer.openInCurrentWindow': (uri: vscode.Uri) => vscode.commands.executeCommand('vscode.openFolder', uri, false),
+		'l13Projects.action.explorer.copyUri': (uri: vscode.Uri) => vscode.env.clipboard.writeText(uri.toString()),
 		
-		'l13Projects.action.workspace.revealInFinder': (item:ProjectTreeItem) => files.reveal(item?.project.path || getCurrentWorkspacePath()),
-		'l13Projects.action.workspace.revealInExplorer': (item:ProjectTreeItem) => files.reveal(item?.project.path || getCurrentWorkspacePath()),
-		'l13Projects.action.workspace.openContainingFolder': (item:ProjectTreeItem) => files.reveal(item?.project.path || getCurrentWorkspacePath()),
-		'l13Projects.action.workspace.openInTerminal': ({ project }:ProjectTreeItem) => terminal.open(getFolderPath(project)),
-		'l13Projects.action.workspace.copyPath': ({ project }:ProjectTreeItem) => vscode.env.clipboard.writeText(project.path),
+		'l13Projects.action.workspace.revealInFinder': (item: WorkspaceTreeItem) => files.reveal(item?.project.path || getCurrentWorkspacePath()),
+		'l13Projects.action.workspace.revealInExplorer': (item: WorkspaceTreeItem) => files.reveal(item?.project.path || getCurrentWorkspacePath()),
+		'l13Projects.action.workspace.openContainingFolder': (item: WorkspaceTreeItem) => files.reveal(item?.project.path || getCurrentWorkspacePath()),
+		'l13Projects.action.workspace.openInTerminal': ({ project }: WorkspaceTreeItem) => terminal.open(<string>getFolderPath(project)),
+		'l13Projects.action.workspace.copyPath': ({ project }: WorkspaceTreeItem) => vscode.env.clipboard.writeText(createUri(project.path).path),
+		'l13Projects.action.workspace.copyUri': ({ project }: WorkspaceTreeItem) => vscode.env.clipboard.writeText(createUri(project.path).toString()),
 		
-		'l13Projects.action.group.openAllInCurrentAndNewWindows': ({ group }:CommonGroupTreeItems) => sessions.openMultipleWindows(group, false),
-		'l13Projects.action.group.openAllInNewWindows': ({ group }:CommonGroupTreeItems) => sessions.openMultipleWindows(group, true),
+		'l13Projects.action.group.openAllInCurrentAndNewWindows': ({ group }: CommonGroupTreeItems) => sessions.openMultipleWindows(group, false),
+		'l13Projects.action.group.openAllInNewWindows': ({ group }: CommonGroupTreeItems) => sessions.openMultipleWindows(group, true),
 		
-		'l13Projects.action.group.addFoldersToWorkspace': ({ group }:FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
+		'l13Projects.action.group.addFoldersToWorkspace': ({ group }: FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
 			
 			sessions.addFoldersToWorkspace(group.paths, projectsState);
 			
 		},
 		
-		'l13Projects.action.group.openAsWorkspace': ({ group }:FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
+		'l13Projects.action.group.openAsWorkspace': ({ group }: FavoriteGroupTreeItem|WorkspaceGroupTreeItem) => {
 			
 			sessions.openAsWorkspace(group.paths, sessionsState, projectsState);
 			
 		},
 		
-		'l13Projects.action.tag.openAllInCurrentAndNewWindows': ({ tag }:TagTreeItem) => sessions.openMultipleWindows(tag, false),
-		'l13Projects.action.tag.openAllInNewWindows': ({ tag }:TagTreeItem) => sessions.openMultipleWindows(tag, true),
+		'l13Projects.action.tag.openAllInCurrentAndNewWindows': ({ tag }: TagTreeItem) => sessions.openMultipleWindows(tag, false),
+		'l13Projects.action.tag.openAllInNewWindows': ({ tag }: TagTreeItem) => sessions.openMultipleWindows(tag, true),
 		
-		'l13Projects.action.tag.addFoldersToWorkspace': ({ tag }:TagTreeItem) => {
+		'l13Projects.action.tag.addFoldersToWorkspace': ({ tag }: TagTreeItem) => {
 			
 			sessions.addFoldersToWorkspace(tag.paths, projectsState);
 			
 		},
 		
-		'l13Projects.action.tag.openAsWorkspace': ({ tag }:TagTreeItem) => {
+		'l13Projects.action.tag.openAsWorkspace': ({ tag }: TagTreeItem) => {
 			
 			sessions.openAsWorkspace(tag.paths, sessionsState, projectsState);
 			
@@ -144,8 +146,8 @@ export function activate (context:vscode.ExtensionContext) {
 
 //	Functions __________________________________________________________________
 
-function getFolderPath (project:Project) {
+function getFolderPath (project: Project) {
 	
-	return project.type === 'folders' || project.type === 'workspace' ? path.dirname(project.path) : project.path;
+	return project.type === 'folders' || project.type === 'workspace' ? dirname(project.path) : project.path;
 	
 }

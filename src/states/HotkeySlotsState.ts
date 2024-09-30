@@ -22,20 +22,20 @@ import { getCurrentWorkspacePath } from '../common/workspaces';
 
 export class HotkeySlotsState {
 	
-	private static current:HotkeySlotsState;
+	private static current: HotkeySlotsState;
 	
-	public static create (context:vscode.ExtensionContext) {
+	public static create (context: vscode.ExtensionContext) {
 		
 		return HotkeySlotsState.current || (HotkeySlotsState.current = new HotkeySlotsState(context));
 		
 	}
 	
-	private _onDidChangeSlots:vscode.EventEmitter<Slot[]> = new vscode.EventEmitter<Slot[]>();
-	public readonly onDidChangeSlots:vscode.Event<Slot[]> = this._onDidChangeSlots.event;
+	private _onDidChangeSlots: vscode.EventEmitter<Slot[]> = new vscode.EventEmitter<Slot[]>();
+	public readonly onDidChangeSlots: vscode.Event<Slot[]> = this._onDidChangeSlots.event;
 	
-	private slots:Slot[] = null;
+	private slots: Slot[] = null;
 	
-	private constructor (private readonly context:vscode.ExtensionContext) {
+	private constructor (private readonly context: vscode.ExtensionContext) {
 		
 		this.slots = states.getSlots(context);
 		
@@ -53,7 +53,7 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public getByWorkspace (workspace:Project) {
+	public getByWorkspace (workspace: Project) {
 		
 		const slots = this.slots;
 		
@@ -65,7 +65,7 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public getByGroup (group:FavoriteGroup|WorkspaceGroup) {
+	public getByGroup (group: FavoriteGroup|WorkspaceGroup) {
 		
 		const slots = this.slots;
 		
@@ -77,7 +77,7 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public getByTag (tag:Tag) {
+	public getByTag (tag: Tag) {
 		
 		const slots = this.slots;
 		
@@ -89,18 +89,19 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public assign (project:Project, index:number) {
+	public assign (selectedProject: Project, index: number) {
 		
 		const slots = this.slots;
+		const path = selectedProject.path;
 		
 		for (const slot of slots) {
-			if (slot && slot.path === project.path) delete slots[slot.index];
+			if (slot && slot.path === path) delete slots[slot.index];
 		}
 		
 		slots[index] = {
-			label: project.label,
+			label: selectedProject.label,
 			index,
-			path: project.path,
+			path,
 		};
 		
 		states.updateSlots(this.context, slots);
@@ -108,19 +109,20 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public assignGroup (group:FavoriteGroup|WorkspaceGroup, index:number) {
+	public assignGroup (selectedGroup: FavoriteGroup|WorkspaceGroup, index: number) {
 		
 		const slots = this.slots;
+		const groupId = selectedGroup.id;
 		
 		for (const slot of slots) {
-			if (slot && slot.groupId === group.id) delete slots[slot.index];
+			if (slot && slot.groupId === groupId) delete slots[slot.index];
 		}
 		
 		slots[index] = {
-			label: group.label,
+			label: selectedGroup.label,
 			index,
-			groupId: group.id,
-			paths: group.paths,
+			groupId,
+			paths: selectedGroup.paths,
 		};
 		
 		states.updateSlots(this.context, slots);
@@ -128,7 +130,7 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public assignTag (tag:Tag, index:number) {
+	public assignTag (tag: Tag, index: number) {
 		
 		const slots = this.slots;
 		
@@ -148,7 +150,7 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public updateWorkspace (project:Project) {
+	public updateWorkspace (project: Project) {
 		
 		const slots = this.slots;
 		
@@ -164,7 +166,7 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public updateGroup (group:FavoriteGroup|WorkspaceGroup) {
+	public updateGroup (group: FavoriteGroup|WorkspaceGroup) {
 		
 		const slots = this.slots;
 		
@@ -181,7 +183,7 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public updateTag (tag:Tag) {
+	public updateTag (tag: Tag) {
 		
 		const slots = this.slots;
 		
@@ -198,7 +200,7 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public removeWorkspace (project:Project) {
+	public removeWorkspace (project: Project) {
 		
 		const slots = this.slots;
 		
@@ -215,7 +217,7 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public removeGroup (group:FavoriteGroup|WorkspaceGroup) {
+	public removeGroup (group: FavoriteGroup|WorkspaceGroup) {
 		
 		const slots = this.slots;
 		
@@ -232,7 +234,7 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public removeTag (tag:Tag) {
+	public removeTag (tag: Tag) {
 		
 		const slots = this.slots;
 		
@@ -249,7 +251,7 @@ export class HotkeySlotsState {
 		
 	}
 	
-	public remove (index:number) {
+	public remove (index: number) {
 		
 		const slots = this.slots;
 		

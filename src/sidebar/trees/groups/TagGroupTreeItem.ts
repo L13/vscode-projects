@@ -27,7 +27,7 @@ export class TagGroupTreeItem extends TreeItem implements GroupTreeItem {
 	
 	public iconPath = iconPath;
 	
-	public constructor (public readonly group:TagGroup) {
+	public constructor (public readonly group: TagGroup) {
 		
 		super(group.label, group.collapsed ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded);
 		
@@ -35,7 +35,7 @@ export class TagGroupTreeItem extends TreeItem implements GroupTreeItem {
 		
 	}
 	
-	public saveGroupState (workspaceGroupsState:WorkspaceGroupsState, collapsed:boolean) {
+	public saveGroupState (workspaceGroupsState: WorkspaceGroupsState, collapsed: boolean) {
 		
 		workspaceGroupsState.saveTagGroupState(this, collapsed);
 		

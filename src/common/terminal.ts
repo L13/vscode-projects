@@ -1,7 +1,9 @@
 //	Imports ____________________________________________________________________
 
-import * as fs from 'fs';
 import * as vscode from 'vscode';
+
+import * as fse from './fse';
+import { createUri } from './uris';
 
 //	Variables __________________________________________________________________
 
@@ -13,9 +15,11 @@ import * as vscode from 'vscode';
 
 //	Exports ____________________________________________________________________
 
-export function open (pathname:string) {
+export async function open (pathname: string) {
 	
-	if (fs.existsSync(pathname)) vscode.window.createTerminal({ cwd: pathname }).show();
+	const uri = createUri(pathname);
+	
+	if (await fse.exists(uri)) vscode.window.createTerminal({ cwd: uri }).show();
 	else vscode.window.showErrorMessage(`Path "${pathname}" doesn't exist!`);
 	
 }

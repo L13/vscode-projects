@@ -29,34 +29,34 @@ import { FavoriteTreeItem } from './trees/items/FavoriteTreeItem';
 
 export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeItems> {
 	
-	private _onDidChangeTreeData:vscode.EventEmitter<FavoritesTreeItems|undefined> = new vscode.EventEmitter<FavoritesTreeItems|undefined>();
-	public readonly onDidChangeTreeData:vscode.Event<FavoritesTreeItems|undefined> = this._onDidChangeTreeData.event;
+	private _onDidChangeTreeData: vscode.EventEmitter<FavoritesTreeItems|undefined> = new vscode.EventEmitter<FavoritesTreeItems|undefined>();
+	public readonly onDidChangeTreeData: vscode.Event<FavoritesTreeItems|undefined> = this._onDidChangeTreeData.event;
 	
-	public workspaceDescriptionFormat:WorkspaceDescriptionFormat = settings.get('workspaceDescriptionFormat');
-	public groupDescriptionFormat:GroupDescriptionFormat = settings.get('groupDescriptionFormat');
+	public workspaceDescriptionFormat: WorkspaceDescriptionFormat = settings.get('workspaceDescriptionFormat');
+	public groupDescriptionFormat: GroupDescriptionFormat = settings.get('groupDescriptionFormat');
 	
-	private favorites:Favorite[] = [];
-	private favoriteGroups:FavoriteGroup[] = [];
-	private slots:HotkeySlotsState = null;
+	private favorites: Favorite[] = [];
+	private favoriteGroups: FavoriteGroup[] = [];
+	private slots: HotkeySlotsState = null;
 	
-	private tags:Tag[] = [];
+	private tags: Tag[] = [];
 	
-	public static current:FavoritesProvider;
+	public static current: FavoritesProvider;
 	
-	public static create (states:FavoritesStates) {
+	public static create (states: FavoritesStates) {
 		
 		return FavoritesProvider.current || (FavoritesProvider.current = new FavoritesProvider(states));
 		
 	}
 	
-	private constructor ({ favorites, favoriteGroups, hotkeySlots, tags }:FavoritesStates) {
+	private constructor ({ favorites, favoriteGroups, hotkeySlots, tags }: FavoritesStates) {
 		
 		this.favorites = favorites;
 		this.favoriteGroups = favoriteGroups;
 		this.slots = hotkeySlots;
 		this.tags = tags;
 		
-		const initialState:InitialState = settings.get('initialFavoriteGroupsState', 'remember');
+		const initialState: InitialState = settings.get('initialFavoriteGroupsState', 'remember');
 		
 		if (initialState !== 'remember') {
 			this.favoriteGroups.forEach((favoriteGroup) => favoriteGroup.collapsed = initialState === 'collapsed');
@@ -64,7 +64,7 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 		
 	}
 	
-	public refresh (refreshStates?:RefreshFavoritesStates) {
+	public refresh (refreshStates?: RefreshFavoritesStates) {
 		
 		if (refreshStates?.favorites) this.favorites = refreshStates.favorites;
 		if (refreshStates?.favoriteGroups) this.favoriteGroups = refreshStates.favoriteGroups;
@@ -74,20 +74,20 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 		
 	}
 	
-	public getTreeItem (element:FavoritesTreeItems) {
+	public getTreeItem (element: FavoritesTreeItems) {
 		
 		return element;
 		
 	}
 	
-	public getChildren (element?:FavoritesTreeItems) {
+	public getChildren (element?: FavoritesTreeItems) {
 		
-		const list:FavoritesTreeItems[] = [];
+		const list: FavoritesTreeItems[] = [];
 		
 		if (!this.favorites.length && !this.favoriteGroups.length) return Promise.resolve(list);
 		
 		const slots = this.slots;
-		let paths:string[] = [];
+		let paths: string[] = [];
 		
 		if (element) {
 			paths = (<FavoriteGroupTreeItem>element).group.paths;
@@ -110,23 +110,26 @@ export class FavoritesProvider implements vscode.TreeDataProvider<FavoritesTreeI
 		
 	}
 	
-	private addItems (list:FavoritesTreeItems[], paths:string[], isSubProject:boolean) {
+	private addItems (list: FavoritesTreeItems[], paths: string[], isSubItem: boolean) {
 		
-		const workspacePath:string = getCurrentWorkspacePath();
+		const workspacePath: string = getCurrentWorkspacePath();
+		const slots = this.slots;
+		const tags = this.tags;
+		const workspaceDescriptionFormat = this.workspaceDescriptionFormat;
 		let hasCurrentProject = false;
 		
 		this.favorites.forEach((favorite) => {
 			
-			if (isSubProject && !paths.includes(favorite.path)) return;
-			else if (!isSubProject && paths.includes(favorite.path)) return;
+			if (isSubItem && !paths.includes(favorite.path)) return;
+			else if (!isSubItem && paths.includes(favorite.path)) return;
 			
-			const slot = this.slots.getByWorkspace(favorite);
-			const info = formatWorkspaceDescription(favorite, slot, this.tags, this.workspaceDescriptionFormat);
+			const slot = slots.getByWorkspace(favorite);
+			const description = formatWorkspaceDescription(favorite, slot, tags, workspaceDescriptionFormat);
 			
 			if (!hasCurrentProject && workspacePath && workspacePath === favorite.path) {
 				hasCurrentProject = true;
-				list.push(new CurrentFavoriteTreeItem(favorite, info, isSubProject));
-			} else list.push(new FavoriteTreeItem(favorite, info, isSubProject));
+				list.push(new CurrentFavoriteTreeItem(favorite, description, isSubItem));
+			} else list.push(new FavoriteTreeItem(favorite, description, isSubItem));
 			
 		});
 		

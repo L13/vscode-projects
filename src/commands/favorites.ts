@@ -30,7 +30,7 @@ import { WorkspaceGroupsState } from '../states/WorkspaceGroupsState';
 
 //	Exports ____________________________________________________________________
 
-export function activate (context:vscode.ExtensionContext) {
+export function activate (context: vscode.ExtensionContext) {
 	
 	const subscriptions = context.subscriptions;
 	
@@ -152,14 +152,14 @@ export function activate (context:vscode.ExtensionContext) {
 //	Commands
 	
 	commands.register(context, {
-		'l13Projects.action.favorite.addToGroup': ({ project }:FavoriteTreeItems) => favoriteGroupsDialog.addFavoriteToGroup(project),
-		'l13Projects.action.favorite.removeFromGroup': ({ project }:FavoriteTreeItems) => favoriteGroupsState.removeFavorite(project),
-		'l13Projects.action.favorite.rename': ({ project }:FavoriteTreeItems) => favoritesDialog.rename(project),
-		'l13Projects.action.favorite.remove': ({ project }:FavoriteTreeItems) => favoritesDialog.remove(project),
+		'l13Projects.action.favorite.addToGroup': ({ project }: FavoriteTreeItems) => favoriteGroupsDialog.addFavoriteToGroup(project),
+		'l13Projects.action.favorite.removeFromGroup': ({ project }: FavoriteTreeItems) => favoriteGroupsState.removeFavorite(project),
+		'l13Projects.action.favorite.rename': ({ project }: FavoriteTreeItems) => favoritesDialog.rename(project),
+		'l13Projects.action.favorite.remove': ({ project }: FavoriteTreeItems) => favoritesDialog.remove(project),
 		
 		'l13Projects.action.favoriteGroups.add': () => favoriteGroupsDialog.add(),
-		'l13Projects.action.favoriteGroup.rename': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsDialog.rename(group),
-		'l13Projects.action.favoriteGroup.remove': ({ group }:FavoriteGroupTreeItem) => favoriteGroupsDialog.remove(group),
+		'l13Projects.action.favoriteGroup.rename': ({ group }: FavoriteGroupTreeItem) => favoriteGroupsDialog.rename(group),
+		'l13Projects.action.favoriteGroup.remove': ({ group }: FavoriteGroupTreeItem) => favoriteGroupsDialog.remove(group),
 		
 		'l13Projects.action.favorites.pickFavorite': () => favoritesDialog.pick(),
 		'l13Projects.action.favorites.clear': () => favoritesDialog.clear(),
