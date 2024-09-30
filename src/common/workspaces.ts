@@ -85,10 +85,18 @@ function detectWorkspaceType (uri: vscode.Uri): ProjectTypes {
 				if (authority.startsWith('wsl+')) return 'wsl';
 				return 'remote';
 			case 'azdo':
+			case 'azurerepos':
 			case 'github':
+			case 'github-enterprise':
+			case 'review':
 			case 'vscode-vfs':
-				if (authority.startsWith('azdo')) return 'azure';
-				if (authority.startsWith('github')) return 'github';
+				if (authority.startsWith('azdo')
+				|| authority.startsWith('azurerepos')
+				|| authority.startsWith('azurerepos+')) return 'azure';
+				if (authority.startsWith('github')
+				|| authority.startsWith('github+')
+				|| authority.startsWith('github-enterprise')
+				|| authority.startsWith('github-enterprise+')) return 'github';
 				return 'virtual';
 		}
 		return 'remote';

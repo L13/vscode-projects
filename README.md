@@ -7,6 +7,7 @@ Manage your workspaces and projects in Visual Studio Code.
 ## Important Notice
 
 > The current version is a beta because it is not possible to test all types of remote workspaces. If something unexpected appears, please open an issue on GitHub.
+
 > Remote workspaces do not support auto remove. Instead of a local file system, there is no guarantee that it will be always available to check if the folder still exists.
 
 ## What's new in Projects 2.0.0 Beta
