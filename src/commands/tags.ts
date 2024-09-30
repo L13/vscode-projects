@@ -25,7 +25,7 @@ import { WorkspacesState } from '../states/WorkspacesState';
 
 //	Exports ____________________________________________________________________
 
-export function activate (context:vscode.ExtensionContext) {
+export function activate (context: vscode.ExtensionContext) {
 	
 	const subscriptions = context.subscriptions;
 	
@@ -84,13 +84,13 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	commands.register(context, {
 		'l13Projects.action.tag.add': () => tagsDialog.add(),
-		'l13Projects.action.tag.editWorkspaces': ({ tag }:TagTreeItem) => tagsDialog.editWorkspaces(tag),
-		'l13Projects.action.tag.pickAndOpen': ({ tag }:TagTreeItem) => tagsDialog.open(tag),
-		'l13Projects.action.tag.pickAndOpenInCurrentWindow': ({ tag }:TagTreeItem) => tagsDialog.open(tag, false),
-		'l13Projects.action.tag.pickAndOpenInNewWindow': ({ tag }:TagTreeItem) => tagsDialog.open(tag, true),
+		'l13Projects.action.tag.editWorkspaces': ({ tag }: TagTreeItem) => tagsDialog.editWorkspaces(tag),
+		'l13Projects.action.tag.pickAndOpen': ({ tag }: TagTreeItem) => tagsDialog.open(tag),
+		'l13Projects.action.tag.pickAndOpenInCurrentWindow': ({ tag }: TagTreeItem) => tagsDialog.open(tag, false),
+		'l13Projects.action.tag.pickAndOpenInNewWindow': ({ tag }: TagTreeItem) => tagsDialog.open(tag, true),
 		'l13Projects.action.tag.pickTag': () => tagsDialog.pick(),
-		'l13Projects.action.tag.rename': ({ tag }:TagTreeItem) => tagsDialog.rename(tag),
-		'l13Projects.action.tag.remove': ({ tag }:TagTreeItem) => tagsDialog.remove(tag),
+		'l13Projects.action.tag.rename': ({ tag }: TagTreeItem) => tagsDialog.rename(tag),
+		'l13Projects.action.tag.remove': ({ tag }: TagTreeItem) => tagsDialog.remove(tag),
 		
 		'l13Projects.action.tags.clear': () => tagsDialog.clear(),
 	});

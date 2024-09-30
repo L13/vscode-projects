@@ -7,7 +7,7 @@ import Mocha from 'mocha';
 //	Variables __________________________________________________________________
 
 const mocha = new Mocha({
-	ui: 'tdd',
+	ui: 'bdd',
 	color: true,
 });
 

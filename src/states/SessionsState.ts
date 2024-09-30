@@ -18,15 +18,15 @@ import * as states from '../common/states';
 
 export class SessionsState {
 	
-	private static current:SessionsState = null;
+	private static current: SessionsState = null;
 	
-	public static create (context:vscode.ExtensionContext) {
+	public static create (context: vscode.ExtensionContext) {
 		
 		return SessionsState.current || (SessionsState.current = new SessionsState(context));
 		
 	}
 	
-	public constructor (private readonly context:vscode.ExtensionContext) {}
+	private constructor (private readonly context: vscode.ExtensionContext) {}
 	
 	public current () {
 		
@@ -34,7 +34,7 @@ export class SessionsState {
 		
 	}
 	
-	public next (session:NextSession) {
+	public next (session: NextSession) {
 		
 		states.updateNextSession(this.context, session);
 		

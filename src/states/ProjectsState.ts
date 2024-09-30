@@ -1,15 +1,16 @@
 //	Imports ____________________________________________________________________
 
-import * as fs from 'fs';
 import * as vscode from 'vscode';
+
+import type { Project } from '../@types/workspaces';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
 import { formatLabel } from '../@l13/formats';
 
-import type { Project } from '../@types/workspaces';
-
+import * as fse from '../common/fse';
 import * as states from '../common/states';
-import { isCodeWorkspace } from '../common/workspaces';
+import { getPath } from '../common/uris';
+import { createWorkspaceItem } from '../common/workspaces';
 
 //	Variables __________________________________________________________________
 
@@ -23,24 +24,24 @@ import { isCodeWorkspace } from '../common/workspaces';
 
 export class ProjectsState {
 	
-	private static current:ProjectsState = null;
+	private static current: ProjectsState = null;
 	
-	public static create (context:vscode.ExtensionContext) {
+	public static create (context: vscode.ExtensionContext) {
 		
 		return ProjectsState.current || (ProjectsState.current = new ProjectsState(context));
 		
 	}
 	
-	public constructor (private readonly context:vscode.ExtensionContext) {}
+	private constructor (private readonly context: vscode.ExtensionContext) {}
 	
-	private _onDidUpdateProject:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
-	public readonly onDidUpdateProject:vscode.Event<Project> = this._onDidUpdateProject.event;
+	private _onDidUpdateProject: vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
+	public readonly onDidUpdateProject: vscode.Event<Project> = this._onDidUpdateProject.event;
 	
-	private _onDidDeleteProject:vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
-	public readonly onDidDeleteProject:vscode.Event<Project> = this._onDidDeleteProject.event;
+	private _onDidDeleteProject: vscode.EventEmitter<Project> = new vscode.EventEmitter<Project>();
+	public readonly onDidDeleteProject: vscode.Event<Project> = this._onDidDeleteProject.event;
 	
-	private _onDidChangeProjects:vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
-	public readonly onDidChangeProjects:vscode.Event<Project[]> = this._onDidChangeProjects.event;
+	private _onDidChangeProjects: vscode.EventEmitter<Project[]> = new vscode.EventEmitter<Project[]>();
+	public readonly onDidChangeProjects: vscode.Event<Project[]> = this._onDidChangeProjects.event;
 	
 	public get () {
 		
@@ -48,76 +49,91 @@ export class ProjectsState {
 		
 	}
 	
-	private save (projects:Project[]) {
+	private save (projects: Project[]) {
 		
 		states.updateProjects(this.context, projects);
 		
 	}
 	
-	public detectProjectsExists () {
-		
-		const projects = this.get();
-		
-		projects.forEach((project) => project.deleted = !fs.existsSync(project.path));
-		
-		states.updateProjects(this.context, projects);
-		
-	}
-	
-	public removeDeletedProjects () {
-		
-		let projects = this.get();
-		const length = projects.length;
-		
-		projects = projects.filter((project) => fs.existsSync(project.path));
-		
-		if (length !== projects.length) {
-			states.updateProjects(this.context, projects);
-			this.save(projects);
-			// this._onDidChangeProjects.fire(projects);
-		}
-		
-	}
-	
-	public getByPath (fsPath:string) {
-		
-		const projects = this.get();
-		
-		return projects.find(({ path }) => path === fsPath) || null;
-		
-	}
-	
-	public add (fsPath:string, label:string) {
+	public async detectProjectsExists () {
 		
 		const projects = this.get();
 		
 		for (const project of projects) {
-			if (project.path === fsPath) return;
+			project.deleted = ProjectsState.isLocalProject(project) ? !await fse.exists(project.path) : false;
+		}
+		
+		states.updateProjects(this.context, projects);
+		
+	}
+	
+	public async removeDeletedProjects () {
+		
+		const projects = this.get();
+		const length = projects.length;
+		const filteredProjects = [];
+		
+		for (const project of projects) {
+			if (ProjectsState.isLocalProject(project)) {
+				if (await fse.exists(project.path)) filteredProjects.push(project);
+			}
+		}
+		
+		if (length !== filteredProjects.length) {
+			states.updateProjects(this.context, filteredProjects);
+			this.save(filteredProjects);
+			// this._onDidChangeProjects.fire(filteredProjects);
+		}
+		
+	}
+	
+	public getByPath (path: string) {
+		
+		const projects = this.get();
+		
+		return projects.find((project) => project.path === path) || null;
+		
+	}
+	
+	public add (path: string, label: string) {
+		
+		const projects = this.get();
+		
+		for (const project of projects) {
+			if (project.path === path) return;
 		}
 			
-		addProject(projects, fsPath, label);
+		const newProject = createProject(projects, path, label);
+		
+		sortProjects(projects);
 		
 		this.save(projects);
+		
+		this._onDidUpdateProject.fire(newProject);
 		this._onDidChangeProjects.fire(projects);
 		
 	}
 	
-	public addAll (uris:vscode.Uri[]) {
+	public addAll (uris: vscode.Uri[]) {
 		
 		const projects = this.get();
 		const length = projects.length;
 		
 		uris.forEach((uri) => {
 			
-			const fsPath = uri.fsPath;
+			const path = getPath(uri);
 			
-			if (projects.some(({ path }) => path === fsPath)) return;
+			if (projects.some((project) => project.path === path)) return;
 			
-			addProject(projects, fsPath, formatLabel(fsPath));
+			const newProject = createProject(projects, path, formatLabel(path));
+			
+			this._onDidUpdateProject.fire(newProject);
 			
 		});
 		
 		if (projects.length === length) return;
+		
+		sortProjects(projects);
 		
 		this.save(projects);
 		
@@ -125,15 +141,15 @@ export class ProjectsState {
 		
 	}
 	
-	public update (favorite:Project) {
+	public update (selectedFavorite: Project) {
 		
 		const projects = this.get();
-		const fsPath = favorite.path;
+		const path = selectedFavorite.path;
 		
 		for (const project of projects) {
-			if (project.path === fsPath) {
-				project.label = favorite.label;
-				projects.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
+			if (project.path === path) {
+				project.label = selectedFavorite.label;
+				sortProjects(projects);
 				this.save(projects);
 				this._onDidChangeProjects.fire(projects);
 				break;
@@ -142,17 +158,17 @@ export class ProjectsState {
 		
 	}
 	
-	public rename (project:Project, label:string) {
+	public rename (selectedProject: Project, label: string) {
 		
 		const projects = this.get();
-		const fsPath = project.path;
+		const path = selectedProject.path;
 		
-		for (const pro of projects) {
-			if (pro.path === fsPath) {
-				pro.label = label;
-				projects.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
+		for (const project of projects) {
+			if (project.path === path) {
+				project.label = label;
+				sortProjects(projects);
 				this.save(projects);
-				this._onDidUpdateProject.fire(pro);
+				this._onDidUpdateProject.fire(project);
 				this._onDidChangeProjects.fire(projects);
 				break;
 			}
@@ -161,13 +177,13 @@ export class ProjectsState {
 		
 	}
 	
-	public remove (project:Project) {
+	public remove (project: Project) {
 		
 		const projects = this.get();
-		const fsPath = project.path;
+		const path = project.path;
 		
 		for (let i = 0; i < projects.length; i++) {
-			if (projects[i].path === fsPath) {
+			if (projects[i].path === path) {
 				projects.splice(i, 1);
 				this.save(projects);
 				this._onDidDeleteProject.fire(project);
@@ -184,20 +200,28 @@ export class ProjectsState {
 		
 	}
 	
+	public static isLocalProject (project: Project) {
+		
+		return project.type === 'folder' || project.type === 'folders';
+		
+	}
+	
 }
 
 //	Functions __________________________________________________________________
 
-function addProject (projects:Project[], path:string, label:string) {
+function createProject (projects: Project[], path: string, label: string) {
 	
-	const project:Project = {
-		label,
-		path,
-		type: isCodeWorkspace(path) ? 'folders' : 'folder',
-	};
+	const project = createWorkspaceItem(path, null, label);
 	
 	projects.push(project);
 	
-	projects.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
+	return project;
+	
+}
+
+function sortProjects (projects: Project[]) {
+	
+	return projects.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 	
 }

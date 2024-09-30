@@ -2,6 +2,10 @@
 
 import * as vscode from 'vscode';
 
+import { isMacOs } from '../@l13/platforms';
+
+import { isRemoteWorkspace } from './workspaces';
+
 //	Variables __________________________________________________________________
 
 
@@ -12,49 +16,42 @@ import * as vscode from 'vscode';
 
 //	Exports ____________________________________________________________________
 
-export async function open () {
+export async function openWorkspaceFolder () {
 	
-	const uris = await vscode.window.showOpenDialog({
+	return await vscode.window.showOpenDialog(isMacOs && !isRemoteWorkspace() ? {
 		canSelectFiles: true,
 		canSelectFolders: true,
 		canSelectMany: true,
 		filters: {
 			Workspaces: ['code-workspace'],
 		},
-	});
-	
-	return uris || null;
-	
-}
-
-export async function openFolder () {
-	
-	const uris = await vscode.window.showOpenDialog({
+	} : {
 		canSelectFiles: false,
 		canSelectFolders: true,
 		canSelectMany: true,
-	});
-	
-	return uris || null;
+	}) || null;
 	
 }
 
-export async function openFile () {
+export async function openWorkspaceFile () {
 	
-	const uris = await vscode.window.showOpenDialog({
+	if (isRemoteWorkspace()) {
+		vscode.window.showInformationMessage('Remote workspace files are not supported by Visual Studio Code');
+		return null;
+	}
+	
+	return await vscode.window.showOpenDialog({
 		canSelectFiles: true,
 		canSelectFolders: false,
 		canSelectMany: true,
 		filters: {
 			Workspaces: ['code-workspace'],
 		},
-	});
-	
-	return uris || null;
+	}) || null;
 	
 }
 	
-export async function confirm (text:string, ...buttons:string[]) {
+export async function confirm (text: string, ...buttons: string[]) {
 	
 	return await vscode.window.showInformationMessage(text, { modal: true }, ...buttons);
 	

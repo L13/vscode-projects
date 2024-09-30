@@ -31,7 +31,7 @@ export class TagTreeItem extends TreeItem {
 	
 	public contextValue = 'tag';
 	
-	public constructor (public readonly tag:Tag, info:string) {
+	public constructor (public readonly tag: Tag, info: string) {
 		
 		super(tag.label);
 		

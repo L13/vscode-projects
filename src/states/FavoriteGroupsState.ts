@@ -24,24 +24,24 @@ import type { FavoriteGroupTreeItem } from '../sidebar/trees/groups/FavoriteGrou
 
 export class FavoriteGroupsState {
 	
-	private static current:FavoriteGroupsState = null;
+	private static current: FavoriteGroupsState = null;
 	
-	public static create (context:vscode.ExtensionContext) {
+	public static create (context: vscode.ExtensionContext) {
 		
 		return FavoriteGroupsState.current || (FavoriteGroupsState.current = new FavoriteGroupsState(context));
 		
 	}
 	
-	public constructor (private readonly context:vscode.ExtensionContext) {}
+	private constructor (private readonly context: vscode.ExtensionContext) {}
 	
-	private _onDidUpdateFavoriteGroup:vscode.EventEmitter<FavoriteGroup> = new vscode.EventEmitter<FavoriteGroup>();
-	public readonly onDidUpdateFavoriteGroup:vscode.Event<FavoriteGroup> = this._onDidUpdateFavoriteGroup.event;
+	private _onDidUpdateFavoriteGroup: vscode.EventEmitter<FavoriteGroup> = new vscode.EventEmitter<FavoriteGroup>();
+	public readonly onDidUpdateFavoriteGroup: vscode.Event<FavoriteGroup> = this._onDidUpdateFavoriteGroup.event;
 	
-	private _onDidDeleteFavoriteGroup:vscode.EventEmitter<FavoriteGroup> = new vscode.EventEmitter<FavoriteGroup>();
-	public readonly onDidDeleteFavoriteGroup:vscode.Event<FavoriteGroup> = this._onDidDeleteFavoriteGroup.event;
+	private _onDidDeleteFavoriteGroup: vscode.EventEmitter<FavoriteGroup> = new vscode.EventEmitter<FavoriteGroup>();
+	public readonly onDidDeleteFavoriteGroup: vscode.Event<FavoriteGroup> = this._onDidDeleteFavoriteGroup.event;
 	
-	private _onDidChangeFavoriteGroups:vscode.EventEmitter<FavoriteGroup[]> = new vscode.EventEmitter<FavoriteGroup[]>();
-	public readonly onDidChangeFavoriteGroups:vscode.Event<FavoriteGroup[]> = this._onDidChangeFavoriteGroups.event;
+	private _onDidChangeFavoriteGroups: vscode.EventEmitter<FavoriteGroup[]> = new vscode.EventEmitter<FavoriteGroup[]>();
+	public readonly onDidChangeFavoriteGroups: vscode.Event<FavoriteGroup[]> = this._onDidChangeFavoriteGroups.event;
 	
 	public get () {
 		
@@ -49,13 +49,13 @@ export class FavoriteGroupsState {
 		
 	}
 	
-	private save (favoriteGroups:FavoriteGroup[]) {
+	private save (favoriteGroups: FavoriteGroup[]) {
 		
 		states.updateFavoriteGroups(this.context, favoriteGroups);
 		
 	}
 	
-	public getById (groupId:number) {
+	public getById (groupId: number) {
 		
 		const favoriteGroups = this.get();
 		
@@ -63,7 +63,7 @@ export class FavoriteGroupsState {
 		
 	}
 	
-	public getByName (groupLabel:string) {
+	public getByName (groupLabel: string) {
 		
 		const favoriteGroups = this.get();
 		
@@ -71,7 +71,7 @@ export class FavoriteGroupsState {
 		
 	}
 	
-	public add (label:string) {
+	public add (label: string) {
 		
 		const favoriteGroups = this.get();
 		
@@ -93,7 +93,7 @@ export class FavoriteGroupsState {
 		
 	}
 	
-	public addFavorite (favorite:Favorite, favoriteGroup:FavoriteGroup) {
+	public addFavorite (favorite: Favorite, favoriteGroup: FavoriteGroup) {
 		
 		const favoriteGroups = this.get();
 		
@@ -111,7 +111,7 @@ export class FavoriteGroupsState {
 		
 	}
 	
-	public addWorkspaceGroup (workspaceGroup:WorkspaceGroup, workspaces:Project[]) {
+	public addWorkspaceGroup (workspaceGroup: WorkspaceGroup, workspaces: Project[]) {
 		
 		const favoriteGroups = this.get();
 		const paths = workspaceGroup.paths;
@@ -134,7 +134,7 @@ export class FavoriteGroupsState {
 		
 	}
 	
-	public update (workspaceGroup:FavoriteGroup, workspaces:Project[]) {
+	public update (workspaceGroup: FavoriteGroup, workspaces: Project[]) {
 		
 		const favoriteGroups = this.get();
 		
@@ -154,7 +154,7 @@ export class FavoriteGroupsState {
 		
 	}
 	
-	public rename (favoriteGroup:FavoriteGroup, label:string) {
+	public rename (favoriteGroup: FavoriteGroup, label: string) {
 		
 		const favoriteGroups = this.get();
 		const groupId = favoriteGroup.id;
@@ -172,7 +172,7 @@ export class FavoriteGroupsState {
 		
 	}
 	
-	public removeFavorite (favorite:Favorite) {
+	public removeFavorite (favorite: Favorite) {
 		
 		const favoriteGroups = this.get();
 		const favoriteGroup = favoriteGroups.find((group) => remove(group.paths, favorite.path));
@@ -185,7 +185,7 @@ export class FavoriteGroupsState {
 		
 	}
 	
-	public remove (favoriteGroup:FavoriteGroup, removeAll:boolean) {
+	public remove (favoriteGroup: FavoriteGroup, removeAll: boolean) {
 		
 		const favoriteGroups = this.get();
 		const groupId = favoriteGroup.id;
@@ -214,7 +214,7 @@ export class FavoriteGroupsState {
 		
 	}
 	
-	public saveCollapsedState (item:FavoriteGroupTreeItem, collapsed:boolean) {
+	public saveCollapsedState (item: FavoriteGroupTreeItem, collapsed: boolean) {
 		
 		const favoriteGroups = this.get();
 		const groupId = item.group.id;
@@ -233,7 +233,7 @@ export class FavoriteGroupsState {
 
 //	Functions __________________________________________________________________
 
-function removePathsInFavoriteGroups (favoriteGroups:FavoriteGroup[], paths:string[]) {
+function removePathsInFavoriteGroups (favoriteGroups: FavoriteGroup[], paths: string[]) {
 		
 	for (const favoriteGroup of favoriteGroups) {
 		for (const path of paths) remove(favoriteGroup.paths, path);
@@ -241,7 +241,7 @@ function removePathsInFavoriteGroups (favoriteGroups:FavoriteGroup[], paths:stri
 	
 }
 
-function addMissingFavorites (context:vscode.ExtensionContext, workspaces:Project[]) {
+function addMissingFavorites (context: vscode.ExtensionContext, workspaces: Project[]) {
 	
 	const favorites = states.getFavorites(context);
 		
@@ -251,7 +251,9 @@ function addMissingFavorites (context:vscode.ExtensionContext, workspaces:Projec
 		}
 		favorites.push({
 			label: workspace.label,
+			root: workspace.root,
 			path: workspace.path,
+			remote: workspace.remote,
 			type: workspace.type,
 			color: workspace.color,
 		});
@@ -263,7 +265,7 @@ function addMissingFavorites (context:vscode.ExtensionContext, workspaces:Projec
 	
 }
 
-function sortFavoriteGroups (favoriteGroups:FavoriteGroup[]) {
+function sortFavoriteGroups (favoriteGroups: FavoriteGroup[]) {
 	
 	favoriteGroups.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 	

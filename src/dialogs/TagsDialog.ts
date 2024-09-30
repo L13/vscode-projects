@@ -6,7 +6,7 @@ import type { Tag } from '../@types/tags';
 import type { Project } from '../@types/workspaces';
 
 import { sortCaseInsensitive } from '../@l13/arrays';
-import { formatAmount, formatLabel } from '../@l13/formats';
+import { formatAmount, formatLabel, formatNotAvailableAlert } from '../@l13/formats';
 import { pluralWorkspaces } from '../@l13/units/projects';
 
 import * as dialogs from '../common/dialogs';
@@ -29,15 +29,16 @@ import type { WorkspacesState } from '../states/WorkspacesState';
 
 export class TagsDialog {
 	
-	private static current:TagsDialog = null;
+	private static current: TagsDialog = null;
 	
-	public static create (tagsState:TagsState, workspacesState:WorkspacesState, projectsState:ProjectsState) {
+	public static create (tagsState: TagsState, workspacesState: WorkspacesState, projectsState: ProjectsState) {
 		
 		return TagsDialog.current || (TagsDialog.current = new TagsDialog(tagsState, workspacesState, projectsState));
 		
 	}
 	
-	public constructor (private readonly tagsState:TagsState, private readonly workspacesState:WorkspacesState, private readonly projectsState:ProjectsState) {}
+	// eslint-disable-next-line max-len
+	private constructor (private readonly tagsState: TagsState, private readonly workspacesState: WorkspacesState, private readonly projectsState: ProjectsState) {}
 	
 	public async add () {
 		
@@ -58,17 +59,17 @@ export class TagsDialog {
 		
 	}
 	
-	public async open (tag:Tag, openInNewWindow?:boolean) {
+	public async open (tag: Tag, openInNewWindow?: boolean) {
 		
 		if (tag.paths.length) {
 			const items = tag.paths.map((path) => {
-			
+				
 				const project = this.projectsState.getByPath(path);
 				
 				return {
 					label: project?.label || formatLabel(path),
 					description: project?.path || path,
-					detail: project?.deleted ? '$(alert) Path does not exist' : '',
+					detail: project?.deleted ? formatNotAvailableAlert(project) : '',
 					workspace: project || { path },
 				};
 				
@@ -107,7 +108,7 @@ export class TagsDialog {
 		
 	}
 	
-	public async editWorkspaces (tag:Tag) {
+	public async editWorkspaces (tag: Tag) {
 		
 		const workspaces = this.workspacesState.cache || await this.workspacesState.detect();
 		
@@ -118,7 +119,7 @@ export class TagsDialog {
 			return {
 				label: workspace.label,
 				description: workspace.path,
-				detail: workspace.deleted ? '$(alert) Path does not exist' : '',
+				detail: workspace.deleted ? formatNotAvailableAlert(workspace) : '',
 				picked: tag.paths.includes(workspace.path),
 				workspace,
 			};
@@ -136,10 +137,10 @@ export class TagsDialog {
 		
 	}
 	
-	public async editTags (workspace:Project) {
+	public async editTags (workspace: Project) {
 		
 		const tags = this.tagsState.get();
-		let selectedTags:Tag[] = null;
+		let selectedTags: Tag[] = null;
 		
 		if (tags.length) {
 			const items = tags.map((tag) => {
@@ -170,7 +171,7 @@ export class TagsDialog {
 		
 	}
 	
-	public async rename (tag:Tag) {
+	public async rename (tag: Tag) {
 		
 		const label = await vscode.window.showInputBox({
 			placeHolder: 'Please enter a new name for the tag.',
@@ -188,7 +189,7 @@ export class TagsDialog {
 		
 	}
 	
-	public async remove (tag:Tag) {
+	public async remove (tag: Tag) {
 		
 		if (settings.get('confirmDeleteTag', true)) {
 			const buttonDeleteDontShowAgain = 'Delete, don\'t show again';

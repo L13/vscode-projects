@@ -1,22 +1,13 @@
 # Change Log
 All notable changes to the "Projects" extension will be documented in this file.
 
-## [1.1.1] - 2022-02-27
-
-### Fixed
-
-- Fixed duplicated workspace for `sortWorkspacesBy` with value `name` [Issue 40](https://github.com/L13/vscode-projects/issues/40)
-
-## [1.1.0] - 2021-06-13
+## [2.0.0] - 2024-09-30
 
 ### Added
 
-- Added `category` for some commands in package.json
-- Added basic support for workspace trust.
-
-### Changed
-
-- Changed icons for subfolders.
+- Added support for remote workspaces.
+- Added sort workspaces by root.
+- Added actions for reveal folder in os, show favorites, workspaces or tags to statusbar icons.
 
 ## [1.0.0] - 2021-05-16
 

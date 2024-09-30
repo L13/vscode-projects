@@ -20,15 +20,15 @@ export type CommonTreeItems = FavoriteTreeItems|WorkspaceTreeItems;
 
 export type CommonGroupTreeItems = FavoriteGroupTreeItem|WorkspaceGroupTreeItem;
 
-export type InitialState = 'collapsed'|'expanded'|'remember';
+export type InitialState = 'collapsed' | 'expanded' | 'remember';
 
-export type WorkspaceSorting = 'name'|'category'|'type';
+export type WorkspaceSorting = 'category' | 'name' | 'root' | 'type';
 
-export type WorkspaceDescriptionFormat = 'both'|'none'|'slot'|'tags';
+export type WorkspaceDescriptionFormat = 'both' | 'none' | 'slot' | 'tags';
 
-export type TagDescriptionFormat = 'both'|'none'|'slot'|'workspaces';
+export type TagDescriptionFormat = 'both' | 'none' | 'slot' | 'workspaces';
 
-export type GroupDescriptionFormat = 'both'|'none'|'slot'|'workspaces';
+export type GroupDescriptionFormat = 'both' | 'none' | 'slot' | 'workspaces';
 
 //	Functions __________________________________________________________________
 

@@ -13,32 +13,32 @@ import * as vscode from 'vscode';
 //	Exports ____________________________________________________________________
 
 type Comparison = {
-	fileA:string,
-	fileB:string,
-	label:string,
-	desc:string,
+	fileA: string,
+	fileB: string,
+	label: string,
+	desc: string,
 };
 
 type Favorite = {
-	fileA:string;
-	fileB:string;
-	label:string;
-	groupId?:number;
+	fileA: string;
+	fileB: string;
+	label: string;
+	groupId?: number;
 };
 
 export interface DiffFavoriteTreeItem extends vscode.TreeItem {
 	
-	contextValue:'favorite'|'subfavorite';
+	contextValue: 'favorite'|'subfavorite';
 	
-	readonly favorite:Favorite;
+	readonly favorite: Favorite;
 	
 }
 
 export interface DiffHistoryTreeItem extends vscode.TreeItem {
 	
-	contextValue:'history';
+	contextValue: 'history';
 	
-	readonly comparison:Comparison;
+	readonly comparison: Comparison;
 	
 }
 

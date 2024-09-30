@@ -114,13 +114,13 @@
 			"error",
 			{
 				"selector": "default",
-				"format": [
-					"camelCase",
-					"PascalCase",
-					"UPPER_CASE"
-				],
+				"format": null,
 				"leadingUnderscore": "allow",
-				"trailingUnderscore": "forbid"
+				"trailingUnderscore": "forbid",
+				"custom": {
+					"regex": "^(?:[A-Za-z](?:[A-Za-z0-9]+)*|[A-Z](?:[A-Z0-9]*?)(?:_[A-Z0-9]+)*|[A-Za-z][A-Za-z0-9]+(?:\\.[A-Za-z0-9]+)+|\\d+|(?:-[a-z0-9]+)+)$",
+					"match": true
+				}
 			}
 		],
 		"@typescript-eslint/no-dupe-class-members": "error",
@@ -187,27 +187,7 @@
 		"@typescript-eslint/semi": "error",
 		"space-before-function-paren": "off",
 		"@typescript-eslint/space-before-function-paren": "error",
-		"@typescript-eslint/type-annotation-spacing": [
-			"error",
-			{
-				"before": false,
-				"after": false,
-				"overrides": {
-					"arrow": {
-						"before": true,
-						"after": true
-					},
-					"property": {
-						"before": false,
-						"after": false
-					},
-					"returnType": {
-						"before": true,
-						"after": false
-					}
-				}
-			}
-		],
+		"@typescript-eslint/type-annotation-spacing": "error",
 		"@typescript-eslint/triple-slash-reference": [
 			"error",
 			{

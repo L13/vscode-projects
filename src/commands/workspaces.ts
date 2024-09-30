@@ -2,11 +2,15 @@
 
 import * as vscode from 'vscode';
 
+import { formatAmount } from '../@l13/formats';
+import { pluralEntries } from '../@l13/units/files';
+
 import type { GroupTreeItems, Project } from '../@types/workspaces';
 
 import * as commands from '../common/commands';
 import * as files from '../common/files';
 import * as settings from '../common/settings';
+import { createUri } from '../common/uris';
 
 import { FavoriteGroupsDialog } from '../dialogs/FavoriteGroupsDialog';
 import { ProjectsDialog } from '../dialogs/ProjectsDialog';
@@ -14,8 +18,19 @@ import { TagsDialog } from '../dialogs/TagsDialog';
 import { WorkspaceGroupsDialog } from '../dialogs/WorkspaceGroupsDialog';
 import { WorkspacesDialog } from '../dialogs/WorkspacesDialog';
 
+import { Output } from '../output/Output';
+
 import { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGroupTreeItem';
-import { ProjectTreeItem } from '../sidebar/trees/items/ProjectTreeItem';
+
+import { WorkspaceTreeItem } from '../sidebar/trees/items/WorkspaceTreeItem';
+
+import { CategorySorter } from '../sidebar/trees/sorter/CategorySorter';
+import { GroupSorter } from '../sidebar/trees/sorter/GroupSorter';
+import { NameSorter } from '../sidebar/trees/sorter/NameSorter';
+import { RootSorter } from '../sidebar/trees/sorter/RootSorter';
+import { TagSorter } from '../sidebar/trees/sorter/TagSorter';
+import { TypeSorter } from '../sidebar/trees/sorter/TypeSorter';
+
 import { WorkspacesProvider } from '../sidebar/WorkspacesProvider';
 
 import { FavoriteGroupsState } from '../states/FavoriteGroupsState';
@@ -40,10 +55,11 @@ import { StatusBarInfo } from '../statusbar/StatusBarInfo';
 
 //	Exports ____________________________________________________________________
 
-export function activate (context:vscode.ExtensionContext) {
+export function activate (context: vscode.ExtensionContext) {
 	
 	const subscriptions = context.subscriptions;
 	
+	const output = Output.create();
 	const statusBarInfo = StatusBarInfo.create(context);
 	
 	const favoriteGroupsState = FavoriteGroupsState.create(context);
@@ -63,13 +79,25 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	const workspacesProvider = WorkspacesProvider.create({
 		hotkeySlots: hotkeySlotsState,
-		simpleGroups: workspaceGroupsState.getSimpleGroups(),
-		tagGroup: workspaceGroupsState.getTagGroup(),
 		tags: tagsState.get(),
-		typeGroups: workspaceGroupsState.getTypeGroups(),
 		workspaces: workspacesState.cache,
 		workspaceGroups: workspaceGroupsState.get(),
 	});
+	
+	const tagSorter = new TagSorter(workspacesProvider, workspaceGroupsState);
+	const groupSorter = new GroupSorter(workspacesProvider, workspaceGroupsState);
+	const nameSorter = new NameSorter(workspacesProvider);
+	const categorySorter = new CategorySorter(workspacesProvider, workspaceGroupsState);
+	const rootSorter = new RootSorter(workspacesProvider, workspaceGroupsState);
+	const typeSorter = new TypeSorter(workspacesProvider, workspaceGroupsState);
+	
+	workspacesProvider.addStaticSorter(tagSorter);
+	workspacesProvider.addStaticSorter(groupSorter);
+	
+	workspacesProvider.addWorkspacesSorter(nameSorter);
+	workspacesProvider.addWorkspacesSorter(categorySorter);
+	workspacesProvider.addWorkspacesSorter(rootSorter);
+	workspacesProvider.addWorkspacesSorter(typeSorter);
 	
 	const treeView = vscode.window.createTreeView('l13ProjectsWorkspaces', {
 		showCollapseAll: true,
@@ -138,7 +166,7 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	subscriptions.push(workspacesProvider.onWillInitView(async () => {
 		
-		updateProjectsAndFavorites(statusBarColorState, favoritesState, projectsState);
+		await updateProjectsAndFavorites(statusBarColorState, favoritesState, projectsState);
 		
 		workspacesProvider.refresh({
 			workspaces: await workspacesState.detect(),
@@ -198,6 +226,43 @@ export function activate (context:vscode.ExtensionContext) {
 		
 	}));
 	
+	output.message('LOG\n');
+	
+	if (workspacesState.cache) output.log('Using cache for detected projects');
+	
+	subscriptions.push(workspacesState.onWillScanWorkspaces(() => {
+		
+		output.message();
+		output.log('Start scanning all folders for projects');
+		
+	}));
+	
+	subscriptions.push(workspacesState.onWillScanWorkspace(({ path, type }) => {
+		
+		output.log(`Start scanning folder "${path}" for ${type} projects`);
+		
+	}));
+	
+	subscriptions.push(workspacesState.onDidScanWorkspace(({ error, result, type }) => {
+		
+		if (error) {
+			output.log(`Error during scanning folder "${result.root}" for ${type} projects`);
+			output.message(`\n${error}\n`);
+			vscode.window.showErrorMessage(`${error.message}`, 'Show Output').then((value) => {
+				
+				if (value) vscode.commands.executeCommand('l13Projects.action.output.show');
+				
+			});
+		} else output.log(`Finished scanning folder "${result.root}" for ${type} projects. Found ${formatAmount(result.uris.length, pluralEntries)}.`);
+		
+	}));
+	
+	subscriptions.push(workspacesState.onDidScanWorkspaces(() => {
+		
+		output.log('Finished scanning all folders for projects');
+		
+	}));
+	
 //	Workspace Groups
 	
 	subscriptions.push(workspaceGroupsState.onDidUpdateWorkspaceGroup((workspaceGroup) => {
@@ -247,21 +312,21 @@ export function activate (context:vscode.ExtensionContext) {
 	
 	commands.register(context, {
 		
-		'l13Projects.action.workspace.open': ({ project }:ProjectTreeItem) => files.open(project.path),
-		'l13Projects.action.workspace.openInCurrentWindow': ({ project }:ProjectTreeItem) => files.open(project.path, false),
-		'l13Projects.action.workspace.openInNewWindow': ({ project }:ProjectTreeItem) => files.open(project.path, true),
+		'l13Projects.action.workspace.open': ({ project }: WorkspaceTreeItem) => files.open(project.path),
+		'l13Projects.action.workspace.openInCurrentWindow': ({ project }: WorkspaceTreeItem) => files.open(project.path, false),
+		'l13Projects.action.workspace.openInNewWindow': ({ project }: WorkspaceTreeItem) => files.open(project.path, true),
 		
-		'l13Projects.action.workspace.addToWorkspace': ({ project }:ProjectTreeItem) => addToWorkspace(project),
-		'l13Projects.action.workspace.addToFavorites': ({ project }:ProjectTreeItem) => favoritesState.add(project),
-		'l13Projects.action.workspace.addToGroup': ({ project }:ProjectTreeItem) => workspaceGroupsDialog.addWorkspaceToGroup(project),
-		'l13Projects.action.workspace.removeFromGroup': ({ project }:ProjectTreeItem) => workspaceGroupsState.removeWorkspace(project),
+		'l13Projects.action.workspace.addToWorkspace': ({ project }: WorkspaceTreeItem) => addToWorkspace(project),
+		'l13Projects.action.workspace.addToFavorites': ({ project }: WorkspaceTreeItem) => favoritesState.add(project),
+		'l13Projects.action.workspace.addToGroup': ({ project }: WorkspaceTreeItem) => workspaceGroupsDialog.addWorkspaceToGroup(project),
+		'l13Projects.action.workspace.removeFromGroup': ({ project }: WorkspaceTreeItem) => workspaceGroupsState.removeWorkspace(project),
 		
-		'l13Projects.action.workspace.editTags': ({ project }:ProjectTreeItem) => tagsDialog.editTags(project),
+		'l13Projects.action.workspace.editTags': ({ project }: WorkspaceTreeItem) => tagsDialog.editTags(project),
 		
 		'l13Projects.action.workspaces.addProject': () => projectsDialog.addDirectory(),
-		'l13Projects.action.workspaces.addProjectWorkspace': () => projectsDialog.addVSCodeWorkspace(),
+		'l13Projects.action.workspaces.addWorkspaceProject': () => projectsDialog.addWorkspaceFile(),
 		'l13Projects.action.workspaces.saveProject': () => projectsDialog.save(),
-		'l13Projects.action.workspace.saveDetectedProject': ({ project }:ProjectTreeItem) => projectsDialog.save(project),
+		'l13Projects.action.workspace.saveDetectedProject': ({ project }: WorkspaceTreeItem) => projectsDialog.save(project),
 		
 		'l13Projects.action.workspaces.pickWorkspace': () => workspacesDialog.pick(),
 		
@@ -271,7 +336,7 @@ export function activate (context:vscode.ExtensionContext) {
 				location: { viewId: 'l13ProjectsWorkspaces' },
 			}, async () => {
 				
-				updateProjectsAndFavorites(statusBarColorState, favoritesState, projectsState);
+				await updateProjectsAndFavorites(statusBarColorState, favoritesState, projectsState);
 				
 				await workspacesState.detect();
 				
@@ -280,27 +345,27 @@ export function activate (context:vscode.ExtensionContext) {
 		},
 		
 		'l13Projects.action.workspaceGroups.add': () => workspaceGroupsDialog.add(),
-		'l13Projects.action.workspaceGroup.addToFavorites': ({ group }:WorkspaceGroupTreeItem) => {
+		'l13Projects.action.workspaceGroup.addToFavorites': ({ group }: WorkspaceGroupTreeItem) => {
 			
 			const workspaces = group.paths.map((path) => workspacesState.getByPath(path));
 			
 			favoriteGroupsDialog.addWorkspaceGroup(group, workspaces.filter((workspace) => !!workspace));
 			
 		},
-		'l13Projects.action.workspaceGroup.editWorkspaces': ({ group }:WorkspaceGroupTreeItem) => {
+		'l13Projects.action.workspaceGroup.editWorkspaces': ({ group }: WorkspaceGroupTreeItem) => {
 			
 			workspacesDialog.editWorkspaces(group);
 			
 		},
-		'l13Projects.action.workspaceGroup.rename': ({ group }:WorkspaceGroupTreeItem) => workspaceGroupsDialog.rename(group),
-		'l13Projects.action.workspaceGroup.remove': ({ group }:WorkspaceGroupTreeItem) => workspaceGroupsDialog.remove(group),
+		'l13Projects.action.workspaceGroup.rename': ({ group }: WorkspaceGroupTreeItem) => workspaceGroupsDialog.rename(group),
+		'l13Projects.action.workspaceGroup.remove': ({ group }: WorkspaceGroupTreeItem) => workspaceGroupsDialog.remove(group),
 		'l13Projects.action.workspaceGroups.clear': () => workspaceGroupsDialog.clear(),
 		
-		'l13Projects.action.project.rename': ({ project }:ProjectTreeItem) => projectsDialog.rename(project),
-		'l13Projects.action.project.remove': ({ project }:ProjectTreeItem) => projectsDialog.remove(project),
+		'l13Projects.action.project.rename': ({ project }: WorkspaceTreeItem) => projectsDialog.rename(project),
+		'l13Projects.action.project.remove': ({ project }: WorkspaceTreeItem) => projectsDialog.remove(project),
 		'l13Projects.action.projects.clear': () => projectsDialog.clear(),
 		
-		'l13Projects.action.colorPicker.selectColor': ({ project }:ProjectTreeItem) => {
+		'l13Projects.action.colorPicker.selectColor': ({ project }: WorkspaceTreeItem) => {
 			
 			workspacesProvider.showColorPicker(project);
 			treeView.reveal(workspacesProvider.colorPickerTreeItem, { focus: true, select: true });
@@ -322,28 +387,28 @@ export function activate (context:vscode.ExtensionContext) {
 
 //	Functions __________________________________________________________________
 
-function changeStatusbBarColor (statusBarColorState:StatusBarColor, workspacesProvider:WorkspacesProvider, color:number) {
+function changeStatusbBarColor (statusBarColorState: StatusBarColor, workspacesProvider: WorkspacesProvider, color: number) {
 	
 	statusBarColorState.assignProjectColor(workspacesProvider.colorPickerProject, color);
 	workspacesProvider.colorPickerProject = null;
 	
 }
 
-function addToWorkspace (project:Project) {
+function addToWorkspace (project: Project) {
 		
-	const index:number = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.length : 0;
+	const index: number = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.length : 0;
 	
 	vscode.workspace.updateWorkspaceFolders(index, null, {
 		name: project.label,
-		uri: vscode.Uri.file(project.path),
+		uri: createUri(project.path),
 	});
 	
 }
 
-function updateProjectsAndFavorites (statusBarColorState:StatusBarColor, favoritesState:FavoritesState, projectsState:ProjectsState) {
+async function updateProjectsAndFavorites (statusBarColorState: StatusBarColor, favoritesState: FavoritesState, projectsState: ProjectsState) {
 	
-	if (!settings.isTrustedWorkspaceEnabled()) statusBarColorState.detectProjectColors();
-	else if (vscode.workspace.isTrusted) statusBarColorState.detectCurrentProjectColor();
+	if (!settings.isTrustedWorkspaceEnabled()) await statusBarColorState.detectProjectColors();
+	else if (vscode.workspace.isTrusted) await statusBarColorState.detectCurrentProjectColor();
 				
 	if (settings.get('autoRemoveDeletedProjects')) {
 		favoritesState.cleanupUnknownPaths();

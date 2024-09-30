@@ -2,6 +2,8 @@
 
 import * as vscode from 'vscode';
 
+import { formatNotAvailableAlert } from '../@l13/formats';
+
 import type { Favorite, FavoriteQuickPickItem } from '../@types/favorites';
 
 import * as dialogs from '../common/dialogs';
@@ -23,15 +25,15 @@ import type { FavoritesState } from '../states/FavoritesState';
 
 export class FavoritesDialog {
 	
-	private static current:FavoritesDialog = null;
+	private static current: FavoritesDialog = null;
 	
-	public static create (favoritesStates:FavoritesState, favoriteGroupsState:FavoriteGroupsState) {
+	public static create (favoritesStates: FavoritesState, favoriteGroupsState: FavoriteGroupsState) {
 		
 		return FavoritesDialog.current || (FavoritesDialog.current = new FavoritesDialog(favoritesStates, favoriteGroupsState));
 		
 	}
 	
-	public constructor (private readonly favoritesStates:FavoritesState, private readonly favoriteGroupsState:FavoriteGroupsState) {}
+	private constructor (private readonly favoritesStates: FavoritesState, private readonly favoriteGroupsState: FavoriteGroupsState) {}
 	
 	public async pick () {
 		
@@ -42,7 +44,7 @@ export class FavoritesDialog {
 		const item = await vscode.window.showQuickPick(items, {
 			placeHolder: 'Select a project',
 		});
-			
+		
 		if (item) {
 			if (item.favoriteGroup) files.openAll(item.favoriteGroup.paths);
 			else if (item.favorite) files.open(item.favorite.path);
@@ -50,7 +52,7 @@ export class FavoritesDialog {
 		
 	}
 	
-	private createQuickPickItems ():FavoriteQuickPickItem[] {
+	private createQuickPickItems (): FavoriteQuickPickItem[] {
 		
 		const favoriteGroups = this.favoriteGroupsState.get();
 		const favorites = this.favoritesStates.get();
@@ -71,7 +73,7 @@ export class FavoritesDialog {
 		const items = favorites.map((favorite) => ({
 			label: favorite.label,
 			description: favorite.path,
-			detail: favorite.deleted ? '$(alert) Path does not exist' : '',
+			detail: favorite.deleted ? formatNotAvailableAlert(favorite) : '',
 			favorite,
 		}));
 		
@@ -79,7 +81,7 @@ export class FavoritesDialog {
 		
 	}
 	
-	public async rename (favorite:Favorite) {
+	public async rename (favorite: Favorite) {
 		
 		const value = await vscode.window.showInputBox({ value: favorite.label });
 		
@@ -95,7 +97,7 @@ export class FavoritesDialog {
 		
 	}
 	
-	public async remove (favorite:Favorite) {
+	public async remove (favorite: Favorite) {
 		
 		if (settings.get('confirmDeleteFavorite', true)) {
 			const buttonDeleteDontShowAgain = 'Delete, don\'t show again';
