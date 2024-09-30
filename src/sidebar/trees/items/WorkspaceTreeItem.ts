@@ -1,13 +1,14 @@
 //	Imports ____________________________________________________________________
 
-import { join } from 'path';
 import { TreeItem } from 'vscode';
 
 import type { Project } from '../../../@types/workspaces';
 
+import { getContextValue, getIconPath } from '../../../common/treeview';
+
 //	Variables __________________________________________________________________
 
-const basePath = join(__dirname, '..', 'images', 'types');
+
 
 //	Initialize _________________________________________________________________
 
@@ -15,31 +16,21 @@ const basePath = join(__dirname, '..', 'images', 'types');
 
 //	Exports ____________________________________________________________________
 
-export class ProjectTreeItem extends TreeItem {
+export class WorkspaceTreeItem extends TreeItem {
 	
 	public command = {
 		arguments: [this],
 		command: 'l13Projects.action.workspace.open',
-		title: 'Open Project',
+		title: 'Open Workspace',
 	};
 	
-	public constructor (public readonly project:Project, info:string, isSubProject = false) {
+	public constructor (public readonly project: Project, public description: string, isSubItem = false) {
 		
 		super(project.label);
 		
-		const type = project.type;
-		let icon = `${type}`;
-		
-		if (type === 'folder' || type === 'folders') icon += `-color-${project.color || 0}`;
-		
-		this.contextValue = `${isSubProject ? 'sub' : ''}project-${type}`;
+		this.iconPath = getIconPath(project);
+		this.contextValue = getContextValue(project, isSubItem);
 		this.tooltip = project.path;
-		this.description = info;
-		
-		this.iconPath = {
-			light: join(basePath, `project-${icon}-light.svg`),
-			dark: join(basePath, `project-${icon}-dark.svg`),
-		};
 		
 	}
 	

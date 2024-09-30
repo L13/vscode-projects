@@ -2,6 +2,8 @@
 
 import * as vscode from 'vscode';
 
+import type { Dictionary } from '../@types/basics';
+
 //	Variables __________________________________________________________________
 
 
@@ -12,7 +14,7 @@ import * as vscode from 'vscode';
 
 //	Exports ____________________________________________________________________
 
-export function register (context:vscode.ExtensionContext, commands:{ [command:string]:(...args:any) => void }) {
+export function register (context: vscode.ExtensionContext, commands: Dictionary<(...args: any) => void>) {
 	
 	const subscriptions = context.subscriptions;
 

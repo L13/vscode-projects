@@ -10,6 +10,8 @@ import type { Project, SimpleGroupState, TypeGroupState, WorkspaceGroup } from '
 import { getNextGroupId } from '../common/groups';
 import * as states from '../common/states';
 
+import type { PinnedGroupTreeItem } from '../sidebar/trees/groups/PinnedGroupTreeItem';
+import type { RootGroupTreeItem } from '../sidebar/trees/groups/RootGroupTreeItem';
 import type { SimpleGroupTreeItem } from '../sidebar/trees/groups/SimpleGroupTreeItem';
 import type { TagGroupTreeItem } from '../sidebar/trees/groups/TagGroupTreeItem';
 import type { TypeGroupTreeItem } from '../sidebar/trees/groups/TypeGroupTreeItem';
@@ -27,24 +29,24 @@ import type { WorkspaceGroupTreeItem } from '../sidebar/trees/groups/WorkspaceGr
 
 export class WorkspaceGroupsState {
 	
-	private static current:WorkspaceGroupsState = null;
+	private static current: WorkspaceGroupsState = null;
 	
-	public static create (context:vscode.ExtensionContext) {
+	public static create (context: vscode.ExtensionContext) {
 		
 		return WorkspaceGroupsState.current || (WorkspaceGroupsState.current = new WorkspaceGroupsState(context));
 		
 	}
 	
-	public constructor (private readonly context:vscode.ExtensionContext) {}
+	private constructor (private readonly context: vscode.ExtensionContext) {}
 	
-	private _onDidUpdateWorkspaceGroup:vscode.EventEmitter<WorkspaceGroup> = new vscode.EventEmitter<WorkspaceGroup>();
-	public readonly onDidUpdateWorkspaceGroup:vscode.Event<WorkspaceGroup> = this._onDidUpdateWorkspaceGroup.event;
+	private _onDidUpdateWorkspaceGroup: vscode.EventEmitter<WorkspaceGroup> = new vscode.EventEmitter<WorkspaceGroup>();
+	public readonly onDidUpdateWorkspaceGroup: vscode.Event<WorkspaceGroup> = this._onDidUpdateWorkspaceGroup.event;
 	
-	private _onDidDeleteWorkspaceGroup:vscode.EventEmitter<WorkspaceGroup> = new vscode.EventEmitter<WorkspaceGroup>();
-	public readonly onDidDeleteWorkspaceGroup:vscode.Event<WorkspaceGroup> = this._onDidDeleteWorkspaceGroup.event;
+	private _onDidDeleteWorkspaceGroup: vscode.EventEmitter<WorkspaceGroup> = new vscode.EventEmitter<WorkspaceGroup>();
+	public readonly onDidDeleteWorkspaceGroup: vscode.Event<WorkspaceGroup> = this._onDidDeleteWorkspaceGroup.event;
 	
-	private _onDidChangeWorkspaceGroups:vscode.EventEmitter<WorkspaceGroup[]> = new vscode.EventEmitter<WorkspaceGroup[]>();
-	public readonly onDidChangeWorkspaceGroups:vscode.Event<WorkspaceGroup[]> = this._onDidChangeWorkspaceGroups.event;
+	private _onDidChangeWorkspaceGroups: vscode.EventEmitter<WorkspaceGroup[]> = new vscode.EventEmitter<WorkspaceGroup[]>();
+	public readonly onDidChangeWorkspaceGroups: vscode.Event<WorkspaceGroup[]> = this._onDidChangeWorkspaceGroups.event;
 	
 	public get () {
 		
@@ -52,9 +54,21 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	private save (workspaceGroups:WorkspaceGroup[]) {
+	private save (workspaceGroups: WorkspaceGroup[]) {
 		
 		states.updateWorkspaceGroups(this.context, workspaceGroups);
+		
+	}
+	
+	public getPinnedGroup () {
+		
+		return states.getPinnedGroup(this.context);
+		
+	}
+	
+	public getRootGroups () {
+		
+		return states.getRootGroups(this.context);
 		
 	}
 	
@@ -76,7 +90,7 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public getById (groupId:number) {
+	public getById (groupId: number) {
 		
 		const workspaceGroups = this.get();
 		
@@ -84,7 +98,7 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public getByName (groupId:string) {
+	public getByName (groupId: string) {
 		
 		const workspaceGroups = this.get();
 		
@@ -92,7 +106,7 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public add (label:string) {
+	public add (label: string) {
 		
 		const workspaceGroups = this.get();
 		
@@ -114,7 +128,7 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public addWorkspace (workspace:Project, workspaceGroup:WorkspaceGroup) {
+	public addWorkspace (workspace: Project, workspaceGroup: WorkspaceGroup) {
 		
 		const workspaceGroups = this.get();
 		
@@ -130,7 +144,7 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public editWorkspaces (currentWorkspaceGroup:WorkspaceGroup, workspaces:Project[]) {
+	public editWorkspaces (currentWorkspaceGroup: WorkspaceGroup, workspaces: Project[]) {
 		
 		const workspaceGroups = this.get();
 		const paths = workspaces.map((workspace) => workspace.path);
@@ -158,7 +172,7 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public cleanupUnknownPaths (workspaces:Project[]) {
+	public cleanupUnknownPaths (workspaces: Project[]) {
 		
 		const workspaceGroups = this.get();
 		const paths = workspaces.map((workspace) => workspace.path);
@@ -184,7 +198,7 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public update (favoriteGroup:FavoriteGroup) {
+	public update (favoriteGroup: FavoriteGroup) {
 		
 		const workspaceGroups = this.get();
 		
@@ -203,7 +217,7 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public rename (workspaceGroup:WorkspaceGroup, label:string) {
+	public rename (workspaceGroup: WorkspaceGroup, label: string) {
 		
 		const workspaceGroups = this.get();
 		
@@ -220,7 +234,7 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public removeWorkspace (workspace:Project) {
+	public removeWorkspace (workspace: Project) {
 		
 		const workspaceGroups = this.get();
 		const workspaceGroup = workspaceGroups.find((group) => remove(group.paths, workspace.path));
@@ -233,7 +247,7 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public remove (workspaceGroup:WorkspaceGroup) {
+	public remove (workspaceGroup: WorkspaceGroup) {
 		
 		const workspaceGroups = this.get();
 		const groupId = workspaceGroup.id;
@@ -257,7 +271,7 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public saveWorkspaceGroupState (item:WorkspaceGroupTreeItem, collapsed:boolean) {
+	public saveWorkspaceGroupState (item: WorkspaceGroupTreeItem, collapsed: boolean) {
 		
 		const workspaceGroups = this.get();
 		const groupId = item.group.id;
@@ -272,7 +286,7 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public saveTagGroupState (item:TagGroupTreeItem, collapsed:boolean) {
+	public saveTagGroupState (item: TagGroupTreeItem, collapsed: boolean) {
 		
 		let groupState = states.getTagGroup(this.context);
 		
@@ -283,7 +297,18 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public saveSimpleGroupState (item:SimpleGroupTreeItem, collapsed:boolean) {
+	public savePinnedGroupState (item: PinnedGroupTreeItem, collapsed: boolean) {
+		
+		let groupState = states.getPinnedGroup(this.context);
+		
+		if (groupState) groupState.collapsed = collapsed;
+		else groupState = { collapsed };
+		
+		states.updatePinnedGroup(this.context, groupState);
+		
+	}
+	
+	public saveSimpleGroupState (item: SimpleGroupTreeItem, collapsed: boolean) {
 		
 		const groupStates = states.getSimpleGroups(this.context);
 		
@@ -292,7 +317,7 @@ export class WorkspaceGroupsState {
 		
 	}
 	
-	public saveTypeGroupState (item:TypeGroupTreeItem, collapsed:boolean) {
+	public saveTypeGroupState (item: TypeGroupTreeItem, collapsed: boolean) {
 		
 		const groupStates = states.getTypeGroups(this.context);
 		
@@ -301,11 +326,36 @@ export class WorkspaceGroupsState {
 		
 	}
 	
+	public saveRootGroupState (item: RootGroupTreeItem, collapsed: boolean) {
+		
+		const groupStates = states.getRootGroups(this.context);
+		
+		const root = item.group.root;
+		const groupState = groupStates.find((state) => state.root === root);
+		
+		if (groupState) groupState.collapsed = collapsed;
+		else groupStates.push({ root, collapsed });
+		
+		item.group.collapsed = collapsed;
+		
+		states.updateRootGroups(this.context, groupStates);
+		
+	}
+	
+	public cleanupUnknownRootGroupStates (roots: string[]) {
+		
+		const groupStates = states.getRootGroups(this.context);
+		const filteredGroupStates = groupStates.filter((state) => roots.includes(state.root));
+		
+		states.updateRootGroups(this.context, filteredGroupStates);
+		
+	}
+	
 }
 
 //	Functions __________________________________________________________________
 
-function saveCollapseState (groupStates:Array<SimpleGroupState|TypeGroupState>, item:SimpleGroupTreeItem|TypeGroupTreeItem, collapsed:boolean) {
+function saveCollapseState (groupStates: Array<SimpleGroupState|TypeGroupState>, item: SimpleGroupTreeItem|TypeGroupTreeItem, collapsed: boolean) {
 	
 	const type = item.group.type;
 	const groupState = groupStates.find((state) => state.type === type);
@@ -317,13 +367,13 @@ function saveCollapseState (groupStates:Array<SimpleGroupState|TypeGroupState>, 
 	
 }
 
-function sortWorkspaceGroups (workspaceGroups:WorkspaceGroup[]) {
+function sortWorkspaceGroups (workspaceGroups: WorkspaceGroup[]) {
 	
 	workspaceGroups.sort(({ label: a }, { label: b }) => sortCaseInsensitive(a, b));
 	
 }
 
-function removePathsInWorkspaceGroups (workspaceGroups:WorkspaceGroup[], paths:string[]) {
+function removePathsInWorkspaceGroups (workspaceGroups: WorkspaceGroup[], paths: string[]) {
 		
 	for (const workspaceGroup of workspaceGroups) {
 		for (const path of paths) remove(workspaceGroup.paths, path);

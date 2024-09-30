@@ -12,7 +12,7 @@ import type { Plural } from '../../@types/formats';
 
 //	Exports ____________________________________________________________________
 
-export const pluralWorkspaces:Plural = { size: 'Workspaces', 1: 'Workspace' };
+export const pluralWorkspaces: Plural = { size: 'Workspaces', 1: 'Workspace' };
 
 //	Functions __________________________________________________________________
 

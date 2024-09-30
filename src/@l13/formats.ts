@@ -20,21 +20,33 @@ import { pluralWorkspaces } from './units/projects';
 
 //	Exports ____________________________________________________________________
 
-export function formatAmount (value:number, units:Plural) {
+export function formatAmount (value: number, units: Plural) {
 	
 	return `${value} ${units[value] || units.size}`;
 	
 }
 
-export function formatLabel (value:string) {
+export function formatLabel (value: string) {
 	
 	return basename(value, '.code-workspace');
 	
 }
 
-export function formatWorkspaceDescription (workspace:Project, slot:Slot, tags:Tag[], formatType:WorkspaceDescriptionFormat) {
+export function formatNotAvailable (workspace: Project) {
 	
-	const desc:string[] = [];
+	return workspace.remote ? '' : 'Path does not exist';
+	
+}
+
+export function formatNotAvailableAlert (workspace: Project) {
+	
+	return `$(alert) ${formatNotAvailable(workspace)}`;
+	
+}
+
+export function formatWorkspaceDescription (workspace: Project, slot: Slot, tags: Tag[], formatType: WorkspaceDescriptionFormat) {
+	
+	const desc: string[] = [];
 	
 	if (slot && (formatType === 'both' || formatType === 'slot')) desc.push(`[${slot.index}]`);
 	if (formatType === 'both' || formatType === 'tags') {
@@ -42,18 +54,18 @@ export function formatWorkspaceDescription (workspace:Project, slot:Slot, tags:T
 		const names = tags.filter(({ paths }) => paths.includes(path)).map(({ label }) => label);
 		if (names.length) desc.push(names.join(', '));
 	}
-	if (workspace.deleted) {
+	if (workspace.deleted && !workspace.remote) {
 		if (desc.length) desc.unshift('•');
-		desc.unshift('Path does not exist');
+		desc.unshift(formatNotAvailable(workspace));
 	}
 	
 	return desc.join(' ');
 	
 }
 
-export function formatTagDescription (tag:Tag, slot:Slot, formatType:TagDescriptionFormat) {
+export function formatTagDescription (tag: Tag, slot: Slot, formatType: TagDescriptionFormat) {
 	
-	const desc:string[] = [];
+	const desc: string[] = [];
 	
 	if (tag.paths.length && (formatType === 'both' || formatType === 'workspaces')) {
 		desc.push(formatAmount(tag.paths.length, pluralWorkspaces));
@@ -64,9 +76,9 @@ export function formatTagDescription (tag:Tag, slot:Slot, formatType:TagDescript
 	
 }
 
-export function formatGroupDescription (amount:number, slot:Slot, formatType:GroupDescriptionFormat) {
+export function formatGroupDescription (amount: number, slot: Slot, formatType: GroupDescriptionFormat) {
 	
-	const desc:string[] = [];
+	const desc: string[] = [];
 	
 	if (amount && (formatType === 'both' || formatType === 'workspaces')) {
 		desc.push(formatAmount(amount, pluralWorkspaces));

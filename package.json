@@ -2,9 +2,9 @@
 	"name": "l13-projects",
 	"displayName": "Projects",
 	"description": "Manage your workspaces and projects in Visual Studio Code",
-	"version": "1.1.1",
+	"version": "2.0.0",
 	"publisher": "L13RARY",
-	"license": "SEE LICENCE IN LICENCE.md",
+	"license": "SEE LICENSE IN LICENSE.md",
 	"homepage": "https://github.com/l13/vscode-projects/blob/master/README.md",
 	"repository": {
 		"type": "git",
@@ -32,13 +32,14 @@
 		"workspace"
 	],
 	"activationEvents": [
-		"*"
+		"onStartupFinished"
 	],
 	"extensionKind": [
 		"ui",
 		"workspace"
 	],
 	"capabilities": {
+		"virtualWorkspaces": true,
 		"untrustedWorkspaces": {
 			"supported": "limited",
 			"description": "If 'Security > Workspace > Trust: Enabled' is true the feature 'Select Status Bar Color' works only in the current workspace."
@@ -99,6 +100,10 @@
 				"title": "Open in Current Window"
 			},
 			{
+				"command": "l13Projects.action.explorer.copyUri",
+				"title": "Copy Uri"
+			},
+			{
 				"command": "l13Projects.action.favorites.pickFavorite",
 				"category": "Projects",
 				"title": "Open Favorite Workspace"
@@ -157,16 +162,16 @@
 			{
 				"command": "l13Projects.action.workspaces.addProject",
 				"category": "Projects",
-				"title": "Add Project",
+				"title": "Add Project...",
 				"icon": {
 					"light": "images/workspaces/project-save-light.svg",
 					"dark": "images/workspaces/project-save-dark.svg"
 				}
 			},
 			{
-				"command": "l13Projects.action.workspaces.addProjectWorkspace",
+				"command": "l13Projects.action.workspaces.addWorkspaceProject",
 				"category": "Projects",
-				"title": "Add Project Workspace",
+				"title": "Add Workspace Project...",
 				"icon": {
 					"light": "images/workspaces/project-workspace-save-light.svg",
 					"dark": "images/workspaces/project-workspace-save-dark.svg"
@@ -288,6 +293,10 @@
 			{
 				"command": "l13Projects.action.workspace.copyPath",
 				"title": "Copy Path"
+			},
+			{
+				"command": "l13Projects.action.workspace.copyUri",
+				"title": "Copy Uri"
 			},
 			{
 				"command": "l13Projects.action.workspace.assignSlot",
@@ -558,6 +567,11 @@
 			{
 				"command": "l13Projects.action.diff.history.openInTerminal",
 				"title": "Open in Integrated Terminal..."
+			},
+			{
+				"command": "l13Projects.action.output.show",
+				"category": "Projects",
+				"title": "Show Output Channel"
 			}
 		],
 		"keybindings": [
@@ -640,6 +654,10 @@
 				},
 				{
 					"command": "l13Projects.action.explorer.openInCurrentWindow",
+					"when": "false"
+				},
+				{
+					"command": "l13Projects.action.explorer.copyUri",
 					"when": "false"
 				},
 				{
@@ -791,6 +809,10 @@
 					"when": "false"
 				},
 				{
+					"command": "l13Projects.action.workspace.copyUri",
+					"when": "false"
+				},
+				{
 					"command": "l13Projects.action.favoriteGroups.add",
 					"when": "false"
 				},
@@ -935,6 +957,11 @@
 				{
 					"command": "l13Projects.action.explorer.openInNewWindow",
 					"group": "2_workspace@2"
+				},
+				{
+					"command": "l13Projects.action.explorer.copyUri",
+					"group": "6_copypath@20",
+					"when": "resourceScheme != file"
 				}
 			],
 			"view/title": [
@@ -949,7 +976,7 @@
 					"group": "navigation@1"
 				},
 				{
-					"command": "l13Projects.action.workspaces.addProjectWorkspace",
+					"command": "l13Projects.action.workspaces.addWorkspaceProject",
 					"when": "!isMac && view == l13ProjectsWorkspaces",
 					"group": "navigation@2"
 				},
@@ -983,22 +1010,22 @@
 				{
 					"command": "l13Projects.action.favorite.removeFromGroup",
 					"group": "7_modification@1",
-					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?subfavorite-(folders?|git|subfolder|vscode|workspace)$/"
+					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?(remote-)?subfavorite-(folders?|git|subfolder|vscode|workspace|remote|virtual)$/"
 				},
 				{
 					"command": "l13Projects.action.favorite.addToGroup",
 					"group": "navigation@9",
-					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?(favorite|subfavorite)-(folders?|git|subfolder|vscode|workspace)$/"
+					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?(remote-)?(sub)?favorite-(folders?|git|subfolder|vscode|workspace|remote|virtual)$/"
 				},
 				{
 					"command": "l13Projects.action.favorite.rename",
 					"group": "7_modification@2",
-					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?(favorite|subfavorite)-(folders?)$/"
+					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?(remote-)?(sub)?favorite-(folders?|remote|virtual)$/"
 				},
 				{
 					"command": "l13Projects.action.favorite.remove",
 					"group": "7_modification@3",
-					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?(favorite|subfavorite)-(folders?|git|subfolder|vscode|workspace)$/"
+					"when": "view == l13ProjectsFavorites && viewItem =~ /^(current-)?(remote-)?(sub)?favorite-(folders?|git|subfolder|vscode|workspace|remote|virtual)$/"
 				},
 				{
 					"command": "l13Projects.action.group.openAllInCurrentAndNewWindows",
@@ -1048,57 +1075,57 @@
 				{
 					"command": "l13Projects.action.workspace.openInCurrentWindow",
 					"group": "navigation@1",
-					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favorite|project|subfavorite|subproject)-(folders?|git|subfolder|vscode|workspace)$/"
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(remote-)?(sub)?(favorite|project)-(folders?|git|subfolder|vscode|workspace|remote|virtual)$/"
 				},
 				{
 					"command": "l13Projects.action.workspace.openInNewWindow",
 					"group": "navigation@2",
-					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(favorite|project|subfavorite|subproject)-(folders?|git|subfolder|vscode|workspace)$/"
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(remote-)?(sub)?(favorite|project)-(folders?|git|subfolder|vscode|workspace|remote|virtual)$/"
 				},
 				{
 					"command": "l13Projects.action.workspace.saveDetectedProject",
 					"group": "navigation@3",
-					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^((current-)?(project|subproject)-(git|subfolder|vscode|workspace)|unknown-project)$/"
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^((current-)?(remote-)?(sub)?project-(git|subfolder|vscode|workspace)|unknown-(remote-)?project)$/"
 				},
 				{
 					"command": "l13Projects.action.workspace.revealInFinder",
 					"group": "navigation@5",
-					"when": "isMac && view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?(favorite|project|subfavorite|subproject)-(folders?|git|subfolder|vscode|workspace)|unknown-project)$/"
+					"when": "isMac && view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?(sub)?(favorite|project)-(folders?|git|subfolder|vscode|workspace)|unknown-project)$/"
 				},
 				{
 					"command": "l13Projects.action.workspace.revealInExplorer",
 					"group": "navigation@5",
-					"when": "isWindows && view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?(favorite|project|subfavorite|subproject)-(folders?|git|subfolder|vscode|workspace)|unknown-project)$/"
+					"when": "isWindows && view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?(sub)?(favorite|project)-(folders?|git|subfolder|vscode|workspace)|unknown-project)$/"
 				},
 				{
 					"command": "l13Projects.action.workspace.openContainingFolder",
 					"group": "navigation@5",
-					"when": "isLinux && view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?(favorite|project|subfavorite|subproject)-(folders?|git|subfolder|vscode|workspace)|unknown-project)$/"
+					"when": "isLinux && view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?(sub)?(favorite|project)-(folders?|git|subfolder|vscode|workspace)|unknown-project)$/"
 				},
 				{
 					"command": "l13Projects.action.workspace.openInTerminal",
 					"group": "navigation@6",
-					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?(favorite|project|subfavorite|subproject)-(folders?|git|subfolder|vscode|workspace)|unknown-project)$/"
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?(sub)?(favorite|project)-(folders?|git|subfolder|vscode|workspace)|unknown-project)$/"
 				},
 				{
 					"command": "l13Projects.action.workspace.addToFavorites",
 					"group": "navigation@7",
-					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?(project|subproject)-(folders?|git|subfolder|vscode|workspace)$/"
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?(remote-)?(sub)?project-(folders?|git|subfolder|vscode|workspace|remote|virtual)$/"
 				},
 				{
 					"command": "l13Projects.action.workspace.assignSlot",
 					"group": "navigation@8",
-					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(current-)?(favorite|project|subfavorite|subproject)-(folders?|git|subfolder|vscode|workspace)$/"
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(current-)?(remote-)?(sub)?(favorite|project)-(folders?|git|subfolder|vscode|workspace|remote|virtual)$/"
 				},
 				{
 					"command": "l13Projects.action.workspace.addToGroup",
 					"group": "navigation@9",
-					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?(project|subproject)-(folders?|git|subfolder|vscode|workspace)$/"
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?(remote-)?(sub)?project-(folders?|git|subfolder|vscode|workspace|remote|virtual)$/"
 				},
 				{
 					"command": "l13Projects.action.workspace.editTags",
 					"group": "navigation@10",
-					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(current-)?(favorite|project|subfavorite|subproject)-(folders?|git|subfolder|vscode|workspace)$/"
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(current-)?(remote-)?(sub)?(favorite|project)-(folders?|git|subfolder|vscode|workspace|remote|virtual)$/"
 				},
 				{
 					"command": "l13Projects.action.colorPicker.selectColor",
@@ -1113,27 +1140,32 @@
 				{
 					"command": "l13Projects.action.workspace.addToWorkspace",
 					"group": "2_workspace@1",
-					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(favorite|project|subfavorite|subproject)-(folder|git|subfolder|vscode)$/"
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(remote-)?(sub)?(favorite|project)-(folder|git|subfolder|vscode|remote|virtual)$/"
 				},
 				{
 					"command": "l13Projects.action.workspace.copyPath",
 					"group": "6_copypath@1",
-					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^(current-)?(favorite|project|subfavorite|subproject)-(folders?|git|subfolder|vscode|workspace)$/"
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?(remote-)?(sub)?(favorite|project)-(folders?|git|subfolder|vscode|workspace|remote|virtual)|unknown-(remote-)?project)$/"
+				},
+				{
+					"command": "l13Projects.action.workspace.copyUri",
+					"group": "6_copypath@2",
+					"when": "view =~ /^l13Projects(Favorites|Workspaces)$/ && viewItem =~ /^((current-)?remote-(sub)?(favorite|project)-(folders?|git|subfolder|vscode|workspace|remote|virtual)|unknown-remote-project)$/"
 				},
 				{
 					"command": "l13Projects.action.workspace.removeFromGroup",
 					"group": "7_modification@2",
-					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?subproject-(folders?|git|subfolder|vscode|workspace)$/"
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?(remote-)?subproject-(folders?|git|subfolder|vscode|workspace|remote|virtual)$/"
 				},
 				{
 					"command": "l13Projects.action.project.rename",
 					"group": "7_modification@3",
-					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?(project|subproject)-(folders?)$/"
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?(remote-)?(sub)?project-(folders?|remote|virtual)$/"
 				},
 				{
 					"command": "l13Projects.action.project.remove",
 					"group": "7_modification@4",
-					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?(project|subproject)-(folders?)$/"
+					"when": "view == l13ProjectsWorkspaces && viewItem =~ /^(current-)?(remote-)?(sub)?project-(folders?|remote|virtual)$/"
 				},
 				{
 					"command": "l13Projects.action.tag.add",
@@ -1462,12 +1494,14 @@
 					"enum": [
 						"category",
 						"name",
+						"root",
 						"type"
 					],
-					"description": "Indicates how the workspaces should be sorted. Custom groups are always at the top of the tree view. If a workspace is part of a custom group, it does not appear in the auto sorted groups anymore.",
+					"description": "Indicates how the workspaces should be sorted. Custom groups are always at the top of the tree view followed by pinned groups. If a workspace is part of a custom group, it does not appear in the auto sorted groups anymore.",
 					"enumDescriptions": [
 						"Group all workspaces by category.",
 						"Sort all workspaces by name.",
+						"Group all workspaces by root path.",
 						"Group all workspaces by type."
 					]
 				},
@@ -1551,6 +1585,23 @@
 					"type": "boolean",
 					"default": false,
 					"description": "Controls whether a deleted project should be removed from workspaces and favorites automatically."
+				},
+				"l13Projects.statusBarAction": {
+					"type": "string",
+					"default": "reveal",
+					"enum": [
+						"reveal",
+						"favorites",
+						"workspaces",
+						"tags"
+					],
+					"description": "Indicates the action which will be triggered by click on the statusbar icon.",
+					"enumDescriptions": [
+						"Reveal the workspace in the OS.",
+						"Show favorite projcts.",
+						"Show all workspaces.",
+						"Show all tags."
+					]
 				}
 			}
 		}
@@ -1559,7 +1610,7 @@
 		"vscode:prepublish": "npm run compile",
 		"compile": "gulp build",
 		"watch": "gulp watch",
-		"test": "mocha",
+		"test": "node test/index.js",
 		"update": "rm -rf node_modules && rm package-lock.json && npm install",
 		"check-lint-rules": "node ./plugins/check-lint-rules"
 	},

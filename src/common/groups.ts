@@ -14,14 +14,14 @@ import * as states from './states';
 
 //	Exports ____________________________________________________________________
 
-export function getNextGroupId (context:vscode.ExtensionContext) :number {
+export function getNextGroupId (context: vscode.ExtensionContext): number {
 	
 	const favoriteGroups = states.getFavoriteGroups(context);
 	const workspaceGroups = states.getWorkspaceGroups(context);
 	
 	if (!favoriteGroups.length && !workspaceGroups.length) return 0;
 	
-	const groupIds:number[] = [];
+	const groupIds: number[] = [];
 	
 	favoriteGroups.forEach((favoriteGroup) => groupIds.push(favoriteGroup.id));
 	workspaceGroups.forEach((workspaceGroup) => groupIds.push(workspaceGroup.id));
@@ -38,13 +38,13 @@ export function getNextGroupId (context:vscode.ExtensionContext) :number {
 	
 }
 
-export function getNextTagId (context:vscode.ExtensionContext) :number {
+export function getNextTagId (context: vscode.ExtensionContext): number {
 	
 	const tags = states.getTags(context);
 	
 	if (!tags.length) return 0;
 	
-	const tagIds:number[] = tags.map((tag) => tag.id);
+	const tagIds: number[] = tags.map((tag) => tag.id);
 	
 	const maxTagId = Math.max(...tagIds);
 	let i = 0;

@@ -1,13 +1,14 @@
 //	Imports ____________________________________________________________________
 
-import { join } from 'path';
 import { TreeItem } from 'vscode';
 
 import type { Favorite } from '../../../@types/favorites';
 
+import { getContextValue, getIconPath } from '../../../common/treeview';
+
 //	Variables __________________________________________________________________
 
-const basePath = join(__dirname, '..', 'images', 'types');
+
 
 //	Initialize _________________________________________________________________
 
@@ -20,25 +21,16 @@ export class FavoriteTreeItem extends TreeItem {
 	public command = {
 		arguments: [this],
 		command: 'l13Projects.action.workspace.open',
-		title: 'Open Project',
+		title: 'Open Favorite',
 	};
 	
-	public constructor (public readonly project:Favorite, public description:string, isSubProject = false) {
+	public constructor (public readonly project: Favorite, public description: string, isSubItem = false) {
 		
 		super(project.label);
 		
-		const type = project.type;
-		let icon = `${type}`;
-		
-		if (type === 'folder' || type === 'folders') icon += `-color-${project.color || 0}`;
-		
-		this.contextValue = `${isSubProject ? 'sub' : ''}favorite-${type}`;
+		this.iconPath = getIconPath(project);
+		this.contextValue = getContextValue(project, isSubItem, 'favorite');
 		this.tooltip = project.path;
-		
-		this.iconPath = {
-			light: join(basePath, `project-${icon}-light.svg`),
-			dark: join(basePath, `project-${icon}-dark.svg`),
-		};
 		
 	}
 	
